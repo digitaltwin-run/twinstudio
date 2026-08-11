@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package lps.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "lps/v1/geometry.proto";
+
+message CommandEnvelope {
+  string command_id = 1;
+  string command_type = 2;
+  string project_id = 3;
+  optional int64 expected_version = 4;
+  google.protobuf.Struct payload = 5;
+  string actor = 6;
+  string correlation_id = 7;
+  google.protobuf.Timestamp issued_at = 8;
+}
+
+message ChangePlan {
+  string plan_id = 1;
+  string project_id = 2;
+  string base_revision = 3;
+  string prompt = 4;
+  string selection_uri = 5;
+  repeated string selected_scope_uris = 6;
+  repeated GeometryOperation operations = 7;
+  repeated google.protobuf.Struct impact = 8;
+  repeated string assumptions = 9;
+  repeated string unresolved_questions = 10;
+  bool requires_approval = 11;
+  string planner = 12;
+  string created_by = 13;
+  google.protobuf.Timestamp created_at = 14;
+}
+
+message PlanScopedChangeRequest {
+  string project_id = 1;
+  string prompt = 2;
+  RegionSelection selection = 3;
+}
+
+message ApplyChangePlanRequest {
+  string project_id = 1;
+  string plan_id = 2;
+  int64 expected_version = 3;
+}
+
+message GenerateArtifactsRequest {
+  string project_id = 1;
+  string revision = 2;
+  repeated string object_uris = 3;
+  repeated string formats = 4;
+  google.protobuf.Struct generator_configuration = 5;
+}

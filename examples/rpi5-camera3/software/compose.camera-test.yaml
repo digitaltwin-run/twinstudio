@@ -1,0 +1,9 @@
+services:
+  camera-test:
+    build: .
+    environment:
+      VISION_INPUT_DIR: /input
+      VISION_OUTPUT_DIR: /output
+    volumes:
+      - ./samples:/input:ro
+      - ./results:/output

@@ -1,0 +1,253 @@
+{
+  "metadata": {
+    "name": "Raspberry Pi 5 housing",
+    "revision": "A",
+    "description": "Parametric two-part FDM housing with a lower base, an upper lid, a front hinge, two Raspberry Pi mounting patterns, and layered 2D drawings.",
+    "units": "mm",
+    "author": "Housing Studio"
+  },
+  "dimensions": {
+    "external_width": 79.0,
+    "external_depth": 95.0,
+    "base_height": 25.0,
+    "total_height": 40.0,
+    "wall_thickness": 2.0,
+    "floor_thickness": 2.0,
+    "lid_top_thickness": 2.0,
+    "lid_vertical_lower_section": 2.0,
+    "lid_side_inset": 10.0,
+    "lid_front_inset": 13.0,
+    "lid_rear_inset": 2.0,
+    "edge_radius": 0.8
+  },
+  "mating": {
+    "fit_clearance": 0.3,
+    "locating_lip_height": 5.0,
+    "locating_lip_thickness": 1.2,
+    "front_gap_for_hinge": 10.0
+  },
+  "hinge": {
+    "outer_diameter": 8.0,
+    "pin_diameter": 3.0,
+    "pin_bore_clearance": 0.2,
+    "axis_y": 0.5,
+    "axis_z_offset_from_base_top": 1.0,
+    "side_margin": 4.0,
+    "inter_knuckle_gap": 0.8,
+    "opening_angle_deg": 195.0,
+    "base_wall_relief": 1.5,
+    "lid_edge_relief": 2.0,
+    "base_front_chamfer_angle_deg": 45.0,
+    "base_front_chamfer_size": 2.0
+  },
+  "board": {
+    "length": 85.0,
+    "width": 56.0,
+    "thickness": 1.6,
+    "hole_spacing_length": 58.0,
+    "hole_spacing_width": 49.0,
+    "first_hole_edge_offset": 3.5,
+    "standoff": {
+      "height": 3.0,
+      "outer_diameter": 6.0,
+      "pilot_hole_diameter": 1.0
+    },
+    "position_a": {
+      "front_clearance": 2.0,
+      "right_clearance": 1.0,
+      "expected_left_clearance": null,
+      "anchor": "right"
+    },
+    "position_b": {
+      "front_clearance": 2.0,
+      "right_clearance": 7.5,
+      "expected_left_clearance": 10.5,
+      "anchor": "right"
+    }
+  },
+  "connector_openings": [
+    {
+      "name": "rear_connector",
+      "enabled": true,
+      "wall": "rear",
+      "center_horizontal": 39.5,
+      "bottom_z": 7.0,
+      "width": 20.0,
+      "height": 8.0,
+      "corner_radius": 1.0
+    }
+  ],
+  "camera_mounts": {
+    "columns": 2,
+    "rows": 3,
+    "center_x": 39.5,
+    "center_y": 58.0,
+    "x_pitch": 18.0,
+    "y_pitch": 10.0,
+    "outer_diameter": 6.0,
+    "hole_diameter": 2.0,
+    "boss_height_after_reduction": 4.0,
+    "embed_depth": 1.0
+  },
+  "auxiliary_lid_bosses": {
+    "outer_diameter": 8.0,
+    "hole_diameter": 2.0,
+    "top_z_from_base_mating_plane": 14.0,
+    "boss_height": 8.0,
+    "x_span": 55.0,
+    "y_span": 71.0,
+    "center_x": 39.5,
+    "center_y": 47.5
+  },
+  "rear_tabs": {
+    "count": 2,
+    "width": 8.0,
+    "thickness": 3.0,
+    "height": 8.0,
+    "clearance_to_inner_wall": 1.0,
+    "middle_wall_reduction": 4.0
+  },
+  "feature_layers": {
+    "base_shell": {
+      "enabled": true,
+      "label": "Lower base shell",
+      "notes": ""
+    },
+    "lid_shell": {
+      "enabled": true,
+      "label": "Upper lid shell",
+      "notes": ""
+    },
+    "hinge": {
+      "enabled": true,
+      "label": "Front hinge",
+      "notes": ""
+    },
+    "pcb_mount_a": {
+      "enabled": true,
+      "label": "PCB mounting pattern A",
+      "notes": ""
+    },
+    "pcb_mount_b": {
+      "enabled": true,
+      "label": "PCB mounting pattern B",
+      "notes": ""
+    },
+    "camera_mounts": {
+      "enabled": true,
+      "label": "Camera mounting bosses",
+      "notes": ""
+    },
+    "lid_aux_bosses": {
+      "enabled": true,
+      "label": "Four auxiliary lid bosses",
+      "notes": ""
+    },
+    "rear_tabs": {
+      "enabled": true,
+      "label": "Rear internal tabs",
+      "notes": ""
+    },
+    "connector_openings": {
+      "enabled": true,
+      "label": "Connector openings",
+      "notes": ""
+    },
+    "locating_lip": {
+      "enabled": false,
+      "label": "Internal locating lip",
+      "notes": "Disabled by default because PCB position A is close to the right wall."
+    },
+    "pcb_reference": {
+      "enabled": true,
+      "label": "PCB reference geometry",
+      "notes": "Preview and 2D reference only; never merged into manufactured solids."
+    }
+  },
+  "drawing": {
+    "projection": "first_angle",
+    "sheet_size": "A3",
+    "include_front": true,
+    "include_top": true,
+    "include_side": true,
+    "include_isometric_note": true,
+    "layers": {
+      "visible_edges": {
+        "enabled": true,
+        "dxf_name": "VISIBLE_EDGES",
+        "line_type": "CONTINUOUS",
+        "line_weight_mm": 0.5,
+        "color_index": 7
+      },
+      "hidden_edges": {
+        "enabled": true,
+        "dxf_name": "HIDDEN_EDGES",
+        "line_type": "HIDDEN",
+        "line_weight_mm": 0.18,
+        "color_index": 8
+      },
+      "centerlines": {
+        "enabled": true,
+        "dxf_name": "CENTERLINES",
+        "line_type": "CENTER",
+        "line_weight_mm": 0.18,
+        "color_index": 4
+      },
+      "dimensions": {
+        "enabled": true,
+        "dxf_name": "DIMENSIONS",
+        "line_type": "CONTINUOUS",
+        "line_weight_mm": 0.18,
+        "color_index": 2
+      },
+      "notes": {
+        "enabled": true,
+        "dxf_name": "NOTES",
+        "line_type": "CONTINUOUS",
+        "line_weight_mm": 0.18,
+        "color_index": 7
+      },
+      "section_hatch": {
+        "enabled": true,
+        "dxf_name": "SECTION_HATCH",
+        "line_type": "DASHED",
+        "line_weight_mm": 0.13,
+        "color_index": 8
+      },
+      "pcb_reference": {
+        "enabled": true,
+        "dxf_name": "PCB_REFERENCE",
+        "line_type": "DASHED",
+        "line_weight_mm": 0.18,
+        "color_index": 3
+      },
+      "construction": {
+        "enabled": true,
+        "dxf_name": "CONSTRUCTION",
+        "line_type": "DASHED",
+        "line_weight_mm": 0.13,
+        "color_index": 9
+      },
+      "datums": {
+        "enabled": true,
+        "dxf_name": "DATUMS",
+        "line_type": "CONTINUOUS",
+        "line_weight_mm": 0.25,
+        "color_index": 6
+      }
+    }
+  },
+  "artifacts": {
+    "export_step": true,
+    "export_stl": true,
+    "export_obj": true,
+    "export_glb": true,
+    "export_dxf": true,
+    "export_svg": true,
+    "export_pdf": true,
+    "export_open_preview": true,
+    "create_zip": true,
+    "mesh_tolerance": 0.08,
+    "angular_tolerance": 0.15
+  }
+}

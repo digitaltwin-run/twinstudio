@@ -1,0 +1,15 @@
+.env
+.venv/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.db
+/data/*
+!/data/.gitkeep
+/generated/
+examples/rpi5-camera3/demo-rpi5.lps.zip
+sample_output/demo/housing_project_bundle.zip
+services/cad-worker/vendor/rpi5_housing_studio/generated/
+services/cad-worker/vendor/rpi5_housing_studio/sample_output/

@@ -1,0 +1,197 @@
+{
+  "$defs": {
+    "ChangeOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "title": "Operation Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChangeOperationKind"
+        },
+        "target_uri": {
+          "title": "Target Uri",
+          "type": "string"
+        },
+        "selector": {
+          "additionalProperties": true,
+          "title": "Selector",
+          "type": "object"
+        },
+        "arguments": {
+          "additionalProperties": true,
+          "title": "Arguments",
+          "type": "object"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reversible": {
+          "default": true,
+          "title": "Reversible",
+          "type": "boolean"
+        },
+        "validation_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "target_uri"
+      ],
+      "title": "ChangeOperation",
+      "type": "object"
+    },
+    "ChangeOperationKind": {
+      "enum": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "title": "ChangeOperationKind",
+      "type": "string"
+    },
+    "ImpactItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "impact": {
+          "enum": [
+            "direct",
+            "dependent",
+            "manufacturing",
+            "test",
+            "software",
+            "commercial"
+          ],
+          "title": "Impact",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "impact",
+        "summary"
+      ],
+      "title": "ImpactItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "plan_id": {
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "base_revision": {
+      "title": "Base Revision",
+      "type": "string"
+    },
+    "prompt": {
+      "title": "Prompt",
+      "type": "string"
+    },
+    "selection_uri": {
+      "title": "Selection Uri",
+      "type": "string"
+    },
+    "selected_scope_uris": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Selected Scope Uris",
+      "type": "array"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/ChangeOperation"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "impact": {
+      "items": {
+        "$ref": "#/$defs/ImpactItem"
+      },
+      "title": "Impact",
+      "type": "array"
+    },
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "unresolved_questions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unresolved Questions",
+      "type": "array"
+    },
+    "requires_approval": {
+      "default": true,
+      "title": "Requires Approval",
+      "type": "boolean"
+    },
+    "planner": {
+      "default": "local",
+      "title": "Planner",
+      "type": "string"
+    },
+    "created_by": {
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "base_revision",
+    "prompt",
+    "selection_uri",
+    "selected_scope_uris",
+    "operations",
+    "created_by"
+  ],
+  "title": "ChangePlan",
+  "type": "object"
+}

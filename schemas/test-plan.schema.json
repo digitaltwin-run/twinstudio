@@ -1,0 +1,179 @@
+{
+  "$defs": {
+    "LifecycleStage": {
+      "enum": [
+        "evidence_intake",
+        "requirements",
+        "concept",
+        "architecture",
+        "detailed_design",
+        "prototype",
+        "verification",
+        "validation",
+        "industrialization",
+        "production",
+        "fulfillment",
+        "operation",
+        "maintenance",
+        "end_of_life"
+      ],
+      "title": "LifecycleStage",
+      "type": "string"
+    },
+    "Role": {
+      "enum": [
+        "reader",
+        "editor",
+        "admin",
+        "creator"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "TestCase": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "test_type": {
+          "enum": [
+            "inspection",
+            "mechanical",
+            "electrical",
+            "thermal",
+            "software",
+            "camera",
+            "human_use",
+            "transport",
+            "manufacturing",
+            "commercial"
+          ],
+          "title": "Test Type",
+          "type": "string"
+        },
+        "target_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Uris",
+          "type": "array"
+        },
+        "lifecycle_stage": {
+          "$ref": "#/$defs/LifecycleStage",
+          "default": "verification"
+        },
+        "procedure": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Procedure",
+          "type": "array"
+        },
+        "input_artifact_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Artifact Uris",
+          "type": "array"
+        },
+        "expected_results": {
+          "additionalProperties": true,
+          "title": "Expected Results",
+          "type": "object"
+        },
+        "execution_adapter": {
+          "default": "manual",
+          "title": "Execution Adapter",
+          "type": "string"
+        },
+        "container_image_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Image Uri"
+        },
+        "status": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "ready",
+            "running",
+            "passed",
+            "failed",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "result_artifact_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Result Artifact Uris",
+          "type": "array"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "name",
+        "test_type"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "uri": {
+      "title": "Uri",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "stage": {
+      "$ref": "#/$defs/LifecycleStage",
+      "default": "verification"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/TestCase"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "approval_required": {
+      "default": true,
+      "title": "Approval Required",
+      "type": "boolean"
+    },
+    "owner_role": {
+      "$ref": "#/$defs/Role",
+      "default": "editor"
+    }
+  },
+  "required": [
+    "uri",
+    "name"
+  ],
+  "title": "TestPlan",
+  "type": "object"
+}

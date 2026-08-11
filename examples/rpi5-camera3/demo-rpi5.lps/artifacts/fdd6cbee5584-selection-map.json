@@ -1,0 +1,36 @@
+{
+  "uri": "poa://demo/demo-rpi5@main/selection-map/example-front-wall",
+  "selection_uri": "poa://demo/demo-rpi5@main/region/example-front-wall",
+  "target_revision": "main",
+  "resolved_object_uris": [
+    "poa://demo/demo-rpi5@main/part/base"
+  ],
+  "resolved_feature_uris": [
+    "poa://demo/demo-rpi5@main/part/base/feature/shell"
+  ],
+  "resolved_semantic_face_uris": [
+    "poa://demo/demo-rpi5@main/part/base/face/front"
+  ],
+  "resolved_brep_face_ids": [],
+  "algorithm": "semantic-plus-projection",
+  "status": "partial",
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "EPHEMERAL_MESH_FACE",
+      "message": "The sample has a triangle index and semantic face, but no native B-Rep face ID.",
+      "target_uris": [
+        "poa://demo/demo-rpi5@main/part/base"
+      ],
+      "data": {
+        "face_index": 42,
+        "mesh_hash": "demo-base-stl"
+      }
+    }
+  ],
+  "metadata": {
+    "example": true
+  },
+  "created_by": "editor@example.test",
+  "created_at": "2026-08-11T17:27:21.428123Z"
+}

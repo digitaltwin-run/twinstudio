@@ -1,0 +1,142 @@
+stage: detailed_design
+gates:
+- stage: evidence_intake
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: requirements
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: concept
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: architecture
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: detailed_design
+  status: in_progress
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: prototype
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: verification
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: validation
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: industrialization
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: production
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: fulfillment
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: operation
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: maintenance
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []
+- stage: end_of_life
+  status: not_started
+  entry_criteria:
+  - Previous gate approved
+  exit_criteria:
+  - Required artifacts and tests attached
+  approver_roles:
+  - creator
+  - admin
+  evidence_artifact_uris: []

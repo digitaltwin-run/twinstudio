@@ -1,0 +1,109 @@
+uri: poa://demo/demo-rpi5@main/test-plan/product-verification
+name: Raspberry Pi 5 camera appliance verification plan
+stage: verification
+approval_required: true
+owner_role: editor
+cases:
+- uri: poa://demo/demo-rpi5@main/test-plan/product-verification/case/dimensional-inspection
+  name: Housing dimensional inspection
+  test_type: inspection
+  target_uris:
+  - poa://demo/demo-rpi5@main/part/base
+  - poa://demo/demo-rpi5@main/part/lid
+  lifecycle_stage: verification
+  procedure:
+  - Generate 2D drawings from the approved revision.
+  - Measure wall thickness and critical interfaces.
+  - Compare measured values with approved parameters.
+  input_artifact_uris:
+  - poa://demo/demo-rpi5@main/artifact/base-step
+  - poa://demo/demo-rpi5@main/artifact/lid-step
+  expected_results:
+    wall_thickness_mm: 2.0
+    hinge_opening_deg_min: 190
+  execution_adapter: manual
+  container_image_uri: null
+  status: ready
+  result_artifact_uris: []
+  notes: Physical measurements still required.
+- uri: poa://demo/demo-rpi5@main/test-plan/product-verification/case/slicer-check
+  name: FDM manufacturability check
+  test_type: manufacturing
+  target_uris:
+  - poa://demo/demo-rpi5@main/part/base
+  - poa://demo/demo-rpi5@main/part/lid
+  lifecycle_stage: verification
+  procedure:
+  - Slice each STL with the selected printer profile.
+  - Check non-manifold errors, supports, thin walls, travel and estimated material.
+  input_artifact_uris:
+  - poa://demo/demo-rpi5@main/artifact/base-stl
+  - poa://demo/demo-rpi5@main/artifact/lid-stl
+  expected_results:
+    mesh_repair_required: false
+    unapproved_supports: 0
+  execution_adapter: slicer-adapter
+  container_image_uri: null
+  status: draft
+  result_artifact_uris: []
+  notes: Adapter is a plug-in boundary in this package.
+- uri: poa://demo/demo-rpi5@main/test-plan/product-verification/case/power-budget
+  name: Power and voltage-drop scenario
+  test_type: electrical
+  target_uris:
+  - poa://demo/demo-rpi5@main/power-supply/usb-c-5v
+  - poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5
+  lifecycle_stage: verification
+  procedure:
+  - Run the lumped power model for every load case.
+  - Flag current limit or brownout threshold violations.
+  - Confirm estimates with bench measurements before release.
+  input_artifact_uris: []
+  expected_results:
+    voltage_above_brownout: true
+    current_below_supply_limit: true
+  execution_adapter: core-power-model
+  container_image_uri: null
+  status: ready
+  result_artifact_uris: []
+  notes: Analytical estimate, not SPICE or hardware-in-the-loop.
+- uri: poa://demo/demo-rpi5@main/test-plan/product-verification/case/camera-pipeline
+  name: Camera sample-image pipeline
+  test_type: camera
+  target_uris:
+  - poa://demo/demo-rpi5@main/camera/camera-module-3
+  - poa://demo/demo-rpi5@main/software/vision-app
+  lifecycle_stage: validation
+  procedure:
+  - Replay sample images through the containerized application.
+  - Capture deterministic output metrics and logs.
+  - Compare with approved expected results.
+  input_artifact_uris: []
+  expected_results:
+    sample_images_processed: 2
+    fatal_errors: 0
+  execution_adapter: docker-compose
+  container_image_uri: poa://demo/demo-rpi5@main/container-image/vision-app-runtime
+  status: draft
+  result_artifact_uris: []
+  notes: Synthetic images are included; real camera validation is required.
+- uri: poa://demo/demo-rpi5@main/test-plan/product-verification/case/human-installation
+  name: Human installation and misuse review
+  test_type: human_use
+  target_uris:
+  - poa://demo/demo-rpi5@main/device/rpi5-camera-appliance
+  lifecycle_stage: validation
+  procedure:
+  - Execute the defined human-use scenario.
+  - Record errors, ambiguity, forces, pinch points and recovery steps.
+  - Update FMEA controls.
+  input_artifact_uris: []
+  expected_results:
+    critical_use_errors: 0
+    recovery_documented: true
+  execution_adapter: checklist
+  container_image_uri: null
+  status: ready
+  result_artifact_uris: []
+  notes: Digital-human ergonomics is a future adapter; current evaluation is rule/checklist
+    based.

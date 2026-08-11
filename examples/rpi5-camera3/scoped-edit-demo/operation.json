@@ -1,0 +1,9 @@
+{
+  "target_uri": "poa://demo/demo-rpi5@main/part/base",
+  "kind": "boolean_cut",
+  "arguments": {
+    "feature_type": "hole",
+    "diameter_mm": 3.0,
+    "description": "Demonstration hole cut constrained to the selected base front-wall region."
+  }
+}

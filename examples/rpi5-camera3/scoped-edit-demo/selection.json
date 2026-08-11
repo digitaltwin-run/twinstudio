@@ -1,0 +1,88 @@
+{
+  "selection_id": "a52ae8ef-8881-46e8-9113-b9f1a256fd6e",
+  "uri": "poa://demo/demo-rpi5@main/region/example-front-wall",
+  "project_id": "demo-rpi5",
+  "project_revision": "main",
+  "source_view": "3d",
+  "tool": "lasso",
+  "target_object_uris": [
+    "poa://demo/demo-rpi5@main/part/base"
+  ],
+  "screen_path": [
+    {
+      "x": 320.0,
+      "y": 220.0
+    },
+    {
+      "x": 460.0,
+      "y": 220.0
+    },
+    {
+      "x": 470.0,
+      "y": 330.0
+    },
+    {
+      "x": 310.0,
+      "y": 330.0
+    }
+  ],
+  "ray_hits": [
+    {
+      "object_uri": "poa://demo/demo-rpi5@main/part/base",
+      "mesh_hash": "demo-base-stl",
+      "face_index": 42,
+      "semantic_face_uri": "poa://demo/demo-rpi5@main/part/base/face/front",
+      "brep_face_id": null,
+      "point": {
+        "x": 39.5,
+        "y": 1.0,
+        "z": 12.0
+      },
+      "normal": {
+        "x": 0.0,
+        "y": -1.0,
+        "z": 0.0
+      },
+      "distance": null
+    }
+  ],
+  "world_aabb": {
+    "minimum": {
+      "x": 20.0,
+      "y": 0.0,
+      "z": 5.0
+    },
+    "maximum": {
+      "x": 60.0,
+      "y": 2.0,
+      "z": 20.0
+    }
+  },
+  "camera": {
+    "projection": "perspective",
+    "position": {
+      "x": 150.0,
+      "y": -175.0,
+      "z": 115.0
+    },
+    "target": {
+      "x": 40.0,
+      "y": 45.0,
+      "z": 18.0
+    },
+    "up": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 1.0
+    },
+    "fov": 42.0,
+    "zoom": null,
+    "viewport_width": 900,
+    "viewport_height": 600
+  },
+  "source_artifact_uri": null,
+  "projection_entity_ids": [],
+  "notes": "Example lasso over the base front wall.",
+  "created_by": "editor@example.test",
+  "created_at": "2026-08-11T17:13:51.838987Z"
+}

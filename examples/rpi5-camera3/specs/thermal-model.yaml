@@ -1,0 +1,12 @@
+nodes:
+- uri: poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5
+  ambient_c: 25.0
+  initial_c: 25.0
+  thermal_resistance_c_per_w: 7.5
+  thermal_capacitance_j_per_c: 45.0
+- uri: poa://demo/demo-rpi5@main/assembly/enclosure
+  ambient_c: 25.0
+  initial_c: 25.0
+  thermal_resistance_c_per_w: 14.0
+  thermal_capacitance_j_per_c: 180.0
+timestep_s: 0.5

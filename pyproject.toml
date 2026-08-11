@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "twinstudio"
+version = "0.3.0"
+description = "Event-sourced collaborative living product studio for scoped NL-to-2D-to-3D edits, specifications, simulations and artifact generation."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Living Product Studio" }]
+dependencies = [
+  "fastapi>=0.128,<1",
+  "uvicorn[standard]>=0.35,<1",
+  "pydantic>=2.13,<3",
+  "sqlalchemy>=2.0,<3",
+  "psycopg[binary]>=3.2,<4",
+  "PyJWT>=2.10,<3",
+  "python-multipart>=0.0.20,<1",
+  "typer>=0.16,<1",
+  "PyYAML>=6.0,<7",
+  "paho-mqtt>=2.1,<3",
+  "httpx>=0.28,<1",
+  "python-dotenv>=1.1,<2"
+]
+
+[project.optional-dependencies]
+llm = ["litellm>=1,<2"]
+dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
+
+[project.scripts]
+lps = "living_product_studio.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["living_product_studio*"]
+
+[tool.setuptools.package-data]
+living_product_studio = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"

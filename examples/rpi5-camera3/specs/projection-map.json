@@ -1,0 +1,79 @@
+{
+  "uri": "poa://demo/demo-rpi5@main/projection-map/assembly-orthographic",
+  "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+  "source_view": "2d",
+  "target_revision": "main",
+  "entities": {
+    "front.base.outer-wall": {
+      "entity_id": "front.base.outer-wall",
+      "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+      "object_uri": "poa://demo/demo-rpi5@main/part/base",
+      "feature_uri": "poa://demo/demo-rpi5@main/part/base/feature/shell",
+      "semantic_face_uri": "poa://demo/demo-rpi5@main/part/base/face/front",
+      "brep_face_id": null,
+      "mapping_type": "orthographic",
+      "source_to_world_matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "confidence": 0.65,
+      "metadata": {
+        "note": "Example logical entity; regenerate entity IDs from the final drawing exporter."
+      }
+    },
+    "front.lid.outer-slope": {
+      "entity_id": "front.lid.outer-slope",
+      "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+      "object_uri": "poa://demo/demo-rpi5@main/part/lid",
+      "feature_uri": "poa://demo/demo-rpi5@main/part/lid/feature/shell",
+      "semantic_face_uri": "poa://demo/demo-rpi5@main/part/lid/face/front-slope",
+      "brep_face_id": null,
+      "mapping_type": "orthographic",
+      "source_to_world_matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "confidence": 0.65,
+      "metadata": {
+        "note": "Example logical entity; regenerate entity IDs from the final drawing exporter."
+      }
+    }
+  },
+  "calibration": {
+    "units": "mm",
+    "projection": "front",
+    "origin": "drawing lower-left",
+    "status": "example_not_metrology_verified"
+  },
+  "status": "draft",
+  "created_by": "creator@example.test",
+  "created_at": "2026-08-11T17:27:21.428123Z"
+}

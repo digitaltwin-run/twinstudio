@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.000 127.000" width="100%" height="100%">
+<rect width="100%" height="100%" fill="white"/>
+<title>Top</title>
+<g id="VISIBLE_EDGES" fill="none" stroke="black" stroke-width="0.500">
+<polygon points="16.000,111.000 95.000,111.000 95.000,16.000 16.000,16.000"/>
+<polygon points="26.000,98.000 85.000,98.000 85.000,18.000 26.000,18.000"/>
+</g>
+<g id="PCB_REFERENCE" fill="none" stroke="black" stroke-width="0.180" stroke-dasharray="3,2">
+<polygon points="36.000,107.000 92.000,107.000 92.000,22.000 36.000,22.000"/>
+<polygon points="29.500,107.000 85.500,107.000 85.500,22.000 29.500,22.000"/>
+</g>
+<g id="DIMENSIONS" fill="none" stroke="black" stroke-width="0.180">
+<line x1="16.000" y1="111.000" x2="16.000" y2="121.000"/>
+<line x1="95.000" y1="111.000" x2="95.000" y2="121.000"/>
+<line x1="16.000" y1="121.000" x2="95.000" y2="121.000"/>
+<line x1="16.000" y1="121.000" x2="17.800" y2="120.100"/>
+<line x1="16.000" y1="121.000" x2="17.800" y2="121.900"/>
+<line x1="95.000" y1="121.000" x2="93.200" y2="120.100"/>
+<line x1="95.000" y1="121.000" x2="93.200" y2="121.900"/>
+<text x="55.500" y="119.500" font-size="2.500" text-anchor="middle" fill="black" stroke="none">79.00</text>
+<line x1="16.000" y1="111.000" x2="6.000" y2="111.000"/>
+<line x1="16.000" y1="16.000" x2="6.000" y2="16.000"/>
+<line x1="6.000" y1="111.000" x2="6.000" y2="16.000"/>
+<line x1="6.000" y1="111.000" x2="6.900" y2="109.200"/>
+<line x1="6.000" y1="111.000" x2="5.100" y2="109.200"/>
+<line x1="6.000" y1="16.000" x2="6.900" y2="17.800"/>
+<line x1="6.000" y1="16.000" x2="5.100" y2="17.800"/>
+<text x="8.000" y="63.500" font-size="2.500" text-anchor="start" fill="black" stroke="none">95.00</text>
+</g>
+<g id="NOTES" fill="none" stroke="black" stroke-width="0.180">
+<text x="55.500" y="8.000" font-size="2.800" text-anchor="middle" fill="black" stroke="none">ASSEMBLY - TOP</text>
+</g>
+</svg>

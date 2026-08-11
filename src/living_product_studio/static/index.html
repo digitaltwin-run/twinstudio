@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Living Product Studio</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1>Living Product Studio</h1>
+    <p>Żywy projekt urządzenia: zaznaczenie → NL → plan 2D → zmiana 3D → testy i lifecycle.</p>
+  </div>
+  <div class="top-actions">
+    <select id="projectSelect" aria-label="Projekt"></select>
+    <span id="roleBadge" class="badge">—</span>
+    <a id="exportLink" class="button" href="#">Pobierz .lps.zip</a>
+    <a class="button secondary" href="/docs" target="_blank">REST API</a>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="left-panel panel">
+    <div class="panel-head">
+      <div><h2>Drzewo produktu</h2><p>Obiekty fizyczne, kupowane, software, testy i oferta.</p></div>
+      <button id="refreshButton" class="icon-button" title="Odśwież">↻</button>
+    </div>
+    <div id="objectTree" class="tree"></div>
+    <section class="inspector-block">
+      <h3>Zaznaczony obiekt</h3>
+      <div id="objectInspector" class="empty">Kliknij element drzewa lub bryłę.</div>
+    </section>
+  </aside>
+
+  <section class="center-panel">
+    <nav class="tabs" aria-label="Widoki">
+      <button class="tab active" data-tab="view3d">3D</button>
+      <button class="tab" data-tab="view2d">2D</button>
+      <button class="tab" data-tab="spec">Specyfikacja / xBOM</button>
+      <button class="tab" data-tab="lifecycle">Lifecycle</button>
+      <button class="tab" data-tab="tests">Testy i symulacje</button>
+    </nav>
+
+    <section id="view3d" class="tab-page active viewer-page">
+      <div class="viewer-toolbar">
+        <div class="tool-group">
+          <button class="tool active" data-tool="pointer">Kursor</button>
+          <button class="tool" data-tool="pencil">Ołówek</button>
+          <button class="tool" data-tool="lasso">Lasso</button>
+          <button class="tool" data-tool="rectangle">Prostokąt</button>
+          <button id="clearSelection" class="tool danger">Wyczyść</button>
+        </div>
+        <div class="tool-group">
+          <button id="fitCamera" class="tool">Dopasuj kamerę</button>
+          <label class="switch"><input id="xrayToggle" type="checkbox" /> półprzezroczystość</label>
+        </div>
+      </div>
+      <div id="viewer3d" class="viewer3d">
+        <canvas id="selectionCanvas3d" class="selection-overlay"></canvas>
+        <div id="viewerStatus" class="viewer-status">Ładowanie modelu…</div>
+      </div>
+      <div class="view-hint">Ołówek/lasso zapisuje punkty ekranu i przecięcia promieni z siatką. Plan zmiany może dotyczyć wyłącznie wskazanych URI.</div>
+    </section>
+
+    <section id="view2d" class="tab-page viewer-page">
+      <div class="viewer-toolbar">
+        <div class="tool-group">
+          <select id="drawingView"><option value="front">Front</option><option value="top">Top</option><option value="side">Side</option></select>
+          <button class="tool tool2d active" data-tool="pencil">Ołówek</button>
+          <button class="tool tool2d" data-tool="rectangle">Prostokąt</button>
+          <button id="clearSelection2d" class="tool danger">Wyczyść</button>
+        </div>
+        <span>Obiekt docelowy wybierz w drzewie po lewej.</span>
+      </div>
+      <div id="viewer2d" class="viewer2d">
+        <img id="drawingImage" alt="Rzut 2D" />
+        <canvas id="selectionCanvas2d" class="selection-overlay"></canvas>
+      </div>
+      <div class="view-hint">Rzut wygenerowany z CAD może mieć projection-map do 3D. Dla fotografii bez kalibracji system utworzy propozycję/uwagę, nie zgadnie położenia 3D.</div>
+    </section>
+
+    <section id="spec" class="tab-page data-page"><div id="specContent"></div></section>
+    <section id="lifecycle" class="tab-page data-page"><div id="lifecycleContent"></div></section>
+    <section id="tests" class="tab-page data-page">
+      <div class="simulation-toolbar">
+        <button id="powerButton" class="button">Symulacja zasilania</button>
+        <button id="thermalButton" class="button">Symulacja termiczna</button>
+        <button id="humanButton" class="button">Scenariusz człowieka</button>
+        <button id="mechanicalButton" class="button">Reguły mechaniczne</button>
+      </div>
+      <pre id="simulationOutput" class="json-output">Wybierz test.</pre>
+    </section>
+  </section>
+
+  <aside class="right-panel panel">
+    <section class="inspector-block">
+      <h2>Zakres zmiany</h2>
+      <div id="selectionSummary" class="empty">Zaznacz obszar w 3D lub 2D.</div>
+    </section>
+    <section class="inspector-block">
+      <h3>Uwaga do zaznaczenia</h3>
+      <textarea id="annotationText" rows="4" placeholder="Np. widoczne niedoskonałości druku; ostatnie 2 mm ściany powinny być pionowe."></textarea>
+      <button id="saveAnnotation" class="button full">Zapisz uwagę</button>
+    </section>
+    <section class="inspector-block">
+      <h3>NL → 2D → 3D</h3>
+      <textarea id="changePrompt" rows="7" placeholder="Np. Dodaj w zaznaczonym obszarze otwór Ø3 mm, tylko przez tę ścianę."></textarea>
+      <button id="planButton" class="button primary full">Utwórz plan zmiany</button>
+      <div id="plannerMode" class="hint"></div>
+      <div id="planContent" class="plan-content empty">Plan pojawi się tutaj.</div>
+      <button id="applyButton" class="button success full" disabled>Zastosuj bezpieczną część planu</button>
+      <p class="hint">Operacje geometrii lokalnej trafiają do CAD workera po rozwiązaniu stabilnego face/feature mapping. Rdzeń nie uruchamia kodu wygenerowanego przez LLM.</p>
+    </section>
+    <section class="inspector-block">
+      <h3>Współpraca</h3>
+      <input id="inviteEmail" type="email" placeholder="email osoby zewnętrznej" />
+      <select id="inviteRole"><option>reader</option><option>editor</option><option>admin</option></select>
+      <button id="inviteButton" class="button full">Poproś decydenta o dostęp</button>
+      <div id="inviteStatus" class="hint"></div>
+    </section>
+    <div id="banner" class="banner hidden"></div>
+  </aside>
+</main>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

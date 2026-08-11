@@ -1,0 +1,127 @@
+{
+  "adapter": "cadquery-scoped-brep-v1",
+  "target_uri": "poa://demo/demo-rpi5@main/part/base",
+  "input": {
+    "path": "/mnt/data/living_product_studio_v2/examples/rpi5-camera3/artifacts/3d/base.step",
+    "sha256": "856c264e79a6629c1ef01fef5b8471bd96599f678ff87aa4df066271a1afcd7b",
+    "volume_mm3": 32340.209028228604
+  },
+  "selection": {
+    "selection_id": "a52ae8ef-8881-46e8-9113-b9f1a256fd6e",
+    "uri": "poa://demo/demo-rpi5@main/region/example-front-wall",
+    "project_id": "demo-rpi5",
+    "project_revision": "main",
+    "source_view": "3d",
+    "tool": "lasso",
+    "target_object_uris": [
+      "poa://demo/demo-rpi5@main/part/base"
+    ],
+    "screen_path": [
+      {
+        "x": 320.0,
+        "y": 220.0
+      },
+      {
+        "x": 460.0,
+        "y": 220.0
+      },
+      {
+        "x": 470.0,
+        "y": 330.0
+      },
+      {
+        "x": 310.0,
+        "y": 330.0
+      }
+    ],
+    "ray_hits": [
+      {
+        "object_uri": "poa://demo/demo-rpi5@main/part/base",
+        "mesh_hash": "demo-base-stl",
+        "face_index": 42,
+        "semantic_face_uri": "poa://demo/demo-rpi5@main/part/base/face/front",
+        "brep_face_id": null,
+        "point": {
+          "x": 39.5,
+          "y": 1.0,
+          "z": 12.0
+        },
+        "normal": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
+        "distance": null
+      }
+    ],
+    "world_aabb": {
+      "minimum": {
+        "x": 20.0,
+        "y": 0.0,
+        "z": 5.0
+      },
+      "maximum": {
+        "x": 60.0,
+        "y": 2.0,
+        "z": 20.0
+      }
+    },
+    "camera": {
+      "projection": "perspective",
+      "position": {
+        "x": 150.0,
+        "y": -175.0,
+        "z": 115.0
+      },
+      "target": {
+        "x": 40.0,
+        "y": 45.0,
+        "z": 18.0
+      },
+      "up": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 1.0
+      },
+      "fov": 42.0,
+      "zoom": null,
+      "viewport_width": 900,
+      "viewport_height": 600
+    },
+    "source_artifact_uri": null,
+    "projection_entity_ids": [],
+    "notes": "Example lasso over the base front wall.",
+    "created_by": "editor@example.test",
+    "created_at": "2026-08-11T17:13:51.838987Z"
+  },
+  "operation": {
+    "target_uri": "poa://demo/demo-rpi5@main/part/base",
+    "kind": "boolean_cut",
+    "arguments": {
+      "feature_type": "hole",
+      "diameter_mm": 3.0,
+      "description": "Demonstration hole cut constrained to the selected base front-wall region."
+    }
+  },
+  "outputs": {
+    "step": {
+      "path": "/mnt/data/living_product_studio_v2/examples/rpi5-camera3/scoped-edit-demo/output/scoped-result.step",
+      "sha256": "a82c6537cbd80cb1556f4dfff1b1adb1c65b35fca06289f048797fcc5368d392"
+    },
+    "stl": {
+      "path": "/mnt/data/living_product_studio_v2/examples/rpi5-camera3/scoped-edit-demo/output/scoped-result.stl",
+      "sha256": "b05be5c6696ca2ef6e3a3d7702fd7f4cd30c03a7fc98b709105cbe11bbecd389"
+    }
+  },
+  "result": {
+    "volume_mm3": 32326.071861287357,
+    "volume_delta_mm3": -14.137166941247415,
+    "valid": true,
+    "solid_count": 1
+  },
+  "limitations": [
+    "Derived B-Rep only; native parametric feature history is not reconstructed.",
+    "Selection-to-topology stability still depends on semantic/native IDs from the source generator.",
+    "Only allow-listed hole and axis-aligned local-box operations are implemented."
+  ]
+}

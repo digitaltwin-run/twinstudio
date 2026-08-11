@@ -1,0 +1,22 @@
+{
+  "internal_width": 75.0,
+  "internal_depth": 91.0,
+  "lid_height": 15.0,
+  "top_width": 59.0,
+  "top_depth": 80.0,
+  "front_lid_angle_deg": 45.0,
+  "rear_lid_angle_deg": 81.2538377374448,
+  "side_lid_angle_deg": 52.43140797117251,
+  "board_position_a_clearances": {
+    "left": 18.0,
+    "right": 1.0,
+    "front": 2.0,
+    "rear": 4.0
+  },
+  "board_position_b_clearances": {
+    "left": 11.5,
+    "right": 7.5,
+    "front": 2.0,
+    "rear": 4.0
+  }
+}

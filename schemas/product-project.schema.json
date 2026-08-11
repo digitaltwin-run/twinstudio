@@ -1,0 +1,2454 @@
+{
+  "$defs": {
+    "Annotation": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "selection": {
+          "$ref": "#/$defs/RegionSelection"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "status": {
+          "default": "open",
+          "enum": [
+            "open",
+            "resolved",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "selection",
+        "text",
+        "created_by"
+      ],
+      "title": "Annotation",
+      "type": "object"
+    },
+    "ArtifactKind": {
+      "enum": [
+        "photo",
+        "video",
+        "pdf",
+        "drawing_2d",
+        "cad_source",
+        "step",
+        "stl",
+        "obj",
+        "glb",
+        "pcb",
+        "schematic",
+        "gerber",
+        "bom",
+        "software_source",
+        "container_image",
+        "test_result",
+        "simulation_result",
+        "product_listing",
+        "other"
+      ],
+      "title": "ArtifactKind",
+      "type": "string"
+    },
+    "ArtifactRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ArtifactKind"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "default": "application/octet-stream",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "object_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Uri"
+        },
+        "revision": {
+          "default": "main",
+          "title": "Revision",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        },
+        "generated": {
+          "default": false,
+          "title": "Generated",
+          "type": "boolean"
+        },
+        "source": {
+          "default": false,
+          "title": "Source",
+          "type": "boolean"
+        },
+        "downloadable": {
+          "default": true,
+          "title": "Downloadable",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "uri",
+        "name",
+        "kind",
+        "path"
+      ],
+      "title": "ArtifactRecord",
+      "type": "object"
+    },
+    "CameraState": {
+      "additionalProperties": false,
+      "properties": {
+        "projection": {
+          "default": "perspective",
+          "enum": [
+            "perspective",
+            "orthographic"
+          ],
+          "title": "Projection",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "target": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "up": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "fov": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fov"
+        },
+        "zoom": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zoom"
+        },
+        "viewport_width": {
+          "exclusiveMinimum": 0,
+          "title": "Viewport Width",
+          "type": "integer"
+        },
+        "viewport_height": {
+          "exclusiveMinimum": 0,
+          "title": "Viewport Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "position",
+        "target",
+        "up",
+        "viewport_width",
+        "viewport_height"
+      ],
+      "title": "CameraState",
+      "type": "object"
+    },
+    "ChangeOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "title": "Operation Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChangeOperationKind"
+        },
+        "target_uri": {
+          "title": "Target Uri",
+          "type": "string"
+        },
+        "selector": {
+          "additionalProperties": true,
+          "title": "Selector",
+          "type": "object"
+        },
+        "arguments": {
+          "additionalProperties": true,
+          "title": "Arguments",
+          "type": "object"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reversible": {
+          "default": true,
+          "title": "Reversible",
+          "type": "boolean"
+        },
+        "validation_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "target_uri"
+      ],
+      "title": "ChangeOperation",
+      "type": "object"
+    },
+    "ChangeOperationKind": {
+      "enum": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "title": "ChangeOperationKind",
+      "type": "string"
+    },
+    "ChangePlan": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "base_revision": {
+          "title": "Base Revision",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "selection_uri": {
+          "title": "Selection Uri",
+          "type": "string"
+        },
+        "selected_scope_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Selected Scope Uris",
+          "type": "array"
+        },
+        "operations": {
+          "items": {
+            "$ref": "#/$defs/ChangeOperation"
+          },
+          "title": "Operations",
+          "type": "array"
+        },
+        "impact": {
+          "items": {
+            "$ref": "#/$defs/ImpactItem"
+          },
+          "title": "Impact",
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "unresolved_questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unresolved Questions",
+          "type": "array"
+        },
+        "requires_approval": {
+          "default": true,
+          "title": "Requires Approval",
+          "type": "boolean"
+        },
+        "planner": {
+          "default": "local",
+          "title": "Planner",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "base_revision",
+        "prompt",
+        "selection_uri",
+        "selected_scope_uris",
+        "operations",
+        "created_by"
+      ],
+      "title": "ChangePlan",
+      "type": "object"
+    },
+    "EcommerceOffer": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string"
+        },
+        "gtin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gtin"
+        },
+        "gtin_status": {
+          "default": "unassigned",
+          "enum": [
+            "unassigned",
+            "reserved",
+            "assigned",
+            "verified"
+          ],
+          "title": "Gtin Status",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "currency": {
+          "default": "EUR",
+          "title": "Currency",
+          "type": "string"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "tax_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Category"
+        },
+        "stock_status": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "preorder",
+            "in_stock",
+            "out_of_stock"
+          ],
+          "title": "Stock Status",
+          "type": "string"
+        },
+        "media_artifact_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Media Artifact Uris",
+          "type": "array"
+        },
+        "package_object_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package Object Uri"
+        },
+        "attributes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Attributes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "uri",
+        "sku",
+        "title",
+        "description"
+      ],
+      "title": "EcommerceOffer",
+      "type": "object"
+    },
+    "EvidenceClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "subject_uri": {
+          "title": "Subject Uri",
+          "type": "string"
+        },
+        "predicate": {
+          "title": "Predicate",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "source_artifact_uri": {
+          "title": "Source Artifact Uri",
+          "type": "string"
+        },
+        "source_region_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Region Uri"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "approved",
+            "rejected",
+            "superseded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "extracted_by": {
+          "default": "human",
+          "title": "Extracted By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject_uri",
+        "predicate",
+        "value",
+        "source_artifact_uri"
+      ],
+      "title": "EvidenceClaim",
+      "type": "object"
+    },
+    "FailureMode": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "target_uri": {
+          "title": "Target Uri",
+          "type": "string"
+        },
+        "failure": {
+          "title": "Failure",
+          "type": "string"
+        },
+        "effect": {
+          "title": "Effect",
+          "type": "string"
+        },
+        "cause": {
+          "title": "Cause",
+          "type": "string"
+        },
+        "severity": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Severity",
+          "type": "integer"
+        },
+        "occurrence": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "detection": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Detection",
+          "type": "integer"
+        },
+        "controls": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Controls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "uri",
+        "target_uri",
+        "failure",
+        "effect",
+        "cause",
+        "severity",
+        "occurrence",
+        "detection"
+      ],
+      "title": "FailureMode",
+      "type": "object"
+    },
+    "FeatureSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "feature_type": {
+          "title": "Feature Type",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ParameterValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "semantic_faces": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Semantic Faces",
+          "type": "array"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "generated_by": {
+          "default": "parametric",
+          "title": "Generated By",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "name",
+        "feature_type"
+      ],
+      "title": "FeatureSpec",
+      "type": "object"
+    },
+    "HumanTaskStep": {
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "instruction": {
+          "title": "Instruction",
+          "type": "string"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "target_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Uri"
+        },
+        "preconditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "success_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Success Criteria",
+          "type": "array"
+        },
+        "possible_errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Possible Errors",
+          "type": "array"
+        },
+        "hazards": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Hazards",
+          "type": "array"
+        },
+        "expected_duration_s": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Duration S"
+        },
+        "expected_force_n": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Force N"
+        }
+      },
+      "required": [
+        "step_id",
+        "instruction",
+        "action"
+      ],
+      "title": "HumanTaskStep",
+      "type": "object"
+    },
+    "HumanUseScenario": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "actor": {
+          "title": "Actor",
+          "type": "string"
+        },
+        "stage": {
+          "$ref": "#/$defs/LifecycleStage",
+          "default": "operation"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/HumanTaskStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "recovery_steps": {
+          "items": {
+            "$ref": "#/$defs/HumanTaskStep"
+          },
+          "title": "Recovery Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "uri",
+        "name",
+        "actor",
+        "steps"
+      ],
+      "title": "HumanUseScenario",
+      "type": "object"
+    },
+    "ImpactItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "impact": {
+          "enum": [
+            "direct",
+            "dependent",
+            "manufacturing",
+            "test",
+            "software",
+            "commercial"
+          ],
+          "title": "Impact",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "impact",
+        "summary"
+      ],
+      "title": "ImpactItem",
+      "type": "object"
+    },
+    "InclusionSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "physical_product": {
+          "default": true,
+          "title": "Physical Product",
+          "type": "boolean"
+        },
+        "print_job": {
+          "default": false,
+          "title": "Print Job",
+          "type": "boolean"
+        },
+        "cnc_job": {
+          "default": false,
+          "title": "Cnc Job",
+          "type": "boolean"
+        },
+        "purchase_order": {
+          "default": false,
+          "title": "Purchase Order",
+          "type": "boolean"
+        },
+        "pcb_fabrication": {
+          "default": false,
+          "title": "Pcb Fabrication",
+          "type": "boolean"
+        },
+        "software_release": {
+          "default": false,
+          "title": "Software Release",
+          "type": "boolean"
+        },
+        "ecommerce_package": {
+          "default": false,
+          "title": "Ecommerce Package",
+          "type": "boolean"
+        },
+        "documentation": {
+          "default": true,
+          "title": "Documentation",
+          "type": "boolean"
+        },
+        "simulation": {
+          "default": true,
+          "title": "Simulation",
+          "type": "boolean"
+        },
+        "reference_only": {
+          "default": false,
+          "title": "Reference Only",
+          "type": "boolean"
+        }
+      },
+      "title": "InclusionSpec",
+      "type": "object"
+    },
+    "LifecycleGate": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "$ref": "#/$defs/LifecycleStage"
+        },
+        "status": {
+          "default": "not_started",
+          "enum": [
+            "not_started",
+            "in_progress",
+            "blocked",
+            "approved",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "entry_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Entry Criteria",
+          "type": "array"
+        },
+        "exit_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Exit Criteria",
+          "type": "array"
+        },
+        "approver_roles": {
+          "items": {
+            "$ref": "#/$defs/Role"
+          },
+          "title": "Approver Roles",
+          "type": "array"
+        },
+        "evidence_artifact_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Artifact Uris",
+          "type": "array"
+        }
+      },
+      "required": [
+        "stage"
+      ],
+      "title": "LifecycleGate",
+      "type": "object"
+    },
+    "LifecycleStage": {
+      "enum": [
+        "evidence_intake",
+        "requirements",
+        "concept",
+        "architecture",
+        "detailed_design",
+        "prototype",
+        "verification",
+        "validation",
+        "industrialization",
+        "production",
+        "fulfillment",
+        "operation",
+        "maintenance",
+        "end_of_life"
+      ],
+      "title": "LifecycleStage",
+      "type": "string"
+    },
+    "MakeBuy": {
+      "enum": [
+        "make",
+        "buy",
+        "outsource",
+        "virtual",
+        "reference_only"
+      ],
+      "title": "MakeBuy",
+      "type": "string"
+    },
+    "ManufacturingSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "make_buy": {
+          "$ref": "#/$defs/MakeBuy",
+          "default": "make"
+        },
+        "process": {
+          "$ref": "#/$defs/ProcessKind",
+          "default": "none"
+        },
+        "material": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Material"
+        },
+        "finish": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finish"
+        },
+        "machine_profile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Machine Profile"
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier"
+        },
+        "supplier_part_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier Part Number"
+        },
+        "lead_time_days": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Time Days"
+        },
+        "unit_cost": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit Cost"
+        },
+        "currency": {
+          "default": "EUR",
+          "title": "Currency",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "title": "ManufacturingSpec",
+      "type": "object"
+    },
+    "ObjectKind": {
+      "enum": [
+        "device",
+        "assembly",
+        "part",
+        "purchased_component",
+        "pcb",
+        "schematic",
+        "camera",
+        "fastener",
+        "power_supply",
+        "software",
+        "container_image",
+        "test_fixture",
+        "packaging",
+        "document",
+        "ecommerce_offer",
+        "simulation_model",
+        "reference"
+      ],
+      "title": "ObjectKind",
+      "type": "string"
+    },
+    "ObjectNode": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "parent_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Uri"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ObjectKind"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "quantity": {
+          "default": 1.0,
+          "title": "Quantity",
+          "type": "number"
+        },
+        "revision": {
+          "default": "main",
+          "title": "Revision",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ParameterValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "features": {
+          "items": {
+            "$ref": "#/$defs/FeatureSpec"
+          },
+          "title": "Features",
+          "type": "array"
+        },
+        "manufacturing": {
+          "$ref": "#/$defs/ManufacturingSpec"
+        },
+        "inclusion": {
+          "$ref": "#/$defs/InclusionSpec"
+        },
+        "artifact_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Uris",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "uri",
+        "name",
+        "kind"
+      ],
+      "title": "ObjectNode",
+      "type": "object"
+    },
+    "ParameterValue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "status": {
+          "default": "approved",
+          "enum": [
+            "proposed",
+            "approved",
+            "measured",
+            "derived",
+            "deprecated"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "source_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Uri"
+        },
+        "confidence": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ParameterValue",
+      "type": "object"
+    },
+    "PowerLoadCase": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "current_a": {
+          "minimum": 0.0,
+          "title": "Current A",
+          "type": "number"
+        },
+        "duration_s": {
+          "exclusiveMinimum": 0.0,
+          "title": "Duration S",
+          "type": "number"
+        },
+        "component_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component Uri"
+        },
+        "heat_fraction": {
+          "default": 0.95,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Heat Fraction",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "current_a",
+        "duration_s"
+      ],
+      "title": "PowerLoadCase",
+      "type": "object"
+    },
+    "PowerModel": {
+      "additionalProperties": false,
+      "properties": {
+        "supply_voltage_v": {
+          "exclusiveMinimum": 0.0,
+          "title": "Supply Voltage V",
+          "type": "number"
+        },
+        "supply_current_limit_a": {
+          "exclusiveMinimum": 0.0,
+          "title": "Supply Current Limit A",
+          "type": "number"
+        },
+        "cable_resistance_ohm": {
+          "default": 0.08,
+          "minimum": 0.0,
+          "title": "Cable Resistance Ohm",
+          "type": "number"
+        },
+        "connector_resistance_ohm": {
+          "default": 0.03,
+          "minimum": 0.0,
+          "title": "Connector Resistance Ohm",
+          "type": "number"
+        },
+        "board_path_resistance_ohm": {
+          "default": 0.02,
+          "minimum": 0.0,
+          "title": "Board Path Resistance Ohm",
+          "type": "number"
+        },
+        "brownout_voltage_v": {
+          "default": 4.63,
+          "exclusiveMinimum": 0.0,
+          "title": "Brownout Voltage V",
+          "type": "number"
+        },
+        "load_cases": {
+          "items": {
+            "$ref": "#/$defs/PowerLoadCase"
+          },
+          "title": "Load Cases",
+          "type": "array"
+        }
+      },
+      "required": [
+        "supply_voltage_v",
+        "supply_current_limit_a",
+        "load_cases"
+      ],
+      "title": "PowerModel",
+      "type": "object"
+    },
+    "ProcessKind": {
+      "enum": [
+        "fdm_print",
+        "sla_print",
+        "cnc_milling",
+        "laser_cut",
+        "injection_mold",
+        "pcb_fab",
+        "assembly",
+        "purchase",
+        "software_build",
+        "packaging",
+        "none"
+      ],
+      "title": "ProcessKind",
+      "type": "string"
+    },
+    "ProjectionEntityBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "source_artifact_uri": {
+          "title": "Source Artifact Uri",
+          "type": "string"
+        },
+        "object_uri": {
+          "title": "Object Uri",
+          "type": "string"
+        },
+        "feature_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature Uri"
+        },
+        "semantic_face_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Face Uri"
+        },
+        "brep_face_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brep Face Id"
+        },
+        "mapping_type": {
+          "default": "manual",
+          "enum": [
+            "orthographic",
+            "calibrated_photo",
+            "manual",
+            "derived"
+          ],
+          "title": "Mapping Type",
+          "type": "string"
+        },
+        "source_to_world_matrix": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Source To World Matrix",
+          "type": "array"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "entity_id",
+        "source_artifact_uri",
+        "object_uri"
+      ],
+      "title": "ProjectionEntityBinding",
+      "type": "object"
+    },
+    "ProjectionMap": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "source_artifact_uri": {
+          "title": "Source Artifact Uri",
+          "type": "string"
+        },
+        "source_view": {
+          "$ref": "#/$defs/SourceView"
+        },
+        "target_revision": {
+          "title": "Target Revision",
+          "type": "string"
+        },
+        "entities": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ProjectionEntityBinding"
+          },
+          "title": "Entities",
+          "type": "object"
+        },
+        "calibration": {
+          "additionalProperties": true,
+          "title": "Calibration",
+          "type": "object"
+        },
+        "status": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "calibrated",
+            "verified",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "source_artifact_uri",
+        "source_view",
+        "target_revision",
+        "created_by"
+      ],
+      "title": "ProjectionMap",
+      "type": "object"
+    },
+    "RayHit": {
+      "additionalProperties": false,
+      "properties": {
+        "object_uri": {
+          "title": "Object Uri",
+          "type": "string"
+        },
+        "mesh_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mesh Hash"
+        },
+        "face_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Face Index"
+        },
+        "semantic_face_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Face Uri"
+        },
+        "brep_face_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brep Face Id"
+        },
+        "point": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "normal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldPoint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "distance": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance"
+        }
+      },
+      "required": [
+        "object_uri",
+        "point"
+      ],
+      "title": "RayHit",
+      "type": "object"
+    },
+    "RegionSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "selection_id": {
+          "title": "Selection Id",
+          "type": "string"
+        },
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "project_revision": {
+          "title": "Project Revision",
+          "type": "string"
+        },
+        "source_view": {
+          "$ref": "#/$defs/SourceView"
+        },
+        "tool": {
+          "$ref": "#/$defs/SelectionTool"
+        },
+        "target_object_uris": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target Object Uris",
+          "type": "array"
+        },
+        "screen_path": {
+          "items": {
+            "$ref": "#/$defs/ScreenPoint"
+          },
+          "title": "Screen Path",
+          "type": "array"
+        },
+        "ray_hits": {
+          "items": {
+            "$ref": "#/$defs/RayHit"
+          },
+          "title": "Ray Hits",
+          "type": "array"
+        },
+        "world_aabb": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldAabb"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "camera": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CameraState"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_artifact_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Artifact Uri"
+        },
+        "projection_entity_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Projection Entity Ids",
+          "type": "array"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "project_id",
+        "project_revision",
+        "source_view",
+        "tool",
+        "target_object_uris",
+        "created_by"
+      ],
+      "title": "RegionSelection",
+      "type": "object"
+    },
+    "Requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "approved",
+            "verified",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "verification_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verification Method"
+        },
+        "target_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Uris",
+          "type": "array"
+        },
+        "source_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Uri"
+        }
+      },
+      "required": [
+        "uri",
+        "statement"
+      ],
+      "title": "Requirement",
+      "type": "object"
+    },
+    "Role": {
+      "enum": [
+        "reader",
+        "editor",
+        "admin",
+        "creator"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "ScreenPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "ScreenPoint",
+      "type": "object"
+    },
+    "SelectionDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error",
+            "blocking"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "target_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Uris",
+          "type": "array"
+        },
+        "data": {
+          "additionalProperties": true,
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "severity",
+        "code",
+        "message"
+      ],
+      "title": "SelectionDiagnostic",
+      "type": "object"
+    },
+    "SelectionMap": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "selection_uri": {
+          "title": "Selection Uri",
+          "type": "string"
+        },
+        "target_revision": {
+          "title": "Target Revision",
+          "type": "string"
+        },
+        "resolved_object_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Resolved Object Uris",
+          "type": "array"
+        },
+        "resolved_feature_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Resolved Feature Uris",
+          "type": "array"
+        },
+        "resolved_semantic_face_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Resolved Semantic Face Uris",
+          "type": "array"
+        },
+        "resolved_brep_face_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Resolved Brep Face Ids",
+          "type": "array"
+        },
+        "algorithm": {
+          "default": "semantic-plus-projection",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "status": {
+          "default": "unresolved",
+          "enum": [
+            "resolved",
+            "partial",
+            "unresolved",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "diagnostics": {
+          "items": {
+            "$ref": "#/$defs/SelectionDiagnostic"
+          },
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "selection_uri",
+        "target_revision",
+        "created_by"
+      ],
+      "title": "SelectionMap",
+      "type": "object"
+    },
+    "SelectionTool": {
+      "enum": [
+        "pointer",
+        "pencil",
+        "lasso",
+        "rectangle",
+        "brush"
+      ],
+      "title": "SelectionTool",
+      "type": "string"
+    },
+    "SourceView": {
+      "enum": [
+        "3d",
+        "2d",
+        "photo",
+        "pcb",
+        "schematic"
+      ],
+      "title": "SourceView",
+      "type": "string"
+    },
+    "TestCase": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "test_type": {
+          "enum": [
+            "inspection",
+            "mechanical",
+            "electrical",
+            "thermal",
+            "software",
+            "camera",
+            "human_use",
+            "transport",
+            "manufacturing",
+            "commercial"
+          ],
+          "title": "Test Type",
+          "type": "string"
+        },
+        "target_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Uris",
+          "type": "array"
+        },
+        "lifecycle_stage": {
+          "$ref": "#/$defs/LifecycleStage",
+          "default": "verification"
+        },
+        "procedure": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Procedure",
+          "type": "array"
+        },
+        "input_artifact_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Artifact Uris",
+          "type": "array"
+        },
+        "expected_results": {
+          "additionalProperties": true,
+          "title": "Expected Results",
+          "type": "object"
+        },
+        "execution_adapter": {
+          "default": "manual",
+          "title": "Execution Adapter",
+          "type": "string"
+        },
+        "container_image_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Image Uri"
+        },
+        "status": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "ready",
+            "running",
+            "passed",
+            "failed",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "result_artifact_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Result Artifact Uris",
+          "type": "array"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "name",
+        "test_type"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    },
+    "TestPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "stage": {
+          "$ref": "#/$defs/LifecycleStage",
+          "default": "verification"
+        },
+        "cases": {
+          "items": {
+            "$ref": "#/$defs/TestCase"
+          },
+          "title": "Cases",
+          "type": "array"
+        },
+        "approval_required": {
+          "default": true,
+          "title": "Approval Required",
+          "type": "boolean"
+        },
+        "owner_role": {
+          "$ref": "#/$defs/Role",
+          "default": "editor"
+        }
+      },
+      "required": [
+        "uri",
+        "name"
+      ],
+      "title": "TestPlan",
+      "type": "object"
+    },
+    "ThermalModel": {
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/ThermalNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "timestep_s": {
+          "default": 0.5,
+          "exclusiveMinimum": 0.0,
+          "title": "Timestep S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "nodes"
+      ],
+      "title": "ThermalModel",
+      "type": "object"
+    },
+    "ThermalNode": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "ambient_c": {
+          "default": 25.0,
+          "title": "Ambient C",
+          "type": "number"
+        },
+        "initial_c": {
+          "default": 25.0,
+          "title": "Initial C",
+          "type": "number"
+        },
+        "thermal_resistance_c_per_w": {
+          "exclusiveMinimum": 0.0,
+          "title": "Thermal Resistance C Per W",
+          "type": "number"
+        },
+        "thermal_capacitance_j_per_c": {
+          "exclusiveMinimum": 0.0,
+          "title": "Thermal Capacitance J Per C",
+          "type": "number"
+        }
+      },
+      "required": [
+        "uri",
+        "thermal_resistance_c_per_w",
+        "thermal_capacitance_j_per_c"
+      ],
+      "title": "ThermalNode",
+      "type": "object"
+    },
+    "WorldAabb": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "maximum": {
+          "$ref": "#/$defs/WorldPoint"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum"
+      ],
+      "title": "WorldAabb",
+      "type": "object"
+    },
+    "WorldPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "WorldPoint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "tenant": {
+      "title": "Tenant",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "default": "",
+      "title": "Description",
+      "type": "string"
+    },
+    "revision": {
+      "default": "main",
+      "title": "Revision",
+      "type": "string"
+    },
+    "stream_version": {
+      "default": 0,
+      "title": "Stream Version",
+      "type": "integer"
+    },
+    "lifecycle_stage": {
+      "$ref": "#/$defs/LifecycleStage",
+      "default": "evidence_intake"
+    },
+    "objects": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ObjectNode"
+      },
+      "title": "Objects",
+      "type": "object"
+    },
+    "artifacts": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ArtifactRecord"
+      },
+      "title": "Artifacts",
+      "type": "object"
+    },
+    "annotations": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Annotation"
+      },
+      "title": "Annotations",
+      "type": "object"
+    },
+    "change_plans": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ChangePlan"
+      },
+      "title": "Change Plans",
+      "type": "object"
+    },
+    "requirements": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Requirement"
+      },
+      "title": "Requirements",
+      "type": "object"
+    },
+    "claims": {
+      "additionalProperties": {
+        "$ref": "#/$defs/EvidenceClaim"
+      },
+      "title": "Claims",
+      "type": "object"
+    },
+    "memberships": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Role"
+      },
+      "title": "Memberships",
+      "type": "object"
+    },
+    "projection_maps": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ProjectionMap"
+      },
+      "title": "Projection Maps",
+      "type": "object"
+    },
+    "selection_maps": {
+      "additionalProperties": {
+        "$ref": "#/$defs/SelectionMap"
+      },
+      "title": "Selection Maps",
+      "type": "object"
+    },
+    "lifecycle_gates": {
+      "items": {
+        "$ref": "#/$defs/LifecycleGate"
+      },
+      "title": "Lifecycle Gates",
+      "type": "array"
+    },
+    "failure_modes": {
+      "items": {
+        "$ref": "#/$defs/FailureMode"
+      },
+      "title": "Failure Modes",
+      "type": "array"
+    },
+    "human_scenarios": {
+      "items": {
+        "$ref": "#/$defs/HumanUseScenario"
+      },
+      "title": "Human Scenarios",
+      "type": "array"
+    },
+    "test_plans": {
+      "additionalProperties": {
+        "$ref": "#/$defs/TestPlan"
+      },
+      "title": "Test Plans",
+      "type": "object"
+    },
+    "power_model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PowerModel"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "thermal_model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ThermalModel"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "ecommerce_offers": {
+      "items": {
+        "$ref": "#/$defs/EcommerceOffer"
+      },
+      "title": "Ecommerce Offers",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "tenant",
+    "name"
+  ],
+  "title": "ProjectSnapshot",
+  "type": "object"
+}

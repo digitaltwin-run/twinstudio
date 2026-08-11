@@ -1,0 +1,31 @@
+adapter: kicad-cli
+status: roadmap_scaffold
+source_types:
+  - .kicad_sch
+  - .kicad_pcb
+stable_selection_ids:
+  - kicad_uuid
+  - symbol_uuid
+  - footprint_uuid
+  - pad_uuid
+  - track_uuid
+  - zone_uuid
+operations:
+  implemented:
+    - run_erc
+    - run_drc
+    - export_pdf
+    - export_gerbers
+    - export_drill
+  future:
+    - set_property
+    - replace_symbol
+    - move_footprint
+    - edit_board_outline
+    - add_keepout
+    - route_net_under_constraints
+safety:
+  - no_generated_script_execution
+  - schema_validated_operations_only
+  - revision_and_scope_check
+  - mandatory_erc_drc_after_apply

@@ -1,0 +1,145 @@
+{
+  "format": "living-product-studio-bundle",
+  "format_version": 1,
+  "project_id": "demo-rpi5",
+  "revision": "main",
+  "stream_version": 58,
+  "missing_artifacts": [],
+  "files": [
+    {
+      "path": "artifacts/0470b8ec7c6e-sample-dark.png",
+      "size_bytes": 4814,
+      "sha256": "f867ba4f55e2296c167c207cbc61f45286098e65bb4bf676344f88eaec230482"
+    },
+    {
+      "path": "artifacts/109014c70612-side.png",
+      "size_bytes": 2295049,
+      "sha256": "0ea2387508662350d75826141cd710032652ea4cb4d0393a636c211b856066f8"
+    },
+    {
+      "path": "artifacts/148b86f1e861-base.stl",
+      "size_bytes": 406084,
+      "sha256": "a928106e539c79bfa55b20b70427d340a1861c320b9ad73d424b7ff2e37e1c0d"
+    },
+    {
+      "path": "artifacts/14ffd3ed1819-assembly_top.svg",
+      "size_bytes": 1918,
+      "sha256": "40e56a1748c87c813e0acbf0f8aa741eec13dd2d24e0bc8907c60bcd7a667bf2"
+    },
+    {
+      "path": "artifacts/155a44011aca-rpi5.png",
+      "size_bytes": 269517,
+      "sha256": "0fa31978ee1ea48f2142efe369c808306045b467317dca9bb355eaf2b4a0a663"
+    },
+    {
+      "path": "artifacts/199546ddbf8b-back-size.png",
+      "size_bytes": 4430,
+      "sha256": "322280e61e61e73bb11a699b9fd38187a251b23140818d61569870e8ce88a94d"
+    },
+    {
+      "path": "artifacts/41b58febecad-adapter-contract.yaml",
+      "size_bytes": 604,
+      "sha256": "101d8dd5eb329690dbc9d2df5e45dddc610d5ab289631f6870f9de00b4080f88"
+    },
+    {
+      "path": "artifacts/58091bf944f7-back.png",
+      "size_bytes": 22705,
+      "sha256": "f374ed63b3670167c9c204107b0a129658d31283c5c03807b4bbfffa291b0028"
+    },
+    {
+      "path": "artifacts/680da08af988-back-inside.png",
+      "size_bytes": 69585,
+      "sha256": "d81702961e28130407455dc72b5bf44d2f7d291e5283af7e9680b3596c50c291"
+    },
+    {
+      "path": "artifacts/79e6e419b1d2-lid.step",
+      "size_bytes": 686687,
+      "sha256": "a191b0a9c5a699d1057cfe302fdc4206e22e3820b949097622e50b8bf122439b"
+    },
+    {
+      "path": "artifacts/7e9503d429f6-Dockerfile",
+      "size_bytes": 175,
+      "sha256": "4d2c9b62f329a36fab38535e9ea351c1515db7a4469387f9ebf6deaa4901da6d"
+    },
+    {
+      "path": "artifacts/9c5917c15841-sample-bright.png",
+      "size_bytes": 4807,
+      "sha256": "587f1697b05a800437cd58f2461f8c0adb38a74a6ffb076414dc21b7de205ba9"
+    },
+    {
+      "path": "artifacts/a008db266308-compose.camera-test.yaml",
+      "size_bytes": 186,
+      "sha256": "45b73d2295e880877f2842be71f944a4eddcd95451827c34c3aba50a1280e526"
+    },
+    {
+      "path": "artifacts/a1c1ceb6874b-assembly_front.svg",
+      "size_bytes": 1795,
+      "sha256": "4c2969bba45f0d51f47989c2685422ffb20e784102368f0f6319876d9354c63d"
+    },
+    {
+      "path": "artifacts/a40972c7e37e-vision_app.py",
+      "size_bytes": 1168,
+      "sha256": "389e606ec159d1943ac9841b6060ef97f4c3186d2b2da5c727550a6ce6618368"
+    },
+    {
+      "path": "artifacts/b9e612914342-back1.png",
+      "size_bytes": 59297,
+      "sha256": "8bafceb2fea60d8d1d2429c35a7d3d370358435a7276e2aa48bb32254d13c941"
+    },
+    {
+      "path": "artifacts/bc03ceeabded-lid.stl",
+      "size_bytes": 598884,
+      "sha256": "916a9fea2b2ca79d431332939ee5111f309d2e0fc78f8b2a505a74bff930ac51"
+    },
+    {
+      "path": "artifacts/c14bc0b42f6d-camera-analysis.json",
+      "size_bytes": 709,
+      "sha256": "fb1daeb3d8a134d39c926dc486510e1eaed7df8a6eed53a65dfcebb2fa15dac3"
+    },
+    {
+      "path": "artifacts/d38b287bac9c-back2.png",
+      "size_bytes": 66574,
+      "sha256": "2d3b74932fea32dca8159a24798b9ca0fce6065c07833d4b3ab3b1442eb98d7c"
+    },
+    {
+      "path": "artifacts/e874e52173fe-base.step",
+      "size_bytes": 243284,
+      "sha256": "856c264e79a6629c1ef01fef5b8471bd96599f678ff87aa4df066271a1afcd7b"
+    },
+    {
+      "path": "artifacts/efe350947223-assembly_side.svg",
+      "size_bytes": 2053,
+      "sha256": "b3379e1fa9b2a94f9eceb57a90502f993e24e34c5040243b8c937e4f56904f7d"
+    },
+    {
+      "path": "artifacts/f79b10831801-test-plan.yaml",
+      "size_bytes": 4071,
+      "sha256": "2fdb96437f69fbc843fcba2a69d01dac61cad3c0dacb66432834ba5a99ea8645"
+    },
+    {
+      "path": "artifacts/f947a31f903b-projection-map.json",
+      "size_bytes": 2111,
+      "sha256": "3f46654b159bce6ff6945669403b170dcd5152944854254596a3be958ee2c467"
+    },
+    {
+      "path": "artifacts/fdd6cbee5584-selection-map.json",
+      "size_bytes": 1026,
+      "sha256": "d09e442013aee691330ef7d13488f27ab9cab0e294098e369a9ece1703503bc3"
+    },
+    {
+      "path": "event-stream.ndjson",
+      "size_bytes": 65067,
+      "sha256": "a663e26b11d635a258d7d91a3a3e1198a06455a6672f41e40d2a400d927bab51"
+    },
+    {
+      "path": "project.snapshot.json",
+      "size_bytes": 72812,
+      "sha256": "04a2dc0e69eb0d8169c1582735e51a1099f7e91313b77b0cf740ff992a34a24e"
+    },
+    {
+      "path": "project.specification.json",
+      "size_bytes": 137059,
+      "sha256": "1f031799eaea806bf1d644eed319012b4e9a13886e9b970e0036e242a0ab6966"
+    }
+  ]
+}

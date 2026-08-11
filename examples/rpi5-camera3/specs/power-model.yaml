@@ -1,0 +1,22 @@
+supply_voltage_v: 5.1
+supply_current_limit_a: 5.0
+cable_resistance_ohm: 0.08
+connector_resistance_ohm: 0.03
+board_path_resistance_ohm: 0.02
+brownout_voltage_v: 4.63
+load_cases:
+- name: idle
+  current_a: 0.8
+  duration_s: 60.0
+  component_uri: poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5
+  heat_fraction: 0.95
+- name: camera inference
+  current_a: 2.4
+  duration_s: 300.0
+  component_uri: poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5
+  heat_fraction: 0.95
+- name: short peak
+  current_a: 4.2
+  duration_s: 10.0
+  component_uri: poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5
+  heat_fraction: 0.95

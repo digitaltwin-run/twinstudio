@@ -1,0 +1,354 @@
+{
+  "$defs": {
+    "CameraState": {
+      "additionalProperties": false,
+      "properties": {
+        "projection": {
+          "default": "perspective",
+          "enum": [
+            "perspective",
+            "orthographic"
+          ],
+          "title": "Projection",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "target": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "up": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "fov": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fov"
+        },
+        "zoom": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zoom"
+        },
+        "viewport_width": {
+          "exclusiveMinimum": 0,
+          "title": "Viewport Width",
+          "type": "integer"
+        },
+        "viewport_height": {
+          "exclusiveMinimum": 0,
+          "title": "Viewport Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "position",
+        "target",
+        "up",
+        "viewport_width",
+        "viewport_height"
+      ],
+      "title": "CameraState",
+      "type": "object"
+    },
+    "RayHit": {
+      "additionalProperties": false,
+      "properties": {
+        "object_uri": {
+          "title": "Object Uri",
+          "type": "string"
+        },
+        "mesh_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mesh Hash"
+        },
+        "face_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Face Index"
+        },
+        "semantic_face_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Face Uri"
+        },
+        "brep_face_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brep Face Id"
+        },
+        "point": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "normal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldPoint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "distance": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance"
+        }
+      },
+      "required": [
+        "object_uri",
+        "point"
+      ],
+      "title": "RayHit",
+      "type": "object"
+    },
+    "ScreenPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "ScreenPoint",
+      "type": "object"
+    },
+    "SelectionTool": {
+      "enum": [
+        "pointer",
+        "pencil",
+        "lasso",
+        "rectangle",
+        "brush"
+      ],
+      "title": "SelectionTool",
+      "type": "string"
+    },
+    "SourceView": {
+      "enum": [
+        "3d",
+        "2d",
+        "photo",
+        "pcb",
+        "schematic"
+      ],
+      "title": "SourceView",
+      "type": "string"
+    },
+    "WorldAabb": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "maximum": {
+          "$ref": "#/$defs/WorldPoint"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum"
+      ],
+      "title": "WorldAabb",
+      "type": "object"
+    },
+    "WorldPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "WorldPoint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "selection_id": {
+      "title": "Selection Id",
+      "type": "string"
+    },
+    "uri": {
+      "title": "Uri",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "project_revision": {
+      "title": "Project Revision",
+      "type": "string"
+    },
+    "source_view": {
+      "$ref": "#/$defs/SourceView"
+    },
+    "tool": {
+      "$ref": "#/$defs/SelectionTool"
+    },
+    "target_object_uris": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Target Object Uris",
+      "type": "array"
+    },
+    "screen_path": {
+      "items": {
+        "$ref": "#/$defs/ScreenPoint"
+      },
+      "title": "Screen Path",
+      "type": "array"
+    },
+    "ray_hits": {
+      "items": {
+        "$ref": "#/$defs/RayHit"
+      },
+      "title": "Ray Hits",
+      "type": "array"
+    },
+    "world_aabb": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WorldAabb"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "camera": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CameraState"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "source_artifact_uri": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Artifact Uri"
+    },
+    "projection_entity_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Projection Entity Ids",
+      "type": "array"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    },
+    "created_by": {
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "uri",
+    "project_id",
+    "project_revision",
+    "source_view",
+    "tool",
+    "target_object_uris",
+    "created_by"
+  ],
+  "title": "RegionSelection",
+  "type": "object"
+}

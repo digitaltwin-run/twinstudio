@@ -1,0 +1,116 @@
+scenarios:
+- uri: poa://demo/demo-rpi5@main/human-scenario/install-and-start
+  name: Install board, close lid and start device
+  actor: installer
+  stage: validation
+  steps:
+  - step_id: S1
+    instruction: Open the lid beyond 190 degrees.
+    action: rotate_lid
+    target_uri: poa://demo/demo-rpi5@main/part/lid
+    preconditions: []
+    success_criteria:
+    - Lid remains attached and no collision occurs
+    possible_errors:
+    - Forcing before removing transport lock
+    hazards:
+    - Pinch point
+    expected_duration_s: 4.0
+    expected_force_n: 10.0
+  - step_id: S2
+    instruction: Place the Raspberry Pi 5 on the selected set of four standoffs.
+    action: place_component
+    target_uri: poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5
+    preconditions:
+    - Power disconnected
+    success_criteria:
+    - All four holes align; underside components do not contact unused standoffs
+    possible_errors:
+    - Using wrong mounting pattern
+    - Board reversed
+    hazards:
+    - ESD
+    expected_duration_s: 20.0
+    expected_force_n: null
+  - step_id: S3
+    instruction: Connect camera and power cables without strain.
+    action: connect_cables
+    target_uri: poa://demo/demo-rpi5@main/assembly/electronics
+    preconditions:
+    - Board secured
+    success_criteria:
+    - Connectors fully seated and cable bend radius respected
+    possible_errors:
+    - Reverse camera cable
+    - Partial USB-C insertion
+    hazards:
+    - Connector damage
+    expected_duration_s: 30.0
+    expected_force_n: null
+  - step_id: S4
+    instruction: Close the lid and verify connector access.
+    action: close_lid
+    target_uri: poa://demo/demo-rpi5@main/assembly/enclosure
+    preconditions:
+    - No cable in hinge path
+    success_criteria:
+    - Lid closes flush; all required ports accessible
+    possible_errors:
+    - Cable trapped at joint
+    hazards:
+    - Pinch point
+    expected_duration_s: 8.0
+    expected_force_n: null
+  - step_id: S5
+    instruction: Power on and verify camera preview and telemetry.
+    action: start_device
+    target_uri: poa://demo/demo-rpi5@main/device/rpi5-camera-appliance
+    preconditions:
+    - Approved PSU connected
+    success_criteria:
+    - Software starts; camera frames processed; no brownout warning
+    possible_errors:
+    - Unsupported power supply
+    - Missing software image
+    hazards:
+    - Hot surface during sustained test
+    expected_duration_s: 60.0
+    expected_force_n: null
+  recovery_steps: []
+failure_modes:
+- uri: poa://demo/demo-rpi5@main/failure-mode/hinge-crack
+  target_uri: poa://demo/demo-rpi5@main/part/lid/feature/hinge
+  failure: Hinge knuckle cracks
+  effect: Lid detaches or cannot close
+  cause: Layer orientation, insufficient wall, impact or pin interference
+  severity: 7
+  occurrence: 4
+  detection: 4
+  controls:
+  - Print orientation review
+  - Pin clearance coupon
+  - Cycle test
+- uri: poa://demo/demo-rpi5@main/failure-mode/brownout
+  target_uri: poa://demo/demo-rpi5@main/power-supply/usb-c-5v
+  failure: Supply voltage drops below board requirement
+  effect: Reboot, camera frame loss, file corruption
+  cause: Cable resistance or peak load
+  severity: 8
+  occurrence: 4
+  detection: 3
+  controls:
+  - Power simulation
+  - Measure at board
+  - Specify approved PSU/cable
+- uri: poa://demo/demo-rpi5@main/failure-mode/thermal
+  target_uri: poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5
+  failure: SoC thermal throttling
+  effect: Reduced inference rate
+  cause: Insufficient airflow or sustained workload
+  severity: 5
+  occurrence: 6
+  detection: 3
+  controls:
+  - Thermal test
+  - Telemetry alert
+  - Optional heatsink/fan variant

@@ -1,0 +1,134 @@
+{
+  "$defs": {
+    "SelectionDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error",
+            "blocking"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "target_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Uris",
+          "type": "array"
+        },
+        "data": {
+          "additionalProperties": true,
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "severity",
+        "code",
+        "message"
+      ],
+      "title": "SelectionDiagnostic",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "uri": {
+      "title": "Uri",
+      "type": "string"
+    },
+    "selection_uri": {
+      "title": "Selection Uri",
+      "type": "string"
+    },
+    "target_revision": {
+      "title": "Target Revision",
+      "type": "string"
+    },
+    "resolved_object_uris": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resolved Object Uris",
+      "type": "array"
+    },
+    "resolved_feature_uris": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resolved Feature Uris",
+      "type": "array"
+    },
+    "resolved_semantic_face_uris": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resolved Semantic Face Uris",
+      "type": "array"
+    },
+    "resolved_brep_face_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resolved Brep Face Ids",
+      "type": "array"
+    },
+    "algorithm": {
+      "default": "semantic-plus-projection",
+      "title": "Algorithm",
+      "type": "string"
+    },
+    "status": {
+      "default": "unresolved",
+      "enum": [
+        "resolved",
+        "partial",
+        "unresolved",
+        "stale"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "diagnostics": {
+      "items": {
+        "$ref": "#/$defs/SelectionDiagnostic"
+      },
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "created_by": {
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "uri",
+    "selection_uri",
+    "target_revision",
+    "created_by"
+  ],
+  "title": "SelectionMap",
+  "type": "object"
+}

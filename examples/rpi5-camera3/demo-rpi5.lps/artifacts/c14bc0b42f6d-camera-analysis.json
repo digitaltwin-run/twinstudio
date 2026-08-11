@@ -1,0 +1,32 @@
+{
+  "application": "demo-vision-app",
+  "schema_version": 1,
+  "results": [
+    {
+      "file": "sample-bright.png",
+      "sha256": "587f1697b05a800437cd58f2461f8c0adb38a74a6ffb076414dc21b7de205ba9",
+      "width": 640,
+      "height": 360,
+      "mean_rgb": [
+        209.27,
+        216.821,
+        224.372
+      ],
+      "mean_brightness": 216.821,
+      "classification": "bright"
+    },
+    {
+      "file": "sample-dark.png",
+      "sha256": "f867ba4f55e2296c167c207cbc61f45286098e65bb4bf676344f88eaec230482",
+      "width": 640,
+      "height": 360,
+      "mean_rgb": [
+        31.377,
+        38.503,
+        50.074
+      ],
+      "mean_brightness": 39.985,
+      "classification": "dark"
+    }
+  ]
+}

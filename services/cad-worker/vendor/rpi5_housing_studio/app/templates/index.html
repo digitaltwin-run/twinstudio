@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Housing Studio - generator obudowy 2D/3D</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body data-litellm-configured="{{ 'true' if litellm_configured else 'false' }}">
+  <header class="app-header">
+    <div>
+      <h1>Housing Studio</h1>
+      <p>Parametryczny generator obudowy Raspberry Pi 5: CAD 3D, rysunki 2D, warstwy i artefakty.</p>
+    </div>
+    <div class="header-actions">
+      <span id="llmBadge" class="badge"></span>
+      <a class="button secondary" href="/docs" target="_blank" rel="noreferrer">API</a>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="control-panel">
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Opis naturalny</h2>
+          <span class="step">1</span>
+        </div>
+        <textarea id="promptInput" rows="8" spellcheck="true">Ustaw grubość ścian na 2 mm. Zachowaj widoki 2D: front, top i side. Włącz oba warianty mocowania Raspberry Pi, zawias otwierany do 195 stopni oraz warstwy DXF dla krawędzi, wymiarów i referencji PCB.</textarea>
+        <button id="interpretButton" class="button primary full">Zamień opis na konfigurację</button>
+        <p id="interpretMessage" class="hint"></p>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Konfiguracja projektu</h2>
+          <span class="step">2</span>
+        </div>
+        <div class="toolbar compact">
+          <button id="resetConfigButton" class="button secondary">Domyślna</button>
+          <button id="downloadConfigButton" class="button secondary">Pobierz JSON</button>
+          <label class="button secondary file-button">
+            Wczytaj JSON
+            <input id="uploadConfigInput" type="file" accept="application/json,.json" />
+          </label>
+        </div>
+        <textarea id="configEditor" class="code-editor" rows="24" spellcheck="false"></textarea>
+        <div id="configStatus" class="status-line"></div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Generowanie</h2>
+          <span class="step">3</span>
+        </div>
+        <button id="generateButton" class="button success full">Generuj artefakty 2D i 3D</button>
+        <div id="generationProgress" class="progress hidden"><div></div></div>
+        <p class="hint">Generowane są między innymi STEP, STL, OBJ, GLB, DXF, SVG, PDF, konfiguracja warstw i paczka ZIP.</p>
+      </section>
+    </aside>
+
+    <section class="preview-area">
+      <div id="messageBanner" class="message-banner hidden"></div>
+
+      <section class="preview-card viewer-card">
+        <div class="card-header">
+          <div>
+            <h2>Podgląd 3D</h2>
+            <p>Przeciągnij, aby obracać; kółko myszy zmienia skalę.</p>
+          </div>
+          <div class="viewer-controls">
+            <label>
+              Kąt klapy
+              <input id="lidAngle" type="range" min="0" max="210" value="0" step="1" />
+              <output id="lidAngleValue">0°</output>
+            </label>
+            <button id="openLidButton" class="button secondary">Otwórz</button>
+            <button id="resetCameraButton" class="button secondary">Reset kamery</button>
+          </div>
+        </div>
+        <div id="viewer" class="viewer">
+          <div id="viewerPlaceholder" class="placeholder">Wygeneruj projekt, aby załadować model STL.</div>
+        </div>
+      </section>
+
+      <section class="preview-card">
+        <div class="card-header">
+          <div>
+            <h2>Podgląd 2D</h2>
+            <p>Osobne dokumentacje części: base, lid i assembly.</p>
+          </div>
+          <div class="toolbar compact">
+            <select id="drawingPart">
+              <option value="base">Base</option>
+              <option value="lid">Lid</option>
+              <option value="assembly">Assembly</option>
+            </select>
+            <select id="drawingView">
+              <option value="front">Front</option>
+              <option value="top">Top</option>
+              <option value="side">Side</option>
+            </select>
+          </div>
+        </div>
+        <div class="drawing-frame">
+          <img id="drawingPreview" alt="2D drawing preview" />
+          <div id="drawingPlaceholder" class="placeholder">Podgląd SVG pojawi się po wygenerowaniu.</div>
+        </div>
+      </section>
+
+      <div class="two-column">
+        <section class="preview-card">
+          <div class="card-header">
+            <div>
+              <h2>Walidacja</h2>
+              <p>Sprzeczności wymiarowe i założenia wymagające prototypu.</p>
+            </div>
+          </div>
+          <div id="warningList" class="warning-list"></div>
+        </section>
+
+        <section class="preview-card">
+          <div class="card-header">
+            <div>
+              <h2>Metryki</h2>
+              <p>Wartości wyliczone z konfiguracji.</p>
+            </div>
+          </div>
+          <div id="metricsGrid" class="metrics-grid"></div>
+        </section>
+      </div>
+
+      <section class="preview-card">
+        <div class="card-header">
+          <div>
+            <h2>Pliki do pobrania</h2>
+            <p>Każdy artefakt osobno oraz kompletna paczka ZIP.</p>
+          </div>
+          <a id="bundleButton" class="button success hidden" href="#">Pobierz ZIP</a>
+        </div>
+        <div id="artifactList" class="artifact-list">
+          <div class="placeholder">Lista plików pojawi się po wygenerowaniu.</div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    Model jest parametryczny, ale przed produkcją wymaga wydruku próbnego i sprawdzenia zawiasu, tolerancji oraz dostępu do złączy.
+  </footer>
+
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>

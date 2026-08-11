@@ -1,0 +1,58 @@
+{
+  "project": "demo-rpi5",
+  "revision": "main",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "project_schema",
+      "status": "passed",
+      "objects": 15
+    },
+    {
+      "name": "artifact_integrity",
+      "status": "passed",
+      "artifact_count": 24,
+      "missing": [],
+      "hash_mismatches": []
+    },
+    {
+      "name": "scoped_brep_demo",
+      "status": "passed",
+      "errors": [],
+      "volume_delta_mm3": -14.137166941247415
+    },
+    {
+      "name": "compose_yaml",
+      "status": "passed",
+      "services": [
+        "app",
+        "cad-worker",
+        "device-sim",
+        "mailpit",
+        "minio",
+        "mqtt",
+        "mqtt-gateway",
+        "openwebui",
+        "postgres"
+      ]
+    },
+    {
+      "name": "protobuf_static_structure",
+      "status": "passed",
+      "file_count": 8,
+      "errors": [],
+      "note": "Static source check only; run buf lint/protoc in CI for compiler validation."
+    },
+    {
+      "name": "browser_javascript_syntax",
+      "status": "passed",
+      "stderr": ""
+    },
+    {
+      "name": "pytest",
+      "status": "passed",
+      "stdout": "..........................                                               [100%]\n",
+      "stderr": ""
+    }
+  ]
+}

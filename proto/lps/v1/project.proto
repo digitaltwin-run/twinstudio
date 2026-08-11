@@ -1,0 +1,156 @@
+syntax = "proto3";
+
+package lps.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "lps/v1/common.proto";
+import "lps/v1/geometry.proto";
+
+message ManufacturingSpec {
+  string make_buy = 1;
+  string process = 2;
+  string material = 3;
+  string finish = 4;
+  string machine_profile = 5;
+  string supplier = 6;
+  string supplier_part_number = 7;
+  optional double lead_time_days = 8;
+  optional double unit_cost = 9;
+  string currency = 10;
+  string notes = 11;
+}
+
+message InclusionSpec {
+  bool physical_product = 1;
+  bool print_job = 2;
+  bool cnc_job = 3;
+  bool purchase_order = 4;
+  bool pcb_fabrication = 5;
+  bool software_release = 6;
+  bool ecommerce_package = 7;
+  bool documentation = 8;
+  bool simulation = 9;
+  bool reference_only = 10;
+}
+
+message FeatureSpec {
+  string uri = 1;
+  string name = 2;
+  string feature_type = 3;
+  map<string, ParameterValue> parameters = 4;
+  repeated string semantic_faces = 5;
+  bool enabled = 6;
+  string generated_by = 7;
+  string notes = 8;
+}
+
+message ObjectNode {
+  string uri = 1;
+  string parent_uri = 2;
+  string name = 3;
+  string kind = 4;
+  string description = 5;
+  double quantity = 6;
+  string revision = 7;
+  map<string, ParameterValue> parameters = 8;
+  repeated FeatureSpec features = 9;
+  ManufacturingSpec manufacturing = 10;
+  InclusionSpec inclusion = 11;
+  repeated string artifact_uris = 12;
+  repeated string tags = 13;
+  google.protobuf.Struct metadata = 14;
+}
+
+message ArtifactRecord {
+  string uri = 1;
+  string name = 2;
+  string kind = 3;
+  string path = 4;
+  string media_type = 5;
+  string object_uri = 6;
+  string revision = 7;
+  string sha256 = 8;
+  optional int64 size_bytes = 9;
+  bool generated = 10;
+  bool source = 11;
+  bool downloadable = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Struct metadata = 14;
+}
+
+message Requirement {
+  string uri = 1;
+  string statement = 2;
+  string status = 3;
+  string verification_method = 4;
+  repeated string target_uris = 5;
+  string source_uri = 6;
+}
+
+message EvidenceClaim {
+  string claim_id = 1;
+  string subject_uri = 2;
+  string predicate = 3;
+  google.protobuf.Value value = 4;
+  string unit = 5;
+  string source_artifact_uri = 6;
+  string source_region_uri = 7;
+  double confidence = 8;
+  string status = 9;
+  string extracted_by = 10;
+  google.protobuf.Timestamp created_at = 11;
+}
+
+message EcommerceOffer {
+  string uri = 1;
+  string sku = 2;
+  string gtin = 3;
+  string gtin_status = 4;
+  string title = 5;
+  string description = 6;
+  string currency = 7;
+  optional double price = 8;
+  string tax_category = 9;
+  string stock_status = 10;
+  repeated string media_artifact_uris = 11;
+  string package_object_uri = 12;
+  map<string, string> attributes = 13;
+}
+
+message ProjectSnapshot {
+  string project_id = 1;
+  string tenant = 2;
+  string name = 3;
+  string description = 4;
+  string revision = 5;
+  int64 stream_version = 6;
+  string lifecycle_stage = 7;
+  map<string, ObjectNode> objects = 8;
+  map<string, ArtifactRecord> artifacts = 9;
+  map<string, string> memberships = 10;
+  map<string, ProjectionMap> projection_maps = 11;
+  map<string, SelectionMap> selection_maps = 12;
+  repeated Requirement requirements = 13;
+  repeated EvidenceClaim evidence_claims = 14;
+  repeated EcommerceOffer ecommerce_offers = 15;
+  google.protobuf.Struct lifecycle = 16;
+  google.protobuf.Struct test_and_simulation = 17;
+  google.protobuf.Struct metadata = 18;
+  google.protobuf.Timestamp created_at = 19;
+  google.protobuf.Timestamp updated_at = 20;
+}
+
+message ProjectTreeNode {
+  ObjectNode object = 1;
+  repeated ProjectTreeNode children = 2;
+}
+
+message UnifiedSpecification {
+  ProjectSnapshot project = 1;
+  repeated ProjectTreeNode assembly_tree = 2;
+  google.protobuf.Struct manufacturing_views = 3;
+  google.protobuf.Struct software_bill = 4;
+  google.protobuf.Struct test_views = 5;
+  google.protobuf.Struct commercial_views = 6;
+}

@@ -1,0 +1,407 @@
+project_id: demo-rpi5
+objects:
+  poa://demo/demo-rpi5@main/device/rpi5-camera-appliance:
+    name: Raspberry Pi 5 camera appliance
+    kind: device
+    quantity: 1.0
+    manufacturing:
+      make_buy: make
+      process: assembly
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: true
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/assembly/enclosure:
+    name: Hinged enclosure assembly
+    kind: assembly
+    quantity: 1.0
+    manufacturing:
+      make_buy: make
+      process: assembly
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/part/base:
+    name: Lower base
+    kind: part
+    quantity: 1.0
+    manufacturing:
+      make_buy: make
+      process: fdm_print
+      material: PETG
+      finish: Deburr and inspect
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: Prototype route; CNC or molding may be selected in later variants.
+    inclusion:
+      physical_product: true
+      print_job: true
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/part/lid:
+    name: Upper lid
+    kind: part
+    quantity: 1.0
+    manufacturing:
+      make_buy: make
+      process: fdm_print
+      material: PETG
+      finish: Visible-surface quality review
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: true
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/fastener/hinge-pin:
+    name: Hinge pin
+    kind: fastener
+    quantity: 1.0
+    manufacturing:
+      make_buy: buy
+      process: purchase
+      material: Steel
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: TBD
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: true
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/assembly/electronics:
+    name: Electronics assembly
+    kind: assembly
+    quantity: 1.0
+    manufacturing:
+      make_buy: make
+      process: assembly
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5:
+    name: Raspberry Pi 5
+    kind: purchased_component
+    quantity: 1.0
+    manufacturing:
+      make_buy: buy
+      process: purchase
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: Approved distributor
+      supplier_part_number: RPI5-8GB-TBD
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: true
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/camera/camera-module-3:
+    name: Camera Module 3
+    kind: camera
+    quantity: 1.0
+    manufacturing:
+      make_buy: buy
+      process: purchase
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: CAMERA3-VARIANT-TBD
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: true
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/power-supply/usb-c-5v:
+    name: USB-C power supply and cable
+    kind: power_supply
+    quantity: 1.0
+    manufacturing:
+      make_buy: buy
+      process: purchase
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: true
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/assembly/software:
+    name: Software assembly
+    kind: assembly
+    quantity: 1.0
+    manufacturing:
+      make_buy: virtual
+      process: software_build
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: false
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: true
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/software/vision-app:
+    name: Vision application source
+    kind: software
+    quantity: 1.0
+    manufacturing:
+      make_buy: make
+      process: software_build
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: false
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: true
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/container-image/vision-app-runtime:
+    name: Vision application runtime image
+    kind: container_image
+    quantity: 1.0
+    manufacturing:
+      make_buy: make
+      process: software_build
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: false
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: true
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/simulation-model/power-thermal:
+    name: Power and thermal simulation model
+    kind: simulation_model
+    quantity: 1.0
+    manufacturing:
+      make_buy: virtual
+      process: none
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: false
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: false
+      documentation: true
+      simulation: true
+      reference_only: false
+  poa://demo/demo-rpi5@main/packaging/retail-box:
+    name: Retail package
+    kind: packaging
+    quantity: 1.0
+    manufacturing:
+      make_buy: outsource
+      process: packaging
+      material: Corrugated board
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: true
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: true
+      documentation: true
+      simulation: false
+      reference_only: false
+  poa://demo/demo-rpi5@main/ecommerce-offer/default:
+    name: Default ecommerce offer
+    kind: ecommerce_offer
+    quantity: 1.0
+    manufacturing:
+      make_buy: virtual
+      process: none
+      material: null
+      finish: null
+      machine_profile: null
+      supplier: null
+      supplier_part_number: null
+      lead_time_days: null
+      unit_cost: null
+      currency: EUR
+      notes: ''
+    inclusion:
+      physical_product: false
+      print_job: false
+      cnc_job: false
+      purchase_order: false
+      pcb_fabrication: false
+      software_release: false
+      ecommerce_package: true
+      documentation: true
+      simulation: false
+      reference_only: false

@@ -1,0 +1,20 @@
+offers:
+- uri: poa://demo/demo-rpi5@main/offer/default
+  sku: RPI5-CAM-ENC-DEMO
+  gtin: null
+  gtin_status: unassigned
+  title: Raspberry Pi 5 camera appliance enclosure kit
+  description: Draft offer generated from the living product specification. Purchased
+    Raspberry Pi, camera and power supply inclusion must be selected as a variant.
+  currency: EUR
+  price: null
+  tax_category: null
+  stock_status: draft
+  media_artifact_uris:
+  - poa://demo/demo-rpi5@main/artifact/reference-back2-png
+  package_object_uri: poa://demo/demo-rpi5@main/packaging/retail-box
+  attributes:
+    enclosure_material: PETG prototype
+    wall_thickness: 2 mm
+    compute: Raspberry Pi 5 compatible
+note: GTIN is not allocated by this demo.

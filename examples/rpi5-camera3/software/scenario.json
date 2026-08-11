@@ -1,0 +1,8 @@
+{
+  "name": "camera-and-power-demo",
+  "description": "Deterministic sample-image replay plus stochastic MQTT device telemetry.",
+  "limitations": [
+    "This does not emulate Raspberry Pi silicon, the camera sensor or Linux timing.",
+    "It validates the software container contract and example data flow only."
+  ]
+}

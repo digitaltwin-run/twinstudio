@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package lps.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "lps/v1/common.proto";
+
+message PowerLoadCase {
+  string name = 1;
+  double current_a = 2;
+  double duration_s = 3;
+  string component_uri = 4;
+  double heat_fraction = 5;
+}
+
+message PowerModel {
+  double supply_voltage_v = 1;
+  double supply_current_limit_a = 2;
+  double cable_resistance_ohm = 3;
+  double connector_resistance_ohm = 4;
+  double board_path_resistance_ohm = 5;
+  double brownout_voltage_v = 6;
+  repeated PowerLoadCase load_cases = 7;
+}
+
+message ThermalNode {
+  string uri = 1;
+  double ambient_c = 2;
+  double initial_c = 3;
+  double thermal_resistance_c_per_w = 4;
+  double thermal_capacitance_j_per_c = 5;
+}
+
+message ThermalModel {
+  repeated ThermalNode nodes = 1;
+  double timestep_s = 2;
+}
+
+message HumanTaskStep {
+  string step_id = 1;
+  string instruction = 2;
+  string action = 3;
+  string target_uri = 4;
+  repeated string preconditions = 5;
+  repeated string success_criteria = 6;
+  repeated string possible_errors = 7;
+  repeated string hazards = 8;
+  optional double expected_duration_s = 9;
+  optional double expected_force_n = 10;
+}
+
+message HumanUseScenario {
+  string uri = 1;
+  string name = 2;
+  string actor = 3;
+  string stage = 4;
+  repeated HumanTaskStep steps = 5;
+  repeated HumanTaskStep recovery_steps = 6;
+}
+
+message FailureMode {
+  string uri = 1;
+  string target_uri = 2;
+  string failure = 3;
+  string effect = 4;
+  string cause = 5;
+  int32 severity = 6;
+  int32 occurrence = 7;
+  int32 detection = 8;
+  repeated string controls = 9;
+}
+
+message SimulationRequest {
+  string project_id = 1;
+  string scenario_uri = 2;
+  string simulation_kind = 3;
+  string container_image_uri = 4;
+  google.protobuf.Struct parameters = 5;
+  repeated string input_artifact_uris = 6;
+  string requested_by = 7;
+}
+
+message SimulationResult {
+  string run_uri = 1;
+  string project_id = 2;
+  string simulation_kind = 3;
+  string status = 4;
+  google.protobuf.Struct metrics = 5;
+  repeated FileRef output_artifacts = 6;
+  repeated Diagnostic diagnostics = 7;
+  google.protobuf.Timestamp started_at = 8;
+  google.protobuf.Timestamp completed_at = 9;
+}

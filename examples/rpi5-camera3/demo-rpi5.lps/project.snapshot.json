@@ -1,0 +1,2259 @@
+{
+  "project_id": "demo-rpi5",
+  "tenant": "demo",
+  "name": "Raspberry Pi 5 Camera Appliance",
+  "description": "Example living product combining housing CAD, purchased electronics, software, simulations, tests, lifecycle and ecommerce data.",
+  "revision": "main",
+  "stream_version": 58,
+  "lifecycle_stage": "detailed_design",
+  "objects": {
+    "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance": {
+      "uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "parent_uri": null,
+      "name": "Raspberry Pi 5 camera appliance",
+      "kind": "device",
+      "description": "Complete living product: enclosure, purchased electronics, software, tests, packaging and offer.",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "make",
+        "process": "assembly",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": true,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/product-test-plan",
+        "poa://demo/demo-rpi5@main/artifact/pcb-adapter-contract"
+      ],
+      "tags": [
+        "device",
+        "digital-thread"
+      ],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/assembly/enclosure": {
+      "uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "parent_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "name": "Hinged enclosure assembly",
+      "kind": "assembly",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "make",
+        "process": "assembly",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/projection-map-example",
+        "poa://demo/demo-rpi5@main/artifact/selection-map-example",
+        "poa://demo/demo-rpi5@main/artifact/assembly-front",
+        "poa://demo/demo-rpi5@main/artifact/assembly-top",
+        "poa://demo/demo-rpi5@main/artifact/assembly-side"
+      ],
+      "tags": [],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/part/base": {
+      "uri": "poa://demo/demo-rpi5@main/part/base",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "name": "Lower base",
+      "kind": "part",
+      "description": "Parametric lower housing with two RPi 5 mounting patterns.",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {
+        "width": {
+          "value": 79.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "depth": {
+          "value": 95.0,
+          "unit": "mm",
+          "status": "proposed",
+          "source_uri": null,
+          "confidence": 0.6,
+          "notes": "Overall depth requires confirmation."
+        },
+        "height": {
+          "value": 25.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "wall_thickness": {
+          "value": 2.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "floor_thickness": {
+          "value": 2.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        }
+      },
+      "features": [
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/base/feature/shell",
+          "name": "Base shell",
+          "feature_type": "shell",
+          "parameters": {
+            "wall_thickness": {
+              "value": 2.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [
+            "poa://demo/demo-rpi5@main/part/base/face/front",
+            "poa://demo/demo-rpi5@main/part/base/face/right",
+            "poa://demo/demo-rpi5@main/part/base/face/left"
+          ],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/base/feature/rpi-mount-a",
+          "name": "RPi mounting position A",
+          "feature_type": "standoff_pattern",
+          "parameters": {
+            "count": {
+              "value": 4,
+              "unit": null,
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "outer_diameter": {
+              "value": 6.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "pilot_hole": {
+              "value": 1.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "height": {
+              "value": 3.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/base/feature/rpi-mount-b",
+          "name": "RPi mounting position B",
+          "feature_type": "standoff_pattern",
+          "parameters": {
+            "count": {
+              "value": 4,
+              "unit": null,
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "right_clearance": {
+              "value": 7.5,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "left_clearance": {
+              "value": 10.5,
+              "unit": "mm",
+              "status": "proposed",
+              "source_uri": null,
+              "confidence": 0.7,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/base/feature/hinge",
+          "name": "Base hinge knuckles",
+          "feature_type": "hinge",
+          "parameters": {
+            "opening_angle_deg": {
+              "value": 195.0,
+              "unit": "deg",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "front_chamfer_angle": {
+              "value": 45.0,
+              "unit": "deg",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        }
+      ],
+      "manufacturing": {
+        "make_buy": "make",
+        "process": "fdm_print",
+        "material": "PETG",
+        "finish": "Deburr and inspect",
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": "Prototype route; CNC or molding may be selected in later variants."
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": true,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/base-stl",
+        "poa://demo/demo-rpi5@main/artifact/base-step"
+      ],
+      "tags": [],
+      "metadata": {
+        "viewer_mesh": "examples/rpi5-camera3/artifacts/3d/base.stl",
+        "selection_map": "examples/rpi5-camera3/specs/selection-map.json"
+      }
+    },
+    "poa://demo/demo-rpi5@main/part/lid": {
+      "uri": "poa://demo/demo-rpi5@main/part/lid",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "name": "Upper lid",
+      "kind": "part",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {
+        "wall_thickness": {
+          "value": 2.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "total_height": {
+          "value": 40.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "vertical_joint_section": {
+          "value": 2.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        }
+      },
+      "features": [
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/lid/feature/shell",
+          "name": "Sloped lid shell",
+          "feature_type": "shell",
+          "parameters": {
+            "wall_thickness": {
+              "value": 2.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [
+            "poa://demo/demo-rpi5@main/part/lid/face/roof",
+            "poa://demo/demo-rpi5@main/part/lid/face/front-slope",
+            "poa://demo/demo-rpi5@main/part/lid/face/side-slope"
+          ],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/lid/feature/camera-mounts",
+          "name": "Camera mounting grid",
+          "feature_type": "boss_pattern",
+          "parameters": {
+            "levels": {
+              "value": 2,
+              "unit": null,
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "height_reduction": {
+              "value": 1.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/lid/feature/aux-bosses",
+          "name": "Auxiliary lid bosses",
+          "feature_type": "boss_pattern",
+          "parameters": {
+            "count": {
+              "value": 4,
+              "unit": null,
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "diameter": {
+              "value": 8.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "hole": {
+              "value": 2.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            },
+            "top_above_base": {
+              "value": 14.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/part/lid/feature/hinge",
+          "name": "Lid hinge knuckles",
+          "feature_type": "hinge",
+          "parameters": {
+            "edge_relief": {
+              "value": 2.0,
+              "unit": "mm",
+              "status": "approved",
+              "source_uri": null,
+              "confidence": 1.0,
+              "notes": ""
+            }
+          },
+          "semantic_faces": [],
+          "enabled": true,
+          "generated_by": "parametric",
+          "notes": ""
+        }
+      ],
+      "manufacturing": {
+        "make_buy": "make",
+        "process": "fdm_print",
+        "material": "PETG",
+        "finish": "Visible-surface quality review",
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": true,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/lid-stl",
+        "poa://demo/demo-rpi5@main/artifact/lid-step"
+      ],
+      "tags": [],
+      "metadata": {
+        "viewer_mesh": "examples/rpi5-camera3/artifacts/3d/lid.stl",
+        "selection_map": "examples/rpi5-camera3/specs/selection-map.json"
+      }
+    },
+    "poa://demo/demo-rpi5@main/fastener/hinge-pin": {
+      "uri": "poa://demo/demo-rpi5@main/fastener/hinge-pin",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "name": "Hinge pin",
+      "kind": "fastener",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {
+        "diameter": {
+          "value": 3.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        }
+      },
+      "features": [],
+      "manufacturing": {
+        "make_buy": "buy",
+        "process": "purchase",
+        "material": "Steel",
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": "TBD",
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": true,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/assembly/electronics": {
+      "uri": "poa://demo/demo-rpi5@main/assembly/electronics",
+      "parent_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "name": "Electronics assembly",
+      "kind": "assembly",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "make",
+        "process": "assembly",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5": {
+      "uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/electronics",
+      "name": "Raspberry Pi 5",
+      "kind": "purchased_component",
+      "description": "Purchased compute module used as a dimensional and electrical reference.",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {
+        "length": {
+          "value": 85.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "width": {
+          "value": 56.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "mount_hole_diameter": {
+          "value": 2.7,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "hole_spacing_x": {
+          "value": 58.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "hole_spacing_y": {
+          "value": 49.0,
+          "unit": "mm",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        }
+      },
+      "features": [],
+      "manufacturing": {
+        "make_buy": "buy",
+        "process": "purchase",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": "Approved distributor",
+        "supplier_part_number": "RPI5-8GB-TBD",
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": true,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [
+        "excluded-from-3d-print"
+      ],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/camera/camera-module-3": {
+      "uri": "poa://demo/demo-rpi5@main/camera/camera-module-3",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/electronics",
+      "name": "Camera Module 3",
+      "kind": "camera",
+      "description": "Purchased camera; exact vendor drawing and lens variant must be attached.",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "buy",
+        "process": "purchase",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": "CAMERA3-VARIANT-TBD",
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": true,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/camera-sample-dark",
+        "poa://demo/demo-rpi5@main/artifact/camera-sample-bright"
+      ],
+      "tags": [
+        "excluded-from-3d-print"
+      ],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/power-supply/usb-c-5v": {
+      "uri": "poa://demo/demo-rpi5@main/power-supply/usb-c-5v",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/electronics",
+      "name": "USB-C power supply and cable",
+      "kind": "power_supply",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {
+        "nominal_voltage": {
+          "value": 5.1,
+          "unit": "V",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        },
+        "current_limit": {
+          "value": 5.0,
+          "unit": "A",
+          "status": "approved",
+          "source_uri": null,
+          "confidence": 1.0,
+          "notes": ""
+        }
+      },
+      "features": [],
+      "manufacturing": {
+        "make_buy": "buy",
+        "process": "purchase",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": true,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [
+        "excluded-from-3d-print"
+      ],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/assembly/software": {
+      "uri": "poa://demo/demo-rpi5@main/assembly/software",
+      "parent_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "name": "Software assembly",
+      "kind": "assembly",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "virtual",
+        "process": "software_build",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": false,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": true,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/software/vision-app": {
+      "uri": "poa://demo/demo-rpi5@main/software/vision-app",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/software",
+      "name": "Vision application source",
+      "kind": "software",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "make",
+        "process": "software_build",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": false,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": true,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/vision-app-source",
+        "poa://demo/demo-rpi5@main/artifact/camera-analysis-result"
+      ],
+      "tags": [],
+      "metadata": {
+        "repository": "included example source",
+        "entrypoint": "examples/rpi5-camera3/software/vision_app.py",
+        "test_inputs": [
+          "examples/rpi5-camera3/software/samples/sample-dark.png",
+          "examples/rpi5-camera3/software/samples/sample-bright.png"
+        ]
+      }
+    },
+    "poa://demo/demo-rpi5@main/container-image/vision-app-runtime": {
+      "uri": "poa://demo/demo-rpi5@main/container-image/vision-app-runtime",
+      "parent_uri": "poa://demo/demo-rpi5@main/assembly/software",
+      "name": "Vision application runtime image",
+      "kind": "container_image",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "make",
+        "process": "software_build",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": false,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": true,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/vision-app-dockerfile",
+        "poa://demo/demo-rpi5@main/artifact/vision-app-compose"
+      ],
+      "tags": [],
+      "metadata": {
+        "dockerfile": "examples/rpi5-camera3/software/Dockerfile",
+        "compose": "examples/rpi5-camera3/software/compose.camera-test.yaml",
+        "simulation_note": "application/data-flow simulation, not Raspberry Pi hardware emulation"
+      }
+    },
+    "poa://demo/demo-rpi5@main/simulation-model/power-thermal": {
+      "uri": "poa://demo/demo-rpi5@main/simulation-model/power-thermal",
+      "parent_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "name": "Power and thermal simulation model",
+      "kind": "simulation_model",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "virtual",
+        "process": "none",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": false,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": false,
+        "documentation": true,
+        "simulation": true,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/packaging/retail-box": {
+      "uri": "poa://demo/demo-rpi5@main/packaging/retail-box",
+      "parent_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "name": "Retail package",
+      "kind": "packaging",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "outsource",
+        "process": "packaging",
+        "material": "Corrugated board",
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": true,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": true,
+        "documentation": true,
+        "simulation": false,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [],
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/ecommerce-offer/default": {
+      "uri": "poa://demo/demo-rpi5@main/ecommerce-offer/default",
+      "parent_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "name": "Default ecommerce offer",
+      "kind": "ecommerce_offer",
+      "description": "",
+      "quantity": 1.0,
+      "revision": "main",
+      "parameters": {},
+      "features": [],
+      "manufacturing": {
+        "make_buy": "virtual",
+        "process": "none",
+        "material": null,
+        "finish": null,
+        "machine_profile": null,
+        "supplier": null,
+        "supplier_part_number": null,
+        "lead_time_days": null,
+        "unit_cost": null,
+        "currency": "EUR",
+        "notes": ""
+      },
+      "inclusion": {
+        "physical_product": false,
+        "print_job": false,
+        "cnc_job": false,
+        "purchase_order": false,
+        "pcb_fabrication": false,
+        "software_release": false,
+        "ecommerce_package": true,
+        "documentation": true,
+        "simulation": false,
+        "reference_only": false
+      },
+      "artifact_uris": [],
+      "tags": [],
+      "metadata": {}
+    }
+  },
+  "artifacts": {
+    "poa://demo/demo-rpi5@main/artifact/base-stl": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/base-stl",
+      "name": "base.stl",
+      "kind": "stl",
+      "path": "examples/rpi5-camera3/artifacts/3d/base.stl",
+      "media_type": "model/stl",
+      "object_uri": "poa://demo/demo-rpi5@main/part/base",
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837832Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/lid-stl": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/lid-stl",
+      "name": "lid.stl",
+      "kind": "stl",
+      "path": "examples/rpi5-camera3/artifacts/3d/lid.stl",
+      "media_type": "model/stl",
+      "object_uri": "poa://demo/demo-rpi5@main/part/lid",
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837857Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/base-step": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/base-step",
+      "name": "base.step",
+      "kind": "step",
+      "path": "examples/rpi5-camera3/artifacts/3d/base.step",
+      "media_type": "model/step",
+      "object_uri": "poa://demo/demo-rpi5@main/part/base",
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837869Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/lid-step": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/lid-step",
+      "name": "lid.step",
+      "kind": "step",
+      "path": "examples/rpi5-camera3/artifacts/3d/lid.step",
+      "media_type": "model/step",
+      "object_uri": "poa://demo/demo-rpi5@main/part/lid",
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837880Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/assembly-front": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+      "name": "assembly_front.svg",
+      "kind": "drawing_2d",
+      "path": "examples/rpi5-camera3/artifacts/2d/assembly_front.svg",
+      "media_type": "image/svg+xml",
+      "object_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837894Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/assembly-top": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/assembly-top",
+      "name": "assembly_top.svg",
+      "kind": "drawing_2d",
+      "path": "examples/rpi5-camera3/artifacts/2d/assembly_top.svg",
+      "media_type": "image/svg+xml",
+      "object_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837911Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/assembly-side": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/assembly-side",
+      "name": "assembly_side.svg",
+      "kind": "drawing_2d",
+      "path": "examples/rpi5-camera3/artifacts/2d/assembly_side.svg",
+      "media_type": "image/svg+xml",
+      "object_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837921Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/reference-back-size-png": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/reference-back-size-png",
+      "name": "back-size.png",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/assets/reference/back-size.png",
+      "media_type": "image/png",
+      "object_uri": null,
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837932Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/reference-side-png": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/reference-side-png",
+      "name": "side.png",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/assets/reference/side.png",
+      "media_type": "image/png",
+      "object_uri": null,
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837942Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/reference-rpi5-png": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/reference-rpi5-png",
+      "name": "rpi5.png",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/assets/reference/rpi5.png",
+      "media_type": "image/png",
+      "object_uri": null,
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837951Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/reference-back-png": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/reference-back-png",
+      "name": "back.png",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/assets/reference/back.png",
+      "media_type": "image/png",
+      "object_uri": null,
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837959Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/reference-back1-png": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/reference-back1-png",
+      "name": "back1.png",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/assets/reference/back1.png",
+      "media_type": "image/png",
+      "object_uri": null,
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837967Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/reference-back2-png": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/reference-back2-png",
+      "name": "back2.png",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/assets/reference/back2.png",
+      "media_type": "image/png",
+      "object_uri": null,
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837975Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/reference-back-inside-png": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/reference-back-inside-png",
+      "name": "back-inside.png",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/assets/reference/back-inside.png",
+      "media_type": "image/png",
+      "object_uri": null,
+      "revision": "main",
+      "sha256": null,
+      "size_bytes": null,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:13:51.837983Z",
+      "metadata": {}
+    },
+    "poa://demo/demo-rpi5@main/artifact/vision-app-source": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/vision-app-source",
+      "name": "Vision application source",
+      "kind": "software_source",
+      "path": "examples/rpi5-camera3/software/vision_app.py",
+      "media_type": "text/x-python",
+      "object_uri": "poa://demo/demo-rpi5@main/software/vision-app",
+      "revision": "main",
+      "sha256": "389e606ec159d1943ac9841b6060ef97f4c3186d2b2da5c727550a6ce6618368",
+      "size_bytes": 1168,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Vision application source"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/vision-app-dockerfile": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/vision-app-dockerfile",
+      "name": "Vision application Dockerfile",
+      "kind": "software_source",
+      "path": "examples/rpi5-camera3/software/Dockerfile",
+      "media_type": "text/plain",
+      "object_uri": "poa://demo/demo-rpi5@main/container-image/vision-app-runtime",
+      "revision": "main",
+      "sha256": "4d2c9b62f329a36fab38535e9ea351c1515db7a4469387f9ebf6deaa4901da6d",
+      "size_bytes": 175,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Vision application Dockerfile"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/vision-app-compose": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/vision-app-compose",
+      "name": "Vision application Compose scenario",
+      "kind": "software_source",
+      "path": "examples/rpi5-camera3/software/compose.camera-test.yaml",
+      "media_type": "application/yaml",
+      "object_uri": "poa://demo/demo-rpi5@main/container-image/vision-app-runtime",
+      "revision": "main",
+      "sha256": "45b73d2295e880877f2842be71f944a4eddcd95451827c34c3aba50a1280e526",
+      "size_bytes": 186,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Vision application Compose scenario"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/camera-sample-dark": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/camera-sample-dark",
+      "name": "Synthetic dark camera sample",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/software/samples/sample-dark.png",
+      "media_type": "image/png",
+      "object_uri": "poa://demo/demo-rpi5@main/camera/camera-module-3",
+      "revision": "main",
+      "sha256": "f867ba4f55e2296c167c207cbc61f45286098e65bb4bf676344f88eaec230482",
+      "size_bytes": 4814,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Synthetic dark camera sample"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/camera-sample-bright": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/camera-sample-bright",
+      "name": "Synthetic bright camera sample",
+      "kind": "photo",
+      "path": "examples/rpi5-camera3/software/samples/sample-bright.png",
+      "media_type": "image/png",
+      "object_uri": "poa://demo/demo-rpi5@main/camera/camera-module-3",
+      "revision": "main",
+      "sha256": "587f1697b05a800437cd58f2461f8c0adb38a74a6ffb076414dc21b7de205ba9",
+      "size_bytes": 4807,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Synthetic bright camera sample"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/camera-analysis-result": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/camera-analysis-result",
+      "name": "Camera sample analysis result",
+      "kind": "test_result",
+      "path": "examples/rpi5-camera3/software/results/camera-analysis.json",
+      "media_type": "application/json",
+      "object_uri": "poa://demo/demo-rpi5@main/software/vision-app",
+      "revision": "main",
+      "sha256": "fb1daeb3d8a134d39c926dc486510e1eaed7df8a6eed53a65dfcebb2fa15dac3",
+      "size_bytes": 709,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Camera sample analysis result"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/product-test-plan": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/product-test-plan",
+      "name": "Product verification test plan",
+      "kind": "other",
+      "path": "examples/rpi5-camera3/specs/test-plan.yaml",
+      "media_type": "application/yaml",
+      "object_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "revision": "main",
+      "sha256": "2fdb96437f69fbc843fcba2a69d01dac61cad3c0dacb66432834ba5a99ea8645",
+      "size_bytes": 4071,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Product verification test plan"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/projection-map-example": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/projection-map-example",
+      "name": "Example 2D-to-3D projection map",
+      "kind": "other",
+      "path": "examples/rpi5-camera3/specs/projection-map.json",
+      "media_type": "application/json",
+      "object_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "revision": "main",
+      "sha256": "3f46654b159bce6ff6945669403b170dcd5152944854254596a3be958ee2c467",
+      "size_bytes": 2111,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Example 2D-to-3D projection map"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/selection-map-example": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/selection-map-example",
+      "name": "Example resolved selection map",
+      "kind": "other",
+      "path": "examples/rpi5-camera3/specs/selection-map.json",
+      "media_type": "application/json",
+      "object_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "revision": "main",
+      "sha256": "d09e442013aee691330ef7d13488f27ab9cab0e294098e369a9ece1703503bc3",
+      "size_bytes": 1026,
+      "generated": true,
+      "source": false,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Example resolved selection map"
+      }
+    },
+    "poa://demo/demo-rpi5@main/artifact/pcb-adapter-contract": {
+      "uri": "poa://demo/demo-rpi5@main/artifact/pcb-adapter-contract",
+      "name": "Future KiCad adapter contract",
+      "kind": "other",
+      "path": "examples/rpi5-camera3/pcb/adapter-contract.yaml",
+      "media_type": "application/yaml",
+      "object_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+      "revision": "main",
+      "sha256": "101d8dd5eb329690dbc9d2df5e45dddc610d5ab289631f6870f9de00b4080f88",
+      "size_bytes": 604,
+      "generated": false,
+      "source": true,
+      "downloadable": true,
+      "created_at": "2026-08-11T17:37:57.228983Z",
+      "metadata": {
+        "display_name": "Future KiCad adapter contract"
+      }
+    }
+  },
+  "annotations": {},
+  "change_plans": {},
+  "requirements": {
+    "poa://demo/demo-rpi5@main/requirement/wall-2mm": {
+      "uri": "poa://demo/demo-rpi5@main/requirement/wall-2mm",
+      "statement": "Base and lid general wall thickness shall be 2 mm.",
+      "status": "approved",
+      "verification_method": "CAD inspection and printed coupon measurement",
+      "target_uris": [
+        "poa://demo/demo-rpi5@main/part/base",
+        "poa://demo/demo-rpi5@main/part/lid"
+      ],
+      "source_uri": null
+    },
+    "poa://demo/demo-rpi5@main/requirement/hinge-open": {
+      "uri": "poa://demo/demo-rpi5@main/requirement/hinge-open",
+      "statement": "The lid shall open beyond 190 degrees without collision.",
+      "status": "approved",
+      "verification_method": "CAD motion check and physical prototype",
+      "target_uris": [
+        "poa://demo/demo-rpi5@main/assembly/enclosure"
+      ],
+      "source_uri": null
+    },
+    "poa://demo/demo-rpi5@main/requirement/views": {
+      "uri": "poa://demo/demo-rpi5@main/requirement/views",
+      "statement": "Separate front, top and side 2D views shall be generated for each housing part.",
+      "status": "approved",
+      "verification_method": "Drawing package review",
+      "target_uris": [
+        "poa://demo/demo-rpi5@main/part/base",
+        "poa://demo/demo-rpi5@main/part/lid",
+        "poa://demo/demo-rpi5@main/assembly/enclosure"
+      ],
+      "source_uri": null
+    },
+    "poa://demo/demo-rpi5@main/requirement/scoped-edit": {
+      "uri": "poa://demo/demo-rpi5@main/requirement/scoped-edit",
+      "statement": "Natural-language geometry changes shall be constrained to explicitly selected objects or regions.",
+      "status": "proposed",
+      "verification_method": "Scope guard automated test",
+      "target_uris": [
+        "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance"
+      ],
+      "source_uri": null
+    }
+  },
+  "claims": {
+    "723bd308-6b67-4718-b520-d508965b50cc": {
+      "claim_id": "723bd308-6b67-4718-b520-d508965b50cc",
+      "subject_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "predicate": "external_width",
+      "value": 79.0,
+      "unit": "mm",
+      "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/reference-back-size-png",
+      "source_region_uri": null,
+      "confidence": 0.95,
+      "status": "approved",
+      "extracted_by": "human+review",
+      "created_at": "2026-08-11T17:13:51.838082Z"
+    },
+    "e82024ec-2878-48a0-8d2d-3e34e9591a87": {
+      "claim_id": "e82024ec-2878-48a0-8d2d-3e34e9591a87",
+      "subject_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "predicate": "base_height",
+      "value": 25.0,
+      "unit": "mm",
+      "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/reference-side-png",
+      "source_region_uri": null,
+      "confidence": 0.95,
+      "status": "approved",
+      "extracted_by": "human+review",
+      "created_at": "2026-08-11T17:13:51.838093Z"
+    },
+    "b64f3ff8-b7f7-46a3-9297-a962d613f6ed": {
+      "claim_id": "b64f3ff8-b7f7-46a3-9297-a962d613f6ed",
+      "subject_uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+      "predicate": "rpi_board_size",
+      "value": "85 x 56",
+      "unit": "mm",
+      "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/reference-rpi5-png",
+      "source_region_uri": null,
+      "confidence": 0.95,
+      "status": "approved",
+      "extracted_by": "human+review",
+      "created_at": "2026-08-11T17:13:51.838100Z"
+    },
+    "7909d582-37af-42fd-8ce1-3d520dce3ef4": {
+      "claim_id": "7909d582-37af-42fd-8ce1-3d520dce3ef4",
+      "subject_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+      "predicate": "overall_depth",
+      "value": 95.0,
+      "unit": "mm",
+      "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/reference-side-png",
+      "source_region_uri": null,
+      "confidence": 0.6,
+      "status": "proposed",
+      "extracted_by": "human+review",
+      "created_at": "2026-08-11T17:13:51.838107Z"
+    }
+  },
+  "memberships": {
+    "creator@example.test": "creator",
+    "editor@example.test": "editor",
+    "reader@example.test": "reader"
+  },
+  "projection_maps": {
+    "poa://demo/demo-rpi5@main/projection-map/assembly-orthographic": {
+      "uri": "poa://demo/demo-rpi5@main/projection-map/assembly-orthographic",
+      "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+      "source_view": "2d",
+      "target_revision": "main",
+      "entities": {
+        "front.base.outer-wall": {
+          "entity_id": "front.base.outer-wall",
+          "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+          "object_uri": "poa://demo/demo-rpi5@main/part/base",
+          "feature_uri": "poa://demo/demo-rpi5@main/part/base/feature/shell",
+          "semantic_face_uri": "poa://demo/demo-rpi5@main/part/base/face/front",
+          "brep_face_id": null,
+          "mapping_type": "orthographic",
+          "source_to_world_matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "confidence": 0.65,
+          "metadata": {
+            "note": "Example logical entity; regenerate entity IDs from the final drawing exporter."
+          }
+        },
+        "front.lid.outer-slope": {
+          "entity_id": "front.lid.outer-slope",
+          "source_artifact_uri": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+          "object_uri": "poa://demo/demo-rpi5@main/part/lid",
+          "feature_uri": "poa://demo/demo-rpi5@main/part/lid/feature/shell",
+          "semantic_face_uri": "poa://demo/demo-rpi5@main/part/lid/face/front-slope",
+          "brep_face_id": null,
+          "mapping_type": "orthographic",
+          "source_to_world_matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "confidence": 0.65,
+          "metadata": {
+            "note": "Example logical entity; regenerate entity IDs from the final drawing exporter."
+          }
+        }
+      },
+      "calibration": {
+        "units": "mm",
+        "projection": "front",
+        "origin": "drawing lower-left",
+        "status": "example_not_metrology_verified"
+      },
+      "status": "draft",
+      "created_by": "creator@example.test",
+      "created_at": "2026-08-11T17:27:21.428123Z"
+    }
+  },
+  "selection_maps": {
+    "poa://demo/demo-rpi5@main/selection-map/example-front-wall": {
+      "uri": "poa://demo/demo-rpi5@main/selection-map/example-front-wall",
+      "selection_uri": "poa://demo/demo-rpi5@main/region/example-front-wall",
+      "target_revision": "main",
+      "resolved_object_uris": [
+        "poa://demo/demo-rpi5@main/part/base"
+      ],
+      "resolved_feature_uris": [
+        "poa://demo/demo-rpi5@main/part/base/feature/shell"
+      ],
+      "resolved_semantic_face_uris": [
+        "poa://demo/demo-rpi5@main/part/base/face/front"
+      ],
+      "resolved_brep_face_ids": [],
+      "algorithm": "semantic-plus-projection",
+      "status": "partial",
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "code": "EPHEMERAL_MESH_FACE",
+          "message": "The sample has a triangle index and semantic face, but no native B-Rep face ID.",
+          "target_uris": [
+            "poa://demo/demo-rpi5@main/part/base"
+          ],
+          "data": {
+            "face_index": 42,
+            "mesh_hash": "demo-base-stl"
+          }
+        }
+      ],
+      "metadata": {
+        "example": true
+      },
+      "created_by": "editor@example.test",
+      "created_at": "2026-08-11T17:27:21.428123Z"
+    }
+  },
+  "lifecycle_gates": [
+    {
+      "stage": "evidence_intake",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "requirements",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "concept",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "architecture",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "detailed_design",
+      "status": "in_progress",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "prototype",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "verification",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "validation",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "industrialization",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "production",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "fulfillment",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "operation",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "maintenance",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    },
+    {
+      "stage": "end_of_life",
+      "status": "not_started",
+      "entry_criteria": [
+        "Previous gate approved"
+      ],
+      "exit_criteria": [
+        "Required artifacts and tests attached"
+      ],
+      "approver_roles": [
+        "creator",
+        "admin"
+      ],
+      "evidence_artifact_uris": []
+    }
+  ],
+  "failure_modes": [
+    {
+      "uri": "poa://demo/demo-rpi5@main/failure-mode/hinge-crack",
+      "target_uri": "poa://demo/demo-rpi5@main/part/lid/feature/hinge",
+      "failure": "Hinge knuckle cracks",
+      "effect": "Lid detaches or cannot close",
+      "cause": "Layer orientation, insufficient wall, impact or pin interference",
+      "severity": 7,
+      "occurrence": 4,
+      "detection": 4,
+      "controls": [
+        "Print orientation review",
+        "Pin clearance coupon",
+        "Cycle test"
+      ]
+    },
+    {
+      "uri": "poa://demo/demo-rpi5@main/failure-mode/brownout",
+      "target_uri": "poa://demo/demo-rpi5@main/power-supply/usb-c-5v",
+      "failure": "Supply voltage drops below board requirement",
+      "effect": "Reboot, camera frame loss, file corruption",
+      "cause": "Cable resistance or peak load",
+      "severity": 8,
+      "occurrence": 4,
+      "detection": 3,
+      "controls": [
+        "Power simulation",
+        "Measure at board",
+        "Specify approved PSU/cable"
+      ]
+    },
+    {
+      "uri": "poa://demo/demo-rpi5@main/failure-mode/thermal",
+      "target_uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+      "failure": "SoC thermal throttling",
+      "effect": "Reduced inference rate",
+      "cause": "Insufficient airflow or sustained workload",
+      "severity": 5,
+      "occurrence": 6,
+      "detection": 3,
+      "controls": [
+        "Thermal test",
+        "Telemetry alert",
+        "Optional heatsink/fan variant"
+      ]
+    }
+  ],
+  "human_scenarios": [
+    {
+      "uri": "poa://demo/demo-rpi5@main/human-scenario/install-and-start",
+      "name": "Install board, close lid and start device",
+      "actor": "installer",
+      "stage": "validation",
+      "steps": [
+        {
+          "step_id": "S1",
+          "instruction": "Open the lid beyond 190 degrees.",
+          "action": "rotate_lid",
+          "target_uri": "poa://demo/demo-rpi5@main/part/lid",
+          "preconditions": [],
+          "success_criteria": [
+            "Lid remains attached and no collision occurs"
+          ],
+          "possible_errors": [
+            "Forcing before removing transport lock"
+          ],
+          "hazards": [
+            "Pinch point"
+          ],
+          "expected_duration_s": 4.0,
+          "expected_force_n": 10.0
+        },
+        {
+          "step_id": "S2",
+          "instruction": "Place the Raspberry Pi 5 on the selected set of four standoffs.",
+          "action": "place_component",
+          "target_uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+          "preconditions": [
+            "Power disconnected"
+          ],
+          "success_criteria": [
+            "All four holes align; underside components do not contact unused standoffs"
+          ],
+          "possible_errors": [
+            "Using wrong mounting pattern",
+            "Board reversed"
+          ],
+          "hazards": [
+            "ESD"
+          ],
+          "expected_duration_s": 20.0,
+          "expected_force_n": null
+        },
+        {
+          "step_id": "S3",
+          "instruction": "Connect camera and power cables without strain.",
+          "action": "connect_cables",
+          "target_uri": "poa://demo/demo-rpi5@main/assembly/electronics",
+          "preconditions": [
+            "Board secured"
+          ],
+          "success_criteria": [
+            "Connectors fully seated and cable bend radius respected"
+          ],
+          "possible_errors": [
+            "Reverse camera cable",
+            "Partial USB-C insertion"
+          ],
+          "hazards": [
+            "Connector damage"
+          ],
+          "expected_duration_s": 30.0,
+          "expected_force_n": null
+        },
+        {
+          "step_id": "S4",
+          "instruction": "Close the lid and verify connector access.",
+          "action": "close_lid",
+          "target_uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+          "preconditions": [
+            "No cable in hinge path"
+          ],
+          "success_criteria": [
+            "Lid closes flush; all required ports accessible"
+          ],
+          "possible_errors": [
+            "Cable trapped at joint"
+          ],
+          "hazards": [
+            "Pinch point"
+          ],
+          "expected_duration_s": 8.0,
+          "expected_force_n": null
+        },
+        {
+          "step_id": "S5",
+          "instruction": "Power on and verify camera preview and telemetry.",
+          "action": "start_device",
+          "target_uri": "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance",
+          "preconditions": [
+            "Approved PSU connected"
+          ],
+          "success_criteria": [
+            "Software starts; camera frames processed; no brownout warning"
+          ],
+          "possible_errors": [
+            "Unsupported power supply",
+            "Missing software image"
+          ],
+          "hazards": [
+            "Hot surface during sustained test"
+          ],
+          "expected_duration_s": 60.0,
+          "expected_force_n": null
+        }
+      ],
+      "recovery_steps": []
+    }
+  ],
+  "test_plans": {
+    "poa://demo/demo-rpi5@main/test-plan/product-verification": {
+      "uri": "poa://demo/demo-rpi5@main/test-plan/product-verification",
+      "name": "Raspberry Pi 5 camera appliance verification plan",
+      "stage": "verification",
+      "cases": [
+        {
+          "uri": "poa://demo/demo-rpi5@main/test-plan/product-verification/case/dimensional-inspection",
+          "name": "Housing dimensional inspection",
+          "test_type": "inspection",
+          "target_uris": [
+            "poa://demo/demo-rpi5@main/part/base",
+            "poa://demo/demo-rpi5@main/part/lid"
+          ],
+          "lifecycle_stage": "verification",
+          "procedure": [
+            "Generate 2D drawings from the approved revision.",
+            "Measure wall thickness and critical interfaces.",
+            "Compare measured values with approved parameters."
+          ],
+          "input_artifact_uris": [
+            "poa://demo/demo-rpi5@main/artifact/base-step",
+            "poa://demo/demo-rpi5@main/artifact/lid-step"
+          ],
+          "expected_results": {
+            "wall_thickness_mm": 2.0,
+            "hinge_opening_deg_min": 190
+          },
+          "execution_adapter": "manual",
+          "container_image_uri": null,
+          "status": "ready",
+          "result_artifact_uris": [],
+          "notes": "Physical measurements still required."
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/test-plan/product-verification/case/slicer-check",
+          "name": "FDM manufacturability check",
+          "test_type": "manufacturing",
+          "target_uris": [
+            "poa://demo/demo-rpi5@main/part/base",
+            "poa://demo/demo-rpi5@main/part/lid"
+          ],
+          "lifecycle_stage": "verification",
+          "procedure": [
+            "Slice each STL with the selected printer profile.",
+            "Check non-manifold errors, supports, thin walls, travel and estimated material."
+          ],
+          "input_artifact_uris": [
+            "poa://demo/demo-rpi5@main/artifact/base-stl",
+            "poa://demo/demo-rpi5@main/artifact/lid-stl"
+          ],
+          "expected_results": {
+            "mesh_repair_required": false,
+            "unapproved_supports": 0
+          },
+          "execution_adapter": "slicer-adapter",
+          "container_image_uri": null,
+          "status": "draft",
+          "result_artifact_uris": [],
+          "notes": "Adapter is a plug-in boundary in this package."
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/test-plan/product-verification/case/power-budget",
+          "name": "Power and voltage-drop scenario",
+          "test_type": "electrical",
+          "target_uris": [
+            "poa://demo/demo-rpi5@main/power-supply/usb-c-5v",
+            "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5"
+          ],
+          "lifecycle_stage": "verification",
+          "procedure": [
+            "Run the lumped power model for every load case.",
+            "Flag current limit or brownout threshold violations.",
+            "Confirm estimates with bench measurements before release."
+          ],
+          "input_artifact_uris": [],
+          "expected_results": {
+            "voltage_above_brownout": true,
+            "current_below_supply_limit": true
+          },
+          "execution_adapter": "core-power-model",
+          "container_image_uri": null,
+          "status": "ready",
+          "result_artifact_uris": [],
+          "notes": "Analytical estimate, not SPICE or hardware-in-the-loop."
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/test-plan/product-verification/case/camera-pipeline",
+          "name": "Camera sample-image pipeline",
+          "test_type": "camera",
+          "target_uris": [
+            "poa://demo/demo-rpi5@main/camera/camera-module-3",
+            "poa://demo/demo-rpi5@main/software/vision-app"
+          ],
+          "lifecycle_stage": "validation",
+          "procedure": [
+            "Replay sample images through the containerized application.",
+            "Capture deterministic output metrics and logs.",
+            "Compare with approved expected results."
+          ],
+          "input_artifact_uris": [],
+          "expected_results": {
+            "sample_images_processed": 2,
+            "fatal_errors": 0
+          },
+          "execution_adapter": "docker-compose",
+          "container_image_uri": "poa://demo/demo-rpi5@main/container-image/vision-app-runtime",
+          "status": "draft",
+          "result_artifact_uris": [],
+          "notes": "Synthetic images are included; real camera validation is required."
+        },
+        {
+          "uri": "poa://demo/demo-rpi5@main/test-plan/product-verification/case/human-installation",
+          "name": "Human installation and misuse review",
+          "test_type": "human_use",
+          "target_uris": [
+            "poa://demo/demo-rpi5@main/device/rpi5-camera-appliance"
+          ],
+          "lifecycle_stage": "validation",
+          "procedure": [
+            "Execute the defined human-use scenario.",
+            "Record errors, ambiguity, forces, pinch points and recovery steps.",
+            "Update FMEA controls."
+          ],
+          "input_artifact_uris": [],
+          "expected_results": {
+            "critical_use_errors": 0,
+            "recovery_documented": true
+          },
+          "execution_adapter": "checklist",
+          "container_image_uri": null,
+          "status": "ready",
+          "result_artifact_uris": [],
+          "notes": "Digital-human ergonomics is a future adapter; current evaluation is rule/checklist based."
+        }
+      ],
+      "approval_required": true,
+      "owner_role": "editor"
+    }
+  },
+  "power_model": {
+    "supply_voltage_v": 5.1,
+    "supply_current_limit_a": 5.0,
+    "cable_resistance_ohm": 0.08,
+    "connector_resistance_ohm": 0.03,
+    "board_path_resistance_ohm": 0.02,
+    "brownout_voltage_v": 4.63,
+    "load_cases": [
+      {
+        "name": "idle",
+        "current_a": 0.8,
+        "duration_s": 60.0,
+        "component_uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+        "heat_fraction": 0.95
+      },
+      {
+        "name": "camera inference",
+        "current_a": 2.4,
+        "duration_s": 300.0,
+        "component_uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+        "heat_fraction": 0.95
+      },
+      {
+        "name": "short peak",
+        "current_a": 4.2,
+        "duration_s": 10.0,
+        "component_uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+        "heat_fraction": 0.95
+      }
+    ]
+  },
+  "thermal_model": {
+    "nodes": [
+      {
+        "uri": "poa://demo/demo-rpi5@main/purchased-component/raspberry-pi-5",
+        "ambient_c": 25.0,
+        "initial_c": 25.0,
+        "thermal_resistance_c_per_w": 7.5,
+        "thermal_capacitance_j_per_c": 45.0
+      },
+      {
+        "uri": "poa://demo/demo-rpi5@main/assembly/enclosure",
+        "ambient_c": 25.0,
+        "initial_c": 25.0,
+        "thermal_resistance_c_per_w": 14.0,
+        "thermal_capacitance_j_per_c": 180.0
+      }
+    ],
+    "timestep_s": 0.5
+  },
+  "ecommerce_offers": [
+    {
+      "uri": "poa://demo/demo-rpi5@main/offer/default",
+      "sku": "RPI5-CAM-ENC-DEMO",
+      "gtin": null,
+      "gtin_status": "unassigned",
+      "title": "Raspberry Pi 5 camera appliance enclosure kit",
+      "description": "Draft offer generated from the living product specification. Purchased Raspberry Pi, camera and power supply inclusion must be selected as a variant.",
+      "currency": "EUR",
+      "price": null,
+      "tax_category": null,
+      "stock_status": "draft",
+      "media_artifact_uris": [
+        "poa://demo/demo-rpi5@main/artifact/reference-back2-png"
+      ],
+      "package_object_uri": "poa://demo/demo-rpi5@main/packaging/retail-box",
+      "attributes": {
+        "enclosure_material": "PETG prototype",
+        "wall_thickness": "2 mm",
+        "compute": "Raspberry Pi 5 compatible"
+      }
+    }
+  ],
+  "metadata": {
+    "default_3d_artifacts": {
+      "base": "poa://demo/demo-rpi5@main/artifact/base-stl",
+      "lid": "poa://demo/demo-rpi5@main/artifact/lid-stl"
+    },
+    "default_2d_views": {
+      "front": "poa://demo/demo-rpi5@main/artifact/assembly-front",
+      "top": "poa://demo/demo-rpi5@main/artifact/assembly-top",
+      "side": "poa://demo/demo-rpi5@main/artifact/assembly-side"
+    },
+    "canonical_format": "protobuf+json",
+    "poa_definition": "Product Object Addressing",
+    "format_version": "0.2.0",
+    "selection_contract": "screen evidence -> projection/semantic map -> scoped change plan -> CAD adapter -> regenerated artifacts",
+    "implementation_limits": [
+      "Arbitrary local B-Rep edits require a CAD adapter with persistent face/feature identity.",
+      "PCB/SCH editing is represented in the DSL and roadmap; no production PCB autorouter is included.",
+      "Power/thermal calculations are reduced-order estimates and require physical validation.",
+      "EAN/GTIN check digits can be calculated, but number allocation must come from the product owner/GS1 process."
+    ]
+  },
+  "created_at": "2026-08-11T17:13:51.838298Z",
+  "updated_at": "2026-08-11T17:53:18.419684"
+}

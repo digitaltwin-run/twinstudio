@@ -1,0 +1,164 @@
+{
+  "$defs": {
+    "ProjectionEntityBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "source_artifact_uri": {
+          "title": "Source Artifact Uri",
+          "type": "string"
+        },
+        "object_uri": {
+          "title": "Object Uri",
+          "type": "string"
+        },
+        "feature_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature Uri"
+        },
+        "semantic_face_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Face Uri"
+        },
+        "brep_face_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brep Face Id"
+        },
+        "mapping_type": {
+          "default": "manual",
+          "enum": [
+            "orthographic",
+            "calibrated_photo",
+            "manual",
+            "derived"
+          ],
+          "title": "Mapping Type",
+          "type": "string"
+        },
+        "source_to_world_matrix": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Source To World Matrix",
+          "type": "array"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "entity_id",
+        "source_artifact_uri",
+        "object_uri"
+      ],
+      "title": "ProjectionEntityBinding",
+      "type": "object"
+    },
+    "SourceView": {
+      "enum": [
+        "3d",
+        "2d",
+        "photo",
+        "pcb",
+        "schematic"
+      ],
+      "title": "SourceView",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "uri": {
+      "title": "Uri",
+      "type": "string"
+    },
+    "source_artifact_uri": {
+      "title": "Source Artifact Uri",
+      "type": "string"
+    },
+    "source_view": {
+      "$ref": "#/$defs/SourceView"
+    },
+    "target_revision": {
+      "title": "Target Revision",
+      "type": "string"
+    },
+    "entities": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ProjectionEntityBinding"
+      },
+      "title": "Entities",
+      "type": "object"
+    },
+    "calibration": {
+      "additionalProperties": true,
+      "title": "Calibration",
+      "type": "object"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "calibrated",
+        "verified",
+        "stale"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "created_by": {
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "uri",
+    "source_artifact_uri",
+    "source_view",
+    "target_revision",
+    "created_by"
+  ],
+  "title": "ProjectionMap",
+  "type": "object"
+}

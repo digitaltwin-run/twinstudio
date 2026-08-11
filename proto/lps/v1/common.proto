@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package lps.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "io.livingproductstudio.v1";
+option csharp_namespace = "LivingProductStudio.V1";
+
+// Every domain address uses Product Object Addressing (POA):
+// poa://{tenant}/{project}@{revision}/{kind}/{id}/...
+message PoaRef {
+  string uri = 1;
+}
+
+message Quantity {
+  double value = 1;
+  string unit = 2;
+  optional double tolerance_plus = 3;
+  optional double tolerance_minus = 4;
+}
+
+message ParameterValue {
+  oneof value {
+    string string_value = 1;
+    double number_value = 2;
+    int64 integer_value = 3;
+    bool boolean_value = 4;
+  }
+  string unit = 5;
+  string status = 6;
+  string source_uri = 7;
+  double confidence = 8;
+  string notes = 9;
+}
+
+message Actor {
+  string email = 1;
+  string role = 2;
+  string authentication_method = 3;
+}
+
+message FileRef {
+  string artifact_uri = 1;
+  string name = 2;
+  string media_type = 3;
+  string sha256 = 4;
+  int64 size_bytes = 5;
+  string download_uri = 6;
+}
+
+message Diagnostic {
+  enum Severity {
+    SEVERITY_UNSPECIFIED = 0;
+    INFO = 1;
+    WARNING = 2;
+    ERROR = 3;
+    BLOCKING = 4;
+  }
+  Severity severity = 1;
+  string code = 2;
+  string message = 3;
+  repeated string target_uris = 4;
+  google.protobuf.Struct data = 5;
+}
+
+message AuditStamp {
+  string created_by = 1;
+  google.protobuf.Timestamp created_at = 2;
+  string updated_by = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}

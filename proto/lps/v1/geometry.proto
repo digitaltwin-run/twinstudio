@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+package lps.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "lps/v1/common.proto";
+
+message ScreenPoint {
+  double x = 1;
+  double y = 2;
+}
+
+message WorldPoint {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message CameraState {
+  string projection = 1;
+  WorldPoint position = 2;
+  WorldPoint target = 3;
+  WorldPoint up = 4;
+  optional double fov = 5;
+  optional double zoom = 6;
+  int32 viewport_width = 7;
+  int32 viewport_height = 8;
+}
+
+message RayHit {
+  string object_uri = 1;
+  string mesh_hash = 2;
+  optional int64 face_index = 3;
+  string semantic_face_uri = 4;
+  string brep_face_id = 5;
+  string feature_uri = 6;
+  WorldPoint point = 7;
+  WorldPoint normal = 8;
+  optional double distance = 9;
+}
+
+message WorldAabb {
+  WorldPoint minimum = 1;
+  WorldPoint maximum = 2;
+}
+
+message RegionSelection {
+  string selection_id = 1;
+  string uri = 2;
+  string project_id = 3;
+  string project_revision = 4;
+  string source_view = 5;
+  string tool = 6;
+  repeated string target_object_uris = 7;
+  repeated ScreenPoint screen_path = 8;
+  repeated RayHit ray_hits = 9;
+  WorldAabb world_aabb = 10;
+  CameraState camera = 11;
+  string source_artifact_uri = 12;
+  repeated string projection_entity_ids = 13;
+  string notes = 14;
+  string created_by = 15;
+  google.protobuf.Timestamp created_at = 16;
+}
+
+message ProjectionEntityBinding {
+  string entity_id = 1;
+  string source_artifact_uri = 2;
+  string object_uri = 3;
+  string feature_uri = 4;
+  string semantic_face_uri = 5;
+  string brep_face_id = 6;
+  string mapping_type = 7;
+  repeated double source_to_world_matrix = 8;
+  double confidence = 9;
+  google.protobuf.Struct metadata = 10;
+}
+
+message ProjectionMap {
+  string uri = 1;
+  string source_artifact_uri = 2;
+  string source_view = 3;
+  string target_revision = 4;
+  repeated ProjectionEntityBinding entities = 5;
+  google.protobuf.Struct calibration = 6;
+  string status = 7;
+  string created_by = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
+
+message SelectionMap {
+  string uri = 1;
+  string selection_uri = 2;
+  string target_revision = 3;
+  repeated string resolved_object_uris = 4;
+  repeated string resolved_feature_uris = 5;
+  repeated string resolved_semantic_face_uris = 6;
+  repeated string resolved_brep_face_ids = 7;
+  string algorithm = 8;
+  string status = 9;
+  repeated Diagnostic diagnostics = 10;
+  google.protobuf.Struct metadata = 11;
+}
+
+message GeometryOperation {
+  string operation_id = 1;
+  string kind = 2;
+  string target_uri = 3;
+  google.protobuf.Struct selector = 4;
+  google.protobuf.Struct arguments = 5;
+  string rationale = 6;
+  double confidence = 7;
+  bool reversible = 8;
+  repeated string validation_steps = 9;
+}

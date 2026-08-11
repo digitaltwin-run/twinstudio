@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Housing Studio - generator obudowy 2D/3D</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body
+  data-litellm-configured="{{ 'true' if litellm_configured else 'false' }}"
+  data-app-version="{{ app_version }}"
+>
+  <header class="app-header">
+    <div>
+      <div class="title-row">
+        <h1>Housing Studio</h1>
+        <span class="version-pill">v{{ app_version }}</span>
+      </div>
+      <p>Parametryczny generator obudowy Raspberry Pi 5: CAD 3D, dokumentacja 2D, warstwy, rewizje i artefakty.</p>
+    </div>
+    <div class="header-actions">
+      <span id="llmBadge" class="badge"></span>
+      <a class="button secondary" href="/docs" target="_blank" rel="noreferrer">API</a>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="control-panel">
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Opis naturalny</h2>
+          <span class="step">1</span>
+        </div>
+        <textarea id="promptInput" rows="7" spellcheck="true">Ustaw grubość wszystkich ścian na 2 mm. Zachowaj widoki 2D: front, top i side. Włącz oba warianty mocowania Raspberry Pi, zawias otwierany do 195 stopni oraz warstwy DXF dla krawędzi, wymiarów i referencji PCB.</textarea>
+        <button id="interpretButton" class="button primary full">Przygotuj propozycję zmian</button>
+        <p id="interpretMessage" class="hint"></p>
+      </section>
+
+      <section id="changeReviewSection" class="panel-section hidden">
+        <div class="section-heading">
+          <h2>Przegląd zmian</h2>
+          <span id="changeCountBadge" class="step">0</span>
+        </div>
+        <p class="hint">Zmiany nie są stosowane automatycznie. Sprawdź wartości przed zatwierdzeniem.</p>
+        <div id="changeList" class="change-list"></div>
+        <div class="toolbar review-actions">
+          <button id="applyChangesButton" class="button success">Zastosuj</button>
+          <button id="discardChangesButton" class="button secondary">Odrzuć</button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Parametry i warstwy</h2>
+          <span class="step">2</span>
+        </div>
+
+        <details open>
+          <summary>Kluczowe wymiary</summary>
+          <div id="quickParameterControls" class="quick-grid"></div>
+        </details>
+
+        <details open>
+          <summary>Warstwy funkcjonalne 3D</summary>
+          <div id="featureLayerControls" class="toggle-list"></div>
+        </details>
+
+        <details>
+          <summary>Widoki i warstwy dokumentacji 2D</summary>
+          <div class="control-subheading">Widoki</div>
+          <div id="drawingViewControls" class="toggle-list compact-list"></div>
+          <div class="control-subheading">Warstwy</div>
+          <div id="drawingLayerControls" class="toggle-list"></div>
+        </details>
+
+        <details>
+          <summary>Formaty wyjściowe</summary>
+          <div id="artifactOutputControls" class="toggle-list compact-list"></div>
+        </details>
+        <p class="hint">Przełączniki aktualizują konfigurację JSON. Warstwy 2D można ukrywać w podglądzie SVG bez ponownego generowania; DXF i PDF wymagają regeneracji.</p>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Konfiguracja JSON</h2>
+          <span class="step">3</span>
+        </div>
+        <div class="toolbar compact">
+          <button id="resetConfigButton" class="button secondary">Domyślna</button>
+          <button id="validateConfigButton" class="button secondary">Waliduj</button>
+          <button id="downloadConfigButton" class="button secondary">Pobierz</button>
+          <label class="button secondary file-button">
+            Wczytaj
+            <input id="uploadConfigInput" type="file" accept="application/json,.json" />
+          </label>
+        </div>
+        <textarea id="configEditor" class="code-editor" rows="22" spellcheck="false"></textarea>
+        <div id="configStatus" class="status-line"></div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Generowanie</h2>
+          <span class="step">4</span>
+        </div>
+        <button id="generateButton" class="button success full">Generuj artefakty 2D i 3D</button>
+        <div id="generationProgress" class="progress hidden"><div></div></div>
+        <p class="hint">Paczka zawiera między innymi STEP, STL, OBJ, GLB, DXF, SVG, PDF, BOM, raport zmian i skrypt Python do odtworzenia rewizji.</p>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-heading">
+          <h2>Historia rewizji</h2>
+          <button id="refreshJobsButton" class="icon-text-button" type="button">Odśwież</button>
+        </div>
+        <div id="jobHistory" class="job-history">
+          <div class="placeholder">Brak wygenerowanych rewizji.</div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="preview-area">
+      <div id="messageBanner" class="message-banner hidden"></div>
+
+      <section class="preview-card viewer-card">
+        <div class="card-header">
+          <div>
+            <h2>Podgląd 3D</h2>
+            <p>Przeciągnij, aby obracać; kółko myszy zmienia skalę.</p>
+          </div>
+          <div class="viewer-controls">
+            <label>
+              Kąt klapy
+              <input id="lidAngle" type="range" min="0" max="210" value="0" step="1" />
+              <output id="lidAngleValue">0°</output>
+            </label>
+            <button id="openLidButton" class="button secondary">Otwórz</button>
+            <button id="resetCameraButton" class="button secondary">Reset kamery</button>
+            <label class="inline-check"><input id="showBase" type="checkbox" checked /> Base</label>
+            <label class="inline-check"><input id="showLid" type="checkbox" checked /> Lid</label>
+            <label class="inline-check"><input id="showGrid" type="checkbox" checked /> Grid</label>
+            <label class="inline-check"><input id="showAxes" type="checkbox" checked /> Axes</label>
+          </div>
+        </div>
+        <div id="viewer" class="viewer">
+          <div id="viewerPlaceholder" class="placeholder">Wygeneruj projekt albo otwórz rewizję, aby załadować model STL.</div>
+        </div>
+      </section>
+
+      <section class="preview-card">
+        <div class="card-header">
+          <div>
+            <h2>Podgląd dokumentacji 2D</h2>
+            <p>Front, top i side dla podstawy, klapy oraz złożenia.</p>
+          </div>
+          <div class="toolbar compact">
+            <select id="drawingPart" aria-label="Część rysunku">
+              <option value="base">Base</option>
+              <option value="lid">Lid</option>
+              <option value="assembly">Assembly</option>
+            </select>
+            <select id="drawingView" aria-label="Widok rysunku">
+              <option value="front">Front</option>
+              <option value="top">Top</option>
+              <option value="side">Side</option>
+            </select>
+          </div>
+        </div>
+        <div id="drawingLayerVisibility" class="drawing-layer-visibility hidden"></div>
+        <div class="drawing-frame">
+          <div id="drawingSvgHost" class="drawing-svg-host" aria-label="2D drawing preview"></div>
+          <div id="drawingPlaceholder" class="placeholder">Podgląd SVG pojawi się po wygenerowaniu.</div>
+        </div>
+        <div id="drawingPreviewStatus" class="preview-footnote">Warstwy podglądu są sterowane przełącznikami po lewej stronie.</div>
+      </section>
+
+      <div class="two-column">
+        <section class="preview-card">
+          <div class="card-header">
+            <div>
+              <h2>Walidacja</h2>
+              <p>Sprzeczności wymiarowe i założenia wymagające prototypu.</p>
+            </div>
+          </div>
+          <div id="warningList" class="warning-list"></div>
+        </section>
+
+        <section class="preview-card">
+          <div class="card-header">
+            <div>
+              <h2>Metryki</h2>
+              <p>Wartości wyliczone z aktualnej konfiguracji.</p>
+            </div>
+          </div>
+          <div id="metricsGrid" class="metrics-grid"></div>
+        </section>
+      </div>
+
+      <section class="preview-card">
+        <div class="card-header">
+          <div>
+            <h2>Pliki do pobrania</h2>
+            <p>Każdy artefakt osobno oraz kompletna paczka ZIP.</p>
+          </div>
+          <a id="bundleButton" class="button success hidden" href="#">Pobierz ZIP</a>
+        </div>
+        <div id="artifactList" class="artifact-list">
+          <div class="placeholder">Lista plików pojawi się po wygenerowaniu lub otwarciu rewizji.</div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    Model jest parametryczny, ale przed produkcją wymaga wydruku próbnego i sprawdzenia zawiasu, tolerancji oraz dostępu do złączy.
+  </footer>
+
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
