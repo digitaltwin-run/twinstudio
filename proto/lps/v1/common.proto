@@ -54,10 +54,10 @@ message FileRef {
 message Diagnostic {
   enum Severity {
     SEVERITY_UNSPECIFIED = 0;
-    INFO = 1;
-    WARNING = 2;
-    ERROR = 3;
-    BLOCKING = 4;
+    SEVERITY_INFO = 1;
+    SEVERITY_WARNING = 2;
+    SEVERITY_ERROR = 3;
+    SEVERITY_BLOCKING = 4;
   }
   Severity severity = 1;
   string code = 2;

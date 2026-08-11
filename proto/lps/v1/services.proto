@@ -2,34 +2,76 @@ syntax = "proto3";
 
 package lps.v1;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/struct.proto";
 import "lps/v1/commands.proto";
 import "lps/v1/events.proto";
 import "lps/v1/project.proto";
 import "lps/v1/simulation.proto";
 
-message ProjectIdRequest {
+option java_multiple_files = true;
+option java_package = "io.livingproductstudio.v1";
+option csharp_namespace = "LivingProductStudio.V1";
+
+message ExecuteRequest {
+  CommandEnvelope command = 1;
+}
+
+message ExecuteResponse {
+  repeated EventEnvelope events = 1;
+}
+
+message PlanScopedChangeResponse {
+  ChangePlan plan = 1;
+}
+
+message ApplyChangePlanResponse {
+  repeated EventEnvelope events = 1;
+}
+
+message GetProjectRequest {
   string project_id = 1;
 }
 
-message EventStreamRequest {
+message GetProjectResponse {
+  ProjectSnapshot project = 1;
+}
+
+message GetUnifiedSpecificationRequest {
+  string project_id = 1;
+}
+
+message GetUnifiedSpecificationResponse {
+  UnifiedSpecification specification = 1;
+}
+
+message StreamEventsRequest {
   string project_id = 1;
   int64 after_version = 2;
 }
 
+message StreamEventsResponse {
+  EventEnvelope event = 1;
+}
+
+message RunRequest {
+  SimulationRequest simulation = 1;
+}
+
+message RunResponse {
+  SimulationResult result = 1;
+}
+
 service CommandService {
-  rpc Execute(CommandEnvelope) returns (EventBatch);
-  rpc PlanScopedChange(PlanScopedChangeRequest) returns (ChangePlan);
-  rpc ApplyChangePlan(ApplyChangePlanRequest) returns (EventBatch);
+  rpc Execute(ExecuteRequest) returns (ExecuteResponse);
+  rpc PlanScopedChange(PlanScopedChangeRequest) returns (PlanScopedChangeResponse);
+  rpc ApplyChangePlan(ApplyChangePlanRequest) returns (ApplyChangePlanResponse);
 }
 
 service QueryService {
-  rpc GetProject(ProjectIdRequest) returns (ProjectSnapshot);
-  rpc GetUnifiedSpecification(ProjectIdRequest) returns (UnifiedSpecification);
-  rpc StreamEvents(EventStreamRequest) returns (stream EventEnvelope);
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
+  rpc GetUnifiedSpecification(GetUnifiedSpecificationRequest) returns (GetUnifiedSpecificationResponse);
+  rpc StreamEvents(StreamEventsRequest) returns (stream StreamEventsResponse);
 }
 
 service SimulationService {
-  rpc Run(SimulationRequest) returns (SimulationResult);
+  rpc Run(RunRequest) returns (RunResponse);
 }
