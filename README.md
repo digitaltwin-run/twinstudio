@@ -328,6 +328,7 @@ The project tests POA parsing/scope, permissions, event reconstruction, optimist
 - [Acceptance criteria](docs/15_ACCEPTANCE_CRITERIA.md)
 - [Implementation status](docs/IMPLEMENTATION_STATUS.md)
 - [Główny plan platformy i lifecycle — PL](docs/16_MASTER_PRODUCT_LIFECYCLE_BLUEPRINT_PL.md)
+- [Podsumowanie dopracowania i dalsze zalecenia — PL](docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md)
 - [Polski indeks paczki](PAKIET_PL.md)
 
 ## License

@@ -7,6 +7,7 @@
 - `docs/00_START_PL.md` — szybkie uruchomienie i podstawowy workflow po polsku.
 - `docs/16_MASTER_PRODUCT_LIFECYCLE_BLUEPRINT_PL.md` — kompletny plan platformy i cyklu życia produktu.
 - `docs/17_REQUIREMENTS_TRACEABILITY_PL.md` — macierz każdego wymagania, modułu, statusu i kryterium odbioru.
+- `docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md` — wnioski z uruchomienia i publikacji oraz priorytety dalszego hardeningu.
 - `docs/IMPLEMENTATION_STATUS.md` — macierz: zaimplementowane / scaffold / roadmap.
 - `docs/VERIFICATION.md` oraz `docs/verification-report.json` — wykonane testy i jawne ograniczenia.
 - `compose.yaml` — środowisko Docker z profilami CAD, integracji, symulacji, Open WebUI i storage.
@@ -16,7 +17,7 @@
 - `services/mqtt-gateway/` — most MQTT → REST.
 - `services/device-sim/` — symulator telemetrii urządzenia.
 - `examples/rpi5-camera3/` — żywy projekt przykładowego urządzenia.
-- `examples/rpi5-camera3/demo-rpi5.lps.zip` — przenośny eksport projektu.
+- `examples/rpi5-camera3/demo-rpi5.lps/` — rozpakowany, przeglądalny eksport projektu; ZIP można wygenerować ponownie.
 - `examples/rpi5-camera3/scoped-edit-demo/` — działający przykład zaznaczenie → lokalny otwór → STEP/STL/journal.
 
 ## Uruchomienie

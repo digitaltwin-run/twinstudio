@@ -65,3 +65,5 @@ Osoba zewnętrzna podaje email i rolę. Decydent dostaje email approve/reject. P
 - GTIN/EAN wymaga legalnej alokacji właściciela w GS1; narzędzie oblicza tylko cyfrę kontrolną.
 
 Pełny opis znajduje się w `docs/16_MASTER_PRODUCT_LIFECYCLE_BLUEPRINT_PL.md`, a stan implementacji w `docs/IMPLEMENTATION_STATUS.md`.
+Wnioski z uruchomienia, publikacji i lista dalszych prac znajdują się w
+`docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md`.

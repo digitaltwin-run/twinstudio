@@ -1,6 +1,34 @@
 # Verification record
 
-Verification performed in the build environment on 2026-08-11.
+## Live runtime and publication addendum
+
+Additional live verification was performed on 2026-08-11 after the original package-build record below:
+
+- the base Compose stack (`app`, PostgreSQL, MQTT and Mailpit) was built and started;
+- the application, PostgreSQL and Mailpit healthchecks passed, and MQTT accepted a live TCP connection;
+- the application returned HTTP 200 for the web UI, health endpoint and OpenAPI document;
+- startup seeding reconstructed `demo-rpi5` with 15 objects and 58 events in PostgreSQL;
+- project tree, unified specification, power simulation, human-use evaluation and mechanical checks were queried over live REST;
+- MCP `tools/list` returned 12 tools using the modern 2026-07-28 request shape;
+- Mailpit API and MQTT connectivity were checked;
+- all 24 recorded example artifacts existed and their SHA-256 hashes matched;
+- the unpacked LPS example contained all 27 files declared by its internal manifest, with matching sizes and hashes;
+- local validation passed 52 tests with one Node-only test skipped in the CAD container; the skipped JavaScript check passed separately with Node;
+- GitHub Actions passed all 53 tests with Node available;
+- `buf lint` passed under the `STANDARD` profile and Compose configuration validation passed;
+- the public CI run completed successfully: <https://github.com/digitaltwin-run/twinstudio/actions/runs/31529121492>.
+
+The local host used alternate ports `8400` and `8425` because the documented defaults were already occupied.
+The published Compose file retains defaults `8000` and `8025` and permits overrides through
+`LPS_HOST_PORT` and `MAILPIT_HOST_PORT`.
+
+See `docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md` for the issues found, corrections made and remaining
+production-hardening priorities.
+
+## Original package-build record
+
+The following section preserves the earlier build-environment record from 2026-08-11. Its “not executed”
+statements describe that earlier environment and are superseded by the live addendum where applicable.
 
 ## Passed checks
 
