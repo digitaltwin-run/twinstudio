@@ -7,6 +7,28 @@
 
 ---
 
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Dokumentacja została uzupełniona i opublikowana:
+
+  - Podsumowanie dopracowania i dalsze zalecenia (https://github.com/digitaltwin-run/twinstudio/blob/main/docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md)
+  - Zaktualizowany raport weryfikacji (https://github.com/digitaltwin-run/twinstudio/blob/main/docs/VERIFICATION.md)
+
+  Dokument obejmuje:
+
+  - problemy wykryte podczas uruchomienia i publikacji oraz ich rozwiązania;
+  - priorytety P0/P1/P2;
+  - bezpieczeństwo, migracje, Docker, CI, Protobuf i obserwowalność;
+  - 63 pozostałe uwagi Ruff i ostrzeżenia deprecacyjne;
+  - strategię przechowywania STEP/STL/GLB i rozpakowanych eksportów;
+  - kolejność dalszych prac i kryteria gotowości produkcyjnej.
+
+  Commit: 45e7050. Pipeline CI (https://github.com/digitaltwin-run/twinstudio/actions/runs/31532212337) przeszedł w całości: Python, Compose i Protobuf.
+
+─ Worked for 5m 50s ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
 ## 📋 Current Issues (showing 200 of 506)
 
 - [ ] housing_studio/__init__.py:3 - Relative import (level=1): '.models'
