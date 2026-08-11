@@ -1,0 +1,24 @@
+flowchart TD
+%% generated in 0.02s
+    app__main["app.main<br/>15 funcs"]
+    generator["generator<br/>2 funcs"]
+    housing_studio__artifacts["housing_studio.artifacts<br/>11 funcs"]
+    housing_studio__cad3d["housing_studio.cad3d<br/>15 funcs"]
+    housing_studio__config_diff["housing_studio.config_diff<br/>6 funcs"]
+    housing_studio__draw2d["housing_studio.draw2d<br/>30 funcs"]
+    housing_studio__llm_config["housing_studio.llm_config<br/>7 funcs"]
+    housing_studio__mesh_preview["housing_studio.mesh_preview<br/>5 funcs"]
+    sample_output__demo["sample_output.demo<br/>1 funcs"]
+    services__cad_worker["services.cad-worker<br/>185 funcs"]
+    app__main ==>|10| services__cad_worker
+    housing_studio__draw2d ==>|8| services__cad_worker
+    services__cad_worker ==>|6| housing_studio__cad3d
+    housing_studio__cad3d ==>|6| services__cad_worker
+    housing_studio__artifacts ==>|6| services__cad_worker
+    housing_studio__artifacts ==>|6| housing_studio__cad3d
+    generator ==>|5| services__cad_worker
+    housing_studio__llm_config -->|3| housing_studio__config_diff
+    services__cad_worker -->|1| housing_studio__draw2d
+    housing_studio__mesh_preview -->|1| services__cad_worker
+    sample_output__demo -->|1| services__cad_worker
+    housing_studio__artifacts -->|1| housing_studio__draw2d

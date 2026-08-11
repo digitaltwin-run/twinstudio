@@ -1,0 +1,4839 @@
+project: /home/tom/github/digitaltwin-run/twinstudio
+generated_from: code2llm call graph analysis
+stats:
+  total_nodes: 375
+  total_edges: 490
+  modules_count: 45
+nodes:
+  app.main._validated_config:
+    name: _validated_config
+    module: app.main
+    line: 63
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 3
+  src.living_product_studio.static.app.handleDraw:
+    name: handleDraw
+    module: src.living_product_studio.static.app
+    line: 33
+    cyclomatic_complexity: 16
+    calls_out: 7
+    calls_in: 1
+  examples.rpi5-camera3.pcb.kicad_adapter.export_review_artifacts:
+    name: export_review_artifacts
+    module: examples.rpi5-camera3.pcb.kicad_adapter
+    line: 32
+    cyclomatic_complexity: 3
+    calls_out: 25
+    calls_in: 0
+  src.living_product_studio.cli.export:
+    name: export
+    module: src.living_product_studio.cli
+    line: 117
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 0
+  app.main._safe_job_identifier:
+    name: _safe_job_identifier
+    module: app.main
+    line: 70
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 4
+  src.living_product_studio.mcp_protocol.request_meta:
+    name: request_meta
+    module: src.living_product_studio.mcp_protocol
+    line: 38
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  housing_studio.cad3d._wire_rect:
+    name: _wire_rect
+    module: housing_studio.cad3d
+    line: 25
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 6
+  src.living_product_studio.event_store.token_hash:
+    name: token_hash
+    module: src.living_product_studio.event_store
+    line: 105
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 9
+  src.living_product_studio.mcp_gateway.McpGateway._modernize_result:
+    name: _modernize_result
+    module: src.living_product_studio.mcp_gateway
+    line: 120
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  app.static.app.interpretPrompt:
+    name: interpretPrompt
+    module: app.static.app
+    line: 735
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.fallback_interpret:
+    name: fallback_interpret
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config
+    line: 45
+    cyclomatic_complexity: 33
+    calls_out: 28
+    calls_in: 3
+  src.living_product_studio.static.app.saveAnnotation:
+    name: saveAnnotation
+    module: src.living_product_studio.static.app
+    line: 52
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.living_product_studio.event_store.EventStore.accept_invitation:
+    name: accept_invitation
+    module: src.living_product_studio.event_store
+    line: 345
+    cyclomatic_complexity: 4
+    calls_out: 17
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.interpret_with_litellm:
+    name: interpret_with_litellm
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config
+    line: 247
+    cyclomatic_complexity: 8
+    calls_out: 21
+    calls_in: 2
+  src.living_product_studio.change_planner._diameter:
+    name: _diameter
+    module: src.living_product_studio.change_planner
+    line: 357
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  src.living_product_studio.static.app.initTabs:
+    name: initTabs
+    module: src.living_product_studio.static.app
+    line: 18
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  src.living_product_studio.static.app.renderTree:
+    name: renderTree
+    module: src.living_product_studio.static.app
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 4
+  app.static.app.blob:
+    name: blob
+    module: app.static.app
+    line: 812
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.generator.load_config:
+    name: load_config
+    module: services.cad-worker.vendor.rpi5_housing_studio.generator
+    line: 13
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.living_product_studio.static.app.loadDrawing:
+    name: loadDrawing
+    module: src.living_product_studio.static.app
+    line: 49
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 2
+  app.static.app.manifest:
+    name: manifest
+    module: app.static.app
+    line: 785
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  app.static.app.checked:
+    name: checked
+    module: app.static.app
+    line: 494
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_top_view:
+    name: _assembly_top_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 415
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 1
+  app.static.app.proposal:
+    name: proposal
+    module: app.static.app
+    line: 759
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  housing_studio.cad3d._camera_positions:
+    name: _camera_positions
+    module: housing_studio.cad3d
+    line: 335
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.living_product_studio.static.app.renderObjectInspector:
+    name: renderObjectInspector
+    module: src.living_product_studio.static.app
+    line: 23
+    cyclomatic_complexity: 10
+    calls_out: 5
+    calls_in: 3
+  src.living_product_studio.cli.gtin_complete:
+    name: gtin_complete
+    module: src.living_product_studio.cli
+    line: 126
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.living_product_studio.static.app.resizeViewer:
+    name: resizeViewer
+    module: src.living_product_studio.static.app
+    line: 26
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.living_product_studio.cli.gtin_validate:
+    name: gtin_validate
+    module: src.living_product_studio.cli
+    line: 131
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  housing_studio.draw2d._dimension_segments:
+    name: _dimension_segments
+    module: housing_studio.draw2d
+    line: 537
+    cyclomatic_complexity: 2
+    calls_out: 18
+    calls_in: 1
+  housing_studio.mesh_preview._board_mesh:
+    name: _board_mesh
+    module: housing_studio.mesh_preview
+    line: 33
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 2
+  app.static.app.file:
+    name: file
+    module: app.static.app
+    line: 904
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.bus.QueryService.project:
+    name: project
+    module: src.living_product_studio.bus
+    line: 40
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  services.cad-worker.scoped_brep_adapter._verify_scope:
+    name: _verify_scope
+    module: services.cad-worker.scoped_brep_adapter
+    line: 64
+    cyclomatic_complexity: 9
+    calls_out: 10
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text:
+    name: text
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 437
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  services.mqtt-gateway.gateway.response_topic:
+    name: response_topic
+    module: services.mqtt-gateway.gateway
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  app.static.app.lidUrl:
+    name: lidUrl
+    module: app.static.app
+    line: 632
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 0
+  app.static.app.generate:
+    name: generate
+    module: app.static.app
+    line: 778
+    cyclomatic_complexity: 5
+    calls_out: 15
+    calls_in: 0
+  generator.load_config:
+    name: load_config
+    module: generator
+    line: 14
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  services.mqtt-gateway.gateway.on_message:
+    name: on_message
+    module: services.mqtt-gateway.gateway
+    line: 35
+    cyclomatic_complexity: 10
+    calls_out: 25
+    calls_in: 0
+  app.static.app.renderDrawingLayers:
+    name: renderDrawingLayers
+    module: app.static.app
+    line: 294
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  src.living_product_studio.uri.is_within_scope:
+    name: is_within_scope
+    module: src.living_product_studio.uri
+    line: 75
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 3
+  src.living_product_studio.static.app.treeNode:
+    name: treeNode
+    module: src.living_product_studio.static.app
+    line: 20
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._svg_dash:
+    name: _svg_dash
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 674
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_side_view:
+    name: _base_side_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 200
+    cyclomatic_complexity: 7
+    calls_out: 25
+    calls_in: 1
+  app.main._url_for:
+    name: _url_for
+    module: app.main
+    line: 81
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 4
+  app.static.app.fetchJson:
+    name: fetchJson
+    module: app.static.app
+    line: 144
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 8
+  app.main.get_job:
+    name: get_job
+    module: app.main
+    line: 248
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 0
+  app.static.app.parseEditorConfig:
+    name: parseEditorConfig
+    module: app.static.app
+    line: 185
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 4
+  src.living_product_studio.simulations.evaluate_human_scenario:
+    name: evaluate_human_scenario
+    module: src.living_product_studio.simulations
+    line: 117
+    cyclomatic_complexity: 10
+    calls_out: 8
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.payload:
+    name: payload
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 381
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  housing_studio.llm_config._response_content:
+    name: _response_content
+    module: housing_studio.llm_config
+    line: 429
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._cylinder_along_x:
+    name: _cylinder_along_x
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 33
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 5
+  src.living_product_studio.gtin.validate_gtin:
+    name: validate_gtin
+    module: src.living_product_studio.gtin
+    line: 27
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  src.living_product_studio.specification.manufacturing_views:
+    name: manufacturing_views
+    module: src.living_product_studio.specification
+    line: 69
+    cyclomatic_complexity: 12
+    calls_out: 13
+    calls_in: 1
+  housing_studio.draw2d._flatten_primitives:
+    name: _flatten_primitives
+    module: housing_studio.draw2d
+    line: 571
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 3
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lineweight_dxf:
+    name: _lineweight_dxf
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 508
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig:
+    name: prettyConfig
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 75
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 4
+  src.living_product_studio.mqtt_bus._topic_atom:
+    name: _topic_atom
+    module: src.living_product_studio.mqtt_bus
+    line: 61
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  housing_studio.draw2d._base_top_view:
+    name: _base_top_view
+    module: housing_studio.draw2d
+    line: 143
+    cyclomatic_complexity: 14
+    calls_out: 28
+    calls_in: 1
+  housing_studio.draw2d._lid_side_view:
+    name: _lid_side_view
+    module: housing_studio.draw2d
+    line: 363
+    cyclomatic_complexity: 2
+    calls_out: 18
+    calls_in: 1
+  housing_studio.draw2d._assembly_top_view:
+    name: _assembly_top_view
+    module: housing_studio.draw2d
+    line: 415
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_front_view:
+    name: _assembly_front_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 400
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 1
+  app.main.interpret:
+    name: interpret
+    module: app.main
+    line: 190
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 0
+  src.living_product_studio.mcp_gateway.McpGateway.tools:
+    name: tools
+    module: src.living_product_studio.mcp_gateway
+    line: 127
+    cyclomatic_complexity: 1
+    calls_out: 21
+    calls_in: 0
+  housing_studio.draw2d._assembly_front_view:
+    name: _assembly_front_view
+    module: housing_studio.draw2d
+    line: 400
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 1
+  housing_studio.mesh_preview._load_mesh:
+    name: _load_mesh
+    module: housing_studio.mesh_preview
+    line: 12
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 3
+  src.living_product_studio.api.startup_seed:
+    name: startup_seed
+    module: src.living_product_studio.api
+    line: 129
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.living_product_studio.static.app.createAreaSelection:
+    name: createAreaSelection
+    module: src.living_product_studio.static.app
+    line: 39
+    cyclomatic_complexity: 5
+    calls_out: 14
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.main.interpret:
+    name: interpret
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 122
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 0
+  src.living_product_studio.cli.command:
+    name: command
+    module: src.living_product_studio.cli
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 0
+  housing_studio.draw2d.export_all_2d:
+    name: export_all_2d
+    module: housing_studio.draw2d
+    line: 865
+    cyclomatic_complexity: 9
+    calls_out: 15
+    calls_in: 2
+  src.living_product_studio.static.app.toggleObjectVisibility:
+    name: toggleObjectVisibility
+    module: src.living_product_studio.static.app
+    line: 22
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 1
+  housing_studio.cad3d._auxiliary_boss_positions:
+    name: _auxiliary_boss_positions
+    module: housing_studio.cad3d
+    line: 344
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  src.living_product_studio.change_planner._angle:
+    name: _angle
+    module: src.living_product_studio.change_planner
+    line: 366
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.scoped_brep_adapter.apply_scoped_operation:
+    name: apply_scoped_operation
+    module: services.cad-worker.scoped_brep_adapter
+    line: 109
+    cyclomatic_complexity: 12
+    calls_out: 43
+    calls_in: 1
+  src.living_product_studio.mcp_protocol.body_protocol_version:
+    name: body_protocol_version
+    module: src.living_product_studio.mcp_protocol
+    line: 43
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 2
+  src.living_product_studio.api._resolved_artifact_path:
+    name: _resolved_artifact_path
+    module: src.living_product_studio.api
+    line: 539
+    cyclomatic_complexity: 7
+    calls_out: 8
+    calls_in: 1
+  src.living_product_studio.gtin.complete_gtin:
+    name: complete_gtin
+    module: src.living_product_studio.gtin
+    line: 19
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  app.static.app.renderWarnings:
+    name: renderWarnings
+    module: app.static.app
+    line: 360
+    cyclomatic_complexity: 7
+    calls_out: 5
+    calls_in: 5
+  app.main.default_config:
+    name: default_config
+    module: app.main
+    line: 168
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 0
+  housing_studio.llm_config._normalise_number:
+    name: _normalise_number
+    module: housing_studio.llm_config
+    line: 28
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.living_product_studio.static.app.create2dSelection:
+    name: create2dSelection
+    module: src.living_product_studio.static.app
+    line: 50
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  housing_studio.artifacts._write_json:
+    name: _write_json
+    module: housing_studio.artifacts
+    line: 59
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 8
+  src.living_product_studio.simulations.mechanical_rule_checks:
+    name: mechanical_rule_checks
+    module: src.living_product_studio.simulations
+    line: 148
+    cyclomatic_complexity: 7
+    calls_out: 13
+    calls_in: 2
+  housing_studio.cad3d.make_models:
+    name: make_models
+    module: housing_studio.cad3d
+    line: 501
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 2
+  src.living_product_studio.change_planner.ChangePlanner._local_plan:
+    name: _local_plan
+    module: src.living_product_studio.change_planner
+    line: 137
+    cyclomatic_complexity: 20
+    calls_out: 33
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_actual_clearances:
+    name: board_actual_clearances
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation
+    line: 45
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 7
+  app.static.app.clearAppliedAudit:
+    name: clearAppliedAudit
+    module: app.static.app
+    line: 205
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 4
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parsed:
+    name: parsed
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 438
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.api.apply_change_plan:
+    name: apply_change_plan
+    module: src.living_product_studio.api
+    line: 322
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 0
+  src.living_product_studio.api.authorize_project:
+    name: authorize_project
+    module: src.living_product_studio.api
+    line: 159
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 14
+  services.cad-worker.vendor.rpi5_housing_studio.app.main.generate:
+    name: generate
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 135
+    cyclomatic_complexity: 3
+    calls_out: 7
+    calls_in: 0
+  app.main.validate_config:
+    name: validate_config
+    module: app.main
+    line: 179
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate:
+    name: generate
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 399
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 0
+  app.static.app.discardProposedChanges:
+    name: discardProposedChanges
+    module: app.static.app
+    line: 772
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  housing_studio.draw2d._base_side_view:
+    name: _base_side_view
+    module: housing_studio.draw2d
+    line: 200
+    cyclomatic_complexity: 7
+    calls_out: 25
+    calls_in: 1
+  housing_studio.artifacts._record:
+    name: _record
+    module: housing_studio.artifacts
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 23
+  src.living_product_studio.static.app.renderSpec:
+    name: renderSpec
+    module: src.living_product_studio.static.app
+    line: 57
+    cyclomatic_complexity: 19
+    calls_out: 12
+    calls_in: 2
+  housing_studio.draw2d._board_outline:
+    name: _board_outline
+    module: housing_studio.draw2d
+    line: 104
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 4
+  src.living_product_studio.event_store._aware:
+    name: _aware
+    module: src.living_product_studio.event_store
+    line: 370
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 4
+  src.living_product_studio.bus.CommandBus._handle_existing:
+    name: _handle_existing
+    module: src.living_product_studio.bus
+    line: 98
+    cyclomatic_complexity: 24
+    calls_out: 42
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig:
+    name: uploadConfig
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 436
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics:
+    name: design_metrics
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation
+    line: 306
+    cyclomatic_complexity: 1
+    calls_out: 11
+    calls_in: 11
+  app.static.app.createToggle:
+    name: createToggle
+    module: app.static.app
+    line: 255
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 4
+  src.living_product_studio.static.app.refreshSnapshot:
+    name: refreshSnapshot
+    module: src.living_product_studio.static.app
+    line: 17
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 3
+  src.living_product_studio.event_store.EventStore.authenticate_api_token:
+    name: authenticate_api_token
+    module: src.living_product_studio.event_store
+    line: 224
+    cyclomatic_complexity: 4
+    calls_out: 13
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig:
+    name: setConfig
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 92
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._set_rgba:
+    name: _set_rgba
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview
+    line: 29
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 4
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings:
+    name: collect_warnings
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation
+    line: 98
+    cyclomatic_complexity: 24
+    calls_out: 51
+    calls_in: 9
+  app.static.app.validateConfig:
+    name: validateConfig
+    module: app.static.app
+    line: 711
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 2
+  app.static.app.suggestion:
+    name: suggestion
+    module: app.static.app
+    line: 369
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.living_product_studio.api.create_change_plan:
+    name: create_change_plan
+    module: src.living_product_studio.api
+    line: 299
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 0
+  app.static.app.renderDrawingPreviewLayerControls:
+    name: renderDrawingPreviewLayerControls
+    module: app.static.app
+    line: 477
+    cyclomatic_complexity: 9
+    calls_out: 12
+    calls_in: 1
+  services.cad-worker.worker.on_message:
+    name: on_message
+    module: services.cad-worker.worker
+    line: 35
+    cyclomatic_complexity: 8
+    calls_out: 20
+    calls_in: 0
+  src.living_product_studio.static.app.pointInPolygon:
+    name: pointInPolygon
+    module: src.living_product_studio.static.app
+    line: 41
+    cyclomatic_complexity: 5
+    calls_out: 0
+    calls_in: 1
+  housing_studio.validation.board_hole_centers:
+    name: board_hole_centers
+    module: housing_studio.validation
+    line: 63
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 0
+  app.static.app.stlGeometry:
+    name: stlGeometry
+    module: app.static.app
+    line: 614
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._pdf_dash:
+    name: _pdf_dash
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 736
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.display:
+    name: display
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 143
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.permissions.require_permission:
+    name: require_permission
+    module: src.living_product_studio.permissions
+    line: 40
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 14
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base:
+    name: make_base
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 143
+    cyclomatic_complexity: 17
+    calls_out: 43
+    calls_in: 1
+  src.living_product_studio.mcp_gateway.McpGateway.read_resource:
+    name: read_resource
+    module: src.living_product_studio.mcp_gateway
+    line: 350
+    cyclomatic_complexity: 6
+    calls_out: 12
+    calls_in: 0
+  src.living_product_studio.static.app.esc:
+    name: esc
+    module: src.living_product_studio.static.app
+    line: 10
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 7
+  services.cad-worker.scoped_brep_adapter._selection_normal:
+    name: _selection_normal
+    module: services.cad-worker.scoped_brep_adapter
+    line: 57
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  src.living_product_studio.api.create_annotation:
+    name: create_annotation
+    module: src.living_product_studio.api
+    line: 271
+    cyclomatic_complexity: 2
+    calls_out: 13
+    calls_in: 0
+  app.static.app.renderArtifactOptions:
+    name: renderArtifactOptions
+    module: app.static.app
+    line: 307
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  src.living_product_studio.gtin.calculate_check_digit:
+    name: calculate_check_digit
+    module: src.living_product_studio.gtin
+    line: 4
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson:
+    name: fetchJson
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 65
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 5
+  app.main.generate:
+    name: generate
+    module: app.main
+    line: 205
+    cyclomatic_complexity: 3
+    calls_out: 7
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.main._url_for:
+    name: _url_for
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 71
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 3
+  app.static.app.applyManualConfigChange:
+    name: applyManualConfigChange
+    module: app.static.app
+    line: 227
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 5
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_top_view:
+    name: _lid_top_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 329
+    cyclomatic_complexity: 8
+    calls_out: 23
+    calls_in: 1
+  src.living_product_studio.static.app.initViewer:
+    name: initViewer
+    module: src.living_product_studio.static.app
+    line: 25
+    cyclomatic_complexity: 2
+    calls_out: 19
+    calls_in: 1
+  src.living_product_studio.change_planner.ChangePlanner.validate_scope:
+    name: validate_scope
+    module: src.living_product_studio.change_planner
+    line: 279
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 0
+  src.living_product_studio.static.app.createPointerSelection:
+    name: createPointerSelection
+    module: src.living_product_studio.static.app
+    line: 38
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._load_mesh:
+    name: _load_mesh
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview
+    line: 12
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 3
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.stlGeometry:
+    name: stlGeometry
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 287
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  src.living_product_studio.static.app.renderLifecycle:
+    name: renderLifecycle
+    module: src.living_product_studio.static.app
+    line: 58
+    cyclomatic_complexity: 8
+    calls_out: 6
+    calls_in: 2
+  examples.rpi5-camera3.pcb.kicad_adapter._cli:
+    name: _cli
+    module: examples.rpi5-camera3.pcb.kicad_adapter
+    line: 14
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  app.static.app.prettyConfig:
+    name: prettyConfig
+    module: app.static.app
+    line: 162
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 4
+  src.living_product_studio.cli.services:
+    name: services
+    module: src.living_product_studio.cli
+    line: 23
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 7
+  app.static.app.STLLoader:
+    name: STLLoader
+    module: app.static.app
+    line: 3
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.blob:
+    name: blob
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 427
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.static.app.selectObject:
+    name: selectObject
+    module: src.living_product_studio.static.app
+    line: 21
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._write_json:
+    name: _write_json
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts
+    line: 54
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 9
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.clearModels:
+    name: clearModels
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 274
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 1
+  housing_studio.draw2d._camera_positions:
+    name: _camera_positions
+    module: housing_studio.draw2d
+    line: 310
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.living_product_studio.mcp_protocol.classify_mcp_era:
+    name: classify_mcp_era
+    module: src.living_product_studio.mcp_protocol
+    line: 48
+    cyclomatic_complexity: 8
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.card:
+    name: card
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 141
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  housing_studio.mesh_preview.export_preview_scenes:
+    name: export_preview_scenes
+    module: housing_studio.mesh_preview
+    line: 54
+    cyclomatic_complexity: 5
+    calls_out: 29
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml:
+    name: escapeHtml
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 149
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 8
+  housing_studio.cad3d.make_base:
+    name: make_base
+    module: housing_studio.cad3d
+    line: 143
+    cyclomatic_complexity: 17
+    calls_out: 43
+    calls_in: 1
+  src.living_product_studio.api.resolve_project_selection:
+    name: resolve_project_selection
+    module: src.living_product_studio.api
+    line: 248
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._normalise_number:
+    name: _normalise_number
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config
+    line: 26
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.living_product_studio.static.app.resizeCanvas:
+    name: resizeCanvas
+    module: src.living_product_studio.static.app
+    line: 27
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 2
+  src.living_product_studio.api.get_tree:
+    name: get_tree
+    module: src.living_product_studio.api
+    line: 207
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  app.static.app.loadViewerDependencies:
+    name: loadViewerDependencies
+    module: app.static.app
+    line: 519
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.group:
+    name: group
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 168
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.living_product_studio.static.app.resize2dCanvas:
+    name: resize2dCanvas
+    module: src.living_product_studio.static.app
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf:
+    name: export_dxf
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 599
+    cyclomatic_complexity: 24
+    calls_out: 32
+    calls_in: 1
+  src.living_product_studio.static.app.renderPlan:
+    name: renderPlan
+    module: src.living_product_studio.static.app
+    line: 54
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  src.living_product_studio.static.app.makeSelection:
+    name: makeSelection
+    module: src.living_product_studio.static.app
+    line: 42
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 3
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderArtifacts:
+    name: renderArtifacts
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 155
+    cyclomatic_complexity: 6
+    calls_out: 16
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._find_number:
+    name: _find_number
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config
+    line: 30
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  app.static.app.showBanner:
+    name: showBanner
+    module: app.static.app
+    line: 135
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 9
+  housing_studio.draw2d._base_front_view:
+    name: _base_front_view
+    module: housing_studio.draw2d
+    line: 110
+    cyclomatic_complexity: 4
+    calls_out: 19
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._board_outline:
+    name: _board_outline
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 104
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 4
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_hole_centers:
+    name: board_hole_centers
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation
+    line: 63
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 8
+  housing_studio.draw2d._svg_dash:
+    name: _svg_dash
+    module: housing_studio.draw2d
+    line: 674
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 1
+  app.static.app.escapeHtml:
+    name: escapeHtml
+    module: app.static.app
+    line: 156
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 17
+  housing_studio.draw2d._ensure_dxf_layers:
+    name: _ensure_dxf_layers
+    module: housing_studio.draw2d
+    line: 513
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.file:
+    name: file
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 459
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.static.app.planChange:
+    name: planChange
+    module: src.living_product_studio.static.app
+    line: 53
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 0
+  src.living_product_studio.static.app.init:
+    name: init
+    module: src.living_product_studio.static.app
+    line: 13
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  app.static.app.applyProposedChanges:
+    name: applyProposedChanges
+    module: app.static.app
+    line: 758
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.downloadConfig:
+    name: downloadConfig
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 425
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 0
+  app.static.app.setNested:
+    name: setNested
+    module: app.static.app
+    line: 176
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._record:
+    name: _record
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts
+    line: 43
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 20
+  app.static.app.applyDrawingLayerVisibility:
+    name: applyDrawingLayerVisibility
+    module: app.static.app
+    line: 504
+    cyclomatic_complexity: 8
+    calls_out: 6
+    calls_in: 2
+  housing_studio.draw2d._assembly_side_view:
+    name: _assembly_side_view
+    module: housing_studio.draw2d
+    line: 430
+    cyclomatic_complexity: 3
+    calls_out: 14
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config:
+    name: default_project_config
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models
+    line: 385
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 7
+  app.static.app.OrbitControls:
+    name: OrbitControls
+    module: app.static.app
+    line: 2
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.living_product_studio.event_store.EventStore.create_api_token:
+    name: create_api_token
+    module: src.living_product_studio.event_store
+    line: 201
+    cyclomatic_complexity: 1
+    calls_out: 10
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings:
+    name: renderWarnings
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 111
+    cyclomatic_complexity: 7
+    calls_out: 5
+    calls_in: 3
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.rows:
+    name: rows
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 170
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.living_product_studio.api.mcp_endpoint:
+    name: mcp_endpoint
+    module: src.living_product_studio.api
+    line: 453
+    cyclomatic_complexity: 19
+    calls_out: 28
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._layer_style:
+    name: _layer_style
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 504
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 4
+  src.living_product_studio.static.app.clearSelection:
+    name: clearSelection
+    module: src.living_product_studio.static.app
+    line: 45
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._draw_view_pdf:
+    name: _draw_view_pdf
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 747
+    cyclomatic_complexity: 11
+    calls_out: 37
+    calls_in: 5
+  src.living_product_studio.change_planner.ChangePlanner.compile_apply_payload:
+    name: compile_apply_payload
+    module: src.living_product_studio.change_planner
+    line: 289
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 0
+  app.static.app.config:
+    name: config
+    module: app.static.app
+    line: 811
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  housing_studio.llm_config.interpret_with_litellm:
+    name: interpret_with_litellm
+    module: housing_studio.llm_config
+    line: 436
+    cyclomatic_complexity: 8
+    calls_out: 23
+    calls_in: 0
+  src.living_product_studio.change_planner._first_number:
+    name: _first_number
+    module: src.living_product_studio.change_planner
+    line: 341
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  app.static.app.auditIsCurrent:
+    name: auditIsCurrent
+    module: app.static.app
+    line: 784
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.mcp_protocol.server_discover_result:
+    name: server_discover_result
+    module: src.living_product_studio.mcp_protocol
+    line: 169
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.living_product_studio.permissions.has_permission:
+    name: has_permission
+    module: src.living_product_studio.permissions
+    line: 33
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_top_view:
+    name: _base_top_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 143
+    cyclomatic_complexity: 14
+    calls_out: 28
+    calls_in: 1
+  src.living_product_studio.projector.project_from_events:
+    name: project_from_events
+    module: src.living_product_studio.projector
+    line: 32
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 1
+  src.living_product_studio.static.app.loadProject:
+    name: loadProject
+    module: src.living_product_studio.static.app
+    line: 15
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 2
+  src.living_product_studio.specification.unified_specification:
+    name: unified_specification
+    module: src.living_product_studio.specification
+    line: 10
+    cyclomatic_complexity: 20
+    calls_out: 37
+    calls_in: 3
+  housing_studio.draw2d._draw_view_pdf:
+    name: _draw_view_pdf
+    module: housing_studio.draw2d
+    line: 748
+    cyclomatic_complexity: 11
+    calls_out: 37
+    calls_in: 5
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._camera_positions:
+    name: _camera_positions
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 335
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.living_product_studio.projector.apply_event:
+    name: apply_event
+    module: src.living_product_studio.projector
+    line: 47
+    cyclomatic_complexity: 37
+    calls_out: 31
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._dimension_segments:
+    name: _dimension_segments
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 537
+    cyclomatic_complexity: 2
+    calls_out: 18
+    calls_in: 1
+  src.living_product_studio.mqtt_bus.MqttPublisher.publish_events:
+    name: publish_events
+    module: src.living_product_studio.mqtt_bus
+    line: 40
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.main.get_job:
+    name: get_job
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 152
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 0
+  app.static.app.renderArtifacts:
+    name: renderArtifacts
+    module: app.static.app
+    line: 398
+    cyclomatic_complexity: 6
+    calls_out: 16
+    calls_in: 2
+  housing_studio.mesh_preview._set_rgba:
+    name: _set_rgba
+    module: housing_studio.mesh_preview
+    line: 29
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 4
+  app.static.app.setConfig:
+    name: setConfig
+    module: app.static.app
+    line: 211
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 8
+  housing_studio.mesh_preview.export_obj_from_stl:
+    name: export_obj_from_stl
+    module: housing_studio.mesh_preview
+    line: 23
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts:
+    name: generate_artifacts
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts
+    line: 164
+    cyclomatic_complexity: 31
+    calls_out: 100
+    calls_in: 4
+  app.static.app.formatValue:
+    name: formatValue
+    module: app.static.app
+    line: 166
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  src.living_product_studio.event_store.EventStore.create_session:
+    name: create_session
+    module: src.living_product_studio.event_store
+    line: 240
+    cyclomatic_complexity: 1
+    calls_out: 10
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._board_mesh:
+    name: _board_mesh
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview
+    line: 33
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner:
+    name: hideBanner
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 61
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 3
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._make_lid_shell:
+    name: _make_lid_shell
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 273
+    cyclomatic_complexity: 2
+    calls_out: 17
+    calls_in: 1
+  src.living_product_studio.static.app.loadProjects:
+    name: loadProjects
+    module: src.living_product_studio.static.app
+    line: 14
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  src.living_product_studio.mcp_protocol.request_params:
+    name: request_params
+    module: src.living_product_studio.mcp_protocol
+    line: 33
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt:
+    name: interpretPrompt
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 375
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 0
+  housing_studio.llm_config._find_number:
+    name: _find_number
+    module: housing_studio.llm_config
+    line: 32
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_side_view:
+    name: _assembly_side_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 430
+    cyclomatic_complexity: 3
+    calls_out: 14
+    calls_in: 1
+  app.main._layer_summary:
+    name: _layer_summary
+    module: app.main
+    line: 101
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 4
+  src.living_product_studio.static.app.sampleSelection:
+    name: sampleSelection
+    module: src.living_product_studio.static.app
+    line: 40
+    cyclomatic_complexity: 8
+    calls_out: 7
+    calls_in: 1
+  app.static.app.card:
+    name: card
+    module: app.static.app
+    line: 390
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.mqtt_bus.publisher_from_settings:
+    name: publisher_from_settings
+    module: src.living_product_studio.mqtt_bus
+    line: 70
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  housing_studio.validation.board_origin:
+    name: board_origin
+    module: housing_studio.validation
+    line: 20
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 2
+  src.living_product_studio.selection_resolver.resolve_selection:
+    name: resolve_selection
+    module: src.living_product_studio.selection_resolver
+    line: 15
+    cyclomatic_complexity: 43
+    calls_out: 43
+    calls_in: 2
+  services.cad-worker.scoped_brep_adapter._load_step:
+    name: _load_step
+    module: services.cad-worker.scoped_brep_adapter
+    line: 75
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_models:
+    name: make_models
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 501
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  housing_studio.config_diff.diff_as_dicts:
+    name: diff_as_dicts
+    module: housing_studio.config_diff
+    line: 66
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 3
+  services.cad-worker.scoped_brep_adapter._selection_center:
+    name: _selection_center
+    module: services.cad-worker.scoped_brep_adapter
+    line: 46
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.main._validated_config:
+    name: _validated_config
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 53
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview:
+    name: load3dPreview
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 297
+    cyclomatic_complexity: 11
+    calls_out: 17
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.updateDrawingPreview:
+    name: updateDrawingPreview
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 193
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  app.static.app.loadDefaultConfig:
+    name: loadDefaultConfig
+    module: app.static.app
+    line: 701
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  src.living_product_studio.static.app.initSelectionCanvas:
+    name: initSelectionCanvas
+    module: src.living_product_studio.static.app
+    line: 31
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  src.living_product_studio.simulations.simulate_thermal:
+    name: simulate_thermal
+    module: src.living_product_studio.simulations
+    line: 66
+    cyclomatic_complexity: 11
+    calls_out: 11
+    calls_in: 2
+  housing_studio.config_diff._plain:
+    name: _plain
+    module: housing_studio.config_diff
+    line: 22
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 2
+  src.living_product_studio.bus.QueryService.tree:
+    name: tree
+    module: src.living_product_studio.bus
+    line: 43
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  app.main.list_jobs:
+    name: list_jobs
+    module: app.main
+    line: 224
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.living_product_studio.static.app.v3:
+    name: v3
+    module: src.living_product_studio.static.app
+    line: 43
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  housing_studio.draw2d._lid_front_view:
+    name: _lid_front_view
+    module: housing_studio.draw2d
+    line: 267
+    cyclomatic_complexity: 4
+    calls_out: 18
+    calls_in: 1
+  app.static.app.renderQuickParameters:
+    name: renderQuickParameters
+    module: app.static.app
+    line: 236
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 1
+  housing_studio.cad3d.make_lid:
+    name: make_lid
+    module: housing_studio.cad3d
+    line: 386
+    cyclomatic_complexity: 17
+    calls_out: 33
+    calls_in: 1
+  app.main._manifest_with_urls:
+    name: _manifest_with_urls
+    module: app.main
+    line: 87
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 2
+  src.living_product_studio.api.run_thermal:
+    name: run_thermal
+    module: src.living_product_studio.api
+    line: 357
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  services.cad-worker.scoped_brep_adapter._unit:
+    name: _unit
+    module: services.cad-worker.scoped_brep_adapter
+    line: 39
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.living_product_studio.static.app.renderHighlight:
+    name: renderHighlight
+    module: src.living_product_studio.static.app
+    line: 44
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 2
+  housing_studio.draw2d._lid_top_view:
+    name: _lid_top_view
+    module: housing_studio.draw2d
+    line: 329
+    cyclomatic_complexity: 8
+    calls_out: 23
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_obj_from_stl:
+    name: export_obj_from_stl
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview
+    line: 23
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 4
+  src.living_product_studio.static.app.shortUri:
+    name: shortUri
+    module: src.living_product_studio.static.app
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 4
+  app.static.app.configured:
+    name: configured
+    module: app.static.app
+    line: 491
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  app.static.app.initViewer:
+    name: initViewer
+    module: app.static.app
+    line: 531
+    cyclomatic_complexity: 4
+    calls_out: 28
+    calls_in: 0
+  src.living_product_studio.static.app.applyPlan:
+    name: applyPlan
+    module: src.living_product_studio.static.app
+    line: 55
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  src.living_product_studio.mcp_gateway.McpGateway.call_tool:
+    name: call_tool
+    module: src.living_product_studio.mcp_gateway
+    line: 210
+    cyclomatic_complexity: 26
+    calls_out: 86
+    calls_in: 0
+  housing_studio.config_diff._walk_diff:
+    name: _walk_diff
+    module: housing_studio.config_diff
+    line: 28
+    cyclomatic_complexity: 12
+    calls_out: 27
+    calls_in: 3
+  app.static.app.clearPendingProposal:
+    name: clearPendingProposal
+    module: app.static.app
+    line: 198
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 6
+  app.static.app.baseUrl:
+    name: baseUrl
+    module: app.static.app
+    line: 631
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 0
+  src.living_product_studio.api.get_events:
+    name: get_events
+    module: src.living_product_studio.api
+    line: 219
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  src.living_product_studio.simulations.simulate_power:
+    name: simulate_power
+    module: src.living_product_studio.simulations
+    line: 26
+    cyclomatic_complexity: 3
+    calls_out: 14
+    calls_in: 3
+  app.static.app.created:
+    name: created
+    module: app.static.app
+    line: 860
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 0
+  app.static.app.uploadConfig:
+    name: uploadConfig
+    module: app.static.app
+    line: 821
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 1
+  housing_studio.validation.design_metrics:
+    name: design_metrics
+    module: housing_studio.validation
+    line: 306
+    cyclomatic_complexity: 1
+    calls_out: 11
+    calls_in: 0
+  app.static.app.clearModels:
+    name: clearModels
+    module: app.static.app
+    line: 601
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 3
+  app.static.app.renderChangeProposal:
+    name: renderChangeProposal
+    module: app.static.app
+    line: 319
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 1
+  app.static.app.rows:
+    name: rows
+    module: app.static.app
+    line: 413
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.living_product_studio.static.app.runSimulation:
+    name: runSimulation
+    module: src.living_product_studio.static.app
+    line: 59
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 1
+  housing_studio.validation.collect_warnings:
+    name: collect_warnings
+    module: housing_studio.validation
+    line: 98
+    cyclomatic_complexity: 24
+    calls_out: 51
+    calls_in: 0
+  src.living_product_studio.static.app.connectWs:
+    name: connectWs
+    module: src.living_product_studio.static.app
+    line: 16
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_preview_scenes:
+    name: export_preview_scenes
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview
+    line: 54
+    cyclomatic_complexity: 5
+    calls_out: 29
+    calls_in: 2
+  services.cad-worker.scoped_brep_adapter._aabb_box:
+    name: _aabb_box
+    module: services.cad-worker.scoped_brep_adapter
+    line: 97
+    cyclomatic_complexity: 3
+    calls_out: 10
+    calls_in: 2
+  src.living_product_studio.uri.parse_poa_uri:
+    name: parse_poa_uri
+    module: src.living_product_studio.uri
+    line: 58
+    cyclomatic_complexity: 7
+    calls_out: 11
+    calls_in: 5
+  housing_studio.draw2d._pdf_dash:
+    name: _pdf_dash
+    module: housing_studio.draw2d
+    line: 737
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_side_view:
+    name: _lid_side_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 363
+    cyclomatic_complexity: 2
+    calls_out: 18
+    calls_in: 1
+  src.living_product_studio.cli.projects_cmd:
+    name: projects_cmd
+    module: src.living_product_studio.cli
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  src.living_product_studio.api.download_artifact:
+    name: download_artifact
+    module: src.living_product_studio.api
+    line: 387
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_front_view:
+    name: _lid_front_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 267
+    cyclomatic_complexity: 4
+    calls_out: 18
+    calls_in: 1
+  housing_studio.draw2d.export_svg:
+    name: export_svg
+    module: housing_studio.draw2d
+    line: 684
+    cyclomatic_complexity: 12
+    calls_out: 39
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets:
+    name: build_drawing_sets
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 451
+    cyclomatic_complexity: 2
+    calls_out: 13
+    calls_in: 1
+  housing_studio.artifacts.generate_artifacts:
+    name: generate_artifacts
+    module: housing_studio.artifacts
+    line: 283
+    cyclomatic_complexity: 32
+    calls_out: 114
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._response_content:
+    name: _response_content
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config
+    line: 240
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 2
+  housing_studio.draw2d.build_drawing_sets:
+    name: build_drawing_sets
+    module: housing_studio.draw2d
+    line: 451
+    cyclomatic_complexity: 2
+    calls_out: 13
+    calls_in: 1
+  services.cad-worker.scoped_brep_adapter._average:
+    name: _average
+    module: services.cad-worker.scoped_brep_adapter
+    line: 28
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.config:
+    name: config
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 426
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.living_product_studio.mcp_gateway._tool:
+    name: _tool
+    module: src.living_product_studio.mcp_gateway
+    line: 384
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 12
+  src.living_product_studio.static.app.api:
+    name: api
+    module: src.living_product_studio.static.app
+    line: 7
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 8
+  src.living_product_studio.event_store.EventStore.authenticate_session:
+    name: authenticate_session
+    module: src.living_product_studio.event_store
+    line: 255
+    cyclomatic_complexity: 3
+    calls_out: 12
+    calls_in: 0
+  services.cad-worker.scoped_brep_adapter._vector:
+    name: _vector
+    module: services.cad-worker.scoped_brep_adapter
+    line: 24
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 6
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig:
+    name: parseEditorConfig
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 79
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 3
+  src.living_product_studio.static.app.banner:
+    name: banner
+    module: src.living_product_studio.static.app
+    line: 9
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 8
+  housing_studio.cad3d._cylinder_along_x:
+    name: _cylinder_along_x
+    module: housing_studio.cad3d
+    line: 33
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 5
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._auxiliary_boss_positions:
+    name: _auxiliary_boss_positions
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 344
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  src.living_product_studio.static.app.jbody:
+    name: jbody
+    module: src.living_product_studio.static.app
+    line: 8
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 4
+  housing_studio.artifacts._sha256:
+    name: _sha256
+    module: housing_studio.artifacts
+    line: 40
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  src.living_product_studio.change_planner._number_near:
+    name: _number_near
+    module: src.living_product_studio.change_planner
+    line: 346
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  src.living_product_studio.cli.plan:
+    name: plan
+    module: src.living_product_studio.cli
+    line: 83
+    cyclomatic_complexity: 2
+    calls_out: 13
+    calls_in: 0
+  src.living_product_studio.domain.utcnow:
+    name: utcnow
+    module: src.living_product_studio.domain
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._camera_positions:
+    name: _camera_positions
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 310
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  app.main._job_summaries:
+    name: _job_summaries
+    module: app.main
+    line: 119
+    cyclomatic_complexity: 5
+    calls_out: 21
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._aux_positions:
+    name: _aux_positions
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 319
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  src.living_product_studio.static.app.hitData:
+    name: hitData
+    module: src.living_product_studio.static.app
+    line: 37
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 2
+  src.living_product_studio.static.app.drawOverlay:
+    name: drawOverlay
+    module: src.living_product_studio.static.app
+    line: 34
+    cyclomatic_complexity: 5
+    calls_out: 13
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._flatten_primitives:
+    name: _flatten_primitives
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 571
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 3
+  housing_studio.draw2d._aux_positions:
+    name: _aux_positions
+    module: housing_studio.draw2d
+    line: 319
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin:
+    name: board_origin
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation
+    line: 20
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 6
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.suggestion:
+    name: suggestion
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 120
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  app.main.get_job_config:
+    name: get_job_config
+    module: app.main
+    line: 229
+    cyclomatic_complexity: 4
+    calls_out: 12
+    calls_in: 0
+  src.living_product_studio.cli.seed:
+    name: seed
+    module: src.living_product_studio.cli
+    line: 38
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  src.living_product_studio.change_planner._owning_object_uri:
+    name: _owning_object_uri
+    module: src.living_product_studio.change_planner
+    line: 325
+    cyclomatic_complexity: 7
+    calls_out: 7
+    calls_in: 1
+  src.living_product_studio.seed.seed_from_file:
+    name: seed_from_file
+    module: src.living_product_studio.seed
+    line: 11
+    cyclomatic_complexity: 17
+    calls_out: 55
+    calls_in: 2
+  housing_studio.draw2d._layer_style:
+    name: _layer_style
+    module: housing_studio.draw2d
+    line: 504
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 4
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_all_2d:
+    name: export_all_2d
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 864
+    cyclomatic_complexity: 9
+    calls_out: 15
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid:
+    name: make_lid
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 386
+    cyclomatic_complexity: 17
+    calls_out: 33
+    calls_in: 1
+  housing_studio.config_diff.diff_configs:
+    name: diff_configs
+    module: housing_studio.config_diff
+    line: 57
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  src.living_product_studio.static.app.loadModels:
+    name: loadModels
+    module: src.living_product_studio.static.app
+    line: 28
+    cyclomatic_complexity: 5
+    calls_out: 13
+    calls_in: 1
+  src.living_product_studio.projector.object_tree:
+    name: object_tree
+    module: src.living_product_studio.projector
+    line: 139
+    cyclomatic_complexity: 6
+    calls_out: 11
+    calls_in: 2
+  src.living_product_studio.static.app.invite:
+    name: invite
+    module: src.living_product_studio.static.app
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 0
+  app.static.app.renderFeatureLayers:
+    name: renderFeatureLayers
+    module: app.static.app
+    line: 269
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_svg:
+    name: export_svg
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 684
+    cyclomatic_complexity: 12
+    calls_out: 35
+    calls_in: 1
+  app.static.app.renderDrawingViews:
+    name: renderDrawingViews
+    module: app.static.app
+    line: 282
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  scripts.verify_project.main:
+    name: main
+    module: scripts.verify_project
+    line: 148
+    cyclomatic_complexity: 3
+    calls_out: 14
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.main._safe_job_identifier:
+    name: _safe_job_identifier
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 2
+  app.static.app.display:
+    name: display
+    module: app.static.app
+    line: 392
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  scripts.verify_project.verify:
+    name: verify
+    module: scripts.verify_project
+    line: 23
+    cyclomatic_complexity: 28
+    calls_out: 62
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.main.default_config:
+    name: default_config
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 112
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  src.living_product_studio.event_store.EventStore.approve_invitation:
+    name: approve_invitation
+    module: src.living_product_studio.event_store
+    line: 298
+    cyclomatic_complexity: 4
+    calls_out: 19
+    calls_in: 0
+  examples.rpi5-camera3.pcb.kicad_adapter.run:
+    name: run
+    module: examples.rpi5-camera3.pcb.kicad_adapter
+    line: 21
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 5
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments:
+    name: hinge_segments
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation
+    line: 74
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 16
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner:
+    name: showBanner
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 56
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 6
+  app.static.app.loadJobHistory:
+    name: loadJobHistory
+    module: app.static.app
+    line: 847
+    cyclomatic_complexity: 8
+    calls_out: 11
+    calls_in: 1
+  src.living_product_studio.api.run_power:
+    name: run_power
+    module: src.living_product_studio.api
+    line: 348
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._sha256:
+    name: _sha256
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts
+    line: 35
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics:
+    name: renderMetrics
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 130
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 3
+  src.living_product_studio.cli.tree:
+    name: tree
+    module: src.living_product_studio.cli
+    line: 54
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  src.living_product_studio.static.app.activateTool:
+    name: activateTool
+    module: src.living_product_studio.static.app
+    line: 32
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.manifest:
+    name: manifest
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 405
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  app.static.app.renderMetrics:
+    name: renderMetrics
+    module: app.static.app
+    line: 379
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 5
+  app.static.app.label:
+    name: label
+    module: app.static.app
+    line: 492
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.living_product_studio.cli.shell:
+    name: shell
+    module: src.living_product_studio.cli
+    line: 136
+    cyclomatic_complexity: 11
+    calls_out: 13
+    calls_in: 0
+  housing_studio.draw2d._rect:
+    name: _rect
+    module: housing_studio.draw2d
+    line: 96
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 17
+  housing_studio.validation.board_actual_clearances:
+    name: board_actual_clearances
+    module: housing_studio.validation
+    line: 45
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 5
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_front_view:
+    name: _base_front_view
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 110
+    cyclomatic_complexity: 4
+    calls_out: 19
+    calls_in: 1
+  src.living_product_studio.static.app.updateSelectionSummary:
+    name: updateSelectionSummary
+    module: src.living_product_studio.static.app
+    line: 46
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 5
+  app.static.app.downloadConfig:
+    name: downloadConfig
+    module: app.static.app
+    line: 810
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 0
+  src.living_product_studio.cli.power:
+    name: power
+    module: src.living_product_studio.cli
+    line: 108
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 1
+  sample_output.demo.rebuild_project.main:
+    name: main
+    module: sample_output.demo.rebuild_project
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 10
+    calls_in: 0
+  src.living_product_studio.api.get_specification:
+    name: get_specification
+    module: src.living_product_studio.api
+    line: 213
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  app.static.app.row:
+    name: row
+    module: app.static.app
+    line: 858
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._wire_rect:
+    name: _wire_rect
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d
+    line: 25
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 6
+  src.living_product_studio.static.app.bindActions:
+    name: bindActions
+    module: src.living_product_studio.static.app
+    line: 62
+    cyclomatic_complexity: 3
+    calls_out: 10
+    calls_in: 1
+  src.living_product_studio.mcp_gateway._content:
+    name: _content
+    module: src.living_product_studio.mcp_gateway
+    line: 392
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 12
+  src.living_product_studio.api.mechanical_checks:
+    name: mechanical_checks
+    module: src.living_product_studio.api
+    line: 381
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._ensure_dxf_layers:
+    name: _ensure_dxf_layers
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 513
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  src.living_product_studio.static.app.raycast:
+    name: raycast
+    module: src.living_product_studio.static.app
+    line: 35
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 2
+  src.living_product_studio.api.get_project:
+    name: get_project
+    module: src.living_product_studio.api
+    line: 200
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  services.cad-worker.scoped_brep_adapter._hole_tool:
+    name: _hole_tool
+    module: services.cad-worker.scoped_brep_adapter
+    line: 85
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 1
+  src.living_product_studio.artifacts.export_project_bundle:
+    name: export_project_bundle
+    module: src.living_product_studio.artifacts
+    line: 22
+    cyclomatic_complexity: 14
+    calls_out: 39
+    calls_in: 3
+  app.static.app.hideBanner:
+    name: hideBanner
+    module: app.static.app
+    line: 140
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 5
+  housing_studio.llm_config.fallback_interpret:
+    name: fallback_interpret
+    module: housing_studio.llm_config
+    line: 47
+    cyclomatic_complexity: 42
+    calls_out: 37
+    calls_in: 3
+  src.living_product_studio.mcp_protocol.modern_result:
+    name: modern_result
+    module: src.living_product_studio.mcp_protocol
+    line: 151
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 3
+  app.static.app.load3dPreview:
+    name: load3dPreview
+    module: app.static.app
+    line: 624
+    cyclomatic_complexity: 15
+    calls_out: 17
+    calls_in: 2
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect:
+    name: _rect
+    module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d
+    line: 96
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 17
+  housing_studio.cad3d._make_lid_shell:
+    name: _make_lid_shell
+    module: housing_studio.cad3d
+    line: 273
+    cyclomatic_complexity: 2
+    calls_out: 17
+    calls_in: 1
+  housing_studio.draw2d.export_dxf:
+    name: export_dxf
+    module: housing_studio.draw2d
+    line: 599
+    cyclomatic_complexity: 24
+    calls_out: 32
+    calls_in: 1
+  services.cad-worker.vendor.rpi5_housing_studio.app.main._manifest_with_urls:
+    name: _manifest_with_urls
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.main
+    line: 77
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 2
+  app.static.app.getNested:
+    name: getNested
+    module: app.static.app
+    line: 172
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  housing_studio.draw2d._lineweight_dxf:
+    name: _lineweight_dxf
+    module: housing_studio.draw2d
+    line: 508
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  src.living_product_studio.mcp_gateway.McpGateway.handle:
+    name: handle
+    module: src.living_product_studio.mcp_gateway
+    line: 58
+    cyclomatic_complexity: 27
+    calls_out: 24
+    calls_in: 0
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig:
+    name: loadDefaultConfig
+    module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app
+    line: 367
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 2
+  src.living_product_studio.api.export_project:
+    name: export_project
+    module: src.living_product_studio.api
+    line: 403
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 0
+  app.static.app.parsed:
+    name: parsed
+    module: app.static.app
+    line: 822
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.living_product_studio.api.run_human:
+    name: run_human
+    module: src.living_product_studio.api
+    line: 375
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  app.static.app.loadJob:
+    name: loadJob
+    module: app.static.app
+    line: 830
+    cyclomatic_complexity: 1
+    calls_out: 13
+    calls_in: 1
+  src.living_product_studio.static.app.semanticFace:
+    name: semanticFace
+    module: src.living_product_studio.static.app
+    line: 36
+    cyclomatic_complexity: 7
+    calls_out: 1
+    calls_in: 1
+edges:
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.payload
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parsed
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parsed
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.suggestion
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.card
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.display
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderArtifacts
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.group
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.rows
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.manifest
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.clearModels
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.stlGeometry
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderArtifacts
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.updateDrawingPreview
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.downloadConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.downloadConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.blob
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.file
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.file
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  call_type: resolved
+- caller: generator.load_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  call_type: resolved
+- caller: services.cad-worker.worker.on_message
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_obj_from_stl
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._load_mesh
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._board_mesh
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_preview_scenes
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._load_mesh
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_preview_scenes
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._set_rgba
+  call_type: resolved
+- caller: services.mqtt-gateway.gateway.on_message
+  callee: services.mqtt-gateway.gateway.response_topic
+  call_type: resolved
+- caller: examples.rpi5-camera3.pcb.kicad_adapter.run
+  callee: examples.rpi5-camera3.pcb.kicad_adapter._cli
+  call_type: resolved
+- caller: examples.rpi5-camera3.pcb.kicad_adapter.export_review_artifacts
+  callee: examples.rpi5-camera3.pcb.kicad_adapter.run
+  call_type: resolved
+- caller: src.living_product_studio.mqtt_bus.MqttPublisher.publish_events
+  callee: src.living_product_studio.mqtt_bus._topic_atom
+  call_type: resolved
+- caller: src.living_product_studio.bus.QueryService.project
+  callee: src.living_product_studio.projector.project_from_events
+  call_type: resolved
+- caller: src.living_product_studio.bus.QueryService.tree
+  callee: src.living_product_studio.projector.object_tree
+  call_type: resolved
+- caller: src.living_product_studio.bus.CommandBus._handle_existing
+  callee: src.living_product_studio.permissions.require_permission
+  call_type: resolved
+- caller: src.living_product_studio.cli.services
+  callee: src.living_product_studio.mqtt_bus.publisher_from_settings
+  call_type: resolved
+- caller: src.living_product_studio.cli.seed
+  callee: src.living_product_studio.cli.services
+  call_type: resolved
+- caller: src.living_product_studio.cli.seed
+  callee: src.living_product_studio.seed.seed_from_file
+  call_type: resolved
+- caller: src.living_product_studio.cli.projects_cmd
+  callee: src.living_product_studio.cli.services
+  call_type: resolved
+- caller: src.living_product_studio.cli.tree
+  callee: src.living_product_studio.cli.services
+  call_type: resolved
+- caller: src.living_product_studio.cli.command
+  callee: src.living_product_studio.cli.services
+  call_type: resolved
+- caller: src.living_product_studio.cli.plan
+  callee: src.living_product_studio.cli.services
+  call_type: resolved
+- caller: src.living_product_studio.cli.power
+  callee: src.living_product_studio.cli.services
+  call_type: resolved
+- caller: src.living_product_studio.cli.power
+  callee: src.living_product_studio.simulations.simulate_power
+  call_type: resolved
+- caller: src.living_product_studio.cli.export
+  callee: src.living_product_studio.cli.services
+  call_type: resolved
+- caller: src.living_product_studio.cli.export
+  callee: src.living_product_studio.artifacts.export_project_bundle
+  call_type: resolved
+- caller: src.living_product_studio.cli.gtin_complete
+  callee: src.living_product_studio.gtin.complete_gtin
+  call_type: resolved
+- caller: src.living_product_studio.cli.gtin_validate
+  callee: src.living_product_studio.gtin.validate_gtin
+  call_type: resolved
+- caller: src.living_product_studio.cli.shell
+  callee: src.living_product_studio.cli.projects_cmd
+  call_type: resolved
+- caller: src.living_product_studio.cli.shell
+  callee: src.living_product_studio.cli.tree
+  call_type: resolved
+- caller: src.living_product_studio.cli.shell
+  callee: src.living_product_studio.cli.power
+  call_type: resolved
+- caller: src.living_product_studio.projector.project_from_events
+  callee: src.living_product_studio.projector.apply_event
+  call_type: resolved
+- caller: src.living_product_studio.projector.apply_event
+  callee: src.living_product_studio.domain.utcnow
+  call_type: resolved
+- caller: src.living_product_studio.gtin.complete_gtin
+  callee: src.living_product_studio.gtin.calculate_check_digit
+  call_type: resolved
+- caller: src.living_product_studio.gtin.validate_gtin
+  callee: src.living_product_studio.gtin.calculate_check_digit
+  call_type: resolved
+- caller: app.static.app.configured
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.parsed
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.prettyConfig
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.clearAppliedAudit
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.renderQuickParameters
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.renderFeatureLayers
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.renderDrawingViews
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.renderDrawingLayers
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.renderArtifactOptions
+  call_type: resolved
+- caller: app.static.app.setConfig
+  callee: app.static.app.applyDrawingLayerVisibility
+  call_type: resolved
+- caller: app.static.app.applyManualConfigChange
+  callee: app.static.app.parseEditorConfig
+  call_type: resolved
+- caller: app.static.app.applyManualConfigChange
+  callee: app.static.app.setNested
+  call_type: resolved
+- caller: app.static.app.applyManualConfigChange
+  callee: app.static.app.clearAppliedAudit
+  call_type: resolved
+- caller: app.static.app.applyManualConfigChange
+  callee: app.static.app.clearPendingProposal
+  call_type: resolved
+- caller: app.static.app.applyManualConfigChange
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.config
+  callee: app.static.app.prettyConfig
+  call_type: resolved
+- caller: app.static.app.renderQuickParameters
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.renderQuickParameters
+  callee: app.static.app.getNested
+  call_type: resolved
+- caller: app.static.app.renderQuickParameters
+  callee: app.static.app.applyManualConfigChange
+  call_type: resolved
+- caller: app.static.app.createToggle
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.row
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.renderFeatureLayers
+  callee: app.static.app.createToggle
+  call_type: resolved
+- caller: app.static.app.renderFeatureLayers
+  callee: app.static.app.applyManualConfigChange
+  call_type: resolved
+- caller: app.static.app.renderDrawingViews
+  callee: app.static.app.createToggle
+  call_type: resolved
+- caller: app.static.app.renderDrawingViews
+  callee: app.static.app.applyManualConfigChange
+  call_type: resolved
+- caller: app.static.app.renderDrawingLayers
+  callee: app.static.app.createToggle
+  call_type: resolved
+- caller: app.static.app.renderDrawingLayers
+  callee: app.static.app.applyManualConfigChange
+  call_type: resolved
+- caller: app.static.app.renderArtifactOptions
+  callee: app.static.app.createToggle
+  call_type: resolved
+- caller: app.static.app.renderArtifactOptions
+  callee: app.static.app.applyManualConfigChange
+  call_type: resolved
+- caller: app.static.app.renderChangeProposal
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.renderChangeProposal
+  callee: app.static.app.formatValue
+  call_type: resolved
+- caller: app.static.app.renderWarnings
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.suggestion
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.renderMetrics
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.card
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.display
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.renderArtifacts
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.rows
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.manifest
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.renderDrawingPreviewLayerControls
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.label
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.checked
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.initViewer
+  callee: app.static.app.loadViewerDependencies
+  call_type: resolved
+- caller: app.static.app.initViewer
+  callee: app.static.app.OrbitControls
+  call_type: resolved
+- caller: app.static.app.stlGeometry
+  callee: app.static.app.STLLoader
+  call_type: resolved
+- caller: app.static.app.load3dPreview
+  callee: app.static.app.clearModels
+  call_type: resolved
+- caller: app.static.app.load3dPreview
+  callee: app.static.app.stlGeometry
+  call_type: resolved
+- caller: app.static.app.baseUrl
+  callee: app.static.app.clearModels
+  call_type: resolved
+- caller: app.static.app.lidUrl
+  callee: app.static.app.clearModels
+  call_type: resolved
+- caller: app.static.app.loadDefaultConfig
+  callee: app.static.app.hideBanner
+  call_type: resolved
+- caller: app.static.app.loadDefaultConfig
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.loadDefaultConfig
+  callee: app.static.app.clearPendingProposal
+  call_type: resolved
+- caller: app.static.app.loadDefaultConfig
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.loadDefaultConfig
+  callee: app.static.app.renderWarnings
+  call_type: resolved
+- caller: app.static.app.loadDefaultConfig
+  callee: app.static.app.renderMetrics
+  call_type: resolved
+- caller: app.static.app.validateConfig
+  callee: app.static.app.hideBanner
+  call_type: resolved
+- caller: app.static.app.validateConfig
+  callee: app.static.app.parseEditorConfig
+  call_type: resolved
+- caller: app.static.app.validateConfig
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.validateConfig
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.validateConfig
+  callee: app.static.app.renderWarnings
+  call_type: resolved
+- caller: app.static.app.validateConfig
+  callee: app.static.app.renderMetrics
+  call_type: resolved
+- caller: app.static.app.validateConfig
+  callee: app.static.app.showBanner
+  call_type: resolved
+- caller: app.static.app.interpretPrompt
+  callee: app.static.app.hideBanner
+  call_type: resolved
+- caller: app.static.app.interpretPrompt
+  callee: app.static.app.parseEditorConfig
+  call_type: resolved
+- caller: app.static.app.interpretPrompt
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.interpretPrompt
+  callee: app.static.app.renderChangeProposal
+  call_type: resolved
+- caller: app.static.app.interpretPrompt
+  callee: app.static.app.showBanner
+  call_type: resolved
+- caller: app.static.app.applyProposedChanges
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.applyProposedChanges
+  callee: app.static.app.renderWarnings
+  call_type: resolved
+- caller: app.static.app.applyProposedChanges
+  callee: app.static.app.renderMetrics
+  call_type: resolved
+- caller: app.static.app.applyProposedChanges
+  callee: app.static.app.clearPendingProposal
+  call_type: resolved
+- caller: app.static.app.applyProposedChanges
+  callee: app.static.app.showBanner
+  call_type: resolved
+- caller: app.static.app.proposal
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.discardProposedChanges
+  callee: app.static.app.clearPendingProposal
+  call_type: resolved
+- caller: app.static.app.discardProposedChanges
+  callee: app.static.app.showBanner
+  call_type: resolved
+- caller: app.static.app.generate
+  callee: app.static.app.hideBanner
+  call_type: resolved
+- caller: app.static.app.generate
+  callee: app.static.app.validateConfig
+  call_type: resolved
+- caller: app.static.app.generate
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.generate
+  callee: app.static.app.renderWarnings
+  call_type: resolved
+- caller: app.static.app.generate
+  callee: app.static.app.renderMetrics
+  call_type: resolved
+- caller: app.static.app.generate
+  callee: app.static.app.renderArtifacts
+  call_type: resolved
+- caller: app.static.app.auditIsCurrent
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.downloadConfig
+  callee: app.static.app.parseEditorConfig
+  call_type: resolved
+- caller: app.static.app.downloadConfig
+  callee: app.static.app.prettyConfig
+  call_type: resolved
+- caller: app.static.app.blob
+  callee: app.static.app.prettyConfig
+  call_type: resolved
+- caller: app.static.app.uploadConfig
+  callee: app.static.app.clearPendingProposal
+  call_type: resolved
+- caller: app.static.app.uploadConfig
+  callee: app.static.app.clearAppliedAudit
+  call_type: resolved
+- caller: app.static.app.uploadConfig
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.uploadConfig
+  callee: app.static.app.validateConfig
+  call_type: resolved
+- caller: app.static.app.uploadConfig
+  callee: app.static.app.showBanner
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.hideBanner
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.clearPendingProposal
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.clearAppliedAudit
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.setConfig
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.renderWarnings
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.renderMetrics
+  call_type: resolved
+- caller: app.static.app.loadJob
+  callee: app.static.app.renderArtifacts
+  call_type: resolved
+- caller: app.static.app.loadJobHistory
+  callee: app.static.app.fetchJson
+  call_type: resolved
+- caller: app.static.app.loadJobHistory
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.loadJobHistory
+  callee: app.static.app.loadJob
+  call_type: resolved
+- caller: app.static.app.loadJobHistory
+  callee: app.static.app.showBanner
+  call_type: resolved
+- caller: app.static.app.created
+  callee: app.static.app.escapeHtml
+  call_type: resolved
+- caller: app.static.app.file
+  callee: app.static.app.uploadConfig
+  call_type: resolved
+- caller: app.static.app.file
+  callee: app.static.app.showBanner
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._record
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._sha256
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._write_json
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_actual_clearances
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_hole_centers
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_actual_clearances
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_actual_clearances
+  call_type: resolved
+- caller: src.living_product_studio.permissions.require_permission
+  callee: src.living_product_studio.permissions.has_permission
+  call_type: resolved
+- caller: src.living_product_studio.uri.is_within_scope
+  callee: src.living_product_studio.uri.parse_poa_uri
+  call_type: resolved
+- caller: src.living_product_studio.change_planner.ChangePlanner._local_plan
+  callee: src.living_product_studio.change_planner._number_near
+  call_type: resolved
+- caller: src.living_product_studio.change_planner.ChangePlanner._local_plan
+  callee: src.living_product_studio.change_planner._diameter
+  call_type: resolved
+- caller: src.living_product_studio.change_planner.ChangePlanner._local_plan
+  callee: src.living_product_studio.change_planner._angle
+  call_type: resolved
+- caller: src.living_product_studio.change_planner.ChangePlanner.validate_scope
+  callee: src.living_product_studio.uri.is_within_scope
+  call_type: resolved
+- caller: src.living_product_studio.change_planner.ChangePlanner.compile_apply_payload
+  callee: src.living_product_studio.change_planner._owning_object_uri
+  call_type: resolved
+- caller: src.living_product_studio.change_planner._owning_object_uri
+  callee: src.living_product_studio.uri.parse_poa_uri
+  call_type: resolved
+- caller: src.living_product_studio.change_planner._number_near
+  callee: src.living_product_studio.change_planner._first_number
+  call_type: resolved
+- caller: src.living_product_studio.specification.unified_specification
+  callee: src.living_product_studio.projector.object_tree
+  call_type: resolved
+- caller: src.living_product_studio.specification.unified_specification
+  callee: src.living_product_studio.specification.manufacturing_views
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._find_number
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._normalise_number
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.interpret_with_litellm
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.fallback_interpret
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.interpret_with_litellm
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._response_content
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.generator.load_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  call_type: resolved
+- caller: scripts.verify_project.main
+  callee: scripts.verify_project.verify
+  call_type: resolved
+- caller: src.living_product_studio.static.app.init
+  callee: src.living_product_studio.static.app.initTabs
+  call_type: resolved
+- caller: src.living_product_studio.static.app.init
+  callee: src.living_product_studio.static.app.initViewer
+  call_type: resolved
+- caller: src.living_product_studio.static.app.init
+  callee: src.living_product_studio.static.app.initSelectionCanvas
+  call_type: resolved
+- caller: src.living_product_studio.static.app.init
+  callee: src.living_product_studio.static.app.bindActions
+  call_type: resolved
+- caller: src.living_product_studio.static.app.init
+  callee: src.living_product_studio.static.app.loadProjects
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProjects
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProjects
+  callee: src.living_product_studio.static.app.esc
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProjects
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProjects
+  callee: src.living_product_studio.static.app.loadProject
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProject
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProject
+  callee: src.living_product_studio.static.app.renderTree
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProject
+  callee: src.living_product_studio.static.app.renderSpec
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProject
+  callee: src.living_product_studio.static.app.renderLifecycle
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProject
+  callee: src.living_product_studio.static.app.loadModels
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProject
+  callee: src.living_product_studio.static.app.loadDrawing
+  call_type: resolved
+- caller: src.living_product_studio.static.app.loadProject
+  callee: src.living_product_studio.static.app.connectWs
+  call_type: resolved
+- caller: src.living_product_studio.static.app.connectWs
+  callee: src.living_product_studio.static.app.refreshSnapshot
+  call_type: resolved
+- caller: src.living_product_studio.static.app.refreshSnapshot
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.refreshSnapshot
+  callee: src.living_product_studio.static.app.renderTree
+  call_type: resolved
+- caller: src.living_product_studio.static.app.refreshSnapshot
+  callee: src.living_product_studio.static.app.renderSpec
+  call_type: resolved
+- caller: src.living_product_studio.static.app.refreshSnapshot
+  callee: src.living_product_studio.static.app.renderLifecycle
+  call_type: resolved
+- caller: src.living_product_studio.static.app.refreshSnapshot
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.initTabs
+  callee: src.living_product_studio.static.app.resizeViewer
+  call_type: resolved
+- caller: src.living_product_studio.static.app.initTabs
+  callee: src.living_product_studio.static.app.resize2dCanvas
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderTree
+  callee: src.living_product_studio.static.app.treeNode
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderTree
+  callee: src.living_product_studio.static.app.renderObjectInspector
+  call_type: resolved
+- caller: src.living_product_studio.static.app.treeNode
+  callee: src.living_product_studio.static.app.esc
+  call_type: resolved
+- caller: src.living_product_studio.static.app.treeNode
+  callee: src.living_product_studio.static.app.selectObject
+  call_type: resolved
+- caller: src.living_product_studio.static.app.treeNode
+  callee: src.living_product_studio.static.app.toggleObjectVisibility
+  call_type: resolved
+- caller: src.living_product_studio.static.app.selectObject
+  callee: src.living_product_studio.static.app.renderTree
+  call_type: resolved
+- caller: src.living_product_studio.static.app.selectObject
+  callee: src.living_product_studio.static.app.renderObjectInspector
+  call_type: resolved
+- caller: src.living_product_studio.static.app.selectObject
+  callee: src.living_product_studio.static.app.updateSelectionSummary
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderObjectInspector
+  callee: src.living_product_studio.static.app.esc
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderObjectInspector
+  callee: src.living_product_studio.static.app.shortUri
+  call_type: resolved
+- caller: src.living_product_studio.static.app.resizeViewer
+  callee: src.living_product_studio.static.app.resizeCanvas
+  call_type: resolved
+- caller: src.living_product_studio.static.app.initSelectionCanvas
+  callee: src.living_product_studio.static.app.handleDraw
+  call_type: resolved
+- caller: src.living_product_studio.static.app.handleDraw
+  callee: src.living_product_studio.static.app.createPointerSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.handleDraw
+  callee: src.living_product_studio.static.app.drawOverlay
+  call_type: resolved
+- caller: src.living_product_studio.static.app.handleDraw
+  callee: src.living_product_studio.static.app.createAreaSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.handleDraw
+  callee: src.living_product_studio.static.app.create2dSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.hitData
+  callee: src.living_product_studio.static.app.semanticFace
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.raycast
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.clearSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.hitData
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.selectObject
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.makeSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.renderHighlight
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.updateSelectionSummary
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createPointerSelection
+  callee: src.living_product_studio.static.app.drawOverlay
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createAreaSelection
+  callee: src.living_product_studio.static.app.sampleSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createAreaSelection
+  callee: src.living_product_studio.static.app.raycast
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createAreaSelection
+  callee: src.living_product_studio.static.app.hitData
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createAreaSelection
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.createAreaSelection
+  callee: src.living_product_studio.static.app.makeSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.sampleSelection
+  callee: src.living_product_studio.static.app.pointInPolygon
+  call_type: resolved
+- caller: src.living_product_studio.static.app.makeSelection
+  callee: src.living_product_studio.static.app.v3
+  call_type: resolved
+- caller: src.living_product_studio.static.app.clearSelection
+  callee: src.living_product_studio.static.app.updateSelectionSummary
+  call_type: resolved
+- caller: src.living_product_studio.static.app.updateSelectionSummary
+  callee: src.living_product_studio.static.app.esc
+  call_type: resolved
+- caller: src.living_product_studio.static.app.updateSelectionSummary
+  callee: src.living_product_studio.static.app.shortUri
+  call_type: resolved
+- caller: src.living_product_studio.static.app.resize2dCanvas
+  callee: src.living_product_studio.static.app.resizeCanvas
+  call_type: resolved
+- caller: src.living_product_studio.static.app.create2dSelection
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.create2dSelection
+  callee: src.living_product_studio.static.app.makeSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.create2dSelection
+  callee: src.living_product_studio.static.app.updateSelectionSummary
+  call_type: resolved
+- caller: src.living_product_studio.static.app.saveAnnotation
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.saveAnnotation
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.saveAnnotation
+  callee: src.living_product_studio.static.app.jbody
+  call_type: resolved
+- caller: src.living_product_studio.static.app.planChange
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.planChange
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.planChange
+  callee: src.living_product_studio.static.app.jbody
+  call_type: resolved
+- caller: src.living_product_studio.static.app.planChange
+  callee: src.living_product_studio.static.app.renderPlan
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderPlan
+  callee: src.living_product_studio.static.app.esc
+  call_type: resolved
+- caller: src.living_product_studio.static.app.applyPlan
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.applyPlan
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.applyPlan
+  callee: src.living_product_studio.static.app.refreshSnapshot
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderSpec
+  callee: src.living_product_studio.static.app.esc
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderSpec
+  callee: src.living_product_studio.static.app.shortUri
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderLifecycle
+  callee: src.living_product_studio.static.app.esc
+  call_type: resolved
+- caller: src.living_product_studio.static.app.renderLifecycle
+  callee: src.living_product_studio.static.app.shortUri
+  call_type: resolved
+- caller: src.living_product_studio.static.app.runSimulation
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.runSimulation
+  callee: src.living_product_studio.static.app.jbody
+  call_type: resolved
+- caller: src.living_product_studio.static.app.invite
+  callee: src.living_product_studio.static.app.banner
+  call_type: resolved
+- caller: src.living_product_studio.static.app.invite
+  callee: src.living_product_studio.static.app.api
+  call_type: resolved
+- caller: src.living_product_studio.static.app.invite
+  callee: src.living_product_studio.static.app.jbody
+  call_type: resolved
+- caller: src.living_product_studio.static.app.bindActions
+  callee: src.living_product_studio.static.app.clearSelection
+  call_type: resolved
+- caller: src.living_product_studio.static.app.bindActions
+  callee: src.living_product_studio.static.app.loadProject
+  call_type: resolved
+- caller: src.living_product_studio.static.app.bindActions
+  callee: src.living_product_studio.static.app.refreshSnapshot
+  call_type: resolved
+- caller: src.living_product_studio.static.app.bindActions
+  callee: src.living_product_studio.static.app.activateTool
+  call_type: resolved
+- caller: src.living_product_studio.static.app.bindActions
+  callee: src.living_product_studio.static.app.loadDrawing
+  call_type: resolved
+- caller: src.living_product_studio.static.app.bindActions
+  callee: src.living_product_studio.static.app.runSimulation
+  call_type: resolved
+- caller: src.living_product_studio.event_store.EventStore.create_api_token
+  callee: src.living_product_studio.event_store.token_hash
+  call_type: resolved
+- caller: src.living_product_studio.event_store.EventStore.authenticate_api_token
+  callee: src.living_product_studio.event_store._aware
+  call_type: resolved
+- caller: src.living_product_studio.event_store.EventStore.create_session
+  callee: src.living_product_studio.event_store.token_hash
+  call_type: resolved
+- caller: src.living_product_studio.event_store.EventStore.authenticate_session
+  callee: src.living_product_studio.event_store._aware
+  call_type: resolved
+- caller: src.living_product_studio.event_store.EventStore.approve_invitation
+  callee: src.living_product_studio.event_store._aware
+  call_type: resolved
+- caller: src.living_product_studio.event_store.EventStore.accept_invitation
+  callee: src.living_product_studio.event_store._aware
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._selection_center
+  callee: services.cad-worker.scoped_brep_adapter._average
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._selection_center
+  callee: services.cad-worker.scoped_brep_adapter._vector
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._selection_normal
+  callee: services.cad-worker.scoped_brep_adapter._unit
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._selection_normal
+  callee: services.cad-worker.scoped_brep_adapter._vector
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._selection_normal
+  callee: services.cad-worker.scoped_brep_adapter._average
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._hole_tool
+  callee: services.cad-worker.scoped_brep_adapter._selection_center
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._hole_tool
+  callee: services.cad-worker.scoped_brep_adapter._selection_normal
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter._aabb_box
+  callee: services.cad-worker.scoped_brep_adapter._vector
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter.apply_scoped_operation
+  callee: services.cad-worker.scoped_brep_adapter._verify_scope
+  call_type: resolved
+- caller: services.cad-worker.scoped_brep_adapter.apply_scoped_operation
+  callee: services.cad-worker.scoped_brep_adapter._load_step
+  call_type: resolved
+- caller: housing_studio.cad3d.make_base
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_hole_centers
+  call_type: resolved
+- caller: housing_studio.cad3d._make_lid_shell
+  callee: housing_studio.cad3d._wire_rect
+  call_type: resolved
+- caller: housing_studio.cad3d.make_lid
+  callee: housing_studio.cad3d._make_lid_shell
+  call_type: resolved
+- caller: housing_studio.cad3d.make_lid
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: housing_studio.cad3d.make_lid
+  callee: housing_studio.cad3d._cylinder_along_x
+  call_type: resolved
+- caller: housing_studio.cad3d.make_lid
+  callee: housing_studio.cad3d._camera_positions
+  call_type: resolved
+- caller: housing_studio.cad3d.make_lid
+  callee: housing_studio.cad3d._auxiliary_boss_positions
+  call_type: resolved
+- caller: housing_studio.cad3d.make_models
+  callee: housing_studio.cad3d.make_base
+  call_type: resolved
+- caller: housing_studio.cad3d.make_models
+  callee: housing_studio.cad3d.make_lid
+  call_type: resolved
+- caller: housing_studio.validation.board_actual_clearances
+  callee: housing_studio.validation.board_origin
+  call_type: resolved
+- caller: housing_studio.validation.board_hole_centers
+  callee: housing_studio.validation.board_origin
+  call_type: resolved
+- caller: housing_studio.validation.collect_warnings
+  callee: housing_studio.validation.board_actual_clearances
+  call_type: resolved
+- caller: housing_studio.validation.design_metrics
+  callee: housing_studio.validation.board_actual_clearances
+  call_type: resolved
+- caller: housing_studio.mesh_preview.export_obj_from_stl
+  callee: housing_studio.mesh_preview._load_mesh
+  call_type: resolved
+- caller: housing_studio.mesh_preview._board_mesh
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin
+  call_type: resolved
+- caller: housing_studio.mesh_preview.export_preview_scenes
+  callee: housing_studio.mesh_preview._load_mesh
+  call_type: resolved
+- caller: housing_studio.mesh_preview.export_preview_scenes
+  callee: housing_studio.mesh_preview._set_rgba
+  call_type: resolved
+- caller: sample_output.demo.rebuild_project.main
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+  call_type: resolved
+- caller: housing_studio.artifacts._record
+  callee: housing_studio.artifacts._sha256
+  call_type: resolved
+- caller: housing_studio.artifacts.generate_artifacts
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  call_type: resolved
+- caller: housing_studio.artifacts.generate_artifacts
+  callee: housing_studio.artifacts._write_json
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_hole_centers
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._make_lid_shell
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._wire_rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._make_lid_shell
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._cylinder_along_x
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._camera_positions
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._auxiliary_boss_positions
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_models
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_models
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+  call_type: resolved
+- caller: housing_studio.llm_config._find_number
+  callee: housing_studio.llm_config._normalise_number
+  call_type: resolved
+- caller: housing_studio.llm_config.fallback_interpret
+  callee: housing_studio.llm_config._find_number
+  call_type: resolved
+- caller: housing_studio.llm_config.interpret_with_litellm
+  callee: housing_studio.llm_config.fallback_interpret
+  call_type: resolved
+- caller: housing_studio.llm_config.interpret_with_litellm
+  callee: housing_studio.llm_config._response_content
+  call_type: resolved
+- caller: src.living_product_studio.mcp_protocol.request_meta
+  callee: src.living_product_studio.mcp_protocol.request_params
+  call_type: resolved
+- caller: src.living_product_studio.mcp_protocol.body_protocol_version
+  callee: src.living_product_studio.mcp_protocol.request_meta
+  call_type: resolved
+- caller: src.living_product_studio.mcp_protocol.classify_mcp_era
+  callee: src.living_product_studio.mcp_protocol.body_protocol_version
+  call_type: resolved
+- caller: src.living_product_studio.mcp_protocol.server_discover_result
+  callee: src.living_product_studio.mcp_protocol.modern_result
+  call_type: resolved
+- caller: src.living_product_studio.mcp_gateway.McpGateway.handle
+  callee: src.living_product_studio.mcp_protocol.server_discover_result
+  call_type: resolved
+- caller: src.living_product_studio.mcp_gateway.McpGateway.handle
+  callee: src.living_product_studio.mcp_protocol.body_protocol_version
+  call_type: resolved
+- caller: src.living_product_studio.mcp_gateway.McpGateway._modernize_result
+  callee: src.living_product_studio.mcp_protocol.modern_result
+  call_type: resolved
+- caller: src.living_product_studio.mcp_gateway.McpGateway.tools
+  callee: src.living_product_studio.mcp_gateway._tool
+  call_type: resolved
+- caller: src.living_product_studio.mcp_gateway.McpGateway.call_tool
+  callee: src.living_product_studio.mcp_gateway._content
+  call_type: resolved
+- caller: src.living_product_studio.mcp_gateway.McpGateway.read_resource
+  callee: src.living_product_studio.permissions.require_permission
+  call_type: resolved
+- caller: src.living_product_studio.mcp_gateway.McpGateway.read_resource
+  callee: src.living_product_studio.uri.parse_poa_uri
+  call_type: resolved
+- caller: housing_studio.config_diff.diff_configs
+  callee: housing_studio.config_diff._walk_diff
+  call_type: resolved
+- caller: housing_studio.config_diff.diff_configs
+  callee: housing_studio.config_diff._plain
+  call_type: resolved
+- caller: housing_studio.config_diff.diff_as_dicts
+  callee: housing_studio.config_diff.diff_configs
+  call_type: resolved
+- caller: housing_studio.draw2d._board_outline
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin
+  call_type: resolved
+- caller: housing_studio.draw2d._board_outline
+  callee: housing_studio.draw2d._rect
+  call_type: resolved
+- caller: housing_studio.draw2d._base_front_view
+  callee: housing_studio.draw2d._rect
+  call_type: resolved
+- caller: housing_studio.draw2d._base_front_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: housing_studio.draw2d._base_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_actual_clearances
+  call_type: resolved
+- caller: housing_studio.draw2d._base_top_view
+  callee: housing_studio.draw2d._rect
+  call_type: resolved
+- caller: housing_studio.draw2d._base_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_hole_centers
+  call_type: resolved
+- caller: housing_studio.draw2d._base_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: housing_studio.draw2d._lid_front_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: housing_studio.draw2d._lid_top_view
+  callee: housing_studio.draw2d._rect
+  call_type: resolved
+- caller: housing_studio.draw2d._lid_top_view
+  callee: housing_studio.draw2d._camera_positions
+  call_type: resolved
+- caller: housing_studio.draw2d._lid_top_view
+  callee: housing_studio.draw2d._aux_positions
+  call_type: resolved
+- caller: housing_studio.draw2d._lid_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: housing_studio.draw2d._assembly_front_view
+  callee: housing_studio.draw2d._rect
+  call_type: resolved
+- caller: housing_studio.draw2d._assembly_top_view
+  callee: housing_studio.draw2d._rect
+  call_type: resolved
+- caller: housing_studio.draw2d._assembly_side_view
+  callee: housing_studio.draw2d._rect
+  call_type: resolved
+- caller: housing_studio.draw2d.build_drawing_sets
+  callee: housing_studio.draw2d._base_front_view
+  call_type: resolved
+- caller: housing_studio.draw2d.build_drawing_sets
+  callee: housing_studio.draw2d._base_top_view
+  call_type: resolved
+- caller: housing_studio.draw2d.build_drawing_sets
+  callee: housing_studio.draw2d._base_side_view
+  call_type: resolved
+- caller: housing_studio.draw2d.build_drawing_sets
+  callee: housing_studio.draw2d._lid_front_view
+  call_type: resolved
+- caller: housing_studio.draw2d.build_drawing_sets
+  callee: housing_studio.draw2d._lid_top_view
+  call_type: resolved
+- caller: housing_studio.draw2d.build_drawing_sets
+  callee: housing_studio.draw2d._lid_side_view
+  call_type: resolved
+- caller: housing_studio.draw2d._ensure_dxf_layers
+  callee: housing_studio.draw2d._layer_style
+  call_type: resolved
+- caller: housing_studio.draw2d._ensure_dxf_layers
+  callee: housing_studio.draw2d._lineweight_dxf
+  call_type: resolved
+- caller: housing_studio.draw2d._flatten_primitives
+  callee: housing_studio.draw2d._dimension_segments
+  call_type: resolved
+- caller: housing_studio.draw2d.export_dxf
+  callee: housing_studio.draw2d._ensure_dxf_layers
+  call_type: resolved
+- caller: housing_studio.draw2d.export_svg
+  callee: housing_studio.draw2d._flatten_primitives
+  call_type: resolved
+- caller: housing_studio.draw2d.export_svg
+  callee: housing_studio.draw2d._layer_style
+  call_type: resolved
+- caller: housing_studio.draw2d.export_svg
+  callee: housing_studio.draw2d._svg_dash
+  call_type: resolved
+- caller: housing_studio.draw2d._draw_view_pdf
+  callee: housing_studio.draw2d._flatten_primitives
+  call_type: resolved
+- caller: housing_studio.draw2d._draw_view_pdf
+  callee: housing_studio.draw2d._layer_style
+  call_type: resolved
+- caller: housing_studio.draw2d._draw_view_pdf
+  callee: housing_studio.draw2d._pdf_dash
+  call_type: resolved
+- caller: housing_studio.draw2d.export_all_2d
+  callee: housing_studio.draw2d.build_drawing_sets
+  call_type: resolved
+- caller: housing_studio.draw2d.export_all_2d
+  callee: housing_studio.draw2d.export_dxf
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._board_outline
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._board_outline
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_front_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_front_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_actual_clearances
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_hole_centers
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_front_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._camera_positions
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._aux_positions
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_front_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_top_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_side_view
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_front_view
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_top_view
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_side_view
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_front_view
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_top_view
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_side_view
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._ensure_dxf_layers
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._layer_style
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._ensure_dxf_layers
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lineweight_dxf
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._flatten_primitives
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._dimension_segments
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._ensure_dxf_layers
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_svg
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._flatten_primitives
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_svg
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._layer_style
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_svg
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._svg_dash
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._draw_view_pdf
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._flatten_primitives
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._draw_view_pdf
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._layer_style
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._draw_view_pdf
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._pdf_dash
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_all_2d
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_all_2d
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf
+  call_type: resolved
+- caller: app.main._validated_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  call_type: resolved
+- caller: app.main._url_for
+  callee: app.main._safe_job_identifier
+  call_type: resolved
+- caller: app.main._manifest_with_urls
+  callee: app.main._url_for
+  call_type: resolved
+- caller: app.main._job_summaries
+  callee: app.main._safe_job_identifier
+  call_type: resolved
+- caller: app.main.default_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  call_type: resolved
+- caller: app.main.default_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  call_type: resolved
+- caller: app.main.default_config
+  callee: app.main._layer_summary
+  call_type: resolved
+- caller: app.main.default_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  call_type: resolved
+- caller: app.main.validate_config
+  callee: app.main._validated_config
+  call_type: resolved
+- caller: app.main.validate_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  call_type: resolved
+- caller: app.main.validate_config
+  callee: app.main._layer_summary
+  call_type: resolved
+- caller: app.main.validate_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  call_type: resolved
+- caller: app.main.interpret
+  callee: app.main._validated_config
+  call_type: resolved
+- caller: app.main.interpret
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  call_type: resolved
+- caller: app.main.interpret
+  callee: app.main._layer_summary
+  call_type: resolved
+- caller: app.main.interpret
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  call_type: resolved
+- caller: app.main.generate
+  callee: app.main._validated_config
+  call_type: resolved
+- caller: app.main.generate
+  callee: app.main._manifest_with_urls
+  call_type: resolved
+- caller: app.main.list_jobs
+  callee: app.main._job_summaries
+  call_type: resolved
+- caller: app.main.get_job_config
+  callee: app.main._safe_job_identifier
+  call_type: resolved
+- caller: app.main.get_job_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  call_type: resolved
+- caller: app.main.get_job_config
+  callee: app.main._layer_summary
+  call_type: resolved
+- caller: app.main.get_job
+  callee: app.main._safe_job_identifier
+  call_type: resolved
+- caller: app.main.get_job
+  callee: app.main._manifest_with_urls
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main._validated_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main._url_for
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.main._safe_job_identifier
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main._manifest_with_urls
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.main._url_for
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.default_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.default_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.default_config
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.interpret
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.main._validated_config
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.interpret
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.interpret
+  callee: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.main._validated_config
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.generate
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.main._manifest_with_urls
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.get_job
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.main._safe_job_identifier
+  call_type: resolved
+- caller: services.cad-worker.vendor.rpi5_housing_studio.app.main.get_job
+  callee: services.cad-worker.vendor.rpi5_housing_studio.app.main._manifest_with_urls
+  call_type: resolved
+- caller: src.living_product_studio.api.startup_seed
+  callee: src.living_product_studio.seed.seed_from_file
+  call_type: resolved
+- caller: src.living_product_studio.api.authorize_project
+  callee: src.living_product_studio.permissions.require_permission
+  call_type: resolved
+- caller: src.living_product_studio.api.get_project
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.get_tree
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.get_specification
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.get_specification
+  callee: src.living_product_studio.specification.unified_specification
+  call_type: resolved
+- caller: src.living_product_studio.api.get_events
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.resolve_project_selection
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.resolve_project_selection
+  callee: src.living_product_studio.selection_resolver.resolve_selection
+  call_type: resolved
+- caller: src.living_product_studio.api.create_annotation
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.create_change_plan
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.apply_change_plan
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.run_power
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.run_power
+  callee: src.living_product_studio.simulations.simulate_power
+  call_type: resolved
+- caller: src.living_product_studio.api.run_thermal
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.run_thermal
+  callee: src.living_product_studio.simulations.simulate_thermal
+  call_type: resolved
+- caller: src.living_product_studio.api.run_human
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.run_human
+  callee: src.living_product_studio.simulations.evaluate_human_scenario
+  call_type: resolved
+- caller: src.living_product_studio.api.mechanical_checks
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.mechanical_checks
+  callee: src.living_product_studio.simulations.mechanical_rule_checks
+  call_type: resolved
+- caller: src.living_product_studio.api.download_artifact
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.download_artifact
+  callee: src.living_product_studio.api._resolved_artifact_path
+  call_type: resolved
+- caller: src.living_product_studio.api.export_project
+  callee: src.living_product_studio.api.authorize_project
+  call_type: resolved
+- caller: src.living_product_studio.api.export_project
+  callee: src.living_product_studio.artifacts.export_project_bundle
+  call_type: resolved
+- caller: src.living_product_studio.api.mcp_endpoint
+  callee: src.living_product_studio.mcp_protocol.classify_mcp_era
+  call_type: resolved
+modules:
+  app.main:
+  - app.main._job_summaries
+  - app.main._layer_summary
+  - app.main._manifest_with_urls
+  - app.main._safe_job_identifier
+  - app.main._url_for
+  - app.main._validated_config
+  - app.main.default_config
+  - app.main.generate
+  - app.main.get_job
+  - app.main.get_job_config
+  - app.main.interpret
+  - app.main.list_jobs
+  - app.main.validate_config
+  app.static.app:
+  - app.static.app.OrbitControls
+  - app.static.app.STLLoader
+  - app.static.app.applyDrawingLayerVisibility
+  - app.static.app.applyManualConfigChange
+  - app.static.app.applyProposedChanges
+  - app.static.app.auditIsCurrent
+  - app.static.app.baseUrl
+  - app.static.app.blob
+  - app.static.app.card
+  - app.static.app.checked
+  - app.static.app.clearAppliedAudit
+  - app.static.app.clearModels
+  - app.static.app.clearPendingProposal
+  - app.static.app.config
+  - app.static.app.configured
+  - app.static.app.createToggle
+  - app.static.app.created
+  - app.static.app.discardProposedChanges
+  - app.static.app.display
+  - app.static.app.downloadConfig
+  - app.static.app.escapeHtml
+  - app.static.app.fetchJson
+  - app.static.app.file
+  - app.static.app.formatValue
+  - app.static.app.generate
+  - app.static.app.getNested
+  - app.static.app.hideBanner
+  - app.static.app.initViewer
+  - app.static.app.interpretPrompt
+  - app.static.app.label
+  - app.static.app.lidUrl
+  - app.static.app.load3dPreview
+  - app.static.app.loadDefaultConfig
+  - app.static.app.loadJob
+  - app.static.app.loadJobHistory
+  - app.static.app.loadViewerDependencies
+  - app.static.app.manifest
+  - app.static.app.parseEditorConfig
+  - app.static.app.parsed
+  - app.static.app.prettyConfig
+  - app.static.app.proposal
+  - app.static.app.renderArtifactOptions
+  - app.static.app.renderArtifacts
+  - app.static.app.renderChangeProposal
+  - app.static.app.renderDrawingLayers
+  - app.static.app.renderDrawingPreviewLayerControls
+  - app.static.app.renderDrawingViews
+  - app.static.app.renderFeatureLayers
+  - app.static.app.renderMetrics
+  - app.static.app.renderQuickParameters
+  - app.static.app.renderWarnings
+  - app.static.app.row
+  - app.static.app.rows
+  - app.static.app.setConfig
+  - app.static.app.setNested
+  - app.static.app.showBanner
+  - app.static.app.stlGeometry
+  - app.static.app.suggestion
+  - app.static.app.uploadConfig
+  - app.static.app.validateConfig
+  examples.rpi5-camera3.pcb.kicad_adapter:
+  - examples.rpi5-camera3.pcb.kicad_adapter._cli
+  - examples.rpi5-camera3.pcb.kicad_adapter.export_review_artifacts
+  - examples.rpi5-camera3.pcb.kicad_adapter.run
+  generator:
+  - generator.load_config
+  housing_studio.artifacts:
+  - housing_studio.artifacts._record
+  - housing_studio.artifacts._sha256
+  - housing_studio.artifacts._write_json
+  - housing_studio.artifacts.generate_artifacts
+  housing_studio.cad3d:
+  - housing_studio.cad3d._auxiliary_boss_positions
+  - housing_studio.cad3d._camera_positions
+  - housing_studio.cad3d._cylinder_along_x
+  - housing_studio.cad3d._make_lid_shell
+  - housing_studio.cad3d._wire_rect
+  - housing_studio.cad3d.make_base
+  - housing_studio.cad3d.make_lid
+  - housing_studio.cad3d.make_models
+  housing_studio.config_diff:
+  - housing_studio.config_diff._plain
+  - housing_studio.config_diff._walk_diff
+  - housing_studio.config_diff.diff_as_dicts
+  - housing_studio.config_diff.diff_configs
+  housing_studio.draw2d:
+  - housing_studio.draw2d._assembly_front_view
+  - housing_studio.draw2d._assembly_side_view
+  - housing_studio.draw2d._assembly_top_view
+  - housing_studio.draw2d._aux_positions
+  - housing_studio.draw2d._base_front_view
+  - housing_studio.draw2d._base_side_view
+  - housing_studio.draw2d._base_top_view
+  - housing_studio.draw2d._board_outline
+  - housing_studio.draw2d._camera_positions
+  - housing_studio.draw2d._dimension_segments
+  - housing_studio.draw2d._draw_view_pdf
+  - housing_studio.draw2d._ensure_dxf_layers
+  - housing_studio.draw2d._flatten_primitives
+  - housing_studio.draw2d._layer_style
+  - housing_studio.draw2d._lid_front_view
+  - housing_studio.draw2d._lid_side_view
+  - housing_studio.draw2d._lid_top_view
+  - housing_studio.draw2d._lineweight_dxf
+  - housing_studio.draw2d._pdf_dash
+  - housing_studio.draw2d._rect
+  - housing_studio.draw2d._svg_dash
+  - housing_studio.draw2d.build_drawing_sets
+  - housing_studio.draw2d.export_all_2d
+  - housing_studio.draw2d.export_dxf
+  - housing_studio.draw2d.export_svg
+  housing_studio.llm_config:
+  - housing_studio.llm_config._find_number
+  - housing_studio.llm_config._normalise_number
+  - housing_studio.llm_config._response_content
+  - housing_studio.llm_config.fallback_interpret
+  - housing_studio.llm_config.interpret_with_litellm
+  housing_studio.mesh_preview:
+  - housing_studio.mesh_preview._board_mesh
+  - housing_studio.mesh_preview._load_mesh
+  - housing_studio.mesh_preview._set_rgba
+  - housing_studio.mesh_preview.export_obj_from_stl
+  - housing_studio.mesh_preview.export_preview_scenes
+  housing_studio.validation:
+  - housing_studio.validation.board_actual_clearances
+  - housing_studio.validation.board_hole_centers
+  - housing_studio.validation.board_origin
+  - housing_studio.validation.collect_warnings
+  - housing_studio.validation.design_metrics
+  sample_output.demo.rebuild_project:
+  - sample_output.demo.rebuild_project.main
+  scripts.verify_project:
+  - scripts.verify_project.main
+  - scripts.verify_project.verify
+  services.cad-worker.scoped_brep_adapter:
+  - services.cad-worker.scoped_brep_adapter._aabb_box
+  - services.cad-worker.scoped_brep_adapter._average
+  - services.cad-worker.scoped_brep_adapter._hole_tool
+  - services.cad-worker.scoped_brep_adapter._load_step
+  - services.cad-worker.scoped_brep_adapter._selection_center
+  - services.cad-worker.scoped_brep_adapter._selection_normal
+  - services.cad-worker.scoped_brep_adapter._unit
+  - services.cad-worker.scoped_brep_adapter._vector
+  - services.cad-worker.scoped_brep_adapter._verify_scope
+  - services.cad-worker.scoped_brep_adapter.apply_scoped_operation
+  services.cad-worker.vendor.rpi5_housing_studio.app.main:
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main._manifest_with_urls
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main._safe_job_identifier
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main._url_for
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main._validated_config
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main.default_config
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main.generate
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main.get_job
+  - services.cad-worker.vendor.rpi5_housing_studio.app.main.interpret
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app:
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.blob
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.card
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.clearModels
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.config
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.display
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.downloadConfig
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.file
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.group
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.manifest
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parsed
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.payload
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderArtifacts
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.rows
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.stlGeometry
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.suggestion
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.updateDrawingPreview
+  - services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig
+  services.cad-worker.vendor.rpi5_housing_studio.generator:
+  - services.cad-worker.vendor.rpi5_housing_studio.generator.load_config
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts:
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._record
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._sha256
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts._write_json
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d:
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._auxiliary_boss_positions
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._camera_positions
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._cylinder_along_x
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._make_lid_shell
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d._wire_rect
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_models
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d:
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_front_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_side_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._assembly_top_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._aux_positions
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_front_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_side_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._base_top_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._board_outline
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._camera_positions
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._dimension_segments
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._draw_view_pdf
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._ensure_dxf_layers
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._flatten_primitives
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._layer_style
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_front_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_side_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lid_top_view
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._lineweight_dxf
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._pdf_dash
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._rect
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._svg_dash
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.build_drawing_sets
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_all_2d
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_svg
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config:
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._find_number
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._normalise_number
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config._response_content
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.fallback_interpret
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.interpret_with_litellm
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview:
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._board_mesh
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._load_mesh
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._set_rgba
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_obj_from_stl
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_preview_scenes
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models:
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation:
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_actual_clearances
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_hole_centers
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.design_metrics
+  - services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.hinge_segments
+  services.cad-worker.worker:
+  - services.cad-worker.worker.on_message
+  services.mqtt-gateway.gateway:
+  - services.mqtt-gateway.gateway.on_message
+  - services.mqtt-gateway.gateway.response_topic
+  src.living_product_studio.api:
+  - src.living_product_studio.api._resolved_artifact_path
+  - src.living_product_studio.api.apply_change_plan
+  - src.living_product_studio.api.authorize_project
+  - src.living_product_studio.api.create_annotation
+  - src.living_product_studio.api.create_change_plan
+  - src.living_product_studio.api.download_artifact
+  - src.living_product_studio.api.export_project
+  - src.living_product_studio.api.get_events
+  - src.living_product_studio.api.get_project
+  - src.living_product_studio.api.get_specification
+  - src.living_product_studio.api.get_tree
+  - src.living_product_studio.api.mcp_endpoint
+  - src.living_product_studio.api.mechanical_checks
+  - src.living_product_studio.api.resolve_project_selection
+  - src.living_product_studio.api.run_human
+  - src.living_product_studio.api.run_power
+  - src.living_product_studio.api.run_thermal
+  - src.living_product_studio.api.startup_seed
+  src.living_product_studio.artifacts:
+  - src.living_product_studio.artifacts.export_project_bundle
+  src.living_product_studio.bus:
+  - src.living_product_studio.bus.CommandBus._handle_existing
+  - src.living_product_studio.bus.QueryService.project
+  - src.living_product_studio.bus.QueryService.tree
+  src.living_product_studio.change_planner:
+  - src.living_product_studio.change_planner.ChangePlanner._local_plan
+  - src.living_product_studio.change_planner.ChangePlanner.compile_apply_payload
+  - src.living_product_studio.change_planner.ChangePlanner.validate_scope
+  - src.living_product_studio.change_planner._angle
+  - src.living_product_studio.change_planner._diameter
+  - src.living_product_studio.change_planner._first_number
+  - src.living_product_studio.change_planner._number_near
+  - src.living_product_studio.change_planner._owning_object_uri
+  src.living_product_studio.cli:
+  - src.living_product_studio.cli.command
+  - src.living_product_studio.cli.export
+  - src.living_product_studio.cli.gtin_complete
+  - src.living_product_studio.cli.gtin_validate
+  - src.living_product_studio.cli.plan
+  - src.living_product_studio.cli.power
+  - src.living_product_studio.cli.projects_cmd
+  - src.living_product_studio.cli.seed
+  - src.living_product_studio.cli.services
+  - src.living_product_studio.cli.shell
+  - src.living_product_studio.cli.tree
+  src.living_product_studio.domain:
+  - src.living_product_studio.domain.utcnow
+  src.living_product_studio.event_store:
+  - src.living_product_studio.event_store.EventStore.accept_invitation
+  - src.living_product_studio.event_store.EventStore.approve_invitation
+  - src.living_product_studio.event_store.EventStore.authenticate_api_token
+  - src.living_product_studio.event_store.EventStore.authenticate_session
+  - src.living_product_studio.event_store.EventStore.create_api_token
+  - src.living_product_studio.event_store.EventStore.create_session
+  - src.living_product_studio.event_store._aware
+  - src.living_product_studio.event_store.token_hash
+  src.living_product_studio.gtin:
+  - src.living_product_studio.gtin.calculate_check_digit
+  - src.living_product_studio.gtin.complete_gtin
+  - src.living_product_studio.gtin.validate_gtin
+  src.living_product_studio.mcp_gateway:
+  - src.living_product_studio.mcp_gateway.McpGateway._modernize_result
+  - src.living_product_studio.mcp_gateway.McpGateway.call_tool
+  - src.living_product_studio.mcp_gateway.McpGateway.handle
+  - src.living_product_studio.mcp_gateway.McpGateway.read_resource
+  - src.living_product_studio.mcp_gateway.McpGateway.tools
+  - src.living_product_studio.mcp_gateway._content
+  - src.living_product_studio.mcp_gateway._tool
+  src.living_product_studio.mcp_protocol:
+  - src.living_product_studio.mcp_protocol.body_protocol_version
+  - src.living_product_studio.mcp_protocol.classify_mcp_era
+  - src.living_product_studio.mcp_protocol.modern_result
+  - src.living_product_studio.mcp_protocol.request_meta
+  - src.living_product_studio.mcp_protocol.request_params
+  - src.living_product_studio.mcp_protocol.server_discover_result
+  src.living_product_studio.mqtt_bus:
+  - src.living_product_studio.mqtt_bus.MqttPublisher.publish_events
+  - src.living_product_studio.mqtt_bus._topic_atom
+  - src.living_product_studio.mqtt_bus.publisher_from_settings
+  src.living_product_studio.permissions:
+  - src.living_product_studio.permissions.has_permission
+  - src.living_product_studio.permissions.require_permission
+  src.living_product_studio.projector:
+  - src.living_product_studio.projector.apply_event
+  - src.living_product_studio.projector.object_tree
+  - src.living_product_studio.projector.project_from_events
+  src.living_product_studio.seed:
+  - src.living_product_studio.seed.seed_from_file
+  src.living_product_studio.selection_resolver:
+  - src.living_product_studio.selection_resolver.resolve_selection
+  src.living_product_studio.simulations:
+  - src.living_product_studio.simulations.evaluate_human_scenario
+  - src.living_product_studio.simulations.mechanical_rule_checks
+  - src.living_product_studio.simulations.simulate_power
+  - src.living_product_studio.simulations.simulate_thermal
+  src.living_product_studio.specification:
+  - src.living_product_studio.specification.manufacturing_views
+  - src.living_product_studio.specification.unified_specification
+  src.living_product_studio.static.app:
+  - src.living_product_studio.static.app.activateTool
+  - src.living_product_studio.static.app.api
+  - src.living_product_studio.static.app.applyPlan
+  - src.living_product_studio.static.app.banner
+  - src.living_product_studio.static.app.bindActions
+  - src.living_product_studio.static.app.clearSelection
+  - src.living_product_studio.static.app.connectWs
+  - src.living_product_studio.static.app.create2dSelection
+  - src.living_product_studio.static.app.createAreaSelection
+  - src.living_product_studio.static.app.createPointerSelection
+  - src.living_product_studio.static.app.drawOverlay
+  - src.living_product_studio.static.app.esc
+  - src.living_product_studio.static.app.handleDraw
+  - src.living_product_studio.static.app.hitData
+  - src.living_product_studio.static.app.init
+  - src.living_product_studio.static.app.initSelectionCanvas
+  - src.living_product_studio.static.app.initTabs
+  - src.living_product_studio.static.app.initViewer
+  - src.living_product_studio.static.app.invite
+  - src.living_product_studio.static.app.jbody
+  - src.living_product_studio.static.app.loadDrawing
+  - src.living_product_studio.static.app.loadModels
+  - src.living_product_studio.static.app.loadProject
+  - src.living_product_studio.static.app.loadProjects
+  - src.living_product_studio.static.app.makeSelection
+  - src.living_product_studio.static.app.planChange
+  - src.living_product_studio.static.app.pointInPolygon
+  - src.living_product_studio.static.app.raycast
+  - src.living_product_studio.static.app.refreshSnapshot
+  - src.living_product_studio.static.app.renderHighlight
+  - src.living_product_studio.static.app.renderLifecycle
+  - src.living_product_studio.static.app.renderObjectInspector
+  - src.living_product_studio.static.app.renderPlan
+  - src.living_product_studio.static.app.renderSpec
+  - src.living_product_studio.static.app.renderTree
+  - src.living_product_studio.static.app.resize2dCanvas
+  - src.living_product_studio.static.app.resizeCanvas
+  - src.living_product_studio.static.app.resizeViewer
+  - src.living_product_studio.static.app.runSimulation
+  - src.living_product_studio.static.app.sampleSelection
+  - src.living_product_studio.static.app.saveAnnotation
+  - src.living_product_studio.static.app.selectObject
+  - src.living_product_studio.static.app.semanticFace
+  - src.living_product_studio.static.app.shortUri
+  - src.living_product_studio.static.app.toggleObjectVisibility
+  - src.living_product_studio.static.app.treeNode
+  - src.living_product_studio.static.app.updateSelectionSummary
+  - src.living_product_studio.static.app.v3
+  src.living_product_studio.uri:
+  - src.living_product_studio.uri.is_within_scope
+  - src.living_product_studio.uri.parse_poa_uri
+entry_points:
+- app.main.default_config
+- app.main.generate
+- app.main.get_job
+- app.main.get_job_config
+- app.main.health
+- app.main.index
+- app.main.interpret
+- app.main.list_jobs
+- app.main.validate_config
+- app.static.app.THREE
+- app.static.app.applyProposedChanges
+- app.static.app.artifact
+- app.static.app.artifacts
+- app.static.app.auditIsCurrent
+- app.static.app.axes
+- app.static.app.axis
+- app.static.app.baseMaterial
+- app.static.app.baseMesh
+- app.static.app.baseUrl
+- app.static.app.blob
+- app.static.app.box
+- app.static.app.camera
+- app.static.app.card
+- app.static.app.center
+- app.static.app.changes
+- app.static.app.checked
+- app.static.app.config
+- app.static.app.configLayers
+- app.static.app.configured
+- app.static.app.configuredOpen
+- app.static.app.controls
+- app.static.app.created
+- app.static.app.current
+- app.static.app.degrees
+- app.static.app.detail
+- app.static.app.discardProposedChanges
+- app.static.app.display
+- app.static.app.distance
+- app.static.app.div
+- app.static.app.downloadConfig
+- app.static.app.file
+- app.static.app.fillLight
+- app.static.app.generate
+- app.static.app.grid
+- app.static.app.group
+- app.static.app.groupById
+- app.static.app.groups
+- app.static.app.height
+- app.static.app.imported
+- app.static.app.index
+- app.static.app.initViewer
+- app.static.app.interpretPrompt
+- app.static.app.item
+- app.static.app.jobs
+- app.static.app.keyLight
+- app.static.app.label
+- app.static.app.lidMaterial
+- app.static.app.lidMesh
+- app.static.app.lidPivot
+- app.static.app.lidUrl
+- app.static.app.link
+- app.static.app.loadDefaultConfig
+- app.static.app.loader
+- app.static.app.manifest
+- app.static.app.maximum
+- app.static.app.modelRoot
+- app.static.app.observer
+- app.static.app.openAngle
+- app.static.app.parsed
+- app.static.app.part
+- app.static.app.parts
+- app.static.app.payload
+- app.static.app.proposal
+- app.static.app.renderer
+- app.static.app.response
+- app.static.app.row
+- app.static.app.rows
+- app.static.app.scene
+- app.static.app.setLlmBadge
+- app.static.app.size
+- app.static.app.suggestion
+- app.static.app.svg
+- app.static.app.svgText
+- app.static.app.target
+- app.static.app.url
+- app.static.app.value
+- app.static.app.version
+- app.static.app.view
+- app.static.app.visibleCount
+- app.static.app.width
+- app.static.app.wrapper
+- examples.rpi5-camera3.demo-rpi5.lps.artifacts.a40972c7e37e-vision_app.analyze
+- examples.rpi5-camera3.pcb.kicad_adapter.export_review_artifacts
+- examples.rpi5-camera3.software.vision_app.analyze
+- generator.main
+- housing_studio.artifacts.generate_artifacts
+- housing_studio.config_diff.ConfigChange.to_dict
+- housing_studio.config_diff.change_summary_text
+- housing_studio.draw2d.View2D.add
+- housing_studio.llm_config.interpret_with_litellm
+- housing_studio.mesh_preview.export_obj_from_stl
+- housing_studio.mesh_preview.export_preview_scenes
+- housing_studio.models.EnclosureDimensions.validate_geometry
+- housing_studio.models.HingeConfig.validate_hinge
+- housing_studio.models.ProjectConfig.validate_project
+- housing_studio.models.StandoffConfig.validate_standoff
+- housing_studio.models.default_project_config
+- housing_studio.validation.DesignWarning.to_dict
+- housing_studio.validation.board_hole_centers
+- housing_studio.validation.collect_warnings
+- housing_studio.validation.design_metrics
+- housing_studio.validation.hinge_segments
+- sample_output.demo.rebuild_project.main
+- scripts.verify_project.main
+- services.cad-worker.vendor.rpi5_housing_studio.app.main.default_config
+- services.cad-worker.vendor.rpi5_housing_studio.app.main.generate
+- services.cad-worker.vendor.rpi5_housing_studio.app.main.get_job
+- services.cad-worker.vendor.rpi5_housing_studio.app.main.health
+- services.cad-worker.vendor.rpi5_housing_studio.app.main.index
+- services.cad-worker.vendor.rpi5_housing_studio.app.main.interpret
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.artifact
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.artifacts
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.axes
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.axis
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.baseMaterial
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.baseMesh
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.baseUrl
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.blob
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.box
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.camera
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.card
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.center
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.config
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.configured
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.configuredOpen
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.controls
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.current
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.degrees
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.detail
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.display
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.distance
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.div
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.downloadConfig
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.file
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fillLight
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.grid
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.group
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.groups
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.height
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.index
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.initViewer
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.item
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.keyLight
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.lidMaterial
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.lidMesh
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.lidPivot
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.lidUrl
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.link
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loader
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.manifest
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.maxDimension
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.modelRoot
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.openAngle
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parsed
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.part
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.payload
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderer
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.resizeObserver
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.response
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.rows
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.scene
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setLlmBadge
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.size
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.suggestion
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.target
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.url
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.value
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.view
+- services.cad-worker.vendor.rpi5_housing_studio.app.static.app.width
+- services.cad-worker.vendor.rpi5_housing_studio.generator.main
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.export_assembly_step
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.export_part
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_models
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.shape_stats
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.View2D.add
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_all_2d
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.EnclosureDimensions.validate_geometry
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.HingeConfig.validate_hinge
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.ProjectConfig.validate_project
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.StandoffConfig.validate_standoff
+- services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.DesignWarning.to_dict
+- services.cad-worker.worker.on_connect
+- services.cad-worker.worker.on_message
+- services.device-sim.simulator.analyze_image
+- services.mqtt-gateway.gateway.on_connect
+- services.mqtt-gateway.gateway.on_message
+- src.living_product_studio.api.WsHub.__init__
+- src.living_product_studio.api.WsHub.broadcast
+- src.living_product_studio.api.WsHub.connect
+- src.living_product_studio.api.WsHub.disconnect
+- src.living_product_studio.api.accept_invitation
+- src.living_product_studio.api.apply_change_plan
+- src.living_product_studio.api.approve_invitation
+- src.living_product_studio.api.command_rejected
+- src.living_product_studio.api.concurrency_error
+- src.living_product_studio.api.create_annotation
+- src.living_product_studio.api.create_change_plan
+- src.living_product_studio.api.download_artifact
+- src.living_product_studio.api.execute_command
+- src.living_product_studio.api.export_project
+- src.living_product_studio.api.get_events
+- src.living_product_studio.api.get_project
+- src.living_product_studio.api.get_specification
+- src.living_product_studio.api.get_tree
+- src.living_product_studio.api.health
+- src.living_product_studio.api.index
+- src.living_product_studio.api.list_projects
+- src.living_product_studio.api.mcp_endpoint
+- src.living_product_studio.api.me
+- src.living_product_studio.api.mechanical_checks
+- src.living_product_studio.api.permission_denied
+- src.living_product_studio.api.principal
+- src.living_product_studio.api.project_not_found
+- src.living_product_studio.api.project_socket
+- src.living_product_studio.api.reject_invitation
+- src.living_product_studio.api.request_access
+- src.living_product_studio.api.resolve_project_selection
+- src.living_product_studio.api.run_human
+- src.living_product_studio.api.run_power
+- src.living_product_studio.api.run_thermal
+- src.living_product_studio.api.startup_seed
+- src.living_product_studio.auth.AuthService.__init__
+- src.living_product_studio.auth.AuthService.accept
+- src.living_product_studio.auth.AuthService.approve
+- src.living_product_studio.auth.AuthService.principal_from_request
+- src.living_product_studio.auth.AuthService.reject
+- src.living_product_studio.auth.AuthService.request_access
+- src.living_product_studio.auth.AuthService.role_for
+- src.living_product_studio.auth.Mailer.__init__
+- src.living_product_studio.auth.Mailer._write_outbox
+- src.living_product_studio.auth.Mailer.send
+- src.living_product_studio.bus.CommandBus.__init__
+- src.living_product_studio.bus.CommandBus._create_project
+- src.living_product_studio.bus.CommandBus._event
+- src.living_product_studio.bus.CommandBus._handle_existing
+- src.living_product_studio.bus.CommandBus.execute
+- src.living_product_studio.bus.QueryService.__init__
+- src.living_product_studio.bus.QueryService.events
+- src.living_product_studio.bus.QueryService.project
+- src.living_product_studio.bus.QueryService.projects
+- src.living_product_studio.bus.QueryService.tree
+- src.living_product_studio.change_planner.ChangePlanner.__init__
+- src.living_product_studio.change_planner.ChangePlanner._litellm_plan
+- src.living_product_studio.change_planner.ChangePlanner._local_plan
+- src.living_product_studio.change_planner.ChangePlanner._selected_context
+- src.living_product_studio.change_planner.ChangePlanner.compile_apply_payload
+- src.living_product_studio.change_planner.ChangePlanner.plan
+- src.living_product_studio.change_planner.ChangePlanner.validate_scope
+- src.living_product_studio.cli.command
+- src.living_product_studio.cli.export
+- src.living_product_studio.cli.gtin_complete
+- src.living_product_studio.cli.gtin_validate
+- src.living_product_studio.cli.plan
+- src.living_product_studio.cli.seed
+- src.living_product_studio.cli.serve
+- src.living_product_studio.cli.shell
+- src.living_product_studio.domain.InvitationRequest.normalize_email
+- src.living_product_studio.domain.RegionSelection.validate_evidence
+- src.living_product_studio.event_store.EventStore.__init__
+- src.living_product_studio.event_store.EventStore.accept_invitation
+- src.living_product_studio.event_store.EventStore.append
+- src.living_product_studio.event_store.EventStore.approve_invitation
+- src.living_product_studio.event_store.EventStore.authenticate_api_token
+- src.living_product_studio.event_store.EventStore.authenticate_session
+- src.living_product_studio.event_store.EventStore.create_api_token
+- src.living_product_studio.event_store.EventStore.create_invitation
+- src.living_product_studio.event_store.EventStore.create_session
+- src.living_product_studio.event_store.EventStore.current_version
+- src.living_product_studio.event_store.EventStore.delete_stream
+- src.living_product_studio.event_store.EventStore.ensure_user
+- src.living_product_studio.event_store.EventStore.list_streams
+- src.living_product_studio.event_store.EventStore.load
+- src.living_product_studio.event_store.EventStore.reject_invitation
+- src.living_product_studio.mcp_gateway.McpGateway.__init__
+- src.living_product_studio.mcp_gateway.McpGateway._error
+- src.living_product_studio.mcp_gateway.McpGateway._modernize_result
+- src.living_product_studio.mcp_gateway.McpGateway.call_tool
+- src.living_product_studio.mcp_gateway.McpGateway.handle
+- src.living_product_studio.mcp_gateway.McpGateway.read_resource
+- src.living_product_studio.mcp_gateway.McpGateway.resources
+- src.living_product_studio.mcp_gateway.McpGateway.tools
+- src.living_product_studio.mcp_protocol.McpHttpError.as_response
+- src.living_product_studio.mqtt_bus.EventPublisher.publish_events
+- src.living_product_studio.mqtt_bus.MqttPublisher.__init__
+- src.living_product_studio.mqtt_bus.MqttPublisher._ensure_client
+- src.living_product_studio.mqtt_bus.MqttPublisher.publish_events
+- src.living_product_studio.mqtt_bus.NullPublisher.publish_events
+- src.living_product_studio.settings.Settings.ensure_directories
+- src.living_product_studio.settings._bool
+- src.living_product_studio.settings._csv
+- src.living_product_studio.simulations.PowerCaseResult.to_dict
+- src.living_product_studio.static.app.applyPlan
+- src.living_product_studio.static.app.init
+- src.living_product_studio.static.app.invite
+- src.living_product_studio.static.app.planChange
+- src.living_product_studio.static.app.saveAnnotation
+- src.living_product_studio.uri.PoaUri.__post_init__
+- src.living_product_studio.uri.PoaUri.__str__
+- src.living_product_studio.uri.PoaUri.child
+- src.living_product_studio.uri.PoaUri.is_ancestor_of
+- src.living_product_studio.uri.PoaUri.with_revision
+- src.living_product_studio.uri.build_poa_uri

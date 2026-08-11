@@ -1,0 +1,83 @@
+# code2llm/evolution | 626 func | 47f | 2026-08-11
+# generated in 0.00s
+
+NEXT[10] (ranked by impact):
+  [1] !! SPLIT           app/static/app.js
+      WHY: 922L, 0 classes, max CC=15
+      EFFORT: ~4h  IMPACT: 13830
+
+  [2] !! SPLIT-FUNC      generate_artifacts  CC=32  fan=59
+      WHY: CC=32 exceeds 15
+      EFFORT: ~1h  IMPACT: 1888
+
+  [3] !! SPLIT-FUNC      generate_artifacts  CC=31  fan=49
+      WHY: CC=31 exceeds 15
+      EFFORT: ~1h  IMPACT: 1519
+
+  [4] !! SPLIT-FUNC      apply_event  CC=37  fan=30
+      WHY: CC=37 exceeds 15
+      EFFORT: ~1h  IMPACT: 1110
+
+  [5] !! SPLIT-FUNC      McpGateway.call_tool  CC=26  fan=36
+      WHY: CC=26 exceeds 15
+      EFFORT: ~1h  IMPACT: 936
+
+  [6] !! SPLIT-FUNC      resolve_selection  CC=43  fan=17
+      WHY: CC=43 exceeds 15
+      EFFORT: ~1h  IMPACT: 731
+
+  [7] !  SPLIT-FUNC      CommandBus._handle_existing  CC=24  fan=27
+      WHY: CC=24 exceeds 15
+      EFFORT: ~1h  IMPACT: 648
+
+  [8] !! SPLIT-FUNC      fallback_interpret  CC=42  fan=14
+      WHY: CC=42 exceeds 15
+      EFFORT: ~1h  IMPACT: 588
+
+  [9] !  SPLIT-FUNC      seed_from_file  CC=17  fan=32
+      WHY: CC=17 exceeds 15
+      EFFORT: ~1h  IMPACT: 544
+
+  [10] !  SPLIT-FUNC      export_dxf  CC=24  fan=21
+      WHY: CC=24 exceeds 15
+      EFFORT: ~1h  IMPACT: 504
+
+
+RISKS[3]:
+  ⚠ Splitting schemas/product-project.schema.json may break 0 import paths
+  ⚠ Splitting sample_output/demo/project_config.schema.json may break 0 import paths
+  ⚠ Splitting app/static/app.js may break 123 import paths
+
+METRICS-TARGET:
+  CC̄:          3.6 → ≤2.5
+  max-CC:      43 → ≤20
+  god-modules: 11 → 0
+  high-CC(≥15): 25 → ≤12
+  hub-types:   0 → ≤0
+
+PATTERNS (language parser shared logic):
+  _extract_declarations() in base.py — unified extraction for:
+    - TypeScript: interfaces, types, classes, functions, arrow funcs
+    - PHP: namespaces, traits, classes, functions, includes
+    - Ruby: modules, classes, methods, requires
+    - C++: classes, structs, functions, #includes
+    - C#: classes, interfaces, methods, usings
+    - Java: classes, interfaces, methods, imports
+    - Go: packages, functions, structs
+    - Rust: modules, functions, traits, use statements
+
+  Shared regex patterns per language:
+    - import: language-specific import/require/using patterns
+    - class: class/struct/trait declarations with inheritance
+    - function: function/method signatures with visibility
+    - brace_tracking: for C-family languages ({ })
+    - end_keyword_tracking: for Ruby (module/class/def...end)
+
+  Benefits:
+    - Consistent extraction logic across all languages
+    - Reduced code duplication (~70% reduction in parser LOC)
+    - Easier maintenance: fix once, apply everywhere
+    - Standardized FunctionInfo/ClassInfo models
+
+HISTORY:
+  (first run — no previous data)

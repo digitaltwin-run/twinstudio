@@ -1,0 +1,52 @@
+# twinstudio | 634 func | 51f | 30952L | python | 2026-08-11
+# generated in 0.00s
+
+HEALTH:
+  CC̄=3.7  critical=47 (limit:10)  dup=34  cycles=0
+
+ALERTS[20]:
+  !!! high_fan_out     generate_artifacts = 59 (limit:10)
+  !!! high_fan_out     generate_artifacts = 49 (limit:10)
+  !!! cc_exceeded      resolve_selection = 43 (limit:15)
+  !!! cc_exceeded      fallback_interpret = 42 (limit:15)
+  !!! cc_exceeded      apply_event = 37 (limit:15)
+  !!! high_fan_out     McpGateway.call_tool = 36 (limit:10)
+  !!! high_fan_out     verify = 35 (limit:10)
+  !!! cc_exceeded      fallback_interpret = 33 (limit:15)
+  !!! cc_exceeded      generate_artifacts = 32 (limit:15)
+  !!! high_fan_out     seed_from_file = 32 (limit:10)
+
+MODULES[137] (top by size):
+  M[examples/rpi5-camera3/demo-rpi5.lps/project.specification.json] 4247L C:0 F:0 CC↑0 D:0 (json)
+  M[schemas/product-project.schema.json] 2454L C:0 F:0 CC↑0 D:0 (json)
+  M[examples/rpi5-camera3/demo-rpi5.lps/project.snapshot.json] 2259L C:0 F:0 CC↑0 D:0 (json)
+  M[examples/rpi5-camera3/project.json] 2250L C:0 F:0 CC↑0 D:0 (json)
+  M[sample_output/demo/project_config.schema.json] 932L C:0 F:0 CC↑0 D:0 (json)
+  M[app/static/app.js] 922L C:0 F:123 CC↑15 D:0 (javascript)
+  M[housing_studio/draw2d.py] 897L C:7 F:30 CC↑24 D:2 (python)
+  M[services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py] 896L C:7 F:30 CC↑24 D:0 (python)
+  M[src/living_product_studio/domain.py] 600L C:49 F:3 CC↑5 D:1 (python)
+  M[housing_studio/cad3d.py] 552L C:1 F:15 CC↑17 D:2 (python)
+  M[services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py] 552L C:1 F:15 CC↑17 D:0 (python)
+  M[src/living_product_studio/api.py] 547L C:7 F:37 CC↑19 D:0 (python)
+  M[housing_studio/llm_config.py] 532L C:1 F:7 CC↑42 D:0 (python)
+  M[housing_studio/artifacts.py] 532L C:1 F:11 CC↑32 D:0 (python)
+  M[services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js] 471L C:0 F:83 CC↑11 D:0 (javascript)
+  LANGS: python:58/json:32/yaml:15/other:8/proto:8/txt:7/javascript:3/yml:2/toml:2/conf:1/shell:1
+
+HOTSPOTS[10]:
+  ★ generate_artifacts fan=59  // Orchestrates 59 calls
+  ★ generate_artifacts fan=49  // Orchestrates 49 calls
+  ★ McpGateway.call_tool fan=36  // Orchestrates 36 calls
+  ★ verify fan=35  // Orchestrates 35 calls
+  ★ seed_from_file fan=32  // Orchestrates 32 calls
+
+REFACTOR[15]:
+  [1] H/L Split apply_event (CC=37)
+  [2] H/L Split generate_artifacts (CC=31)
+  [3] H/L Split resolve_selection (CC=43)
+  [4] H/L Split fallback_interpret (CC=33)
+  [5] H/L Split verify (CC=28)
+
+EVOLUTION:
+  2026-08-11 CC̄=3.7 crit=47 30952L // Automated analysis

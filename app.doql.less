@@ -1,0 +1,118 @@
+// LESS format — define @variables here as needed
+
+app {
+  name: twinstudio;
+  version: 0.3.0;
+  description: "Event-sourced collaborative living product studio for scoped NL-to-2D-to-3D edits, specifications, simulations and artifact generation.";
+  license: MIT;
+  authors: "Living Product Studio";
+}
+
+dependencies {
+  runtime: "fastapi>=0.128,<1, uvicorn[standard]>=0.35,<1, pydantic>=2.13,<3, sqlalchemy>=2.0,<3, psycopg[binary]>=3.2,<4, PyJWT>=2.10,<3, python-multipart>=0.0.20,<1, typer>=0.16,<1, PyYAML>=6.0,<7, paho-mqtt>=2.1,<3, httpx>=0.28,<1, python-dotenv>=1.1,<2";
+  llm: "litellm>=1,<2";
+  dev: "pytest>=8,<10, ruff>=0.12,<1";
+}
+
+entity[name="StrictModel"] {
+
+}
+
+interface[type="api"] {
+  type: rest;
+  framework: fastapi;
+  auth-type: jwt;
+}
+
+interface[type="cli"] {
+  framework: argparse;
+}
+interface[type="cli"] page[name="lps"] {
+  entry: living_product_studio.cli:app;
+}
+
+integration[name="email"] {
+  type: smtp;
+}
+
+integration[name="storage"] {
+  type: s3;
+}
+
+integration[name="mqtt"] {
+  type: mqtt;
+}
+
+workflow[name="install"] {
+  trigger: manual;
+  step-1: run cmd=python -m pip install -e ".[llm,dev]";
+}
+
+workflow[name="run"] {
+  trigger: manual;
+  step-1: run cmd=uvicorn living_product_studio.api:app --reload --host 0.0.0.0 --port 8000;
+}
+
+workflow[name="test"] {
+  trigger: manual;
+  step-1: run cmd=pytest;
+}
+
+workflow[name="lint"] {
+  trigger: manual;
+  step-1: run cmd=ruff check src tests;
+}
+
+workflow[name="compose-up"] {
+  trigger: manual;
+  step-1: run cmd=docker compose up --build;
+}
+
+workflow[name="compose-all"] {
+  trigger: manual;
+  step-1: run cmd=docker compose --profile cad --profile integration --profile openwebui --profile object-store --profile simulation up --build;
+}
+
+workflow[name="compose-down"] {
+  trigger: manual;
+  step-1: run cmd=docker compose down -v;
+}
+
+workflow[name="seed"] {
+  trigger: manual;
+  step-1: run cmd=lps seed --example examples/rpi5-camera3/project.json;
+}
+
+workflow[name="schemas"] {
+  trigger: manual;
+  step-1: run cmd=python scripts/generate_schemas.py;
+}
+
+workflow[name="proto-lint"] {
+  trigger: manual;
+  step-1: run cmd=docker run --rm -v "$(PWD):/workspace" -w /workspace bufbuild/buf:latest lint;
+}
+
+workflow[name="package"] {
+  trigger: manual;
+  step-1: run cmd=python scripts/export_project.py --project demo-rpi5 --out data/artifacts/demo-rpi5.lps.zip;
+}
+
+env_vars {
+  keys: LPS_HOST, LPS_PORT, LPS_HOST_PORT, LPS_PUBLIC_URL, LPS_DATA_DIR, DATABASE_URL, DEV_AUTH_BYPASS, DEV_USER_EMAIL, JWT_SECRET, INVITATION_TTL_HOURS, SESSION_TTL_HOURS, SMTP_HOST, SMTP_PORT, SMTP_FROM, SMTP_USERNAME, SMTP_PASSWORD, SMTP_TLS, MAILPIT_HOST_PORT, MQTT_ENABLED, MQTT_HOST, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD, MQTT_TOPIC_PREFIX, LITELLM_MODEL, LITELLM_API_BASE, LITELLM_API_KEY, MCP_ALLOWED_ORIGINS, OPENAI_API_KEY, ANTHROPIC_API_KEY, ARTIFACT_BACKEND, S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY, S3_SECRET_KEY, OPENWEBUI_IMAGE, WEBUI_SECRET_KEY, LPS_SERVICE_EMAIL, LPS_SERVICE_TOKEN, LPS_API_BASE;
+  profile_smtp: SMTP_FROM, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_TLS, SMTP_USERNAME;
+}
+
+deploy {
+  target: docker-compose;
+  compose_file: docker-compose.yml;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: .env;
+  template_file: .env.example;
+  python_version: >=3.11,<3.14;
+  vars: ANTHROPIC_API_KEY, ARTIFACT_BACKEND, DATABASE_URL, DEV_AUTH_BYPASS, DEV_USER_EMAIL, INVITATION_TTL_HOURS, JWT_SECRET, LITELLM_API_BASE, LITELLM_API_KEY, LITELLM_MODEL, LPS_API_BASE, LPS_DATA_DIR, LPS_HOST, LPS_HOST_PORT, LPS_PORT, LPS_PUBLIC_URL, LPS_SERVICE_EMAIL, LPS_SERVICE_TOKEN, MAILPIT_HOST_PORT, MCP_ALLOWED_ORIGINS, MQTT_ENABLED, MQTT_HOST, MQTT_PASSWORD, MQTT_PORT, MQTT_TOPIC_PREFIX, MQTT_USERNAME, OPENAI_API_KEY, OPENWEBUI_IMAGE, S3_ACCESS_KEY, S3_BUCKET, S3_ENDPOINT, S3_SECRET_KEY, SESSION_TTL_HOURS, SMTP_FROM, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_TLS, SMTP_USERNAME, WEBUI_SECRET_KEY;
+  profile_smtp: SMTP_FROM, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_TLS, SMTP_USERNAME;
+}

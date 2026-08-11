@@ -1,0 +1,38 @@
+flowchart TD
+%% generated in 0.02s
+
+    %% Entry points (blue)
+    classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
+
+    subgraph Core
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setLlmBadge["setLlmBadge"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__configured["configured"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__response["response"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__payload["payload"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__detail["detail"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parsed["parsed"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__value["value"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__index["index"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__item["item"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__suggestion["suggestion"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__card["card"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__display["display"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__div["div"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__artifacts["artifacts"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__groups["groups"]
+        ...["+308 more"]
+    end
+
+    subgraph Exporters
+        src__living_product_studio__cli__export["export"]
+        housing_studio__mesh_preview__export_obj_from_stl["export_obj_from_stl"]
+        housing_studio__mesh_preview__export_preview_scenes["export_preview_scenes"]
+        services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__export_part["export_part"]
+        services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__export_assembly_step["export_assembly_step"]
+        housing_studio__draw2d__export_dxf{{export_dxf CC=24}}
+        services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_dxf{{export_dxf CC=24}}
+        services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_all_2d["export_all_2d"]
+        src__living_product_studio__api__export_project["export_project"]
+    end
+
+    class services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setLlmBadge,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__configured,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__response,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__payload,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__detail,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parsed,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__value,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__index,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__item,services__cad_worker__vendor__rpi5_housing_studio__app__static__app__suggestion entry

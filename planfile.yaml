@@ -1,0 +1,1319 @@
+name: Code Quality Improvement
+project_name: ''
+project_type: prefactoring
+domain: dev-tools
+goal: Improve code quality using prefact
+goals:
+- Fix all prefact-detected issues
+- Improve code maintainability
+- Ensure consistent code style
+quality_gates:
+- metric: Prefact Issues
+  threshold: '0'
+sprints:
+- id: sprint-1
+  name: Code Quality Improvements
+  duration: 2 weeks
+  objectives:
+  - Fix code quality issues
+  task_patterns:
+  - id: ticket-3e3cfc08
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in housing_studio/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - housing_studio/__init__.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-02d3287b
+    name: Fix import-optimization issues
+    description: Resolve 2 import-optimization issues in housing_studio/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/__init__.py
+    rule_id: import-optimization
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2d3c4f1f
+    name: Fix no-relative-imports issues
+    description: Resolve 2 no-relative-imports issues in housing_studio/__init__.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - housing_studio/__init__.py
+    rule_id: no-relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b6588c18
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - generator.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-28cff09e
+    name: Fix ast-print-statements issues
+    description: Resolve 6 ast-print-statements issues in generator.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - generator.py
+    rule_id: ast-print-statements
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cfefca15
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - generator.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-defb4102
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - generator.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0f8fc6eb
+    name: Fix import-optimization issues
+    description: Resolve 5 import-optimization issues in generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - generator.py
+    rule_id: import-optimization
+    count: 5
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-18f7a545
+    name: Fix relative-imports issues
+    description: Resolve 12 relative-imports issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: relative-imports
+    count: 12
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d21ead0f
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1a7b619d
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-502ed72d
+    name: Fix ast-string-concat issues
+    description: Resolve 1 ast-string-concat issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: ast-string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5eb30546
+    name: Fix string-concat-fstring issues
+    description: Resolve 6 string-concat-fstring issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: string-concat-fstring
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-bc20555c
+    name: Fix magic-numbers issues
+    description: Resolve 7 magic-numbers issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: magic-numbers
+    count: 7
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f7888f4e
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-791fc9d2
+    name: Fix string-formatting issues
+    description: Resolve 1 string-formatting issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: string-formatting
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4d9e19d3
+    name: Fix import-optimization issues
+    description: Resolve 6 import-optimization issues in housing_studio/artifacts.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: import-optimization
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-36effc53
+    name: Fix no-relative-imports issues
+    description: Resolve 6 no-relative-imports issues in housing_studio/artifacts.py
+    task_type: bugfix
+    priority: critical
+    estimate: 2d
+    files:
+    - housing_studio/artifacts.py
+    rule_id: no-relative-imports
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6c3120a0
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in housing_studio/cad3d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/cad3d.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b45d61e2
+    name: Fix ast-unused-imports issues
+    description: Resolve 1 ast-unused-imports issues in housing_studio/cad3d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/cad3d.py
+    rule_id: ast-unused-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d7779858
+    name: Fix string-concat-fstring issues
+    description: Resolve 47 string-concat-fstring issues in housing_studio/cad3d.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - housing_studio/cad3d.py
+    rule_id: string-concat-fstring
+    count: 47
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cf7bebe9
+    name: Fix import-optimization issues
+    description: Resolve 0 import-optimization issues in housing_studio/cad3d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/cad3d.py
+    rule_id: import-optimization
+    count: 0
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c3238e30
+    name: Fix no-relative-imports issues
+    description: Resolve 0 no-relative-imports issues in housing_studio/cad3d.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - housing_studio/cad3d.py
+    rule_id: no-relative-imports
+    count: 0
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a175f3d0
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in housing_studio/config_diff.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/config_diff.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c9c0aec1
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in housing_studio/config_diff.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/config_diff.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c080f1c3
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in housing_studio/config_diff.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/config_diff.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-3a24e6df
+    name: Fix import-optimization issues
+    description: Resolve 1 import-optimization issues in housing_studio/config_diff.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/config_diff.py
+    rule_id: import-optimization
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8d6afc65
+    name: Fix no-relative-imports issues
+    description: Resolve 1 no-relative-imports issues in housing_studio/config_diff.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - housing_studio/config_diff.py
+    rule_id: no-relative-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-163c430c
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in housing_studio/draw2d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/draw2d.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4a6aa765
+    name: Fix ast-unused-imports issues
+    description: Resolve 1 ast-unused-imports issues in housing_studio/draw2d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/draw2d.py
+    rule_id: ast-unused-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-12a9832b
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in housing_studio/draw2d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/draw2d.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a519c29d
+    name: Fix string-concat-fstring issues
+    description: Resolve 46 string-concat-fstring issues in housing_studio/draw2d.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - housing_studio/draw2d.py
+    rule_id: string-concat-fstring
+    count: 46
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2c7aece2
+    name: Fix magic-numbers issues
+    description: Resolve 0 magic-numbers issues in housing_studio/draw2d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/draw2d.py
+    rule_id: magic-numbers
+    count: 0
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-594e5076
+    name: Fix string-formatting issues
+    description: Resolve 0 string-formatting issues in housing_studio/draw2d.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/draw2d.py
+    rule_id: string-formatting
+    count: 0
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-fec49e13
+    name: Fix no-relative-imports issues
+    description: Resolve 0 no-relative-imports issues in housing_studio/draw2d.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - housing_studio/draw2d.py
+    rule_id: no-relative-imports
+    count: 0
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c9d41292
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in housing_studio/llm_config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - housing_studio/llm_config.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cf8dbbe1
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in housing_studio/llm_config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/llm_config.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-42609850
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in housing_studio/llm_config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/llm_config.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c0df79f9
+    name: Fix ast-string-concat issues
+    description: Resolve 5 ast-string-concat issues in housing_studio/llm_config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - housing_studio/llm_config.py
+    rule_id: ast-string-concat
+    count: 5
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4aed24d0
+    name: Fix string-concat-fstring issues
+    description: Resolve 12 string-concat-fstring issues in housing_studio/llm_config.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - housing_studio/llm_config.py
+    rule_id: string-concat-fstring
+    count: 12
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7d1e3556
+    name: Fix import-optimization issues
+    description: Resolve 3 import-optimization issues in housing_studio/llm_config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/llm_config.py
+    rule_id: import-optimization
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4b0ee412
+    name: Fix no-relative-imports issues
+    description: Resolve 2 no-relative-imports issues in housing_studio/llm_config.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - housing_studio/llm_config.py
+    rule_id: no-relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4b65f0a8
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in housing_studio/mesh_preview.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - housing_studio/mesh_preview.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-80fa96de
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in housing_studio/mesh_preview.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/mesh_preview.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-13c5db63
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in housing_studio/mesh_preview.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/mesh_preview.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-05071885
+    name: Fix string-concat-fstring issues
+    description: Resolve 10 string-concat-fstring issues in housing_studio/mesh_preview.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - housing_studio/mesh_preview.py
+    rule_id: string-concat-fstring
+    count: 10
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-72f36304
+    name: Fix magic-numbers issues
+    description: Resolve 16 magic-numbers issues in housing_studio/mesh_preview.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - housing_studio/mesh_preview.py
+    rule_id: magic-numbers
+    count: 16
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b4a320ed
+    name: Fix import-optimization issues
+    description: Resolve 1 import-optimization issues in housing_studio/mesh_preview.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/mesh_preview.py
+    rule_id: import-optimization
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ef07a495
+    name: Fix no-relative-imports issues
+    description: Resolve 2 no-relative-imports issues in housing_studio/mesh_preview.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - housing_studio/mesh_preview.py
+    rule_id: no-relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a527879e
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in app/main.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - app/main.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-faa55554
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in app/main.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - app/main.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b2526e6e
+    name: Fix string-concat-fstring issues
+    description: Resolve 2 string-concat-fstring issues in app/main.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - app/main.py
+    rule_id: string-concat-fstring
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-82bad282
+    name: Fix magic-numbers issues
+    description: Resolve 12 magic-numbers issues in app/main.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - app/main.py
+    rule_id: magic-numbers
+    count: 12
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-96eb2684
+    name: Fix import-optimization issues
+    description: Resolve 6 import-optimization issues in app/main.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - app/main.py
+    rule_id: import-optimization
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a6e811a0
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in housing_studio/validation.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/validation.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ef776285
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in housing_studio/validation.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/validation.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-22c073f5
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in housing_studio/validation.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/validation.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4370a193
+    name: Fix string-concat-fstring issues
+    description: Resolve 30 string-concat-fstring issues in housing_studio/validation.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - housing_studio/validation.py
+    rule_id: string-concat-fstring
+    count: 30
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4804bcd0
+    name: Fix magic-numbers issues
+    description: Resolve 7 magic-numbers issues in housing_studio/validation.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - housing_studio/validation.py
+    rule_id: magic-numbers
+    count: 7
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f8aa449d
+    name: Fix string-formatting issues
+    description: Resolve 1 string-formatting issues in housing_studio/validation.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/validation.py
+    rule_id: string-formatting
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6cbd4c02
+    name: Fix import-optimization issues
+    description: Resolve 1 import-optimization issues in housing_studio/validation.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/validation.py
+    rule_id: import-optimization
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cc5edf60
+    name: Fix no-relative-imports issues
+    description: Resolve 1 no-relative-imports issues in housing_studio/validation.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - housing_studio/validation.py
+    rule_id: no-relative-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6785d5c3
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in sample_output/demo/rebuild_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - sample_output/demo/rebuild_project.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-07ad5d70
+    name: Fix ast-print-statements issues
+    description: Resolve 1 ast-print-statements issues in sample_output/demo/rebuild_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - sample_output/demo/rebuild_project.py
+    rule_id: ast-print-statements
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-165ff9c4
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in sample_output/demo/rebuild_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - sample_output/demo/rebuild_project.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-33b42535
+    name: Fix import-optimization issues
+    description: Resolve 3 import-optimization issues in sample_output/demo/rebuild_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - sample_output/demo/rebuild_project.py
+    rule_id: import-optimization
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0dea7ae4
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in scripts/export_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/export_project.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1ddb29e5
+    name: Fix ast-print-statements issues
+    description: Resolve 1 ast-print-statements issues in scripts/export_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/export_project.py
+    rule_id: ast-print-statements
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8f83ff68
+    name: Fix import-optimization issues
+    description: Resolve 5 import-optimization issues in scripts/export_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - scripts/export_project.py
+    rule_id: import-optimization
+    count: 5
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a2c20d8c
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in scripts/generate_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/generate_demo.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d41681d0
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in scripts/generate_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/generate_demo.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-80cdb01b
+    name: Fix ast-print-statements issues
+    description: Resolve 1 ast-print-statements issues in scripts/generate_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/generate_demo.py
+    rule_id: ast-print-statements
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5db8ab32
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in scripts/generate_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/generate_demo.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-74fc18d4
+    name: Fix import-optimization issues
+    description: Resolve 4 import-optimization issues in scripts/generate_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - scripts/generate_demo.py
+    rule_id: import-optimization
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-225b5b73
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in scripts/generate_schemas.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/generate_schemas.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a7343b39
+    name: Fix ast-print-statements issues
+    description: Resolve 1 ast-print-statements issues in scripts/generate_schemas.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/generate_schemas.py
+    rule_id: ast-print-statements
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7114a50f
+    name: Fix import-optimization issues
+    description: Resolve 2 import-optimization issues in scripts/generate_schemas.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/generate_schemas.py
+    rule_id: import-optimization
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0fbc9c42
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in services/cad-worker/scoped_brep_adapter.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/scoped_brep_adapter.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1e05f9e1
+    name: Fix string-concat-fstring issues
+    description: Resolve 18 string-concat-fstring issues in services/cad-worker/scoped_brep_adapter.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - services/cad-worker/scoped_brep_adapter.py
+    rule_id: string-concat-fstring
+    count: 18
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1223d4c8
+    name: Fix import-optimization issues
+    description: Resolve 3 import-optimization issues in services/cad-worker/scoped_brep_adapter.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/scoped_brep_adapter.py
+    rule_id: import-optimization
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7dc7ee78
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in scripts/verify_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/verify_project.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-87437460
+    name: Fix ast-sorted-imports issues
+    description: Resolve 1 ast-sorted-imports issues in scripts/verify_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/verify_project.py
+    rule_id: ast-sorted-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c70fadbf
+    name: Fix ast-print-statements issues
+    description: Resolve 1 ast-print-statements issues in scripts/verify_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/verify_project.py
+    rule_id: ast-print-statements
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9d588c4a
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in scripts/verify_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/verify_project.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6a06c80e
+    name: Fix import-optimization issues
+    description: Resolve 4 import-optimization issues in scripts/verify_project.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - scripts/verify_project.py
+    rule_id: import-optimization
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6ab14138
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in housing_studio/models.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/models.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2c502807
+    name: Fix string-concat-fstring issues
+    description: Resolve 6 string-concat-fstring issues in housing_studio/models.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - housing_studio/models.py
+    rule_id: string-concat-fstring
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f74d88c1
+    name: Fix magic-numbers issues
+    description: Resolve 41 magic-numbers issues in housing_studio/models.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - housing_studio/models.py
+    rule_id: magic-numbers
+    count: 41
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-71a04a07
+    name: Fix import-optimization issues
+    description: Resolve 0 import-optimization issues in housing_studio/models.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - housing_studio/models.py
+    rule_id: import-optimization
+    count: 0
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9862312d
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in services/cad-worker/vendor/rpi5_housing_studio/housing_studio/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/__init__.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8a607afb
+    name: Fix import-optimization issues
+    description: Resolve 1 import-optimization issues in services/cad-worker/vendor/rpi5_housing_studio/housing_studio/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/__init__.py
+    rule_id: import-optimization
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-025f09fc
+    name: Fix no-relative-imports issues
+    description: Resolve 1 no-relative-imports issues in services/cad-worker/vendor/rpi5_housing_studio/housing_studio/__init__.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/__init__.py
+    rule_id: no-relative-imports
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d4b642b6
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ff2b9730
+    name: Fix ast-print-statements issues
+    description: Resolve 4 ast-print-statements issues in services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    rule_id: ast-print-statements
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b171efcf
+    name: Fix ruff-print-statements issues
+    description: Resolve 4 ruff-print-statements issues in services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    rule_id: ruff-print-statements
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-453c642f
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e4483e05
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7aaadfad
+    name: Fix import-optimization issues
+    description: Resolve 4 import-optimization issues in services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/generator.py
+    rule_id: import-optimization
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-89b3f256
+    name: Fix relative-imports issues
+    description: Resolve 10 relative-imports issues in services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py
+    rule_id: relative-imports
+    count: 10
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c79c32e6
+    name: Fix ast-unused-imports issues
+    description: Resolve 3 ast-unused-imports issues in services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py
+    rule_id: ast-unused-imports
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced

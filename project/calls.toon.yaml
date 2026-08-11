@@ -1,0 +1,369 @@
+# code2llm call graph | /home/tom/github/digitaltwin-run/twinstudio
+# generated in 0.20s
+# nodes: 375 | edges: 490 | modules: 45
+# CC̄=3.7
+
+HUBS[20]:
+  housing_studio.artifacts.generate_artifacts
+    CC=32  in:0  out:114  total:114
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+    CC=31  in:4  out:100  total:104
+  src.living_product_studio.mcp_gateway.McpGateway.call_tool
+    CC=26  in:0  out:86  total:86
+  scripts.verify_project.verify
+    CC=28  in:1  out:62  total:63
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+    CC=24  in:9  out:51  total:60
+  src.living_product_studio.seed.seed_from_file
+    CC=17  in:2  out:55  total:57
+  housing_studio.validation.collect_warnings
+    CC=24  in:0  out:51  total:51
+  src.living_product_studio.selection_resolver.resolve_selection
+    CC=43  in:2  out:43  total:45
+  services.cad-worker.scoped_brep_adapter.apply_scoped_operation
+    CC=12  in:1  out:43  total:44
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base
+    CC=17  in:1  out:43  total:44
+  housing_studio.cad3d.make_base
+    CC=17  in:1  out:43  total:44
+  src.living_product_studio.bus.CommandBus._handle_existing
+    CC=24  in:0  out:42  total:42
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d._draw_view_pdf
+    CC=11  in:5  out:37  total:42
+  housing_studio.draw2d._draw_view_pdf
+    CC=11  in:5  out:37  total:42
+  src.living_product_studio.artifacts.export_project_bundle
+    CC=14  in:3  out:39  total:42
+  src.living_product_studio.specification.unified_specification
+    CC=20  in:3  out:37  total:40
+  housing_studio.draw2d.export_svg
+    CC=12  in:1  out:39  total:40
+  housing_studio.llm_config.fallback_interpret
+    CC=42  in:3  out:37  total:40
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_svg
+    CC=12  in:1  out:35  total:36
+  housing_studio.cad3d.make_lid
+    CC=17  in:1  out:33  total:34
+
+MODULES:
+  app.main  [13 funcs]
+    _job_summaries  CC=5  out:21
+    _layer_summary  CC=3  out:2
+    _manifest_with_urls  CC=5  out:9
+    _safe_job_identifier  CC=4  out:3
+    _url_for  CC=2  out:5
+    _validated_config  CC=3  out:5
+    default_config  CC=2  out:7
+    generate  CC=3  out:7
+    get_job  CC=2  out:7
+    get_job_config  CC=4  out:12
+  app.static.app  [60 funcs]
+    OrbitControls  CC=1  out:1
+    STLLoader  CC=1  out:1
+    applyDrawingLayerVisibility  CC=8  out:6
+    applyManualConfigChange  CC=1  out:5
+    applyProposedChanges  CC=3  out:5
+    auditIsCurrent  CC=3  out:2
+    baseUrl  CC=4  out:1
+    blob  CC=1  out:2
+    card  CC=1  out:2
+    checked  CC=2  out:1
+  examples.rpi5-camera3.pcb.kicad_adapter  [3 funcs]
+    _cli  CC=2  out:2
+    export_review_artifacts  CC=3  out:25
+    run  CC=1  out:2
+  generator  [1 funcs]
+    load_config  CC=2  out:3
+  housing_studio.artifacts  [4 funcs]
+    _record  CC=1  out:5
+    _sha256  CC=2  out:6
+    _write_json  CC=1  out:3
+    generate_artifacts  CC=32  out:114
+  housing_studio.cad3d  [8 funcs]
+    _auxiliary_boss_positions  CC=1  out:0
+    _camera_positions  CC=3  out:2
+    _cylinder_along_x  CC=1  out:4
+    _make_lid_shell  CC=2  out:17
+    _wire_rect  CC=1  out:3
+    make_base  CC=17  out:43
+    make_lid  CC=17  out:33
+    make_models  CC=1  out:6
+  housing_studio.config_diff  [4 funcs]
+    _plain  CC=2  out:2
+    _walk_diff  CC=12  out:27
+    diff_as_dicts  CC=2  out:2
+    diff_configs  CC=1  out:4
+  housing_studio.draw2d  [25 funcs]
+    _assembly_front_view  CC=2  out:12
+    _assembly_side_view  CC=3  out:14
+    _assembly_top_view  CC=2  out:12
+    _aux_positions  CC=1  out:0
+    _base_front_view  CC=4  out:19
+    _base_side_view  CC=7  out:25
+    _base_top_view  CC=14  out:28
+    _board_outline  CC=2  out:2
+    _camera_positions  CC=3  out:2
+    _dimension_segments  CC=2  out:18
+  housing_studio.llm_config  [5 funcs]
+    _find_number  CC=3  out:3
+    _normalise_number  CC=1  out:2
+    _response_content  CC=2  out:2
+    fallback_interpret  CC=42  out:37
+    interpret_with_litellm  CC=8  out:23
+  housing_studio.mesh_preview  [5 funcs]
+    _board_mesh  CC=2  out:3
+    _load_mesh  CC=3  out:5
+    _set_rgba  CC=1  out:3
+    export_obj_from_stl  CC=1  out:3
+    export_preview_scenes  CC=5  out:29
+  housing_studio.validation  [5 funcs]
+    board_actual_clearances  CC=1  out:1
+    board_hole_centers  CC=3  out:1
+    board_origin  CC=4  out:0
+    collect_warnings  CC=24  out:51
+    design_metrics  CC=1  out:11
+  sample_output.demo.rebuild_project  [1 funcs]
+    main  CC=1  out:10
+  scripts.verify_project  [2 funcs]
+    main  CC=3  out:14
+    verify  CC=28  out:62
+  services.cad-worker.scoped_brep_adapter  [10 funcs]
+    _aabb_box  CC=3  out:10
+    _average  CC=5  out:9
+    _hole_tool  CC=2  out:9
+    _load_step  CC=4  out:7
+    _selection_center  CC=5  out:8
+    _selection_normal  CC=5  out:6
+    _unit  CC=2  out:3
+    _vector  CC=1  out:4
+    _verify_scope  CC=9  out:10
+    apply_scoped_operation  CC=12  out:43
+  services.cad-worker.vendor.rpi5_housing_studio.app.main  [8 funcs]
+    _manifest_with_urls  CC=5  out:9
+    _safe_job_identifier  CC=4  out:3
+    _url_for  CC=2  out:5
+    _validated_config  CC=3  out:5
+    default_config  CC=2  out:6
+    generate  CC=3  out:7
+    get_job  CC=2  out:7
+    interpret  CC=2  out:7
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app  [31 funcs]
+    blob  CC=1  out:2
+    card  CC=1  out:2
+    clearModels  CC=5  out:3
+    config  CC=1  out:2
+    display  CC=1  out:2
+    downloadConfig  CC=1  out:7
+    escapeHtml  CC=1  out:2
+    fetchJson  CC=6  out:4
+    file  CC=3  out:2
+    generate  CC=2  out:12
+  services.cad-worker.vendor.rpi5_housing_studio.generator  [1 funcs]
+    load_config  CC=2  out:3
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts  [4 funcs]
+    _record  CC=1  out:5
+    _sha256  CC=2  out:6
+    _write_json  CC=1  out:3
+    generate_artifacts  CC=31  out:100
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d  [8 funcs]
+    _auxiliary_boss_positions  CC=1  out:0
+    _camera_positions  CC=3  out:2
+    _cylinder_along_x  CC=1  out:4
+    _make_lid_shell  CC=2  out:17
+    _wire_rect  CC=1  out:3
+    make_base  CC=17  out:43
+    make_lid  CC=17  out:33
+    make_models  CC=1  out:6
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d  [25 funcs]
+    _assembly_front_view  CC=2  out:12
+    _assembly_side_view  CC=3  out:14
+    _assembly_top_view  CC=2  out:12
+    _aux_positions  CC=1  out:0
+    _base_front_view  CC=4  out:19
+    _base_side_view  CC=7  out:25
+    _base_top_view  CC=14  out:28
+    _board_outline  CC=2  out:2
+    _camera_positions  CC=3  out:2
+    _dimension_segments  CC=2  out:18
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config  [5 funcs]
+    _find_number  CC=3  out:3
+    _normalise_number  CC=1  out:2
+    _response_content  CC=2  out:2
+    fallback_interpret  CC=33  out:28
+    interpret_with_litellm  CC=8  out:21
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview  [5 funcs]
+    _board_mesh  CC=2  out:3
+    _load_mesh  CC=3  out:5
+    _set_rgba  CC=1  out:3
+    export_obj_from_stl  CC=1  out:3
+    export_preview_scenes  CC=5  out:29
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models  [1 funcs]
+    default_project_config  CC=1  out:1
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation  [6 funcs]
+    board_actual_clearances  CC=1  out:1
+    board_hole_centers  CC=3  out:1
+    board_origin  CC=4  out:0
+    collect_warnings  CC=24  out:51
+    design_metrics  CC=1  out:11
+    hinge_segments  CC=3  out:2
+  services.cad-worker.worker  [1 funcs]
+    on_message  CC=8  out:20
+  services.mqtt-gateway.gateway  [2 funcs]
+    on_message  CC=10  out:25
+    response_topic  CC=1  out:0
+  src.living_product_studio.api  [18 funcs]
+    _resolved_artifact_path  CC=7  out:8
+    apply_change_plan  CC=5  out:11
+    authorize_project  CC=1  out:5
+    create_annotation  CC=2  out:13
+    create_change_plan  CC=2  out:12
+    download_artifact  CC=4  out:9
+    export_project  CC=1  out:7
+    get_events  CC=2  out:5
+    get_project  CC=1  out:5
+    get_specification  CC=1  out:5
+  src.living_product_studio.artifacts  [1 funcs]
+    export_project_bundle  CC=14  out:39
+  src.living_product_studio.bus  [3 funcs]
+    _handle_existing  CC=24  out:42
+    project  CC=1  out:2
+    tree  CC=1  out:2
+  src.living_product_studio.change_planner  [8 funcs]
+    _local_plan  CC=20  out:33
+    compile_apply_payload  CC=4  out:7
+    validate_scope  CC=4  out:3
+    _angle  CC=2  out:4
+    _diameter  CC=3  out:4
+    _first_number  CC=2  out:4
+    _number_near  CC=4  out:4
+    _owning_object_uri  CC=7  out:7
+  src.living_product_studio.cli  [11 funcs]
+    command  CC=4  out:11
+    export  CC=2  out:8
+    gtin_complete  CC=1  out:3
+    gtin_validate  CC=2  out:3
+    plan  CC=2  out:13
+    power  CC=2  out:7
+    projects_cmd  CC=1  out:5
+    seed  CC=1  out:6
+    services  CC=1  out:5
+    shell  CC=11  out:13
+  src.living_product_studio.domain  [1 funcs]
+    utcnow  CC=1  out:1
+  src.living_product_studio.event_store  [8 funcs]
+    accept_invitation  CC=4  out:17
+    approve_invitation  CC=4  out:19
+    authenticate_api_token  CC=4  out:13
+    authenticate_session  CC=3  out:12
+    create_api_token  CC=1  out:10
+    create_session  CC=1  out:10
+    _aware  CC=2  out:1
+    token_hash  CC=1  out:3
+  src.living_product_studio.gtin  [3 funcs]
+    calculate_check_digit  CC=5  out:6
+    complete_gtin  CC=3  out:4
+    validate_gtin  CC=3  out:4
+  src.living_product_studio.mcp_gateway  [7 funcs]
+    _modernize_result  CC=3  out:2
+    call_tool  CC=26  out:86
+    handle  CC=27  out:24
+    read_resource  CC=6  out:12
+    tools  CC=1  out:21
+    _content  CC=1  out:1
+    _tool  CC=1  out:0
+  src.living_product_studio.mcp_protocol  [6 funcs]
+    body_protocol_version  CC=2  out:3
+    classify_mcp_era  CC=8  out:4
+    modern_result  CC=4  out:8
+    request_meta  CC=3  out:3
+    request_params  CC=3  out:2
+    server_discover_result  CC=1  out:2
+  src.living_product_studio.mqtt_bus  [3 funcs]
+    publish_events  CC=3  out:4
+    _topic_atom  CC=4  out:6
+    publisher_from_settings  CC=2  out:2
+  src.living_product_studio.permissions  [2 funcs]
+    has_permission  CC=3  out:4
+    require_permission  CC=2  out:2
+  src.living_product_studio.projector  [3 funcs]
+    apply_event  CC=37  out:31
+    object_tree  CC=6  out:11
+    project_from_events  CC=5  out:4
+  src.living_product_studio.seed  [1 funcs]
+    seed_from_file  CC=17  out:55
+  src.living_product_studio.selection_resolver  [1 funcs]
+    resolve_selection  CC=43  out:43
+  src.living_product_studio.simulations  [4 funcs]
+    evaluate_human_scenario  CC=10  out:8
+    mechanical_rule_checks  CC=7  out:13
+    simulate_power  CC=3  out:14
+    simulate_thermal  CC=11  out:11
+  src.living_product_studio.specification  [2 funcs]
+    manufacturing_views  CC=12  out:13
+    unified_specification  CC=20  out:37
+  src.living_product_studio.static.app  [48 funcs]
+    activateTool  CC=3  out:5
+    api  CC=6  out:5
+    applyPlan  CC=3  out:3
+    banner  CC=1  out:1
+    bindActions  CC=3  out:10
+    clearSelection  CC=2  out:5
+    connectWs  CC=4  out:4
+    create2dSelection  CC=4  out:3
+    createAreaSelection  CC=5  out:14
+    createPointerSelection  CC=2  out:8
+  src.living_product_studio.uri  [2 funcs]
+    is_within_scope  CC=2  out:4
+    parse_poa_uri  CC=7  out:11
+
+EDGES:
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.payload → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parsed → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parsed → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.suggestion → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.card → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.display → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderArtifacts → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.group → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.rows → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.escapeHtml
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.manifest → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.clearModels
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.stlGeometry
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.interpretPrompt → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.config → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.hideBanner
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.fetchJson
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderWarnings
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderMetrics
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.renderArtifacts
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.updateDrawingPreview
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.generate → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.load3dPreview
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.downloadConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.parseEditorConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.downloadConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.blob → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.prettyConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.setConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.loadDefaultConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.text → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.file → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.uploadConfig
+  services.cad-worker.vendor.rpi5_housing_studio.app.static.app.file → services.cad-worker.vendor.rpi5_housing_studio.app.static.app.showBanner
+  generator.load_config → services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models.default_project_config
+  services.cad-worker.worker.on_message → services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview.export_obj_from_stl → services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._load_mesh
+  services.cad-worker.vendor.rpi5_housing_studio.housing_studio.mesh_preview._board_mesh → services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.board_origin

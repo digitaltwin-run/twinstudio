@@ -1,0 +1,3354 @@
+source: code2llm
+# generated in 0.16s
+schema: code2llm.planfile_tickets.v1
+project_root: /home/tom/github/digitaltwin-run/twinstudio
+tickets:
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: housing_studio.artifacts.generate_artifacts
+    (CC=32)'
+  description: 'code2llm reports `housing_studio.artifacts.generate_artifacts` at
+    `housing_studio/artifacts.py:283` with cyclomatic complexity 32 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - housing_studio/artifacts.py
+  dedupe_key: code2llm:cc:housing_studio/artifacts.py:housing_studio.artifacts.generate_artifacts
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: housing_studio.llm_config.fallback_interpret
+    (CC=42)'
+  description: 'code2llm reports `housing_studio.llm_config.fallback_interpret` at
+    `housing_studio/llm_config.py:47` with cyclomatic complexity 42 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - housing_studio/llm_config.py
+  dedupe_key: code2llm:cc:housing_studio/llm_config.py:housing_studio.llm_config.fallback_interpret
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: scripts.verify_project.verify (CC=28)'
+  description: 'code2llm reports `scripts.verify_project.verify` at `scripts/verify_project.py:23`
+    with cyclomatic complexity 28 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - scripts/verify_project.py
+  dedupe_key: code2llm:cc:scripts/verify_project.py:scripts.verify_project.verify
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+    (CC=31)'
+  description: 'code2llm reports `services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts`
+    at `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py:164`
+    with cyclomatic complexity 31 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py
+  dedupe_key: code2llm:cc:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py:services.cad-worker.vendor.rpi5_housing_studio.housing_studio.artifacts.generate_artifacts
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.fallback_interpret
+    (CC=33)'
+  description: 'code2llm reports `services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.fallback_interpret`
+    at `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/llm_config.py:45`
+    with cyclomatic complexity 33 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/llm_config.py
+  dedupe_key: code2llm:cc:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/llm_config.py:services.cad-worker.vendor.rpi5_housing_studio.housing_studio.llm_config.fallback_interpret
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.mcp_gateway.McpGateway.call_tool
+    (CC=26)'
+  description: 'code2llm reports `src.living_product_studio.mcp_gateway.McpGateway.call_tool`
+    at `src/living_product_studio/mcp_gateway.py:210` with cyclomatic complexity 26
+    (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/mcp_gateway.py
+  dedupe_key: code2llm:cc:src/living_product_studio/mcp_gateway.py:src.living_product_studio.mcp_gateway.McpGateway.call_tool
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.mcp_gateway.McpGateway.handle
+    (CC=27)'
+  description: 'code2llm reports `src.living_product_studio.mcp_gateway.McpGateway.handle`
+    at `src/living_product_studio/mcp_gateway.py:58` with cyclomatic complexity 27
+    (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/mcp_gateway.py
+  dedupe_key: code2llm:cc:src/living_product_studio/mcp_gateway.py:src.living_product_studio.mcp_gateway.McpGateway.handle
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.projector.apply_event
+    (CC=37)'
+  description: 'code2llm reports `src.living_product_studio.projector.apply_event`
+    at `src/living_product_studio/projector.py:47` with cyclomatic complexity 37 (limit
+    15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/projector.py
+  dedupe_key: code2llm:cc:src/living_product_studio/projector.py:src.living_product_studio.projector.apply_event
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.selection_resolver.resolve_selection
+    (CC=43)'
+  description: 'code2llm reports `src.living_product_studio.selection_resolver.resolve_selection`
+    at `src/living_product_studio/selection_resolver.py:15` with cyclomatic complexity
+    43 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/selection_resolver.py
+  dedupe_key: code2llm:cc:src/living_product_studio/selection_resolver.py:src.living_product_studio.selection_resolver.resolve_selection
+- signal: code2llm_dup
+  title: Consolidate duplicate class EnclosureDimensions
+  description: 'code2llm found `EnclosureDimensions` in 2 files: housing_studio/models.py,
+    services/cad-worker/vendor/rpi5_housing_studio/housing_studio/models.py.
+
+
+    Extract a shared base/helper or merge the duplicated behavior, then re-run code2llm
+    to confirm the duplicate signal is gone.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - duplication
+  - refactor
+  files:
+  - housing_studio/models.py
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/models.py
+  dedupe_key: code2llm:dup:EnclosureDimensions
+- signal: code2llm_god
+  title: 'Split god module: housing_studio/draw2d.py'
+  description: 'code2llm reports `housing_studio/draw2d.py` as a large module (897
+    lines, 7 classes).
+
+
+    Split it by responsibility, keep public imports stable, and add focused tests
+    around the moved behavior.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - god-module
+  - refactor
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: code2llm:god:housing_studio/draw2d.py
+- signal: code2llm_god
+  title: 'Split god module: services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py'
+  description: 'code2llm reports `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py`
+    as a large module (896 lines, 7 classes).
+
+
+    Split it by responsibility, keep public imports stable, and add focused tests
+    around the moved behavior.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - god-module
+  - refactor
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: code2llm:god:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+- signal: code2llm_god
+  title: 'Split god module: src/living_product_studio/api.py'
+  description: 'code2llm reports `src/living_product_studio/api.py` as a large module
+    (547 lines, 7 classes).
+
+
+    Split it by responsibility, keep public imports stable, and add focused tests
+    around the moved behavior.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - god-module
+  - refactor
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: code2llm:god:src/living_product_studio/api.py
+- signal: code2llm_god
+  title: 'Split god module: src/living_product_studio/domain.py'
+  description: 'code2llm reports `src/living_product_studio/domain.py` as a large
+    module (600 lines, 49 classes).
+
+
+    Split it by responsibility, keep public imports stable, and add focused tests
+    around the moved behavior.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - god-module
+  - refactor
+  files:
+  - src/living_product_studio/domain.py
+  dedupe_key: code2llm:god:src/living_product_studio/domain.py
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _draw_view_pdf'
+  description: 'code2llm reports `God Function: _draw_view_pdf` in `housing_studio/draw2d.py:748`.
+
+
+    Function ''_draw_view_pdf'' is oversized: CC=11, fan-out=23, mutations=25.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:748:God Function:
+    _draw_view_pdf'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _draw_view_pdf'
+  description: 'code2llm reports `God Function: _draw_view_pdf` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:747`.
+
+
+    Function ''_draw_view_pdf'' is oversized: CC=11, fan-out=23, mutations=25.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:747:God
+    Function: _draw_view_pdf'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: apply_scoped_operation'
+  description: 'code2llm reports `God Function: apply_scoped_operation` in `services/cad-worker/scoped_brep_adapter.py:109`.
+
+
+    Function ''apply_scoped_operation'' is oversized: CC=12, fan-out=25, mutations=19.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/scoped_brep_adapter.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/scoped_brep_adapter.py:109:God
+    Function: apply_scoped_operation'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_pdf'
+  description: 'code2llm reports `God Function: export_pdf` in `housing_studio/draw2d.py:803`.
+
+
+    Function ''export_pdf'' is oversized: CC=9, fan-out=17, mutations=28.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:803:God Function:
+    export_pdf'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_pdf'
+  description: 'code2llm reports `God Function: export_pdf` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:802`.
+
+
+    Function ''export_pdf'' is oversized: CC=9, fan-out=17, mutations=28.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:802:God
+    Function: export_pdf'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_project_bundle'
+  description: 'code2llm reports `God Function: export_project_bundle` in `src/living_product_studio/artifacts.py:22`.
+
+
+    Function ''export_project_bundle'' is oversized: CC=14, fan-out=30, mutations=9.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/artifacts.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/artifacts.py:22:God
+    Function: export_project_bundle'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_svg'
+  description: 'code2llm reports `God Function: export_svg` in `housing_studio/draw2d.py:684`.
+
+
+    Function ''export_svg'' is oversized: CC=12, fan-out=17, mutations=20.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:684:God Function:
+    export_svg'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_svg'
+  description: 'code2llm reports `God Function: export_svg` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:684`.
+
+
+    Function ''export_svg'' is oversized: CC=12, fan-out=15, mutations=19.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:684:God
+    Function: export_svg'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `generator.py:20`.
+
+
+    Function ''main'' is oversized: CC=9, fan-out=19, mutations=22.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - generator.py
+  dedupe_key: 'code2llm:smell:god_function:generator.py:20:God Function: main'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Module: src.living_product_studio.domain'
+  description: 'code2llm reports `God Module: src.living_product_studio.domain` in
+    `src/living_product_studio/domain.py:1`.
+
+
+    Module ''src.living_product_studio.domain'' is too large (3 functions, 49 classes).
+    Consider splitting into sub-modules.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/domain.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/domain.py:1:God
+    Module: src.living_product_studio.domain'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: _'
+  description: 'code2llm reports `Shotgun Surgery: _` in `src/living_product_studio/cli.py:108`.
+
+
+    Mutation of variable ''_'' spans 7 functions in /home/tom/github/digitaltwin-run/twinstudio/src/living_product_studio/cli.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/living_product_studio/cli.py:108:Shotgun
+    Surgery: _'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: d'
+  description: 'code2llm reports `Shotgun Surgery: d` in `housing_studio/cad3d.py:89`.
+
+
+    Mutation of variable ''d'' spans 5 functions in /home/tom/github/digitaltwin-run/twinstudio/housing_studio/cad3d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:housing_studio/cad3d.py:89:Shotgun Surgery:
+    d'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: d'
+  description: 'code2llm reports `Shotgun Surgery: d` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:386`.
+
+
+    Mutation of variable ''d'' spans 5 functions in /home/tom/github/digitaltwin-run/twinstudio/services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:386:Shotgun
+    Surgery: d'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: d'
+  description: 'code2llm reports `Shotgun Surgery: d` in `housing_studio/draw2d.py:110`.
+
+
+    Mutation of variable ''d'' spans 11 functions in /home/tom/github/digitaltwin-run/twinstudio/housing_studio/draw2d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:housing_studio/draw2d.py:110:Shotgun
+    Surgery: d'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: d'
+  description: 'code2llm reports `Shotgun Surgery: d` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:110`.
+
+
+    Mutation of variable ''d'' spans 11 functions in /home/tom/github/digitaltwin-run/twinstudio/services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:110:Shotgun
+    Surgery: d'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: queries'
+  description: 'code2llm reports `Shotgun Surgery: queries` in `src/living_product_studio/cli.py:108`.
+
+
+    Mutation of variable ''queries'' spans 5 functions in /home/tom/github/digitaltwin-run/twinstudio/src/living_product_studio/cli.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/living_product_studio/cli.py:108:Shotgun
+    Surgery: queries'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: result'
+  description: 'code2llm reports `Shotgun Surgery: result` in `housing_studio/cad3d.py:89`.
+
+
+    Mutation of variable ''result'' spans 5 functions in /home/tom/github/digitaltwin-run/twinstudio/housing_studio/cad3d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:housing_studio/cad3d.py:89:Shotgun Surgery:
+    result'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: result'
+  description: 'code2llm reports `Shotgun Surgery: result` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:386`.
+
+
+    Mutation of variable ''result'' spans 5 functions in /home/tom/github/digitaltwin-run/twinstudio/services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:386:Shotgun
+    Surgery: result'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: role'
+  description: 'code2llm reports `Shotgun Surgery: role` in `src/living_product_studio/api.py:189`.
+
+
+    Mutation of variable ''role'' spans 5 functions in /home/tom/github/digitaltwin-run/twinstudio/src/living_product_studio/api.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/living_product_studio/api.py:189:Shotgun
+    Surgery: role'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: snapshot'
+  description: 'code2llm reports `Shotgun Surgery: snapshot` in `src/living_product_studio/api.py:357`.
+
+
+    Mutation of variable ''snapshot'' spans 8 functions in /home/tom/github/digitaltwin-run/twinstudio/src/living_product_studio/api.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/living_product_studio/api.py:357:Shotgun
+    Surgery: snapshot'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: view'
+  description: 'code2llm reports `Shotgun Surgery: view` in `housing_studio/draw2d.py:110`.
+
+
+    Mutation of variable ''view'' spans 10 functions in /home/tom/github/digitaltwin-run/twinstudio/housing_studio/draw2d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:housing_studio/draw2d.py:110:Shotgun
+    Surgery: view'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: view'
+  description: 'code2llm reports `Shotgun Surgery: view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:110`.
+
+
+    Mutation of variable ''view'' spans 10 functions in /home/tom/github/digitaltwin-run/twinstudio/services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:110:Shotgun
+    Surgery: view'
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: app.static.app.load3dPreview (CC=15)'
+  description: 'code2llm reports `app.static.app.load3dPreview` at `app/static/app.js:624`
+    with cyclomatic complexity 15 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - app/static/app.js
+  dedupe_key: code2llm:cc:app/static/app.js:app.static.app.load3dPreview
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: housing_studio.cad3d.make_base (CC=17)'
+  description: 'code2llm reports `housing_studio.cad3d.make_base` at `housing_studio/cad3d.py:143`
+    with cyclomatic complexity 17 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - housing_studio/cad3d.py
+  dedupe_key: code2llm:cc:housing_studio/cad3d.py:housing_studio.cad3d.make_base
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: housing_studio.cad3d.make_lid (CC=17)'
+  description: 'code2llm reports `housing_studio.cad3d.make_lid` at `housing_studio/cad3d.py:386`
+    with cyclomatic complexity 17 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - housing_studio/cad3d.py
+  dedupe_key: code2llm:cc:housing_studio/cad3d.py:housing_studio.cad3d.make_lid
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: housing_studio.draw2d.export_dxf (CC=24)'
+  description: 'code2llm reports `housing_studio.draw2d.export_dxf` at `housing_studio/draw2d.py:599`
+    with cyclomatic complexity 24 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: code2llm:cc:housing_studio/draw2d.py:housing_studio.draw2d.export_dxf
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: housing_studio.validation.collect_warnings
+    (CC=24)'
+  description: 'code2llm reports `housing_studio.validation.collect_warnings` at `housing_studio/validation.py:98`
+    with cyclomatic complexity 24 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - housing_studio/validation.py
+  dedupe_key: code2llm:cc:housing_studio/validation.py:housing_studio.validation.collect_warnings
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base
+    (CC=17)'
+  description: 'code2llm reports `services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base`
+    at `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:143`
+    with cyclomatic complexity 17 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py
+  dedupe_key: code2llm:cc:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_base
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+    (CC=17)'
+  description: 'code2llm reports `services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid`
+    at `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:386`
+    with cyclomatic complexity 17 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py
+  dedupe_key: code2llm:cc:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:services.cad-worker.vendor.rpi5_housing_studio.housing_studio.cad3d.make_lid
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf
+    (CC=24)'
+  description: 'code2llm reports `services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf`
+    at `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:599`
+    with cyclomatic complexity 24 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: code2llm:cc:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+    (CC=24)'
+  description: 'code2llm reports `services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings`
+    at `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:98`
+    with cyclomatic complexity 24 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py
+  dedupe_key: code2llm:cc:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:services.cad-worker.vendor.rpi5_housing_studio.housing_studio.validation.collect_warnings
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.api.mcp_endpoint
+    (CC=19)'
+  description: 'code2llm reports `src.living_product_studio.api.mcp_endpoint` at `src/living_product_studio/api.py:453`
+    with cyclomatic complexity 19 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: code2llm:cc:src/living_product_studio/api.py:src.living_product_studio.api.mcp_endpoint
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.bus.CommandBus._handle_existing
+    (CC=24)'
+  description: 'code2llm reports `src.living_product_studio.bus.CommandBus._handle_existing`
+    at `src/living_product_studio/bus.py:98` with cyclomatic complexity 24 (limit
+    15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/bus.py
+  dedupe_key: code2llm:cc:src/living_product_studio/bus.py:src.living_product_studio.bus.CommandBus._handle_existing
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.change_planner.ChangePlanner._local_plan
+    (CC=20)'
+  description: 'code2llm reports `src.living_product_studio.change_planner.ChangePlanner._local_plan`
+    at `src/living_product_studio/change_planner.py:137` with cyclomatic complexity
+    20 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/change_planner.py
+  dedupe_key: code2llm:cc:src/living_product_studio/change_planner.py:src.living_product_studio.change_planner.ChangePlanner._local_plan
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.mcp_protocol.validate_modern_http_request
+    (CC=24)'
+  description: 'code2llm reports `src.living_product_studio.mcp_protocol.validate_modern_http_request`
+    at `src/living_product_studio/mcp_protocol.py:79` with cyclomatic complexity 24
+    (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/mcp_protocol.py
+  dedupe_key: code2llm:cc:src/living_product_studio/mcp_protocol.py:src.living_product_studio.mcp_protocol.validate_modern_http_request
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.seed.seed_from_file
+    (CC=17)'
+  description: 'code2llm reports `src.living_product_studio.seed.seed_from_file` at
+    `src/living_product_studio/seed.py:11` with cyclomatic complexity 17 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/seed.py
+  dedupe_key: code2llm:cc:src/living_product_studio/seed.py:src.living_product_studio.seed.seed_from_file
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.specification.unified_specification
+    (CC=20)'
+  description: 'code2llm reports `src.living_product_studio.specification.unified_specification`
+    at `src/living_product_studio/specification.py:10` with cyclomatic complexity
+    20 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/specification.py
+  dedupe_key: code2llm:cc:src/living_product_studio/specification.py:src.living_product_studio.specification.unified_specification
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.static.app.handleDraw
+    (CC=16)'
+  description: 'code2llm reports `src.living_product_studio.static.app.handleDraw`
+    at `src/living_product_studio/static/app.js:33` with cyclomatic complexity 16
+    (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: code2llm:cc:src/living_product_studio/static/app.js:src.living_product_studio.static.app.handleDraw
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.living_product_studio.static.app.renderSpec
+    (CC=19)'
+  description: 'code2llm reports `src.living_product_studio.static.app.renderSpec`
+    at `src/living_product_studio/static/app.js:57` with cyclomatic complexity 19
+    (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: code2llm:cc:src/living_product_studio/static/app.js:src.living_product_studio.static.app.renderSpec
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: config, drawing, path'
+  description: 'code2llm reports `Data Clump: config, drawing, path` in `housing_studio/draw2d.py:599`.
+
+
+    Arguments (config, drawing, path) are used together in multiple functions: housing_studio.draw2d.export_dxf,
+    housing_studio.draw2d.export_pdf.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:data_clump:housing_studio/draw2d.py:599:Data Clump:
+    config, drawing, path'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: config, drawing, path'
+  description: 'code2llm reports `Data Clump: config, drawing, path` in `housing_studio/draw2d.py:803`.
+
+
+    Arguments (config, drawing, path) are used together in multiple functions: housing_studio.draw2d.export_dxf,
+    housing_studio.draw2d.export_pdf.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:data_clump:housing_studio/draw2d.py:803:Data Clump:
+    config, drawing, path'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: config, drawing, path'
+  description: 'code2llm reports `Data Clump: config, drawing, path` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:599`.
+
+
+    Arguments (config, drawing, path) are used together in multiple functions: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf,
+    services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_pdf.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:data_clump:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:599:Data
+    Clump: config, drawing, path'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: config, drawing, path'
+  description: 'code2llm reports `Data Clump: config, drawing, path` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:802`.
+
+
+    Arguments (config, drawing, path) are used together in multiple functions: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_dxf,
+    services.cad-worker.vendor.rpi5_housing_studio.housing_studio.draw2d.export_pdf.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:data_clump:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:802:Data
+    Clump: config, drawing, path'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: events, project_id, self'
+  description: 'code2llm reports `Data Clump: events, project_id, self` in `src/living_product_studio/mqtt_bus.py:12`.
+
+
+    Arguments (events, project_id, self) are used together in multiple functions:
+    src.living_product_studio.mqtt_bus.EventPublisher.publish_events, src.living_product_studio.mqtt_bus.NullPublisher.publish_events,
+    src.living_product_studio.mqtt_bus.MqttPublisher.publish_events.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/mqtt_bus.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/mqtt_bus.py:12:Data
+    Clump: events, project_id, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: events, project_id, self'
+  description: 'code2llm reports `Data Clump: events, project_id, self` in `src/living_product_studio/mqtt_bus.py:17`.
+
+
+    Arguments (events, project_id, self) are used together in multiple functions:
+    src.living_product_studio.mqtt_bus.EventPublisher.publish_events, src.living_product_studio.mqtt_bus.NullPublisher.publish_events,
+    src.living_product_studio.mqtt_bus.MqttPublisher.publish_events.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/mqtt_bus.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/mqtt_bus.py:17:Data
+    Clump: events, project_id, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: events, project_id, self'
+  description: 'code2llm reports `Data Clump: events, project_id, self` in `src/living_product_studio/mqtt_bus.py:40`.
+
+
+    Arguments (events, project_id, self) are used together in multiple functions:
+    src.living_product_studio.mqtt_bus.EventPublisher.publish_events, src.living_product_studio.mqtt_bus.NullPublisher.publish_events,
+    src.living_product_studio.mqtt_bus.MqttPublisher.publish_events.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/mqtt_bus.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/mqtt_bus.py:40:Data
+    Clump: events, project_id, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: project_id, body, user'
+  description: 'code2llm reports `Data Clump: project_id, body, user` in `src/living_product_studio/api.py:225`.
+
+
+    Arguments (project_id, body, user) are used together in multiple functions: src.living_product_studio.api.execute_command,
+    src.living_product_studio.api.resolve_project_selection, src.living_product_studio.api.create_annotation,
+    src.living_product_studio.api.create_change_plan, src.living_product_studio.api.run_thermal.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/api.py:225:Data
+    Clump: project_id, body, user'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: project_id, body, user'
+  description: 'code2llm reports `Data Clump: project_id, body, user` in `src/living_product_studio/api.py:248`.
+
+
+    Arguments (project_id, body, user) are used together in multiple functions: src.living_product_studio.api.execute_command,
+    src.living_product_studio.api.resolve_project_selection, src.living_product_studio.api.create_annotation,
+    src.living_product_studio.api.create_change_plan, src.living_product_studio.api.run_thermal.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/api.py:248:Data
+    Clump: project_id, body, user'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: project_id, body, user'
+  description: 'code2llm reports `Data Clump: project_id, body, user` in `src/living_product_studio/api.py:271`.
+
+
+    Arguments (project_id, body, user) are used together in multiple functions: src.living_product_studio.api.execute_command,
+    src.living_product_studio.api.resolve_project_selection, src.living_product_studio.api.create_annotation,
+    src.living_product_studio.api.create_change_plan, src.living_product_studio.api.run_thermal.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/api.py:271:Data
+    Clump: project_id, body, user'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: project_id, body, user'
+  description: 'code2llm reports `Data Clump: project_id, body, user` in `src/living_product_studio/api.py:299`.
+
+
+    Arguments (project_id, body, user) are used together in multiple functions: src.living_product_studio.api.execute_command,
+    src.living_product_studio.api.resolve_project_selection, src.living_product_studio.api.create_annotation,
+    src.living_product_studio.api.create_change_plan, src.living_product_studio.api.run_thermal.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/api.py:299:Data
+    Clump: project_id, body, user'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: project_id, body, user'
+  description: 'code2llm reports `Data Clump: project_id, body, user` in `src/living_product_studio/api.py:357`.
+
+
+    Arguments (project_id, body, user) are used together in multiple functions: src.living_product_studio.api.execute_command,
+    src.living_product_studio.api.resolve_project_selection, src.living_product_studio.api.create_annotation,
+    src.living_product_studio.api.create_change_plan, src.living_product_studio.api.run_thermal.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/api.py:357:Data
+    Clump: project_id, body, user'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: project_id, self, websocket'
+  description: 'code2llm reports `Data Clump: project_id, self, websocket` in `src/living_product_studio/api.py:107`.
+
+
+    Arguments (project_id, self, websocket) are used together in multiple functions:
+    src.living_product_studio.api.WsHub.connect, src.living_product_studio.api.WsHub.disconnect.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/api.py:107:Data
+    Clump: project_id, self, websocket'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: project_id, self, websocket'
+  description: 'code2llm reports `Data Clump: project_id, self, websocket` in `src/living_product_studio/api.py:111`.
+
+
+    Arguments (project_id, self, websocket) are used together in multiple functions:
+    src.living_product_studio.api.WsHub.connect, src.living_product_studio.api.WsHub.disconnect.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/api.py:111:Data
+    Clump: project_id, self, websocket'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: selection, prompt, actor, project, self'
+  description: 'code2llm reports `Data Clump: selection, prompt, actor, project, self`
+    in `src/living_product_studio/change_planner.py:43`.
+
+
+    Arguments (selection, prompt, actor, project, self) are used together in multiple
+    functions: src.living_product_studio.change_planner.ChangePlanner.plan, src.living_product_studio.change_planner.ChangePlanner._litellm_plan,
+    src.living_product_studio.change_planner.ChangePlanner._local_plan.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/change_planner.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/change_planner.py:43:Data
+    Clump: selection, prompt, actor, project, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: selection, prompt, actor, project, self'
+  description: 'code2llm reports `Data Clump: selection, prompt, actor, project, self`
+    in `src/living_product_studio/change_planner.py:81`.
+
+
+    Arguments (selection, prompt, actor, project, self) are used together in multiple
+    functions: src.living_product_studio.change_planner.ChangePlanner.plan, src.living_product_studio.change_planner.ChangePlanner._litellm_plan,
+    src.living_product_studio.change_planner.ChangePlanner._local_plan.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/change_planner.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/change_planner.py:81:Data
+    Clump: selection, prompt, actor, project, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: selection, prompt, actor, project, self'
+  description: 'code2llm reports `Data Clump: selection, prompt, actor, project, self`
+    in `src/living_product_studio/change_planner.py:137`.
+
+
+    Arguments (selection, prompt, actor, project, self) are used together in multiple
+    functions: src.living_product_studio.change_planner.ChangePlanner.plan, src.living_product_studio.change_planner.ChangePlanner._litellm_plan,
+    src.living_product_studio.change_planner.ChangePlanner._local_plan.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/change_planner.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/change_planner.py:137:Data
+    Clump: selection, prompt, actor, project, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: to_email, subject, self, body'
+  description: 'code2llm reports `Data Clump: to_email, subject, self, body` in `src/living_product_studio/auth.py:34`.
+
+
+    Arguments (to_email, subject, self, body) are used together in multiple functions:
+    src.living_product_studio.auth.Mailer.send, src.living_product_studio.auth.Mailer._write_outbox.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/auth.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/auth.py:34:Data
+    Clump: to_email, subject, self, body'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: to_email, subject, self, body'
+  description: 'code2llm reports `Data Clump: to_email, subject, self, body` in `src/living_product_studio/auth.py:53`.
+
+
+    Arguments (to_email, subject, self, body) are used together in multiple functions:
+    src.living_product_studio.auth.Mailer.send, src.living_product_studio.auth.Mailer._write_outbox.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/living_product_studio/auth.py
+  dedupe_key: 'code2llm:smell:data_clump:src/living_product_studio/auth.py:53:Data
+    Clump: to_email, subject, self, body'
+- signal: code2llm_smell_feature_envy
+  title: 'Address code smell: Feature Envy: apply_event'
+  description: 'code2llm reports `Feature Envy: apply_event` in `src/living_product_studio/projector.py:47`.
+
+
+    Function ''apply_event'' mutates multiple variables in other modules: snapshot.metadata,
+    snapshot.metadata.setdefault(''unhandled_events'', []), node.artifact_uris, snapshot.objects,
+    snapshot.ecommerce_offers, snapshot.human_scenarios, snapshot.memberships, snapshot.failure_modes.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - feature-envy
+  files:
+  - src/living_product_studio/projector.py
+  dedupe_key: 'code2llm:smell:feature_envy:src/living_product_studio/projector.py:47:Feature
+    Envy: apply_event'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _aabb_box'
+  description: 'code2llm reports `God Function: _aabb_box` in `services/cad-worker/scoped_brep_adapter.py:97`.
+
+
+    Function ''_aabb_box'' is oversized: CC=3, fan-out=8, mutations=12.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/scoped_brep_adapter.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/scoped_brep_adapter.py:97:God
+    Function: _aabb_box'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _add_locating_lip'
+  description: 'code2llm reports `God Function: _add_locating_lip` in `housing_studio/cad3d.py:354`.
+
+
+    Function ''_add_locating_lip'' is oversized: CC=3, fan-out=5, mutations=11.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/cad3d.py:354:God Function:
+    _add_locating_lip'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _add_locating_lip'
+  description: 'code2llm reports `God Function: _add_locating_lip` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:354`.
+
+
+    Function ''_add_locating_lip'' is oversized: CC=3, fan-out=5, mutations=11.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:354:God
+    Function: _add_locating_lip'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _assembly_front_view'
+  description: 'code2llm reports `God Function: _assembly_front_view` in `housing_studio/draw2d.py:400`.
+
+
+    Function ''_assembly_front_view'' is oversized: CC=2, fan-out=8, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:400:God Function:
+    _assembly_front_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _assembly_front_view'
+  description: 'code2llm reports `God Function: _assembly_front_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:400`.
+
+
+    Function ''_assembly_front_view'' is oversized: CC=2, fan-out=8, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:400:God
+    Function: _assembly_front_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _assembly_side_view'
+  description: 'code2llm reports `God Function: _assembly_side_view` in `housing_studio/draw2d.py:430`.
+
+
+    Function ''_assembly_side_view'' is oversized: CC=3, fan-out=8, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:430:God Function:
+    _assembly_side_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _assembly_side_view'
+  description: 'code2llm reports `God Function: _assembly_side_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:430`.
+
+
+    Function ''_assembly_side_view'' is oversized: CC=3, fan-out=8, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:430:God
+    Function: _assembly_side_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _base_front_view'
+  description: 'code2llm reports `God Function: _base_front_view` in `housing_studio/draw2d.py:110`.
+
+
+    Function ''_base_front_view'' is oversized: CC=4, fan-out=9, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:110:God Function:
+    _base_front_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _base_front_view'
+  description: 'code2llm reports `God Function: _base_front_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:110`.
+
+
+    Function ''_base_front_view'' is oversized: CC=4, fan-out=9, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:110:God
+    Function: _base_front_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _base_side_view'
+  description: 'code2llm reports `God Function: _base_side_view` in `housing_studio/draw2d.py:200`.
+
+
+    Function ''_base_side_view'' is oversized: CC=7, fan-out=11, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:200:God Function:
+    _base_side_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _base_side_view'
+  description: 'code2llm reports `God Function: _base_side_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:200`.
+
+
+    Function ''_base_side_view'' is oversized: CC=7, fan-out=11, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:200:God
+    Function: _base_side_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _base_top_view'
+  description: 'code2llm reports `God Function: _base_top_view` in `housing_studio/draw2d.py:143`.
+
+
+    Function ''_base_top_view'' is oversized: CC=14, fan-out=11, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:143:God Function:
+    _base_top_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _base_top_view'
+  description: 'code2llm reports `God Function: _base_top_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:143`.
+
+
+    Function ''_base_top_view'' is oversized: CC=14, fan-out=11, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:143:God
+    Function: _base_top_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _board_mesh'
+  description: 'code2llm reports `God Function: _board_mesh` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/mesh_preview.py:33`.
+
+
+    Function ''_board_mesh'' is oversized: CC=2, fan-out=3, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/mesh_preview.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/mesh_preview.py:33:God
+    Function: _board_mesh'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _board_mesh'
+  description: 'code2llm reports `God Function: _board_mesh` in `housing_studio/mesh_preview.py:33`.
+
+
+    Function ''_board_mesh'' is oversized: CC=2, fan-out=3, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/mesh_preview.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/mesh_preview.py:33:God Function:
+    _board_mesh'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _change_report_markdown'
+  description: 'code2llm reports `God Function: _change_report_markdown` in `housing_studio/artifacts.py:143`.
+
+
+    Function ''_change_report_markdown'' is oversized: CC=7, fan-out=8, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/artifacts.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/artifacts.py:143:God Function:
+    _change_report_markdown'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _dimension_segments'
+  description: 'code2llm reports `God Function: _dimension_segments` in `housing_studio/draw2d.py:537`.
+
+
+    Function ''_dimension_segments'' is oversized: CC=2, fan-out=3, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:537:God Function:
+    _dimension_segments'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _dimension_segments'
+  description: 'code2llm reports `God Function: _dimension_segments` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:537`.
+
+
+    Function ''_dimension_segments'' is oversized: CC=2, fan-out=3, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:537:God
+    Function: _dimension_segments'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _job_summaries'
+  description: 'code2llm reports `God Function: _job_summaries` in `app/main.py:119`.
+
+
+    Function ''_job_summaries'' is oversized: CC=5, fan-out=12, mutations=3.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/main.py
+  dedupe_key: 'code2llm:smell:god_function:app/main.py:119:God Function: _job_summaries'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _lid_front_view'
+  description: 'code2llm reports `God Function: _lid_front_view` in `housing_studio/draw2d.py:267`.
+
+
+    Function ''_lid_front_view'' is oversized: CC=4, fan-out=10, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:267:God Function:
+    _lid_front_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _lid_front_view'
+  description: 'code2llm reports `God Function: _lid_front_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:267`.
+
+
+    Function ''_lid_front_view'' is oversized: CC=4, fan-out=10, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:267:God
+    Function: _lid_front_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _lid_side_view'
+  description: 'code2llm reports `God Function: _lid_side_view` in `housing_studio/draw2d.py:363`.
+
+
+    Function ''_lid_side_view'' is oversized: CC=2, fan-out=10, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:363:God Function:
+    _lid_side_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _lid_side_view'
+  description: 'code2llm reports `God Function: _lid_side_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:363`.
+
+
+    Function ''_lid_side_view'' is oversized: CC=2, fan-out=10, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:363:God
+    Function: _lid_side_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _lid_top_view'
+  description: 'code2llm reports `God Function: _lid_top_view` in `housing_studio/draw2d.py:329`.
+
+
+    Function ''_lid_top_view'' is oversized: CC=8, fan-out=10, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:329:God Function:
+    _lid_top_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _lid_top_view'
+  description: 'code2llm reports `God Function: _lid_top_view` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:329`.
+
+
+    Function ''_lid_top_view'' is oversized: CC=8, fan-out=10, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:329:God
+    Function: _lid_top_view'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _litellm_plan'
+  description: 'code2llm reports `God Function: _litellm_plan` in `src/living_product_studio/change_planner.py:81`.
+
+
+    Function ''_litellm_plan'' is oversized: CC=7, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/change_planner.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/change_planner.py:81:God
+    Function: _litellm_plan'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _make_lid_shell'
+  description: 'code2llm reports `God Function: _make_lid_shell` in `housing_studio/cad3d.py:273`.
+
+
+    Function ''_make_lid_shell'' is oversized: CC=2, fan-out=9, mutations=19.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/cad3d.py:273:God Function:
+    _make_lid_shell'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _make_lid_shell'
+  description: 'code2llm reports `God Function: _make_lid_shell` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:273`.
+
+
+    Function ''_make_lid_shell'' is oversized: CC=2, fan-out=9, mutations=19.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:273:God
+    Function: _make_lid_shell'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _manifest_with_urls'
+  description: 'code2llm reports `God Function: _manifest_with_urls` in `app/main.py:87`.
+
+
+    Function ''_manifest_with_urls'' is oversized: CC=5, fan-out=5, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/main.py
+  dedupe_key: 'code2llm:smell:god_function:app/main.py:87:God Function: _manifest_with_urls'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _manifest_with_urls'
+  description: 'code2llm reports `God Function: _manifest_with_urls` in `services/cad-worker/vendor/rpi5_housing_studio/app/main.py:77`.
+
+
+    Function ''_manifest_with_urls'' is oversized: CC=5, fan-out=5, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/app/main.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/app/main.py:77:God
+    Function: _manifest_with_urls'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _opening_cut_box'
+  description: 'code2llm reports `God Function: _opening_cut_box` in `housing_studio/cad3d.py:89`.
+
+
+    Function ''_opening_cut_box'' is oversized: CC=10, fan-out=7, mutations=14.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/cad3d.py:89:God Function:
+    _opening_cut_box'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _opening_cut_box'
+  description: 'code2llm reports `God Function: _opening_cut_box` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:89`.
+
+
+    Function ''_opening_cut_box'' is oversized: CC=10, fan-out=7, mutations=14.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/cad3d.py:89:God
+    Function: _opening_cut_box'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _specification_markdown'
+  description: 'code2llm reports `God Function: _specification_markdown` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py:79`.
+
+
+    Function ''_specification_markdown'' is oversized: CC=7, fan-out=7, mutations=12.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/artifacts.py:79:God
+    Function: _specification_markdown'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _specification_markdown'
+  description: 'code2llm reports `God Function: _specification_markdown` in `housing_studio/artifacts.py:198`.
+
+
+    Function ''_specification_markdown'' is oversized: CC=7, fan-out=7, mutations=12.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/artifacts.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/artifacts.py:198:God Function:
+    _specification_markdown'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: accept_invitation'
+  description: 'code2llm reports `God Function: accept_invitation` in `src/living_product_studio/event_store.py:345`.
+
+
+    Function ''accept_invitation'' is oversized: CC=4, fan-out=13, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/event_store.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/event_store.py:345:God
+    Function: accept_invitation'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: append'
+  description: 'code2llm reports `God Function: append` in `src/living_product_studio/event_store.py:122`.
+
+
+    Function ''append'' is oversized: CC=7, fan-out=14, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/event_store.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/event_store.py:122:God
+    Function: append'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: approve_invitation'
+  description: 'code2llm reports `God Function: approve_invitation` in `src/living_product_studio/event_store.py:298`.
+
+
+    Function ''approve_invitation'' is oversized: CC=4, fan-out=14, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/event_store.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/event_store.py:298:God
+    Function: approve_invitation'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: authenticate_api_token'
+  description: 'code2llm reports `God Function: authenticate_api_token` in `src/living_product_studio/event_store.py:224`.
+
+
+    Function ''authenticate_api_token'' is oversized: CC=4, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/event_store.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/event_store.py:224:God
+    Function: authenticate_api_token'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: authenticate_session'
+  description: 'code2llm reports `God Function: authenticate_session` in `src/living_product_studio/event_store.py:255`.
+
+
+    Function ''authenticate_session'' is oversized: CC=3, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/event_store.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/event_store.py:255:God
+    Function: authenticate_session'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: board_actual_clearances'
+  description: 'code2llm reports `God Function: board_actual_clearances` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:45`.
+
+
+    Function ''board_actual_clearances'' is oversized: CC=1, fan-out=1, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:45:God
+    Function: board_actual_clearances'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: board_actual_clearances'
+  description: 'code2llm reports `God Function: board_actual_clearances` in `housing_studio/validation.py:45`.
+
+
+    Function ''board_actual_clearances'' is oversized: CC=1, fan-out=1, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/validation.py:45:God Function:
+    board_actual_clearances'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: board_hole_centers'
+  description: 'code2llm reports `God Function: board_hole_centers` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:63`.
+
+
+    Function ''board_hole_centers'' is oversized: CC=3, fan-out=1, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:63:God
+    Function: board_hole_centers'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: board_hole_centers'
+  description: 'code2llm reports `God Function: board_hole_centers` in `housing_studio/validation.py:63`.
+
+
+    Function ''board_hole_centers'' is oversized: CC=3, fan-out=1, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/validation.py:63:God Function:
+    board_hole_centers'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: board_origin'
+  description: 'code2llm reports `God Function: board_origin` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:20`.
+
+
+    Function ''board_origin'' is oversized: CC=4, fan-out=0, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:20:God
+    Function: board_origin'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: board_origin'
+  description: 'code2llm reports `God Function: board_origin` in `housing_studio/validation.py:20`.
+
+
+    Function ''board_origin'' is oversized: CC=4, fan-out=0, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/validation.py:20:God Function:
+    board_origin'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: build_drawing_sets'
+  description: 'code2llm reports `God Function: build_drawing_sets` in `housing_studio/draw2d.py:451`.
+
+
+    Function ''build_drawing_sets'' is oversized: CC=2, fan-out=11, mutations=2.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:451:God Function:
+    build_drawing_sets'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: build_drawing_sets'
+  description: 'code2llm reports `God Function: build_drawing_sets` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:451`.
+
+
+    Function ''build_drawing_sets'' is oversized: CC=2, fan-out=11, mutations=2.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:451:God
+    Function: build_drawing_sets'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: command'
+  description: 'code2llm reports `God Function: command` in `src/living_product_studio/cli.py:60`.
+
+
+    Function ''command'' is oversized: CC=4, fan-out=10, mutations=12.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/cli.py:60:God
+    Function: command'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: createAreaSelection'
+  description: 'code2llm reports `God Function: createAreaSelection` in `src/living_product_studio/static/app.js:39`.
+
+
+    Function ''createAreaSelection'' is oversized: CC=5, fan-out=14, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/static/app.js:39:God
+    Function: createAreaSelection'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: create_annotation'
+  description: 'code2llm reports `God Function: create_annotation` in `src/living_product_studio/api.py:271`.
+
+
+    Function ''create_annotation'' is oversized: CC=2, fan-out=12, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/api.py:271:God
+    Function: create_annotation'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: create_change_plan'
+  description: 'code2llm reports `God Function: create_change_plan` in `src/living_product_studio/api.py:299`.
+
+
+    Function ''create_change_plan'' is oversized: CC=2, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/api.py:299:God
+    Function: create_change_plan'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: create_invitation'
+  description: 'code2llm reports `God Function: create_invitation` in `src/living_product_studio/event_store.py:267`.
+
+
+    Function ''create_invitation'' is oversized: CC=1, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/event_store.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/event_store.py:267:God
+    Function: create_invitation'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: drawOverlay'
+  description: 'code2llm reports `God Function: drawOverlay` in `src/living_product_studio/static/app.js:34`.
+
+
+    Function ''drawOverlay'' is oversized: CC=5, fan-out=13, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/static/app.js:34:God
+    Function: drawOverlay'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export'
+  description: 'code2llm reports `God Function: export` in `src/living_product_studio/cli.py:117`.
+
+
+    Function ''export'' is oversized: CC=2, fan-out=8, mutations=12.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/cli.py:117:God
+    Function: export'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_all_2d'
+  description: 'code2llm reports `God Function: export_all_2d` in `housing_studio/draw2d.py:865`.
+
+
+    Function ''export_all_2d'' is oversized: CC=9, fan-out=13, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/draw2d.py:865:God Function:
+    export_all_2d'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_all_2d'
+  description: 'code2llm reports `God Function: export_all_2d` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:864`.
+
+
+    Function ''export_all_2d'' is oversized: CC=9, fan-out=13, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py:864:God
+    Function: export_all_2d'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_preview_scenes'
+  description: 'code2llm reports `God Function: export_preview_scenes` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/mesh_preview.py:54`.
+
+
+    Function ''export_preview_scenes'' is oversized: CC=5, fan-out=16, mutations=17.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/mesh_preview.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/mesh_preview.py:54:God
+    Function: export_preview_scenes'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: export_preview_scenes'
+  description: 'code2llm reports `God Function: export_preview_scenes` in `housing_studio/mesh_preview.py:54`.
+
+
+    Function ''export_preview_scenes'' is oversized: CC=5, fan-out=16, mutations=17.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/mesh_preview.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/mesh_preview.py:54:God Function:
+    export_preview_scenes'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: fitCamera'
+  description: 'code2llm reports `God Function: fitCamera` in `src/living_product_studio/static/app.js:29`.
+
+
+    Function ''fitCamera'' is oversized: CC=2, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/static/app.js:29:God
+    Function: fitCamera'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: fitCameraToModels'
+  description: 'code2llm reports `God Function: fitCameraToModels` in `services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:342`.
+
+
+    Function ''fitCameraToModels'' is oversized: CC=5, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:342:God
+    Function: fitCameraToModels'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: fitCameraToModels'
+  description: 'code2llm reports `God Function: fitCameraToModels` in `app/static/app.js:676`.
+
+
+    Function ''fitCameraToModels'' is oversized: CC=5, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:676:God Function: fitCameraToModels'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: generate'
+  description: 'code2llm reports `God Function: generate` in `services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:399`.
+
+
+    Function ''generate'' is oversized: CC=2, fan-out=12, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:399:God
+    Function: generate'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: generate'
+  description: 'code2llm reports `God Function: generate` in `app/static/app.js:778`.
+
+
+    Function ''generate'' is oversized: CC=5, fan-out=15, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:778:God Function: generate'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: get_job_config'
+  description: 'code2llm reports `God Function: get_job_config` in `app/main.py:229`.
+
+
+    Function ''get_job_config'' is oversized: CC=4, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/main.py
+  dedupe_key: 'code2llm:smell:god_function:app/main.py:229:God Function: get_job_config'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: hinge_segments'
+  description: 'code2llm reports `God Function: hinge_segments` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:74`.
+
+
+    Function ''hinge_segments'' is oversized: CC=3, fan-out=2, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/validation.py:74:God
+    Function: hinge_segments'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: hinge_segments'
+  description: 'code2llm reports `God Function: hinge_segments` in `housing_studio/validation.py:74`.
+
+
+    Function ''hinge_segments'' is oversized: CC=3, fan-out=2, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/validation.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/validation.py:74:God Function:
+    hinge_segments'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: initViewer'
+  description: 'code2llm reports `God Function: initViewer` in `services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:211`.
+
+
+    Function ''initViewer'' is oversized: CC=2, fan-out=25, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:211:God
+    Function: initViewer'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: initViewer'
+  description: 'code2llm reports `God Function: initViewer` in `app/static/app.js:531`.
+
+
+    Function ''initViewer'' is oversized: CC=4, fan-out=28, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:531:God Function: initViewer'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: initViewer'
+  description: 'code2llm reports `God Function: initViewer` in `src/living_product_studio/static/app.js:25`.
+
+
+    Function ''initViewer'' is oversized: CC=2, fan-out=19, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/static/app.js:25:God
+    Function: initViewer'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: interpret_with_litellm'
+  description: 'code2llm reports `God Function: interpret_with_litellm` in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/llm_config.py:247`.
+
+
+    Function ''interpret_with_litellm'' is oversized: CC=8, fan-out=10, mutations=18.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/llm_config.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/llm_config.py:247:God
+    Function: interpret_with_litellm'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: interpret_with_litellm'
+  description: 'code2llm reports `God Function: interpret_with_litellm` in `housing_studio/llm_config.py:436`.
+
+
+    Function ''interpret_with_litellm'' is oversized: CC=8, fan-out=11, mutations=18.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/llm_config.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/llm_config.py:436:God Function:
+    interpret_with_litellm'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: load3dPreview'
+  description: 'code2llm reports `God Function: load3dPreview` in `services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:297`.
+
+
+    Function ''load3dPreview'' is oversized: CC=11, fan-out=17, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:297:God
+    Function: load3dPreview'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: loadJob'
+  description: 'code2llm reports `God Function: loadJob` in `app/static/app.js:830`.
+
+
+    Function ''loadJob'' is oversized: CC=1, fan-out=13, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:830:God Function: loadJob'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: loadJobHistory'
+  description: 'code2llm reports `God Function: loadJobHistory` in `app/static/app.js:847`.
+
+
+    Function ''loadJobHistory'' is oversized: CC=8, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:847:God Function: loadJobHistory'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: loadModels'
+  description: 'code2llm reports `God Function: loadModels` in `src/living_product_studio/static/app.js:28`.
+
+
+    Function ''loadModels'' is oversized: CC=5, fan-out=13, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/static/app.js:28:God
+    Function: loadModels'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `services/cad-worker/vendor/rpi5_housing_studio/generator.py:19`.
+
+
+    Function ''main'' is oversized: CC=6, fan-out=16, mutations=18.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/generator.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/generator.py:19:God
+    Function: main'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `scripts/verify_project.py:148`.
+
+
+    Function ''main'' is oversized: CC=3, fan-out=12, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - scripts/verify_project.py
+  dedupe_key: 'code2llm:smell:god_function:scripts/verify_project.py:148:God Function:
+    main'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: manufacturing_views'
+  description: 'code2llm reports `God Function: manufacturing_views` in `src/living_product_studio/specification.py:69`.
+
+
+    Function ''manufacturing_views'' is oversized: CC=12, fan-out=6, mutations=9.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/specification.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/specification.py:69:God
+    Function: manufacturing_views'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: modern_result'
+  description: 'code2llm reports `God Function: modern_result` in `src/living_product_studio/mcp_protocol.py:151`.
+
+
+    Function ''modern_result'' is oversized: CC=4, fan-out=4, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/mcp_protocol.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/mcp_protocol.py:151:God
+    Function: modern_result'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: on_message'
+  description: 'code2llm reports `God Function: on_message` in `services/cad-worker/worker.py:35`.
+
+
+    Function ''on_message'' is oversized: CC=8, fan-out=14, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/worker.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/worker.py:35:God Function:
+    on_message'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: on_message'
+  description: 'code2llm reports `God Function: on_message` in `services/mqtt-gateway/gateway.py:35`.
+
+
+    Function ''on_message'' is oversized: CC=10, fan-out=17, mutations=15.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/mqtt-gateway/gateway.py
+  dedupe_key: 'code2llm:smell:god_function:services/mqtt-gateway/gateway.py:35:God
+    Function: on_message'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: plan'
+  description: 'code2llm reports `God Function: plan` in `src/living_product_studio/cli.py:83`.
+
+
+    Function ''plan'' is oversized: CC=2, fan-out=12, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/cli.py:83:God
+    Function: plan'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: power'
+  description: 'code2llm reports `God Function: power` in `src/living_product_studio/cli.py:108`.
+
+
+    Function ''power'' is oversized: CC=2, fan-out=7, mutations=11.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/cli.py:108:God
+    Function: power'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: principal_from_request'
+  description: 'code2llm reports `God Function: principal_from_request` in `src/living_product_studio/auth.py:76`.
+
+
+    Function ''principal_from_request'' is oversized: CC=7, fan-out=13, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/auth.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/auth.py:76:God
+    Function: principal_from_request'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: projects_cmd'
+  description: 'code2llm reports `God Function: projects_cmd` in `src/living_product_studio/cli.py:48`.
+
+
+    Function ''projects_cmd'' is oversized: CC=1, fan-out=5, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/cli.py:48:God
+    Function: projects_cmd'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: reject_invitation'
+  description: 'code2llm reports `God Function: reject_invitation` in `src/living_product_studio/event_store.py:327`.
+
+
+    Function ''reject_invitation'' is oversized: CC=2, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/event_store.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/event_store.py:327:God
+    Function: reject_invitation'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: renderArtifacts'
+  description: 'code2llm reports `God Function: renderArtifacts` in `services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:155`.
+
+
+    Function ''renderArtifacts'' is oversized: CC=6, fan-out=16, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:155:God
+    Function: renderArtifacts'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: renderArtifacts'
+  description: 'code2llm reports `God Function: renderArtifacts` in `app/static/app.js:398`.
+
+
+    Function ''renderArtifacts'' is oversized: CC=6, fan-out=16, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:398:God Function: renderArtifacts'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: renderDrawingPreviewLayerControls'
+  description: 'code2llm reports `God Function: renderDrawingPreviewLayerControls`
+    in `app/static/app.js:477`.
+
+
+    Function ''renderDrawingPreviewLayerControls'' is oversized: CC=9, fan-out=12,
+    mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:477:God Function: renderDrawingPreviewLayerControls'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: renderHighlight'
+  description: 'code2llm reports `God Function: renderHighlight` in `src/living_product_studio/static/app.js:44`.
+
+
+    Function ''renderHighlight'' is oversized: CC=2, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/static/app.js:44:God
+    Function: renderHighlight'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: request_access'
+  description: 'code2llm reports `God Function: request_access` in `src/living_product_studio/auth.py:103`.
+
+
+    Function ''request_access'' is oversized: CC=11, fan-out=16, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/auth.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/auth.py:103:God
+    Function: request_access'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: resolve_project_selection'
+  description: 'code2llm reports `God Function: resolve_project_selection` in `src/living_product_studio/api.py:248`.
+
+
+    Function ''resolve_project_selection'' is oversized: CC=2, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/api.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/api.py:248:God
+    Function: resolve_project_selection'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: seed'
+  description: 'code2llm reports `God Function: seed` in `src/living_product_studio/cli.py:38`.
+
+
+    Function ''seed'' is oversized: CC=1, fan-out=6, mutations=11.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/cli.py:38:God
+    Function: seed'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: simulate_power'
+  description: 'code2llm reports `God Function: simulate_power` in `src/living_product_studio/simulations.py:26`.
+
+
+    Function ''simulate_power'' is oversized: CC=3, fan-out=6, mutations=13.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/simulations.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/simulations.py:26:God
+    Function: simulate_power'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: simulate_thermal'
+  description: 'code2llm reports `God Function: simulate_thermal` in `src/living_product_studio/simulations.py:66`.
+
+
+    Function ''simulate_thermal'' is oversized: CC=11, fan-out=9, mutations=16.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/simulations.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/simulations.py:66:God
+    Function: simulate_thermal'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: tree'
+  description: 'code2llm reports `God Function: tree` in `src/living_product_studio/cli.py:54`.
+
+
+    Function ''tree'' is oversized: CC=1, fan-out=5, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/cli.py
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/cli.py:54:God
+    Function: tree'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: updateDrawingPreview'
+  description: 'code2llm reports `God Function: updateDrawingPreview` in `app/static/app.js:436`.
+
+
+    Function ''updateDrawingPreview'' is oversized: CC=5, fan-out=14, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:436:God Function: updateDrawingPreview'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Module: app.static.app'
+  description: 'code2llm reports `God Module: app.static.app` in `app/static/app.js:1`.
+
+
+    Module ''app.static.app'' is too large (140 functions, 0 classes). Consider splitting
+    into sub-modules.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:app/static/app.js:1:God Module: app.static.app'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Module: housing_studio.models'
+  description: 'code2llm reports `God Module: housing_studio.models` in `housing_studio/models.py:1`.
+
+
+    Module ''housing_studio.models'' is too large (5 functions, 20 classes). Consider
+    splitting into sub-modules.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - housing_studio/models.py
+  dedupe_key: 'code2llm:smell:god_function:housing_studio/models.py:1:God Module:
+    housing_studio.models'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app'
+  description: 'code2llm reports `God Module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app`
+    in `services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:1`.
+
+
+    Module ''services.cad-worker.vendor.rpi5_housing_studio.app.static.app'' is too
+    large (89 functions, 0 classes). Consider splitting into sub-modules.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/app/static/app.js:1:God
+    Module: services.cad-worker.vendor.rpi5_housing_studio.app.static.app'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models'
+  description: 'code2llm reports `God Module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models`
+    in `services/cad-worker/vendor/rpi5_housing_studio/housing_studio/models.py:1`.
+
+
+    Module ''services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models''
+    is too large (5 functions, 20 classes). Consider splitting into sub-modules.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - services/cad-worker/vendor/rpi5_housing_studio/housing_studio/models.py
+  dedupe_key: 'code2llm:smell:god_function:services/cad-worker/vendor/rpi5_housing_studio/housing_studio/models.py:1:God
+    Module: services.cad-worker.vendor.rpi5_housing_studio.housing_studio.models'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Module: src.living_product_studio.static.app'
+  description: 'code2llm reports `God Module: src.living_product_studio.static.app`
+    in `src/living_product_studio/static/app.js:1`.
+
+
+    Module ''src.living_product_studio.static.app'' is too large (49 functions, 0
+    classes). Consider splitting into sub-modules.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/living_product_studio/static/app.js
+  dedupe_key: 'code2llm:smell:god_function:src/living_product_studio/static/app.js:1:God
+    Module: src.living_product_studio.static.app'
+applied: []
+skipped: []

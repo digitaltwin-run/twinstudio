@@ -1,0 +1,898 @@
+flowchart TD
+%% generated in 0.01s
+    subgraph app__main
+        app__main___validated_config["_validated_config"]
+        app__main___safe_job_identifier["_safe_job_identifier"]
+        app__main___url_for["_url_for"]
+        app__main___manifest_with_urls["_manifest_with_urls"]
+        app__main___layer_summary["_layer_summary"]
+        app__main___job_summaries["_job_summaries"]
+        app__main__index["index"]
+        app__main__health["health"]
+        app__main__default_config["default_config"]
+        app__main__validate_config["validate_config"]
+        app__main__interpret["interpret"]
+        app__main__generate["generate"]
+        app__main__list_jobs["list_jobs"]
+        app__main__get_job_config["get_job_config"]
+        app__main__get_job["get_job"]
+    end
+    subgraph app__static
+        app__static__app__THREE["THREE"]
+        app__static__app__OrbitControls["OrbitControls"]
+        app__static__app__STLLoader["STLLoader"]
+        app__static__app__setLlmBadge["setLlmBadge"]
+        app__static__app__configured["configured"]
+        app__static__app__version["version"]
+        app__static__app__showBanner["showBanner"]
+        app__static__app__hideBanner["hideBanner"]
+        app__static__app__fetchJson["fetchJson"]
+        app__static__app__response["response"]
+        app__static__app__payload["payload"]
+        app__static__app__detail["detail"]
+        app__static__app__escapeHtml["escapeHtml"]
+        app__static__app__div["div"]
+        app__static__app__prettyConfig["prettyConfig"]
+        app__static__app__formatValue["formatValue"]
+        app__static__app__getNested["getNested"]
+        app__static__app__setNested["setNested"]
+        app__static__app__parts["parts"]
+        app__static__app__target["target"]
+        app__static__app__parseEditorConfig["parseEditorConfig"]
+        app__static__app__parsed["parsed"]
+        app__static__app__clearPendingProposal["clearPendingProposal"]
+        app__static__app__clearAppliedAudit["clearAppliedAudit"]
+        app__static__app__setConfig["setConfig"]
+        app__static__app__applyManualConfigChange["applyManualConfigChange"]
+        app__static__app__config["config"]
+        app__static__app__renderQuickParameters["renderQuickParameters"]
+        app__static__app__wrapper["wrapper"]
+        app__static__app__createToggle["createToggle"]
+        app__static__app__row["row"]
+        app__static__app__renderFeatureLayers["renderFeatureLayers"]
+        app__static__app__renderDrawingViews["renderDrawingViews"]
+        app__static__app__renderDrawingLayers["renderDrawingLayers"]
+        app__static__app__renderArtifactOptions["renderArtifactOptions"]
+        app__static__app__renderChangeProposal["renderChangeProposal"]
+        app__static__app__changes["changes"]
+        app__static__app__humanBytes["humanBytes"]
+        app__static__app__value["value"]
+        app__static__app__index["index"]
+        app__static__app__renderWarnings["renderWarnings"]
+        app__static__app__item["item"]
+        app__static__app__suggestion["suggestion"]
+        app__static__app__renderMetrics["renderMetrics"]
+        app__static__app__card["card"]
+        app__static__app__display["display"]
+        app__static__app__renderArtifacts["renderArtifacts"]
+        app__static__app__artifacts["artifacts"]
+        app__static__app__groups["groups"]
+        app__static__app__group["group"]
+        app__static__app__rows["rows"]
+        app__static__app__updateDrawingPreview["updateDrawingPreview"]
+        app__static__app__manifest["manifest"]
+        app__static__app__part["part"]
+        app__static__app__view["view"]
+        app__static__app__artifact["artifact"]
+        app__static__app__svgText["svgText"]
+        app__static__app__svg["svg"]
+        app__static__app__imported["imported"]
+        app__static__app__renderDrawingPreviewLayerControls("renderDrawingPreviewLayerControls CC=9")
+    end
+    subgraph examples__rpi5_camera3
+        examples__rpi5_camera3__software__vision_app__analyze["analyze"]
+        examples__rpi5_camera3__pcb__kicad_adapter___cli["_cli"]
+        examples__rpi5_camera3__pcb__kicad_adapter__run["run"]
+        examples__rpi5_camera3__pcb__kicad_adapter__export_review_artifacts["export_review_artifacts"]
+        examples__rpi5_camera3__demo_rpi5__lps__artifacts__a40972c7e37e_vision_app__analyze["analyze"]
+    end
+    subgraph generator
+        generator__load_config["load_config"]
+        generator__main("main CC=9")
+    end
+    subgraph housing_studio__artifacts
+        housing_studio__artifacts___sha256["_sha256"]
+        housing_studio__artifacts___record["_record"]
+        housing_studio__artifacts___write_json["_write_json"]
+        housing_studio__artifacts___write_bom["_write_bom"]
+        housing_studio__artifacts___rebuild_script["_rebuild_script"]
+        housing_studio__artifacts___generated_readme["_generated_readme"]
+        housing_studio__artifacts___change_report_markdown["_change_report_markdown"]
+        housing_studio__artifacts___job_id["_job_id"]
+        housing_studio__artifacts___safe_job_id["_safe_job_id"]
+        housing_studio__artifacts___specification_markdown["_specification_markdown"]
+        housing_studio__artifacts__generate_artifacts{{generate_artifacts CC=32}}
+    end
+    subgraph housing_studio__cad3d
+        housing_studio__cad3d___wire_rect["_wire_rect"]
+        housing_studio__cad3d___cylinder_along_x["_cylinder_along_x"]
+        housing_studio__cad3d___cylinder_along_y["_cylinder_along_y"]
+        housing_studio__cad3d___add_vertical_boss["_add_vertical_boss"]
+        housing_studio__cad3d___opening_cut_box("_opening_cut_box CC=10")
+        housing_studio__cad3d__make_base{{make_base CC=17}}
+        housing_studio__cad3d___make_lid_shell["_make_lid_shell"]
+        housing_studio__cad3d___camera_positions["_camera_positions"]
+        housing_studio__cad3d___auxiliary_boss_positions["_auxiliary_boss_positions"]
+        housing_studio__cad3d___add_locating_lip["_add_locating_lip"]
+        housing_studio__cad3d__make_lid{{make_lid CC=17}}
+        housing_studio__cad3d__make_models["make_models"]
+        housing_studio__cad3d__export_part["export_part"]
+        housing_studio__cad3d__export_assembly_step["export_assembly_step"]
+        housing_studio__cad3d__shape_stats["shape_stats"]
+    end
+    subgraph housing_studio__config_diff
+        housing_studio__config_diff__ConfigChange__to_dict["to_dict"]
+        housing_studio__config_diff___plain["_plain"]
+        housing_studio__config_diff___walk_diff("_walk_diff CC=12")
+        housing_studio__config_diff__diff_configs["diff_configs"]
+        housing_studio__config_diff__diff_as_dicts["diff_as_dicts"]
+        housing_studio__config_diff__change_summary_text["change_summary_text"]
+    end
+    subgraph housing_studio__draw2d
+        housing_studio__draw2d__View2D__add["add"]
+        housing_studio__draw2d___rect["_rect"]
+        housing_studio__draw2d___board_outline["_board_outline"]
+        housing_studio__draw2d___base_front_view["_base_front_view"]
+        housing_studio__draw2d___base_top_view("_base_top_view CC=14")
+        housing_studio__draw2d___base_side_view["_base_side_view"]
+        housing_studio__draw2d___lid_front_polygon["_lid_front_polygon"]
+        housing_studio__draw2d___lid_side_polygon["_lid_side_polygon"]
+        housing_studio__draw2d___lid_front_view["_lid_front_view"]
+        housing_studio__draw2d___camera_positions["_camera_positions"]
+        housing_studio__draw2d___aux_positions["_aux_positions"]
+        housing_studio__draw2d___lid_top_view("_lid_top_view CC=8")
+        housing_studio__draw2d___lid_side_view["_lid_side_view"]
+        housing_studio__draw2d___assembly_front_view["_assembly_front_view"]
+        housing_studio__draw2d___assembly_top_view["_assembly_top_view"]
+        housing_studio__draw2d___assembly_side_view["_assembly_side_view"]
+        housing_studio__draw2d__build_drawing_sets["build_drawing_sets"]
+        housing_studio__draw2d___layer_style["_layer_style"]
+        housing_studio__draw2d___lineweight_dxf["_lineweight_dxf"]
+        housing_studio__draw2d___ensure_dxf_layers["_ensure_dxf_layers"]
+        housing_studio__draw2d___dimension_segments["_dimension_segments"]
+        housing_studio__draw2d___flatten_primitives["_flatten_primitives"]
+        housing_studio__draw2d___shift_primitive["_shift_primitive"]
+        housing_studio__draw2d__export_dxf{{export_dxf CC=24}}
+        housing_studio__draw2d___svg_dash["_svg_dash"]
+        housing_studio__draw2d__export_svg("export_svg CC=12")
+        housing_studio__draw2d___pdf_dash["_pdf_dash"]
+        housing_studio__draw2d___draw_view_pdf("_draw_view_pdf CC=11")
+        housing_studio__draw2d__export_pdf("export_pdf CC=9")
+        housing_studio__draw2d__export_all_2d("export_all_2d CC=9")
+    end
+    subgraph housing_studio__llm_config
+        housing_studio__llm_config___normalise_number["_normalise_number"]
+        housing_studio__llm_config___find_number["_find_number"]
+        housing_studio__llm_config___set_nested["_set_nested"]
+        housing_studio__llm_config__fallback_interpret{{fallback_interpret CC=42}}
+        housing_studio__llm_config___json_schema_response_format["_json_schema_response_format"]
+        housing_studio__llm_config___response_content["_response_content"]
+        housing_studio__llm_config__interpret_with_litellm("interpret_with_litellm CC=8")
+    end
+    subgraph housing_studio__mesh_preview
+        housing_studio__mesh_preview___load_mesh["_load_mesh"]
+        housing_studio__mesh_preview__export_obj_from_stl["export_obj_from_stl"]
+        housing_studio__mesh_preview___set_rgba["_set_rgba"]
+        housing_studio__mesh_preview___board_mesh["_board_mesh"]
+        housing_studio__mesh_preview__export_preview_scenes["export_preview_scenes"]
+    end
+    subgraph housing_studio__models
+        housing_studio__models__EnclosureDimensions__validate_geometry("validate_geometry CC=10")
+        housing_studio__models__HingeConfig__validate_hinge["validate_hinge"]
+        housing_studio__models__StandoffConfig__validate_standoff["validate_standoff"]
+        housing_studio__models__ProjectConfig__validate_project["validate_project"]
+        housing_studio__models__default_project_config["default_project_config"]
+    end
+    subgraph housing_studio__validation
+        housing_studio__validation__DesignWarning__to_dict["to_dict"]
+        housing_studio__validation__board_origin["board_origin"]
+        housing_studio__validation__board_actual_clearances["board_actual_clearances"]
+        housing_studio__validation__board_hole_centers["board_hole_centers"]
+        housing_studio__validation__hinge_segments["hinge_segments"]
+        housing_studio__validation__collect_warnings{{collect_warnings CC=24}}
+        housing_studio__validation__design_metrics["design_metrics"]
+    end
+    subgraph sample_output__demo
+        sample_output__demo__rebuild_project__main["main"]
+    end
+    subgraph scripts__verify_project
+        scripts__verify_project__sha256["sha256"]
+        scripts__verify_project__verify{{verify CC=28}}
+        scripts__verify_project__main["main"]
+    end
+    subgraph services__cad_worker
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setLlmBadge["setLlmBadge"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__configured["configured"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__showBanner["showBanner"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__hideBanner["hideBanner"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__fetchJson["fetchJson"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__response["response"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__payload["payload"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__detail["detail"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__prettyConfig["prettyConfig"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parseEditorConfig["parseEditorConfig"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parsed["parsed"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setConfig["setConfig"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__humanBytes["humanBytes"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__value["value"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__index["index"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderWarnings["renderWarnings"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__item["item"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__suggestion["suggestion"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderMetrics["renderMetrics"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__card["card"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__display["display"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml["escapeHtml"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__div["div"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderArtifacts["renderArtifacts"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__artifacts["artifacts"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__groups["groups"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__group["group"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__rows["rows"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__updateDrawingPreview["updateDrawingPreview"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__manifest["manifest"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__part["part"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__view["view"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__artifact["artifact"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__initViewer["initViewer"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__scene["scene"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__camera["camera"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderer["renderer"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__controls["controls"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__keyLight["keyLight"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__fillLight["fillLight"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__grid["grid"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__axes["axes"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__modelRoot["modelRoot"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__resize["resize"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__width["width"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__height["height"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__resizeObserver["resizeObserver"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__animate["animate"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__clearModels["clearModels"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__stlGeometry["stlGeometry"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loader["loader"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__load3dPreview("load3dPreview CC=11")
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__baseUrl["baseUrl"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__lidUrl["lidUrl"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__baseMaterial["baseMaterial"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__lidMaterial["lidMaterial"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__baseMesh["baseMesh"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__axis["axis"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__lidMesh["lidMesh"]
+        services__cad_worker__vendor__rpi5_housing_studio__app__static__app__lidPivot["lidPivot"]
+    end
+    subgraph services__device_sim
+        services__device_sim__simulator__analyze_image["analyze_image"]
+    end
+    subgraph services__mqtt_gateway
+        services__mqtt_gateway__gateway__auth_headers["auth_headers"]
+        services__mqtt_gateway__gateway__response_topic["response_topic"]
+        services__mqtt_gateway__gateway__on_connect["on_connect"]
+        services__mqtt_gateway__gateway__on_message("on_message CC=10")
+    end
+    subgraph src__living_product_studio
+        src__living_product_studio__mqtt_bus__EventPublisher__publish_events["publish_events"]
+        src__living_product_studio__mqtt_bus__NullPublisher__publish_events["publish_events"]
+        src__living_product_studio__mqtt_bus__MqttPublisher____init__["__init__"]
+        src__living_product_studio__mqtt_bus__MqttPublisher___ensure_client["_ensure_client"]
+        src__living_product_studio__mqtt_bus__MqttPublisher__publish_events["publish_events"]
+        src__living_product_studio__mqtt_bus___topic_atom["_topic_atom"]
+        src__living_product_studio__mqtt_bus__publisher_from_settings["publisher_from_settings"]
+        src__living_product_studio__artifacts__sha256_file["sha256_file"]
+        src__living_product_studio__artifacts__export_project_bundle("export_project_bundle CC=14")
+        src__living_product_studio__artifacts___safe_artifact_name["_safe_artifact_name"]
+        src__living_product_studio__bus__QueryService____init__["__init__"]
+        src__living_product_studio__bus__QueryService__project["project"]
+        src__living_product_studio__bus__QueryService__tree["tree"]
+        src__living_product_studio__bus__QueryService__events["events"]
+        src__living_product_studio__bus__QueryService__projects["projects"]
+        src__living_product_studio__bus__CommandBus____init__["__init__"]
+        src__living_product_studio__bus__CommandBus__execute["execute"]
+        src__living_product_studio__bus__CommandBus___create_project["_create_project"]
+        src__living_product_studio__bus__CommandBus___handle_existing{{_handle_existing CC=24}}
+        src__living_product_studio__bus__CommandBus___event["_event"]
+        src__living_product_studio__cli__services["services"]
+        src__living_product_studio__cli__serve["serve"]
+        src__living_product_studio__cli__seed["seed"]
+        src__living_product_studio__cli__projects_cmd["projects_cmd"]
+        src__living_product_studio__cli__tree["tree"]
+        src__living_product_studio__cli__command["command"]
+        src__living_product_studio__cli__plan["plan"]
+        src__living_product_studio__cli__power["power"]
+        src__living_product_studio__cli__export["export"]
+        src__living_product_studio__cli__gtin_complete["gtin_complete"]
+        src__living_product_studio__cli__gtin_validate["gtin_validate"]
+        src__living_product_studio__cli__shell("shell CC=11")
+        src__living_product_studio__projector__project_from_events["project_from_events"]
+        src__living_product_studio__projector__apply_event{{apply_event CC=37}}
+        src__living_product_studio__projector__object_tree["object_tree"]
+        src__living_product_studio__gtin__calculate_check_digit["calculate_check_digit"]
+        src__living_product_studio__gtin__complete_gtin["complete_gtin"]
+        src__living_product_studio__gtin__validate_gtin["validate_gtin"]
+        src__living_product_studio__seed__seed_from_file{{seed_from_file CC=17}}
+        src__living_product_studio__selection_resolver__resolve_selection{{resolve_selection CC=43}}
+        src__living_product_studio__auth__Mailer____init__["__init__"]
+        src__living_product_studio__auth__Mailer__send["send"]
+        src__living_product_studio__auth__Mailer___write_outbox["_write_outbox"]
+        src__living_product_studio__auth__AuthService____init__["__init__"]
+        src__living_product_studio__auth__AuthService__principal_from_request["principal_from_request"]
+        src__living_product_studio__auth__AuthService__role_for["role_for"]
+        src__living_product_studio__auth__AuthService__request_access("request_access CC=11")
+        src__living_product_studio__auth__AuthService__approve["approve"]
+        src__living_product_studio__auth__AuthService__reject["reject"]
+        src__living_product_studio__auth__AuthService__accept["accept"]
+        src__living_product_studio__permissions__has_permission["has_permission"]
+        src__living_product_studio__permissions__require_permission["require_permission"]
+        src__living_product_studio__uri__PoaUri____post_init__("__post_init__ CC=8")
+        src__living_product_studio__uri__PoaUri__child["child"]
+        src__living_product_studio__uri__PoaUri__with_revision["with_revision"]
+        src__living_product_studio__uri__PoaUri__is_ancestor_of["is_ancestor_of"]
+        src__living_product_studio__uri__PoaUri____str__["__str__"]
+        src__living_product_studio__uri__parse_poa_uri["parse_poa_uri"]
+        src__living_product_studio__uri__build_poa_uri["build_poa_uri"]
+        src__living_product_studio__uri__is_within_scope["is_within_scope"]
+    end
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__payload --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__fetchJson
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parsed --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loadDefaultConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parsed --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__showBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__prettyConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderWarnings --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__suggestion --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderMetrics --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__card --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__display --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderArtifacts --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderArtifacts --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__humanBytes
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__group --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__rows --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__escapeHtml
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__manifest --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__fetchJson
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__load3dPreview --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__clearModels
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__load3dPreview --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__stlGeometry
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loadDefaultConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__hideBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loadDefaultConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__fetchJson
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loadDefaultConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loadDefaultConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderWarnings
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loadDefaultConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderMetrics
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__interpretPrompt --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__hideBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__interpretPrompt --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parseEditorConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__interpretPrompt --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__fetchJson
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__interpretPrompt --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__interpretPrompt --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderWarnings
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__interpretPrompt --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderMetrics
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__interpretPrompt --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__showBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__config --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__prettyConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__hideBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parseEditorConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__fetchJson
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderWarnings
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderMetrics
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__renderArtifacts
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__updateDrawingPreview
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__load3dPreview
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__showBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__downloadConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__parseEditorConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__downloadConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__prettyConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__blob --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__prettyConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__uploadConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__text
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__uploadConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__setConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__uploadConfig --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__showBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__text --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__loadDefaultConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__text --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__showBanner
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__file --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__uploadConfig
+    services__cad_worker__vendor__rpi5_housing_studio__app__static__app__file --> services__cad_worker__vendor__rpi5_housing_studio__app__static__app__showBanner
+    generator__load_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__models__default_project_config
+    generator__main --> generator__load_config
+    generator__main --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts__generate_artifacts
+    services__cad_worker__worker__on_message --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts__generate_artifacts
+    services__cad_worker__worker__on_message --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__models__default_project_config
+    services__cad_worker__worker__on_message --> services__cad_worker__scoped_brep_adapter__apply_scoped_operation
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview__export_obj_from_stl --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview___load_mesh
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview___board_mesh --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_origin
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview__export_preview_scenes --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview___load_mesh
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview__export_preview_scenes --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview___set_rgba
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview__export_preview_scenes --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__mesh_preview___board_mesh
+    services__mqtt_gateway__gateway__on_message --> services__mqtt_gateway__gateway__response_topic
+    examples__rpi5_camera3__pcb__kicad_adapter__run --> examples__rpi5_camera3__pcb__kicad_adapter___cli
+    examples__rpi5_camera3__pcb__kicad_adapter__export_review_artifacts --> examples__rpi5_camera3__pcb__kicad_adapter__run
+    src__living_product_studio__mqtt_bus__MqttPublisher__publish_events --> src__living_product_studio__mqtt_bus___topic_atom
+    src__living_product_studio__bus__QueryService__project --> src__living_product_studio__projector__project_from_events
+    src__living_product_studio__bus__QueryService__tree --> src__living_product_studio__projector__object_tree
+    src__living_product_studio__bus__CommandBus___handle_existing --> src__living_product_studio__permissions__require_permission
+    src__living_product_studio__cli__services --> src__living_product_studio__mqtt_bus__publisher_from_settings
+    src__living_product_studio__cli__seed --> src__living_product_studio__cli__services
+    src__living_product_studio__cli__seed --> src__living_product_studio__seed__seed_from_file
+    src__living_product_studio__cli__projects_cmd --> src__living_product_studio__cli__services
+    src__living_product_studio__cli__tree --> src__living_product_studio__cli__services
+    src__living_product_studio__cli__command --> src__living_product_studio__cli__services
+    src__living_product_studio__cli__plan --> src__living_product_studio__cli__services
+    src__living_product_studio__cli__power --> src__living_product_studio__cli__services
+    src__living_product_studio__cli__power --> src__living_product_studio__simulations__simulate_power
+    src__living_product_studio__cli__export --> src__living_product_studio__cli__services
+    src__living_product_studio__cli__export --> src__living_product_studio__artifacts__export_project_bundle
+    src__living_product_studio__cli__gtin_complete --> src__living_product_studio__gtin__complete_gtin
+    src__living_product_studio__cli__gtin_validate --> src__living_product_studio__gtin__validate_gtin
+    src__living_product_studio__cli__shell --> src__living_product_studio__cli__projects_cmd
+    src__living_product_studio__cli__shell --> src__living_product_studio__cli__tree
+    src__living_product_studio__cli__shell --> src__living_product_studio__cli__power
+    src__living_product_studio__projector__project_from_events --> src__living_product_studio__projector__apply_event
+    src__living_product_studio__projector__apply_event --> src__living_product_studio__domain__utcnow
+    src__living_product_studio__gtin__complete_gtin --> src__living_product_studio__gtin__calculate_check_digit
+    src__living_product_studio__gtin__validate_gtin --> src__living_product_studio__gtin__calculate_check_digit
+    app__static__app__configured --> app__static__app__escapeHtml
+    app__static__app__parsed --> app__static__app__setConfig
+    app__static__app__setConfig --> app__static__app__prettyConfig
+    app__static__app__setConfig --> app__static__app__clearAppliedAudit
+    app__static__app__setConfig --> app__static__app__renderQuickParameters
+    app__static__app__setConfig --> app__static__app__renderFeatureLayers
+    app__static__app__setConfig --> app__static__app__renderDrawingViews
+    app__static__app__setConfig --> app__static__app__renderDrawingLayers
+    app__static__app__setConfig --> app__static__app__renderArtifactOptions
+    app__static__app__setConfig --> app__static__app__applyDrawingLayerVisibility
+    app__static__app__applyManualConfigChange --> app__static__app__parseEditorConfig
+    app__static__app__applyManualConfigChange --> app__static__app__setNested
+    app__static__app__applyManualConfigChange --> app__static__app__clearAppliedAudit
+    app__static__app__applyManualConfigChange --> app__static__app__clearPendingProposal
+    app__static__app__applyManualConfigChange --> app__static__app__setConfig
+    app__static__app__config --> app__static__app__prettyConfig
+    app__static__app__renderQuickParameters --> app__static__app__escapeHtml
+    app__static__app__renderQuickParameters --> app__static__app__getNested
+    app__static__app__renderQuickParameters --> app__static__app__applyManualConfigChange
+    app__static__app__createToggle --> app__static__app__escapeHtml
+    app__static__app__row --> app__static__app__escapeHtml
+    app__static__app__renderFeatureLayers --> app__static__app__createToggle
+    app__static__app__renderFeatureLayers --> app__static__app__applyManualConfigChange
+    app__static__app__renderDrawingViews --> app__static__app__createToggle
+    app__static__app__renderDrawingViews --> app__static__app__applyManualConfigChange
+    app__static__app__renderDrawingLayers --> app__static__app__createToggle
+    app__static__app__renderDrawingLayers --> app__static__app__applyManualConfigChange
+    app__static__app__renderArtifactOptions --> app__static__app__createToggle
+    app__static__app__renderArtifactOptions --> app__static__app__applyManualConfigChange
+    app__static__app__renderChangeProposal --> app__static__app__escapeHtml
+    app__static__app__renderChangeProposal --> app__static__app__formatValue
+    app__static__app__renderWarnings --> app__static__app__escapeHtml
+    app__static__app__suggestion --> app__static__app__escapeHtml
+    app__static__app__renderMetrics --> app__static__app__escapeHtml
+    app__static__app__card --> app__static__app__escapeHtml
+    app__static__app__display --> app__static__app__escapeHtml
+    app__static__app__renderArtifacts --> app__static__app__escapeHtml
+    app__static__app__renderArtifacts --> app__static__app__humanBytes
+    app__static__app__rows --> app__static__app__escapeHtml
+    app__static__app__updateDrawingPreview --> app__static__app__renderDrawingPreviewLayerControls
+    app__static__app__updateDrawingPreview --> app__static__app__applyDrawingLayerVisibility
+    app__static__app__manifest --> app__static__app__fetchJson
+    app__static__app__renderDrawingPreviewLayerControls --> app__static__app__escapeHtml
+    app__static__app__label --> app__static__app__escapeHtml
+    app__static__app__checked --> app__static__app__escapeHtml
+    app__static__app__initViewer --> app__static__app__loadViewerDependencies
+    app__static__app__initViewer --> app__static__app__OrbitControls
+    app__static__app__stlGeometry --> app__static__app__STLLoader
+    app__static__app__load3dPreview --> app__static__app__clearModels
+    app__static__app__load3dPreview --> app__static__app__stlGeometry
+    app__static__app__baseUrl --> app__static__app__clearModels
+    app__static__app__lidUrl --> app__static__app__clearModels
+    app__static__app__loadDefaultConfig --> app__static__app__hideBanner
+    app__static__app__loadDefaultConfig --> app__static__app__fetchJson
+    app__static__app__loadDefaultConfig --> app__static__app__clearPendingProposal
+    app__static__app__loadDefaultConfig --> app__static__app__setConfig
+    app__static__app__loadDefaultConfig --> app__static__app__renderWarnings
+    app__static__app__loadDefaultConfig --> app__static__app__renderMetrics
+    app__static__app__validateConfig --> app__static__app__hideBanner
+    app__static__app__validateConfig --> app__static__app__parseEditorConfig
+    app__static__app__validateConfig --> app__static__app__fetchJson
+    app__static__app__validateConfig --> app__static__app__setConfig
+    app__static__app__validateConfig --> app__static__app__renderWarnings
+    app__static__app__validateConfig --> app__static__app__renderMetrics
+    app__static__app__validateConfig --> app__static__app__showBanner
+    app__static__app__interpretPrompt --> app__static__app__hideBanner
+    app__static__app__interpretPrompt --> app__static__app__parseEditorConfig
+    app__static__app__interpretPrompt --> app__static__app__fetchJson
+    app__static__app__interpretPrompt --> app__static__app__renderChangeProposal
+    app__static__app__interpretPrompt --> app__static__app__showBanner
+    app__static__app__applyProposedChanges --> app__static__app__setConfig
+    app__static__app__applyProposedChanges --> app__static__app__renderWarnings
+    app__static__app__applyProposedChanges --> app__static__app__renderMetrics
+    app__static__app__applyProposedChanges --> app__static__app__clearPendingProposal
+    app__static__app__applyProposedChanges --> app__static__app__showBanner
+    app__static__app__proposal --> app__static__app__setConfig
+    app__static__app__discardProposedChanges --> app__static__app__clearPendingProposal
+    app__static__app__discardProposedChanges --> app__static__app__showBanner
+    app__static__app__generate --> app__static__app__hideBanner
+    app__static__app__generate --> app__static__app__validateConfig
+    app__static__app__generate --> app__static__app__fetchJson
+    app__static__app__generate --> app__static__app__renderWarnings
+    app__static__app__generate --> app__static__app__renderMetrics
+    app__static__app__generate --> app__static__app__renderArtifacts
+    app__static__app__generate --> app__static__app__updateDrawingPreview
+    app__static__app__generate --> app__static__app__load3dPreview
+    app__static__app__generate --> app__static__app__loadJobHistory
+    app__static__app__generate --> app__static__app__showBanner
+    app__static__app__auditIsCurrent --> app__static__app__fetchJson
+    app__static__app__downloadConfig --> app__static__app__parseEditorConfig
+    app__static__app__downloadConfig --> app__static__app__prettyConfig
+    app__static__app__blob --> app__static__app__prettyConfig
+    app__static__app__uploadConfig --> app__static__app__clearPendingProposal
+    app__static__app__uploadConfig --> app__static__app__clearAppliedAudit
+    app__static__app__uploadConfig --> app__static__app__setConfig
+    app__static__app__uploadConfig --> app__static__app__validateConfig
+    app__static__app__uploadConfig --> app__static__app__showBanner
+    app__static__app__loadJob --> app__static__app__hideBanner
+    app__static__app__loadJob --> app__static__app__fetchJson
+    app__static__app__loadJob --> app__static__app__clearPendingProposal
+    app__static__app__loadJob --> app__static__app__clearAppliedAudit
+    app__static__app__loadJob --> app__static__app__setConfig
+    app__static__app__loadJob --> app__static__app__renderWarnings
+    app__static__app__loadJob --> app__static__app__renderMetrics
+    app__static__app__loadJob --> app__static__app__renderArtifacts
+    app__static__app__loadJob --> app__static__app__updateDrawingPreview
+    app__static__app__loadJob --> app__static__app__load3dPreview
+    app__static__app__loadJob --> app__static__app__showBanner
+    app__static__app__loadJobHistory --> app__static__app__fetchJson
+    app__static__app__loadJobHistory --> app__static__app__escapeHtml
+    app__static__app__loadJobHistory --> app__static__app__loadJob
+    app__static__app__loadJobHistory --> app__static__app__showBanner
+    app__static__app__created --> app__static__app__escapeHtml
+    app__static__app__file --> app__static__app__uploadConfig
+    app__static__app__file --> app__static__app__showBanner
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts___record --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts___sha256
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts__generate_artifacts --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts__generate_artifacts --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts___write_json
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_actual_clearances --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_origin
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_hole_centers --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_origin
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_actual_clearances
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__design_metrics --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_actual_clearances
+    src__living_product_studio__permissions__require_permission --> src__living_product_studio__permissions__has_permission
+    src__living_product_studio__uri__is_within_scope --> src__living_product_studio__uri__parse_poa_uri
+    src__living_product_studio__change_planner__ChangePlanner___local_plan --> src__living_product_studio__change_planner___number_near
+    src__living_product_studio__change_planner__ChangePlanner___local_plan --> src__living_product_studio__change_planner___diameter
+    src__living_product_studio__change_planner__ChangePlanner___local_plan --> src__living_product_studio__change_planner___angle
+    src__living_product_studio__change_planner__ChangePlanner__validate_scope --> src__living_product_studio__uri__is_within_scope
+    src__living_product_studio__change_planner__ChangePlanner__compile_apply_payload --> src__living_product_studio__change_planner___owning_object_uri
+    src__living_product_studio__change_planner___owning_object_uri --> src__living_product_studio__uri__parse_poa_uri
+    src__living_product_studio__change_planner___number_near --> src__living_product_studio__change_planner___first_number
+    src__living_product_studio__specification__unified_specification --> src__living_product_studio__projector__object_tree
+    src__living_product_studio__specification__unified_specification --> src__living_product_studio__specification__manufacturing_views
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config___find_number --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config___normalise_number
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config__fallback_interpret --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config___find_number
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config__fallback_interpret --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config___set_nested
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config__interpret_with_litellm --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config__fallback_interpret
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config__interpret_with_litellm --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config___response_content
+    services__cad_worker__vendor__rpi5_housing_studio__generator__load_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__models__default_project_config
+    services__cad_worker__vendor__rpi5_housing_studio__generator__main --> services__cad_worker__vendor__rpi5_housing_studio__generator__load_config
+    services__cad_worker__vendor__rpi5_housing_studio__generator__main --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts__generate_artifacts
+    scripts__verify_project__main --> scripts__verify_project__verify
+    src__living_product_studio__static__app__init --> src__living_product_studio__static__app__initTabs
+    src__living_product_studio__static__app__init --> src__living_product_studio__static__app__initViewer
+    src__living_product_studio__static__app__init --> src__living_product_studio__static__app__initSelectionCanvas
+    src__living_product_studio__static__app__init --> src__living_product_studio__static__app__bindActions
+    src__living_product_studio__static__app__init --> src__living_product_studio__static__app__loadProjects
+    src__living_product_studio__static__app__loadProjects --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__loadProjects --> src__living_product_studio__static__app__esc
+    src__living_product_studio__static__app__loadProjects --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__loadProjects --> src__living_product_studio__static__app__loadProject
+    src__living_product_studio__static__app__loadProject --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__loadProject --> src__living_product_studio__static__app__renderTree
+    src__living_product_studio__static__app__loadProject --> src__living_product_studio__static__app__renderSpec
+    src__living_product_studio__static__app__loadProject --> src__living_product_studio__static__app__renderLifecycle
+    src__living_product_studio__static__app__loadProject --> src__living_product_studio__static__app__loadModels
+    src__living_product_studio__static__app__loadProject --> src__living_product_studio__static__app__loadDrawing
+    src__living_product_studio__static__app__loadProject --> src__living_product_studio__static__app__connectWs
+    src__living_product_studio__static__app__connectWs --> src__living_product_studio__static__app__refreshSnapshot
+    src__living_product_studio__static__app__refreshSnapshot --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__refreshSnapshot --> src__living_product_studio__static__app__renderTree
+    src__living_product_studio__static__app__refreshSnapshot --> src__living_product_studio__static__app__renderSpec
+    src__living_product_studio__static__app__refreshSnapshot --> src__living_product_studio__static__app__renderLifecycle
+    src__living_product_studio__static__app__refreshSnapshot --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__initTabs --> src__living_product_studio__static__app__resizeViewer
+    src__living_product_studio__static__app__initTabs --> src__living_product_studio__static__app__resize2dCanvas
+    src__living_product_studio__static__app__renderTree --> src__living_product_studio__static__app__treeNode
+    src__living_product_studio__static__app__renderTree --> src__living_product_studio__static__app__renderObjectInspector
+    src__living_product_studio__static__app__treeNode --> src__living_product_studio__static__app__esc
+    src__living_product_studio__static__app__treeNode --> src__living_product_studio__static__app__selectObject
+    src__living_product_studio__static__app__treeNode --> src__living_product_studio__static__app__toggleObjectVisibility
+    src__living_product_studio__static__app__selectObject --> src__living_product_studio__static__app__renderTree
+    src__living_product_studio__static__app__selectObject --> src__living_product_studio__static__app__renderObjectInspector
+    src__living_product_studio__static__app__selectObject --> src__living_product_studio__static__app__updateSelectionSummary
+    src__living_product_studio__static__app__renderObjectInspector --> src__living_product_studio__static__app__esc
+    src__living_product_studio__static__app__renderObjectInspector --> src__living_product_studio__static__app__shortUri
+    src__living_product_studio__static__app__resizeViewer --> src__living_product_studio__static__app__resizeCanvas
+    src__living_product_studio__static__app__loadModels --> src__living_product_studio__static__app__fitCamera
+    src__living_product_studio__static__app__initSelectionCanvas --> src__living_product_studio__static__app__handleDraw
+    src__living_product_studio__static__app__handleDraw --> src__living_product_studio__static__app__createPointerSelection
+    src__living_product_studio__static__app__handleDraw --> src__living_product_studio__static__app__drawOverlay
+    src__living_product_studio__static__app__handleDraw --> src__living_product_studio__static__app__createAreaSelection
+    src__living_product_studio__static__app__handleDraw --> src__living_product_studio__static__app__create2dSelection
+    src__living_product_studio__static__app__hitData --> src__living_product_studio__static__app__semanticFace
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__raycast
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__clearSelection
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__hitData
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__selectObject
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__makeSelection
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__renderHighlight
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__updateSelectionSummary
+    src__living_product_studio__static__app__createPointerSelection --> src__living_product_studio__static__app__drawOverlay
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__sampleSelection
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__raycast
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__hitData
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__makeSelection
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__renderHighlight
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__renderTree
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__renderObjectInspector
+    src__living_product_studio__static__app__createAreaSelection --> src__living_product_studio__static__app__updateSelectionSummary
+    src__living_product_studio__static__app__sampleSelection --> src__living_product_studio__static__app__pointInPolygon
+    src__living_product_studio__static__app__makeSelection --> src__living_product_studio__static__app__v3
+    src__living_product_studio__static__app__clearSelection --> src__living_product_studio__static__app__updateSelectionSummary
+    src__living_product_studio__static__app__updateSelectionSummary --> src__living_product_studio__static__app__esc
+    src__living_product_studio__static__app__updateSelectionSummary --> src__living_product_studio__static__app__shortUri
+    src__living_product_studio__static__app__resize2dCanvas --> src__living_product_studio__static__app__resizeCanvas
+    src__living_product_studio__static__app__create2dSelection --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__create2dSelection --> src__living_product_studio__static__app__makeSelection
+    src__living_product_studio__static__app__create2dSelection --> src__living_product_studio__static__app__updateSelectionSummary
+    src__living_product_studio__static__app__saveAnnotation --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__saveAnnotation --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__saveAnnotation --> src__living_product_studio__static__app__jbody
+    src__living_product_studio__static__app__planChange --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__planChange --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__planChange --> src__living_product_studio__static__app__jbody
+    src__living_product_studio__static__app__planChange --> src__living_product_studio__static__app__renderPlan
+    src__living_product_studio__static__app__renderPlan --> src__living_product_studio__static__app__esc
+    src__living_product_studio__static__app__applyPlan --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__applyPlan --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__applyPlan --> src__living_product_studio__static__app__refreshSnapshot
+    src__living_product_studio__static__app__renderSpec --> src__living_product_studio__static__app__esc
+    src__living_product_studio__static__app__renderSpec --> src__living_product_studio__static__app__shortUri
+    src__living_product_studio__static__app__renderLifecycle --> src__living_product_studio__static__app__esc
+    src__living_product_studio__static__app__renderLifecycle --> src__living_product_studio__static__app__shortUri
+    src__living_product_studio__static__app__runSimulation --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__runSimulation --> src__living_product_studio__static__app__jbody
+    src__living_product_studio__static__app__invite --> src__living_product_studio__static__app__banner
+    src__living_product_studio__static__app__invite --> src__living_product_studio__static__app__api
+    src__living_product_studio__static__app__invite --> src__living_product_studio__static__app__jbody
+    src__living_product_studio__static__app__bindActions --> src__living_product_studio__static__app__clearSelection
+    src__living_product_studio__static__app__bindActions --> src__living_product_studio__static__app__loadProject
+    src__living_product_studio__static__app__bindActions --> src__living_product_studio__static__app__refreshSnapshot
+    src__living_product_studio__static__app__bindActions --> src__living_product_studio__static__app__activateTool
+    src__living_product_studio__static__app__bindActions --> src__living_product_studio__static__app__loadDrawing
+    src__living_product_studio__static__app__bindActions --> src__living_product_studio__static__app__runSimulation
+    src__living_product_studio__event_store__EventStore__create_api_token --> src__living_product_studio__event_store__token_hash
+    src__living_product_studio__event_store__EventStore__authenticate_api_token --> src__living_product_studio__event_store___aware
+    src__living_product_studio__event_store__EventStore__authenticate_api_token --> src__living_product_studio__event_store__token_hash
+    src__living_product_studio__event_store__EventStore__create_session --> src__living_product_studio__event_store__token_hash
+    src__living_product_studio__event_store__EventStore__authenticate_session --> src__living_product_studio__event_store___aware
+    src__living_product_studio__event_store__EventStore__authenticate_session --> src__living_product_studio__event_store__token_hash
+    src__living_product_studio__event_store__EventStore__create_invitation --> src__living_product_studio__event_store__token_hash
+    src__living_product_studio__event_store__EventStore__approve_invitation --> src__living_product_studio__event_store___aware
+    src__living_product_studio__event_store__EventStore__approve_invitation --> src__living_product_studio__event_store__token_hash
+    src__living_product_studio__event_store__EventStore__reject_invitation --> src__living_product_studio__event_store__token_hash
+    src__living_product_studio__event_store__EventStore__accept_invitation --> src__living_product_studio__event_store___aware
+    services__cad_worker__scoped_brep_adapter___selection_center --> services__cad_worker__scoped_brep_adapter___average
+    services__cad_worker__scoped_brep_adapter___selection_center --> services__cad_worker__scoped_brep_adapter___vector
+    services__cad_worker__scoped_brep_adapter___selection_normal --> services__cad_worker__scoped_brep_adapter___unit
+    services__cad_worker__scoped_brep_adapter___selection_normal --> services__cad_worker__scoped_brep_adapter___vector
+    services__cad_worker__scoped_brep_adapter___selection_normal --> services__cad_worker__scoped_brep_adapter___average
+    services__cad_worker__scoped_brep_adapter___hole_tool --> services__cad_worker__scoped_brep_adapter___selection_center
+    services__cad_worker__scoped_brep_adapter___hole_tool --> services__cad_worker__scoped_brep_adapter___selection_normal
+    services__cad_worker__scoped_brep_adapter___aabb_box --> services__cad_worker__scoped_brep_adapter___vector
+    services__cad_worker__scoped_brep_adapter__apply_scoped_operation --> services__cad_worker__scoped_brep_adapter___verify_scope
+    services__cad_worker__scoped_brep_adapter__apply_scoped_operation --> services__cad_worker__scoped_brep_adapter___load_step
+    services__cad_worker__scoped_brep_adapter__apply_scoped_operation --> services__cad_worker__scoped_brep_adapter___hole_tool
+    housing_studio__cad3d__make_base --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_hole_centers
+    housing_studio__cad3d__make_base --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    housing_studio__cad3d__make_base --> housing_studio__cad3d___cylinder_along_x
+    housing_studio__cad3d___make_lid_shell --> housing_studio__cad3d___wire_rect
+    housing_studio__cad3d__make_lid --> housing_studio__cad3d___make_lid_shell
+    housing_studio__cad3d__make_lid --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    housing_studio__cad3d__make_lid --> housing_studio__cad3d___cylinder_along_x
+    housing_studio__cad3d__make_lid --> housing_studio__cad3d___camera_positions
+    housing_studio__cad3d__make_lid --> housing_studio__cad3d___auxiliary_boss_positions
+    housing_studio__cad3d__make_lid --> housing_studio__cad3d___add_locating_lip
+    housing_studio__cad3d__make_models --> housing_studio__cad3d__make_base
+    housing_studio__cad3d__make_models --> housing_studio__cad3d__make_lid
+    housing_studio__validation__board_actual_clearances --> housing_studio__validation__board_origin
+    housing_studio__validation__board_hole_centers --> housing_studio__validation__board_origin
+    housing_studio__validation__collect_warnings --> housing_studio__validation__board_actual_clearances
+    housing_studio__validation__design_metrics --> housing_studio__validation__board_actual_clearances
+    housing_studio__mesh_preview__export_obj_from_stl --> housing_studio__mesh_preview___load_mesh
+    housing_studio__mesh_preview___board_mesh --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_origin
+    housing_studio__mesh_preview__export_preview_scenes --> housing_studio__mesh_preview___load_mesh
+    housing_studio__mesh_preview__export_preview_scenes --> housing_studio__mesh_preview___set_rgba
+    housing_studio__mesh_preview__export_preview_scenes --> housing_studio__mesh_preview___board_mesh
+    sample_output__demo__rebuild_project__main --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts__generate_artifacts
+    housing_studio__artifacts___record --> housing_studio__artifacts___sha256
+    housing_studio__artifacts__generate_artifacts --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    housing_studio__artifacts__generate_artifacts --> housing_studio__artifacts___write_json
+    housing_studio__artifacts__generate_artifacts --> housing_studio__artifacts___write_bom
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_base --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_hole_centers
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_base --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_base --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___cylinder_along_x
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___make_lid_shell --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___wire_rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___make_lid_shell
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___cylinder_along_x
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___camera_positions
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___auxiliary_boss_positions
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___add_locating_lip
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_models --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_base
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_models --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid
+    housing_studio__llm_config___find_number --> housing_studio__llm_config___normalise_number
+    housing_studio__llm_config__fallback_interpret --> housing_studio__llm_config___find_number
+    housing_studio__llm_config__interpret_with_litellm --> housing_studio__llm_config__fallback_interpret
+    housing_studio__llm_config__interpret_with_litellm --> housing_studio__llm_config___response_content
+    src__living_product_studio__mcp_protocol__request_meta --> src__living_product_studio__mcp_protocol__request_params
+    src__living_product_studio__mcp_protocol__body_protocol_version --> src__living_product_studio__mcp_protocol__request_meta
+    src__living_product_studio__mcp_protocol__classify_mcp_era --> src__living_product_studio__mcp_protocol__body_protocol_version
+    src__living_product_studio__mcp_protocol__server_discover_result --> src__living_product_studio__mcp_protocol__modern_result
+    src__living_product_studio__mcp_gateway__McpGateway__handle --> src__living_product_studio__mcp_protocol__server_discover_result
+    src__living_product_studio__mcp_gateway__McpGateway__handle --> src__living_product_studio__mcp_protocol__body_protocol_version
+    src__living_product_studio__mcp_gateway__McpGateway___modernize_result --> src__living_product_studio__mcp_protocol__modern_result
+    src__living_product_studio__mcp_gateway__McpGateway__tools --> src__living_product_studio__mcp_gateway___tool
+    src__living_product_studio__mcp_gateway__McpGateway__tools --> src__living_product_studio__mcp_gateway___project_schema
+    src__living_product_studio__mcp_gateway__McpGateway__call_tool --> src__living_product_studio__mcp_gateway___content
+    src__living_product_studio__mcp_gateway__McpGateway__call_tool --> src__living_product_studio__permissions__require_permission
+    src__living_product_studio__mcp_gateway__McpGateway__read_resource --> src__living_product_studio__permissions__require_permission
+    src__living_product_studio__mcp_gateway__McpGateway__read_resource --> src__living_product_studio__uri__parse_poa_uri
+    housing_studio__config_diff__diff_configs --> housing_studio__config_diff___walk_diff
+    housing_studio__config_diff__diff_configs --> housing_studio__config_diff___plain
+    housing_studio__config_diff__diff_as_dicts --> housing_studio__config_diff__diff_configs
+    housing_studio__draw2d___board_outline --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_origin
+    housing_studio__draw2d___board_outline --> housing_studio__draw2d___rect
+    housing_studio__draw2d___base_front_view --> housing_studio__draw2d___rect
+    housing_studio__draw2d___base_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_actual_clearances
+    housing_studio__draw2d___base_top_view --> housing_studio__draw2d___rect
+    housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_hole_centers
+    housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    housing_studio__draw2d___base_top_view --> housing_studio__draw2d___board_outline
+    housing_studio__draw2d___lid_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    housing_studio__draw2d___lid_front_view --> housing_studio__draw2d___lid_front_polygon
+    housing_studio__draw2d___lid_top_view --> housing_studio__draw2d___rect
+    housing_studio__draw2d___lid_top_view --> housing_studio__draw2d___camera_positions
+    housing_studio__draw2d___lid_top_view --> housing_studio__draw2d___aux_positions
+    housing_studio__draw2d___lid_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    housing_studio__draw2d___lid_side_view --> housing_studio__draw2d___lid_side_polygon
+    housing_studio__draw2d___assembly_front_view --> housing_studio__draw2d___rect
+    housing_studio__draw2d___assembly_front_view --> housing_studio__draw2d___lid_front_polygon
+    housing_studio__draw2d___assembly_top_view --> housing_studio__draw2d___rect
+    housing_studio__draw2d___assembly_top_view --> housing_studio__draw2d___board_outline
+    housing_studio__draw2d___assembly_side_view --> housing_studio__draw2d___rect
+    housing_studio__draw2d___assembly_side_view --> housing_studio__draw2d___lid_side_polygon
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___base_front_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___base_top_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___base_side_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___lid_front_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___lid_top_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___lid_side_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___assembly_front_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___assembly_top_view
+    housing_studio__draw2d__build_drawing_sets --> housing_studio__draw2d___assembly_side_view
+    housing_studio__draw2d___ensure_dxf_layers --> housing_studio__draw2d___layer_style
+    housing_studio__draw2d___ensure_dxf_layers --> housing_studio__draw2d___lineweight_dxf
+    housing_studio__draw2d___flatten_primitives --> housing_studio__draw2d___dimension_segments
+    housing_studio__draw2d__export_dxf --> housing_studio__draw2d___ensure_dxf_layers
+    housing_studio__draw2d__export_dxf --> housing_studio__draw2d___flatten_primitives
+    housing_studio__draw2d__export_svg --> housing_studio__draw2d___flatten_primitives
+    housing_studio__draw2d__export_svg --> housing_studio__draw2d___layer_style
+    housing_studio__draw2d__export_svg --> housing_studio__draw2d___svg_dash
+    housing_studio__draw2d___draw_view_pdf --> housing_studio__draw2d___flatten_primitives
+    housing_studio__draw2d___draw_view_pdf --> housing_studio__draw2d___layer_style
+    housing_studio__draw2d___draw_view_pdf --> housing_studio__draw2d___pdf_dash
+    housing_studio__draw2d__export_all_2d --> housing_studio__draw2d__build_drawing_sets
+    housing_studio__draw2d__export_all_2d --> housing_studio__draw2d__export_dxf
+    housing_studio__draw2d__export_all_2d --> housing_studio__draw2d__export_pdf
+    housing_studio__draw2d__export_all_2d --> housing_studio__draw2d__export_svg
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___board_outline --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_origin
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___board_outline --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_actual_clearances
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__board_hole_centers
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___board_outline
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_front_polygon
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___camera_positions
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___aux_positions
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__hinge_segments
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_side_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_side_polygon
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_front_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_front_polygon
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_top_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___board_outline
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_side_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___rect
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_side_view --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_side_polygon
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_front_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_top_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___base_side_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_front_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_top_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lid_side_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_front_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_top_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___assembly_side_view
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___ensure_dxf_layers --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___layer_style
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___ensure_dxf_layers --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___lineweight_dxf
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___flatten_primitives --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___dimension_segments
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_dxf --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___ensure_dxf_layers
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_dxf --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___flatten_primitives
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_svg --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___flatten_primitives
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_svg --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___layer_style
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_svg --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___svg_dash
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___draw_view_pdf --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___flatten_primitives
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___draw_view_pdf --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___layer_style
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___draw_view_pdf --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d___pdf_dash
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_all_2d --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__build_drawing_sets
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_all_2d --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_dxf
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_all_2d --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_pdf
+    services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_all_2d --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_svg
+    app__main___validated_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__models__default_project_config
+    app__main___url_for --> app__main___safe_job_identifier
+    app__main___manifest_with_urls --> app__main___url_for
+    app__main___job_summaries --> app__main___safe_job_identifier
+    app__main__default_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__models__default_project_config
+    app__main__default_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__design_metrics
+    app__main__default_config --> app__main___layer_summary
+    app__main__default_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    app__main__validate_config --> app__main___validated_config
+    app__main__validate_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__design_metrics
+    app__main__validate_config --> app__main___layer_summary
+    app__main__validate_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    app__main__interpret --> app__main___validated_config
+    app__main__interpret --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__design_metrics
+    app__main__interpret --> app__main___layer_summary
+    app__main__interpret --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    app__main__generate --> app__main___validated_config
+    app__main__generate --> app__main___manifest_with_urls
+    app__main__list_jobs --> app__main___job_summaries
+    app__main__get_job_config --> app__main___safe_job_identifier
+    app__main__get_job_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__design_metrics
+    app__main__get_job_config --> app__main___layer_summary
+    app__main__get_job_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    app__main__get_job --> app__main___safe_job_identifier
+    app__main__get_job --> app__main___manifest_with_urls
+    services__cad_worker__vendor__rpi5_housing_studio__app__main___validated_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__models__default_project_config
+    services__cad_worker__vendor__rpi5_housing_studio__app__main___url_for --> services__cad_worker__vendor__rpi5_housing_studio__app__main___safe_job_identifier
+    services__cad_worker__vendor__rpi5_housing_studio__app__main___manifest_with_urls --> services__cad_worker__vendor__rpi5_housing_studio__app__main___url_for
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__default_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__models__default_project_config
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__default_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__design_metrics
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__default_config --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__interpret --> services__cad_worker__vendor__rpi5_housing_studio__app__main___validated_config
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__interpret --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__design_metrics
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__interpret --> services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__main___validated_config
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__generate --> services__cad_worker__vendor__rpi5_housing_studio__app__main___manifest_with_urls
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__get_job --> services__cad_worker__vendor__rpi5_housing_studio__app__main___safe_job_identifier
+    services__cad_worker__vendor__rpi5_housing_studio__app__main__get_job --> services__cad_worker__vendor__rpi5_housing_studio__app__main___manifest_with_urls
+    src__living_product_studio__api__startup_seed --> src__living_product_studio__seed__seed_from_file
+    src__living_product_studio__api__authorize_project --> src__living_product_studio__permissions__require_permission
+    src__living_product_studio__api__get_project --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__get_tree --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__get_specification --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__get_specification --> src__living_product_studio__specification__unified_specification
+    src__living_product_studio__api__get_events --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__resolve_project_selection --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__resolve_project_selection --> src__living_product_studio__selection_resolver__resolve_selection
+    src__living_product_studio__api__create_annotation --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__create_change_plan --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__apply_change_plan --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__run_power --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__run_power --> src__living_product_studio__simulations__simulate_power
+    src__living_product_studio__api__run_thermal --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__run_thermal --> src__living_product_studio__simulations__simulate_thermal
+    src__living_product_studio__api__run_human --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__run_human --> src__living_product_studio__simulations__evaluate_human_scenario
+    src__living_product_studio__api__mechanical_checks --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__mechanical_checks --> src__living_product_studio__simulations__mechanical_rule_checks
+    src__living_product_studio__api__download_artifact --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__download_artifact --> src__living_product_studio__api___resolved_artifact_path
+    src__living_product_studio__api__export_project --> src__living_product_studio__api__authorize_project
+    src__living_product_studio__api__export_project --> src__living_product_studio__artifacts__export_project_bundle
+    src__living_product_studio__api__mcp_endpoint --> src__living_product_studio__mcp_protocol__classify_mcp_era
+    src__living_product_studio__api__mcp_endpoint --> src__living_product_studio__mcp_protocol__origin_is_allowed
+
+    classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
+    class src__living_product_studio__bus__CommandBus___handle_existing,src__living_product_studio__projector__apply_event,app__static__app__load3dPreview,src__living_product_studio__seed__seed_from_file,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__artifacts__generate_artifacts,src__living_product_studio__selection_resolver__resolve_selection,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__validation__collect_warnings,src__living_product_studio__change_planner__ChangePlanner___local_plan,src__living_product_studio__specification__unified_specification,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config__fallback_interpret,scripts__verify_project__verify,src__living_product_studio__static__app__handleDraw,src__living_product_studio__static__app__renderSpec,housing_studio__cad3d__make_base,housing_studio__cad3d__make_lid,housing_studio__validation__collect_warnings,housing_studio__artifacts__generate_artifacts,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_base,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d__make_lid,housing_studio__llm_config__fallback_interpret,src__living_product_studio__mcp_protocol__validate_modern_http_request,src__living_product_studio__mcp_gateway__McpGateway__handle,src__living_product_studio__mcp_gateway__McpGateway__call_tool,housing_studio__draw2d__export_dxf,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__draw2d__export_dxf,src__living_product_studio__api__mcp_endpoint highCC
+    class services__cad_worker__vendor__rpi5_housing_studio__app__static__app__load3dPreview,generator__main,services__cad_worker__worker__on_message,services__mqtt_gateway__gateway__on_message,src__living_product_studio__artifacts__export_project_bundle,src__living_product_studio__cli__shell,app__static__app__renderDrawingPreviewLayerControls,app__static__app__applyDrawingLayerVisibility,app__static__app__loadJobHistory,src__living_product_studio__auth__AuthService__request_access,src__living_product_studio__uri__PoaUri____post_init__,src__living_product_studio__simulations__simulate_thermal,src__living_product_studio__simulations__evaluate_human_scenario,src__living_product_studio__specification__manufacturing_views,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__llm_config__interpret_with_litellm,src__living_product_studio__static__app__renderObjectInspector,src__living_product_studio__static__app__sampleSelection,src__living_product_studio__static__app__renderLifecycle,services__cad_worker__scoped_brep_adapter___verify_scope,services__cad_worker__scoped_brep_adapter__apply_scoped_operation,housing_studio__cad3d___opening_cut_box,services__cad_worker__vendor__rpi5_housing_studio__housing_studio__cad3d___opening_cut_box,housing_studio__llm_config__interpret_with_litellm,src__living_product_studio__mcp_protocol__classify_mcp_era,housing_studio__config_diff___walk_diff,housing_studio__draw2d___base_top_view,housing_studio__draw2d___lid_top_view,housing_studio__draw2d__export_svg,housing_studio__draw2d___draw_view_pdf,housing_studio__draw2d__export_pdf medCC

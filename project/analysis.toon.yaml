@@ -1,0 +1,315 @@
+# code2llm | 137f 30952L | python:58,json:32,yaml:15,proto:8,txt:7,javascript:3,yml:2,toml:2,shell:1,conf:1 | 2026-08-11
+# generated in 0.05s
+# CC̅=3.7 | critical:26/634 | dups:1 | cycles:0
+
+HEALTH[20]:
+  🔴 DUP   1 duplicate class groups
+  🔴 GOD   housing_studio/draw2d.py = 897L, 7 classes, 30m, max CC=24
+  🔴 GOD   services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py = 896L, 7 classes, 30m, max CC=24
+  🔴 GOD   src/living_product_studio/domain.py = 600L, 49 classes, 3m, max CC=5
+  🔴 GOD   src/living_product_studio/api.py = 547L, 7 classes, 37m, max CC=19
+  🟡 CC    _handle_existing CC=24 (limit:15)
+  🟡 CC    apply_event CC=37 (limit:15)
+  🟡 CC    load3dPreview CC=15 (limit:15)
+  🟡 CC    seed_from_file CC=17 (limit:15)
+  🟡 CC    generate_artifacts CC=31 (limit:15)
+  🟡 CC    resolve_selection CC=43 (limit:15)
+  🟡 CC    collect_warnings CC=24 (limit:15)
+  🟡 CC    _local_plan CC=20 (limit:15)
+  🟡 CC    unified_specification CC=20 (limit:15)
+  🟡 CC    fallback_interpret CC=33 (limit:15)
+  🟡 CC    verify CC=28 (limit:15)
+  🟡 CC    handleDraw CC=16 (limit:15)
+  🟡 CC    renderSpec CC=19 (limit:15)
+  🟡 CC    make_base CC=17 (limit:15)
+  🟡 CC    make_lid CC=17 (limit:15)
+
+REFACTOR[6]:
+  1. rm duplicates  (-1 dup groups)
+  2. split housing_studio/draw2d.py  (god module)
+  3. split services/cad-worker/vendor/rpi5_housing_studio/housing_studio/draw2d.py  (god module)
+  4. split src/living_product_studio/domain.py  (god module)
+  5. split src/living_product_studio/api.py  (god module)
+  6. split 15 high-CC methods  (CC>15)
+
+PIPELINES[250]:
+  [1] Src [response]: response
+      PURITY: 100% pure
+  [2] Src [payload]: payload → fetchJson
+      PURITY: 100% pure
+  [3] Src [detail]: detail
+      PURITY: 100% pure
+  [4] Src [parsed]: parsed → loadDefaultConfig → hideBanner
+      PURITY: 100% pure
+  [5] Src [suggestion]: suggestion → escapeHtml
+      PURITY: 100% pure
+  [6] Src [card]: card → escapeHtml
+      PURITY: 100% pure
+  [7] Src [display]: display → escapeHtml
+      PURITY: 100% pure
+  [8] Src [groups]: groups
+      PURITY: 100% pure
+  [9] Src [group]: group → escapeHtml
+      PURITY: 100% pure
+  [10] Src [rows]: rows → escapeHtml
+      PURITY: 100% pure
+  [11] Src [manifest]: manifest → fetchJson
+      PURITY: 100% pure
+  [12] Src [initViewer]: initViewer → resize
+      PURITY: 100% pure
+  [13] Src [scene]: scene
+      PURITY: 100% pure
+  [14] Src [camera]: camera
+      PURITY: 100% pure
+  [15] Src [renderer]: renderer
+      PURITY: 100% pure
+  [16] Src [controls]: controls
+      PURITY: 100% pure
+  [17] Src [keyLight]: keyLight
+      PURITY: 100% pure
+  [18] Src [fillLight]: fillLight
+      PURITY: 100% pure
+  [19] Src [grid]: grid
+      PURITY: 100% pure
+  [20] Src [axes]: axes
+      PURITY: 100% pure
+  [21] Src [modelRoot]: modelRoot
+      PURITY: 100% pure
+  [22] Src [resizeObserver]: resizeObserver
+      PURITY: 100% pure
+  [23] Src [loader]: loader
+      PURITY: 100% pure
+  [24] Src [baseUrl]: baseUrl
+      PURITY: 100% pure
+  [25] Src [lidUrl]: lidUrl
+      PURITY: 100% pure
+  [26] Src [baseMaterial]: baseMaterial
+      PURITY: 100% pure
+  [27] Src [lidMaterial]: lidMaterial
+      PURITY: 100% pure
+  [28] Src [openAngle]: openAngle
+      PURITY: 100% pure
+  [29] Src [interpretPrompt]: interpretPrompt → hideBanner
+      PURITY: 100% pure
+  [30] Src [config]: config → prettyConfig
+      PURITY: 100% pure
+  [31] Src [generate]: generate → hideBanner
+      PURITY: 100% pure
+  [32] Src [downloadConfig]: downloadConfig → parseEditorConfig
+      PURITY: 100% pure
+  [33] Src [blob]: blob → prettyConfig
+      PURITY: 100% pure
+  [34] Src [file]: file → uploadConfig → text → loadDefaultConfig → ...(1 more)
+      PURITY: 100% pure
+  [35] Src [main]: main → load_config → default_project_config
+      PURITY: 100% pure
+  [36] Src [on_connect]: on_connect
+      PURITY: 100% pure
+  [37] Src [on_message]: on_message → generate_artifacts → collect_warnings → board_actual_clearances → ...(1 more)
+      PURITY: 100% pure
+  [38] Src [analyze_image]: analyze_image
+      PURITY: 100% pure
+  [39] Src [on_connect]: on_connect
+      PURITY: 100% pure
+  [40] Src [on_message]: on_message → response_topic
+      PURITY: 100% pure
+  [41] Src [analyze]: analyze
+      PURITY: 100% pure
+  [42] Src [export_review_artifacts]: export_review_artifacts → run → _cli
+      PURITY: 100% pure
+  [43] Src [publish_events]: publish_events
+      PURITY: 100% pure
+  [44] Src [__init__]: __init__
+      PURITY: 100% pure
+  [45] Src [_ensure_client]: _ensure_client
+      PURITY: 100% pure
+  [46] Src [publish_events]: publish_events → _topic_atom
+      PURITY: 100% pure
+  [47] Src [project]: project → project_from_events → apply_event → utcnow
+      PURITY: 100% pure
+  [48] Src [tree]: tree → object_tree
+      PURITY: 100% pure
+  [49] Src [events]: events
+      PURITY: 100% pure
+  [50] Src [projects]: projects
+      PURITY: 100% pure
+
+LAYERS:
+  scripts/                        CC̄=11.0   ←in:0  →out:0
+  │ !! verify_project             164L  0C    3m  CC=28     ←0
+  │ generate_demo               32L  0C    0m  CC=0.0    ←0
+  │ generate_schemas            20L  0C    0m  CC=0.0    ←0
+  │ export_project              19L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=5.5    ←in:0  →out:0
+  │ compose.yaml               111L  0C    0m  CC=0.0    ←0
+  │ generator                   89L  0C    2m  CC=9      ←0
+  │ project.sh                  60L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml              48L  0C    0m  CC=0.0    ←0
+  │ Makefile                    23L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  18L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          10L  0C    0m  CC=0.0    ←0
+  │ buf.yaml                     7L  0C    0m  CC=0.0    ←0
+  │ buf.gen.yaml                 6L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             1L  0C    0m  CC=0.0    ←0
+  │
+  housing_studio/                 CC̄=4.9    ←in:7  →out:21  !! split  ×DUP
+  │ !! draw2d                     897L  7C   30m  CC=24     ←2
+  │ !! cad3d                      552L  1C   15m  CC=17     ←2
+  │ !! artifacts                  532L  1C   11m  CC=32     ←0
+  │ !! llm_config                 532L  1C    7m  CC=42     ←0
+  │ models                     386L  20C    5m  CC=10     ←0  ×DUP
+  │ !! validation                 320L  1C    7m  CC=24     ←0
+  │ mesh_preview               107L  0C    5m  CC=5      ←0
+  │ config_diff                 83L  1C    6m  CC=12     ←1
+  │ __init__                     6L  0C    0m  CC=0.0    ←0
+  │ version                      3L  0C    0m  CC=0.0    ←0
+  │
+  src/                            CC̄=4.2    ←in:0  →out:0
+  │ !! domain                     600L  49C    3m  CC=5      ←1
+  │ !! api                        547L  7C   37m  CC=19     ←0
+  │ !! mcp_gateway                397L  2C   11m  CC=27     ←0
+  │ event_store                371L  2C   17m  CC=7      ←0
+  │ !! change_planner             368L  3C   12m  CC=20     ←0
+  │ auth                       228L  3C   10m  CC=11     ←0
+  │ !! selection_resolver         213L  0C    1m  CC=43     ←2
+  │ !! bus                        208L  3C   10m  CC=24     ←0
+  │ !! mcp_protocol               187L  1C   10m  CC=24     ←2
+  │ simulations                173L  1C    5m  CC=11     ←3
+  │ cli                        164L  0C   12m  CC=11     ←0
+  │ !! seed                       158L  0C    1m  CC=17     ←2
+  │ !! projector                  157L  1C    3m  CC=37     ←2
+  │ !! specification              105L  0C    2m  CC=20     ←3
+  │ artifacts                   81L  0C    3m  CC=14     ←3
+  │ uri                         77L  2C    8m  CC=8      ←3
+  │ mqtt_bus                    71L  3C    7m  CC=4      ←1
+  │ settings                    70L  1C    3m  CC=3      ←0
+  │ !! app.js                      63L  0C   49m  CC=19     ←0
+  │ permissions                 42L  1C    2m  CC=3      ←3
+  │ gtin                        28L  0C    3m  CC=5      ←1
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │
+  services/                       CC̄=3.4    ←in:0  →out:0  ×DUP
+  │ !! draw2d                     896L  7C   30m  CC=24     ←0
+  │ !! cad3d                      552L  1C   15m  CC=17     ←0
+  │ app.js                     471L  0C   83m  CC=11     ←0
+  │ models                     386L  20C    5m  CC=10     ←5  ×DUP
+  │ !! artifacts                  349L  1C    7m  CC=31     ←4
+  │ !! llm_config                 341L  1C    7m  CC=33     ←2
+  │ !! validation                 320L  1C    7m  CC=24     ←11
+  │ rpi5_enclosure.json        253L  0C    0m  CC=0.0    ←0
+  │ scoped_brep_adapter        183L  1C   11m  CC=12     ←1
+  │ main                       158L  3C   10m  CC=5      ←0
+  │ mesh_preview               107L  0C    5m  CC=5      ←2
+  │ gateway                     99L  0C    4m  CC=10     ←0
+  │ worker                      83L  0C    3m  CC=8      ←0
+  │ generator                   71L  0C    2m  CC=6      ←0
+  │ simulator                   60L  0C    1m  CC=2      ←0
+  │ pyproject.toml              52L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  20L  0C    0m  CC=0.0    ←0
+  │ Makefile                    19L  0C    0m  CC=0.0    ←0
+  │ generate_demo               15L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  14L  0C    0m  CC=0.0    ←0
+  │ requirements.txt            11L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          10L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   5L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   5L  0C    0m  CC=0.0    ←0
+  │ __init__                     5L  0C    0m  CC=0.0    ←0
+  │ change_request_pl.txt        1L  0C    0m  CC=0.0    ←0
+  │ change_request_en.txt        1L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=2.4    ←in:0  →out:0
+  │ !! project.specification.json  4247L  0C    0m  CC=0.0    ←0
+  │ !! project.snapshot.json     2259L  0C    0m  CC=0.0    ←0
+  │ !! project.json              2250L  0C    0m  CC=0.0    ←0
+  │ manufacturing.yaml         407L  0C    0m  CC=0.0    ←0
+  │ rpi5_enclosure.json        253L  0C    0m  CC=0.0    ←0
+  │ manifest.json              145L  0C    0m  CC=0.0    ←0
+  │ lifecycle.yaml             142L  0C    0m  CC=0.0    ←0
+  │ operation-journal.json     127L  0C    0m  CC=0.0    ←0
+  │ human-use.yaml             116L  0C    0m  CC=0.0    ←0
+  │ test-plan.yaml             109L  0C    0m  CC=0.0    ←0
+  │ f79b10831801-test-plan.yaml   109L  0C    0m  CC=0.0    ←0
+  │ example-selection.json      88L  0C    0m  CC=0.0    ←0
+  │ selection.json              88L  0C    0m  CC=0.0    ←0
+  │ projection-map.json         79L  0C    0m  CC=0.0    ←0
+  │ f947a31f903b-projection-map.json    79L  0C    0m  CC=0.0    ←0
+  │ kicad_adapter               51L  1C    3m  CC=3      ←0
+  │ selection-map.json          36L  0C    0m  CC=0.0    ←0
+  │ fdd6cbee5584-selection-map.json    36L  0C    0m  CC=0.0    ←0
+  │ vision_app                  35L  0C    1m  CC=3      ←0
+  │ a40972c7e37e-vision_app     35L  0C    1m  CC=3      ←0
+  │ camera-analysis.json        32L  0C    0m  CC=0.0    ←0
+  │ c14bc0b42f6d-camera-analysis.json    32L  0C    0m  CC=0.0    ←0
+  │ 41b58febecad-adapter-contract.yaml    31L  0C    0m  CC=0.0    ←0
+  │ adapter-contract.yaml       31L  0C    0m  CC=0.0    ←0
+  │ power-model.yaml            22L  0C    0m  CC=0.0    ←0
+  │ ecommerce.yaml              20L  0C    0m  CC=0.0    ←0
+  │ thermal-model.yaml          12L  0C    0m  CC=0.0    ←0
+  │ operation.json               9L  0C    0m  CC=0.0    ←0
+  │ a008db266308-compose.camera-test.yaml     9L  0C    0m  CC=0.0    ←0
+  │ compose.camera-test.yaml     9L  0C    0m  CC=0.0    ←0
+  │ scenario.json                8L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   5L  0C    0m  CC=0.0    ←0
+  │ change_request_pl.txt        1L  0C    0m  CC=0.0    ←0
+  │ change_request_en.txt        1L  0C    0m  CC=0.0    ←0
+  │
+  app/                            CC̄=2.4    ←in:0  →out:10  !! split
+  │ !! app.js                     922L  0C  123m  CC=15     ←0
+  │ main                       254L  4C   15m  CC=5      ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │
+  sample_output/                  CC̄=1.0    ←in:0  →out:0
+  │ !! project_config.schema.json   932L  0C    0m  CC=0.0    ←0
+  │ manifest.json              404L  0C    0m  CC=0.0    ←0
+  │ project_config.json        253L  0C    0m  CC=0.0    ←0
+  │ project_layers.json        124L  0C    0m  CC=0.0    ←0
+  │ design_warnings.json        38L  0C    0m  CC=0.0    ←0
+  │ rebuild_project             27L  0C    1m  CC=1      ←0
+  │ design_metrics.json         22L  0C    0m  CC=0.0    ←0
+  │ model_stats.json            18L  0C    0m  CC=0.0    ←0
+  │ configuration_changes.json     5L  0C    0m  CC=0.0    ←0
+  │ source_description.txt       1L  0C    0m  CC=0.0    ←0
+  │
+  schemas/                        CC̄=0.0    ←in:0  →out:0
+  │ !! product-project.schema.json  2454L  0C    0m  CC=0.0    ←0
+  │ region-selection.schema.json   354L  0C    0m  CC=0.0    ←0
+  │ change-plan.schema.json    197L  0C    0m  CC=0.0    ←0
+  │ test-plan.schema.json      179L  0C    0m  CC=0.0    ←0
+  │ projection-map.schema.json   164L  0C    0m  CC=0.0    ←0
+  │ selection-map.schema.json   134L  0C    0m  CC=0.0    ←0
+  │
+  docs/                           CC̄=0.0    ←in:0  →out:0
+  │ verification-report.json    58L  0C    0m  CC=0.0    ←0
+  │
+  mosquitto/                      CC̄=0.0    ←in:0  →out:0
+  │ mosquitto.conf               5L  0C    0m  CC=0.0    ←0
+  │
+  proto/                          CC̄=0.0    ←in:0  →out:0
+  │ project.proto              160L  0C    0m  CC=0.0    ←0
+  │ geometry.proto             120L  0C    0m  CC=0.0    ←0
+  │ simulation.proto            98L  0C    0m  CC=0.0    ←0
+  │ services.proto              77L  0C    0m  CC=0.0    ←0
+  │ common.proto                74L  0C    0m  CC=0.0    ←0
+  │ commands.proto              59L  0C    0m  CC=0.0    ←0
+  │ collaboration.proto         53L  0C    0m  CC=0.0    ←0
+  │ events.proto                27L  0C    0m  CC=0.0    ←0
+  │
+
+COUPLING:
+                       services.cad-worker       housing_studio                  app            generator   sample_output.demo
+  services.cad-worker                   ──                    7                  ←10                   ←5                   ←1  hub
+       housing_studio                   21                   ──                                                                 hub
+                  app                   10                                        ──                                            !! fan-out
+            generator                    5                                                             ──                     
+   sample_output.demo                    1                                                                                  ──
+  CYCLES: none
+  HUB: housing_studio/ (fan-in=7)
+  HUB: services.cad-worker/ (fan-in=37)
+  SMELL: housing_studio/ fan-out=21 → split needed
+  SMELL: app/ fan-out=10 → split needed
+
+EXTERNAL:
+  validation: run `vallm batch .` → validation.toon
+  duplication: run `redup scan .` → duplication.toon
