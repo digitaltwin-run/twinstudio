@@ -63,6 +63,8 @@ class Settings:
     mqtt_password: str = _env("MQTT_PASSWORD")
     mqtt_topic_prefix: str = _env("MQTT_TOPIC_PREFIX", default="twinstudio/v1").strip("/")
 
+    cad_regeneration_enabled: bool = _bool("TWINSTUDIO_CAD_REGEN_ENABLED", True)
+
     litellm_model: str = _env("LITELLM_MODEL").strip()
     litellm_api_base: str = _env("LITELLM_API_BASE").strip()
     litellm_api_key: str = _env("LITELLM_API_KEY").strip()

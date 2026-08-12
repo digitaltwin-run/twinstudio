@@ -6,10 +6,10 @@ Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:
 
 - kanoniczny pakiet został przeniesiony z `living_product_studio` do `twinstudio`, z warstwą zgodności dla starego namespace;
 - dodano typowaną warstwę ewolucji projektu, TwinScript, katalogi działań i soczewek, lifecycle, REST, CLI, MCP, UI, schematy i artefakty demonstracyjne;
-- `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony do obrazu `cad-worker`;
+- `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony zarówno do głównego obrazu aplikacji, jak i obrazu `cad-worker`;
 - rzeczywista aplikacja ASGI uruchamia się, seeduje projekt demonstracyjny i odpowiada przez HTTP.
 
-Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 90 testów przechodzi, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
+Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 93 testy przechodzą, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Testy API wykonują prawdziwą przebudowę CadQuery po zastosowaniu i cofnięciu parametru, a test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
 
 | Obszar | Ocena | Uzasadnienie |
 |---|---|---|
@@ -17,7 +17,7 @@ Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 90 testów
 | DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 90/90 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 93/93 testy przechodzą z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -57,13 +57,13 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - ostatnie 40 akcji UI jest widoczne jako uporządkowane parametry `args` w URL; rekord zawiera sekwencję, czas, rodzaj akcji, kliknięty element, współrzędne kursora i zwięzły kontekst semantyczny, ale dla pól tekstowych ujawnia tylko długość;
 - autoryzowany `GET /api/v1/projects/{project_id}/logs.dsl` udostępnia ostatnie projektowe rekordy z ograniczonego bufora TWINOBS; `Kopiuj logi DSL` łączy je ze śladem `UiAction` z URL i po odrzuceniu nowoczesnego Clipboard API próbuje trybu zgodności, a niezależne `Pobierz logi DSL` działa bez uprawnienia do schowka;
 - panel planera odczytuje `/health`, rozróżnia tryb lokalny od LiteLLM, pokazuje czas bieżącego oczekiwania i typowy przedział odpowiedzi oraz zapisuje `plan.requested`, `plan.completed`/`plan.failed` i wynik zastosowania w śladzie URL/DSL;
-- UI odróżnia zapis parametru od odroczonej operacji CAD: plan bez `set_parameter` nie udostępnia mylącego przycisku zastosowania i jawnie informuje, że refresh nie przebuduje STL/SVG;
-- `Zapisz i wykonaj uwagę` od razu tworzy `ChangePlan`; bezpieczne `set_parameter` jest wykonywane automatycznie, a geometria bez stabilnego mappingu pozostaje otwarta i jawnie odroczona do CAD workera;
+- UI odróżnia zapis parametru od odroczonej operacji CAD: plan bez `set_parameter` nie udostępnia mylącego przycisku zastosowania, natomiast bezpieczny parametr uruchamia automatyczną regenerację STL/SVG;
+- `Zapisz i wykonaj uwagę` od razu tworzy `ChangePlan`; bezpieczne `set_parameter` jest wykonywane automatycznie i kończy się wersjonowaną przebudową widoków, a geometria bez stabilnego mappingu pozostaje otwarta i jawnie odroczona;
 - lokalny planner kompiluje jawne względne zmiany wymiarów, np. `zmniejsz wysokosc o 4mm`, względem aktualnego parametru zaznaczonego obiektu; wynik pozostaje deklaratywnym `set_parameter`, zapisuje poprzednią wartość i może zostać cofnięty;
 - wybór obiektu w drzewie produktu podświetla jego bryłę 3D oraz jawnie powiązane regiony na rzutach Front, Top i Side; zaznaczenie drzewa ma osobną warstwę wizualną i nie nadpisuje zgodnego prostokąta, lassa ani ołówka używanego do uwag, natomiast przy przejściu na niezależny obiekt czyści stare zaznaczenie, aby uwaga nie trafiła do poprzedniego celu;
 - stały przycisk w nagłówku pobiera PDF aktywnej zakładki przez autoryzowany `POST /api/v1/projects/{project_id}/tabs/{tab}.pdf`: 3D zawiera aktualny kadr WebGL, nakładkę zaznaczenia i obiekt POA, 2D zachowuje trzy wektorowe strony, a Specyfikacja, Lifecycle, Testy, Feature lenses i Evolution/DSL eksportują aktualnie widoczną treść; akcje `tab.pdf.requested`, `tab.pdf.downloaded` i `tab.pdf.failed` są widoczne w URL oraz TWINOBS;
-- `GET /change-history` składa listę uwag, planów, zastosowań i cofnięć z append-only Event Store; cofnięcie bezpiecznego parametru emituje kompensujące `ChangeReverted` z pełnym poprzednim `ParameterValue`, zamiast usuwać audyt;
-- `GET /change-queue` projektuje z tego samego Event Store tylko aktywne zadania jako `ready`, `needs_detail` lub `waiting_cad`; zakończone, cofnięte i nieaktualne plany pozostają w historii, ale nie zaśmiecają kolejki;
+- `GET /change-history` składa listę uwag, planów, zastosowań, regeneracji CAD i cofnięć z append-only Event Store; cofnięcie bezpiecznego parametru emituje kompensujące `ChangeReverted` z pełnym poprzednim `ParameterValue`, zamiast usuwać audyt;
+- `GET /change-queue` projektuje z tego samego Event Store tylko aktywne zadania jako `ready`, `needs_detail`, `waiting_cad` lub `cad_failed`; zakończone, cofnięte i nieaktualne plany pozostają w historii, ale nie zaśmiecają kolejki;
 - UI łączy trwałą kolejkę z lokalnymi stanami `planning`, `applying` i `undoing`; obiekty POA objęte zadaniem mają w drzewie kolorową krawędź i znaczniki `PLAN`, `ZAPIS`, `CAD`, `?`, `GOTOWE` albo `COFNIJ` (wszystkie aktywne typy stanu są widoczne, a kilka zadań tego samego typu jest agregowanych, np. `?×2`), a karta kolejki pozwala ponownie otworzyć zapisany plan po odświeżeniu strony;
 - LLM może odczytać ostatni `UIContext` i playbook `error/<CODE>.md` przez REST lub dwa kontrolowane narzędzia MCP;
 - playbooki używają prostego, deklaratywnego `REPAIR 1.0`; nie dają LLM swobodnego wykonania powłoki ani ominięcia autoryzacji.
@@ -89,7 +89,13 @@ Walidowany przykład `rpi5-hinge-evolution` generuje 48 wariantów celu, 26 zaso
 
 `components/housing-studio` generuje parametryczne STEP/STL/OBJ/GLB, rysunki SVG/DXF/PDF, BOM, raport techniczny, diff konfiguracji i paczkę projektu. Ma własne API FastAPI i opcjonalny most LiteLLM z deterministycznym fallbackiem.
 
-Obraz `services/cad-worker/Dockerfile` korzysta już z `components/housing-studio`. Repo nadal zawiera jednak starsze `housing_studio/`, `app/` oraz `services/cad-worker/vendor/rpi5_housing_studio`. Te kopie różnią się treścią. Dopóki nie zostanie wskazane jedno źródło kanoniczne i usunięte albo zamrożone pozostałe, testy lokalne mogą nieświadomie sprawdzać inną kopię niż obraz CAD.
+Główny `Dockerfile` i obraz `services/cad-worker/Dockerfile` instalują `components/housing-studio`. Repo nadal zawiera jednak starsze `housing_studio/`, `app/` oraz `services/cad-worker/vendor/rpi5_housing_studio`. Ścieżki SVG używane przez bieżącą regenerację zostały zsynchronizowane między kopią główną i komponentem, ale pozostała duplikacja nadal jest długiem: dopóki nie zostanie wskazane jedno źródło kanoniczne i usunięte albo zamrożone pozostałe, test lokalny może importować inną kopię niż obraz aplikacji.
+
+### 3.4. Automatyczna materializacja zmian w CAD
+
+Po `ChangeApplied` i `ChangeReverted` rdzeń zapisuje `GenerationRequested` z unikalnym `job_id`, a następnie w zadaniu tła uruchamia kanoniczny generator `components/housing-studio`. Snapshot parametrów jest mapowany na `ProjectConfig`; wynik obejmuje dwa STL oraz rzuty Front/Top/Side SVG. `GenerationCompleted` atomowo podmienia rekordy pod stabilnymi URI artefaktów, aktualizuje `viewer_mesh` obiektów i zachowuje SHA-256, ścieżkę manifestu oraz identyfikator zadania. Starszy wynik jest oznaczany `superseded` i nie może nadpisać nowszej zmiany lub cofnięcia.
+
+Klient odbiera ukończenie przez WebSocket, pobiera nowy snapshot, przeładowuje 3D i 2D oraz dodaje hash artefaktu do URL pobrania, aby ominąć cache przeglądarki. Ręczny refresh nie jest wymagany; użytkownik może nadal pracować podczas regeneracji. Kolejka i historia pokazują stan zadania, a TWINOBS zapisuje `CAD_REGENERATION_QUEUED`, `CAD_REGENERATION_COMPLETED` albo problem `CAD_REGENERATION_FAILED` z registry `error/CAD_REGENERATION_FAILED.md`. Ta ścieżka dotyczy parametrów posiadających jawne mapowanie; operacje lokalnego B-Rep bez stabilnego mapowania nadal pozostają odroczone.
 
 ## 4. Porównanie intencji przez todo2code
 
@@ -129,7 +135,7 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **90/90 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
+- pełny pytest: **93/93 passed**, łącznie z testami API przez FastAPI `TestClient`, prawdziwą regeneracją i ponowną regeneracją po cofnięciu przez CadQuery, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
@@ -144,6 +150,7 @@ Interpretacja wyniku:
 - test Chromium potwierdził 11 kolejnych rekordów `args`, współrzędne i identyfikatory klikniętych elementów, zapis pełnej trasy diagnostycznej w `UIContext.route` oraz skopiowanie ponad 8 tys. znaków DSL z rekordami `UiAction` i `HTTP_REQUEST_COMPLETED`;
 - scenariusz `zmniejsz o 4mm` poprawnie kończy się lokalnym `add_annotation` z pytaniem o konkretny wymiar/operację; UI pokazuje, że plan nie zmieni bryły, blokuje pustą aplikację i nie sugeruje odświeżania strony;
 - test Chromium zapisał uwagę `ustaw grubość ścian na 2.25 mm`, automatycznie zmienił parametr z 2.0 na 2.25, pokazał zastosowanie na liście historii, a następnie cofnął je do 2.0 przez `ChangeReverted`; akcje `plan.apply.completed` i `change.undo.completed` znalazły się w URL/DSL;
+- izolowany test Chromium pełnego cyklu zmienił wysokość podstawy z 25 na 21 mm, poczekał na zmianę SHA-256 STL i akcję `artifacts.regenerated`, a następnie wykonał `Cofnij` i potwierdził drugą regenerację, powrót parametru oraz zawartości artefaktu bez przeładowania strony;
 - test Chromium potwierdził również trwałe zadanie `needs_detail` dla `zmniejsz o 4mm`, kartę w kolejce, licznik aktywnych zadań oraz odpowiadający mu znacznik `?` i żółtą krawędź na `Lower base` w drzewie projektu;
 - lokalny lifecycle przez Makefile udostępnia `start`, `restart`/`recreate`, `stop`/`kill`, `status`, `health`, `logs`, `logs-follow` i `run`; `start` zastępuje istniejącą instancję TwinStudio z bieżącego workspace, ale odmawia zabicia obcego procesu na tym samym porcie;
 - zrzut kontrolny testu UI jest zapisywany domyślnie jako `/tmp/twinstudio-ui.png`; test jest odtwarzalny poleceniem `python scripts/verify_ui.py --url <adres>`.
@@ -158,7 +165,7 @@ Interpretacja wyniku:
 ## 6. Pozostałe ryzyka i zalecana kolejność prac
 
 1. **Potwierdzić target produkcyjny.** Skrypt `scripts/deploy_compose.sh` obsługuje lokalny/single-host Compose, ale nie zastępuje konfiguracji konkretnego hosta, rejestru obrazów, TLS, backupów i sekretów.
-2. **Wybrać jedno źródło Housing Studio.** Obraz CAD i CI używają `components/housing-studio`; katalog główny i vendor nadal są rozbieżnymi kopiami wymagającymi konsolidacji.
+2. **Wybrać jedno źródło Housing Studio.** Główny obraz, obraz CAD i CI używają `components/housing-studio`; katalog główny i vendor nadal są duplikatami wymagającymi konsolidacji.
 3. **Dodać lock/constraints zależności.** `httpx2` naprawia obecny TestClient, lecz otwarte zakresy wersji nadal mogą zmienić środowisko bez zmiany źródeł.
 4. **Rozstrzygnąć politykę dużych artefaktów.** Dowody release powinny mieć jawny manifest i proces odtworzenia; artefakty instalacyjne `*.egg-info` zostały usunięte ze źródeł i ponownie ignorowane.
 5. **Zaktualizować dowody intencji.** Dodać kuratorowany task/ticket 0.5.0, powiązać changelog z plikami/symbolami i wykluczyć wygenerowane artefakty z analizy `todo2code`.

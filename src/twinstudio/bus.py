@@ -235,6 +235,18 @@ class CommandBus:
             case "generation.request":
                 permission = "artifact.generate"
                 event_type, data = "GenerationRequested", dict(payload)
+            case "generation.complete":
+                permission = "artifact.generate"
+                artifacts = [ArtifactRecord.model_validate(item) for item in payload.get("artifacts", [])]
+                objects = [ObjectNode.model_validate(item) for item in payload.get("objects", [])]
+                event_type, data = "GenerationCompleted", {
+                    **dict(payload),
+                    "artifacts": [item.model_dump(mode="json") for item in artifacts],
+                    "objects": [item.model_dump(mode="json") for item in objects],
+                }
+            case "generation.fail":
+                permission = "artifact.generate"
+                event_type, data = "GenerationFailed", dict(payload)
             case "simulation.request":
                 permission = "simulation.run"
                 event_type, data = "SimulationRunRequested", dict(payload)

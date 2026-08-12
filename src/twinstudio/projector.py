@@ -97,6 +97,13 @@ def _artifact_attached(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
             node.artifact_uris.append(artifact.uri)
 
 
+def _generation_completed(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
+    for item in data.get("artifacts", []):
+        _artifact_attached(snapshot, {"artifact": item})
+    for item in data.get("objects", []):
+        _object_upserted(snapshot, {"object": item})
+
+
 def _annotation_created(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
     annotation = Annotation.model_validate(data["annotation"])
     snapshot.annotations[annotation.uri] = annotation
@@ -232,6 +239,7 @@ _EVENT_HANDLERS: dict[str, EventHandler] = {
     "ObjectUpserted": _object_upserted,
     "ObjectRemoved": _object_removed,
     "ArtifactAttached": _artifact_attached,
+    "GenerationCompleted": _generation_completed,
     "AnnotationCreated": _annotation_created,
     "AnnotationStatusChanged": _annotation_status_changed,
     "ChangePlanCreated": _change_plan_created,
@@ -263,7 +271,7 @@ _AUDIT_ONLY_EVENTS = {
     "SimulationRunRequested",
     "SimulationRunCompleted",
     "GenerationRequested",
-    "GenerationCompleted",
+    "GenerationFailed",
 }
 
 

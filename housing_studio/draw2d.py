@@ -43,6 +43,8 @@ class Polyline2D:
     points: list[tuple[float, float]]
     closed: bool = False
     layer: LayerKey = "visible_edges"
+    object_key: str | None = None
+    projection_entity: str | None = None
 
 
 @dataclass(slots=True)
@@ -399,9 +401,20 @@ def _lid_side_view(config: ProjectConfig) -> View2D:
 def _assembly_front_view(config: ProjectConfig) -> View2D:
     d = config.dimensions
     view = View2D("Front", d.external_width, d.total_height)
-    view.add(_rect(0, 0, d.external_width, d.base_height, "visible_edges"))
+    base_outline = _rect(0, 0, d.external_width, d.base_height, "visible_edges")
+    base_outline.object_key = "part/base"
+    base_outline.projection_entity = "front.base.outer-wall"
+    view.add(base_outline)
     lid_points = [(x, y + d.base_height) for x, y in _lid_front_polygon(config)]
-    view.add(Polyline2D(lid_points, closed=True, layer="visible_edges"))
+    view.add(
+        Polyline2D(
+            lid_points,
+            closed=True,
+            layer="visible_edges",
+            object_key="part/lid",
+            projection_entity="front.lid.outer-slope",
+        )
+    )
     view.add(Line2D((0, d.base_height), (d.external_width, d.base_height), "datums"))
     view.add(
         Dimension2D((0, 0), (d.external_width, 0), -10, f"{d.external_width:.2f}", "horizontal"),
@@ -414,8 +427,19 @@ def _assembly_front_view(config: ProjectConfig) -> View2D:
 def _assembly_top_view(config: ProjectConfig) -> View2D:
     d = config.dimensions
     view = View2D("Top", d.external_width, d.external_depth)
-    view.add(_rect(0, 0, d.external_width, d.external_depth, "visible_edges"))
-    view.add(_rect(d.lid_side_inset, d.lid_front_inset, d.top_width, d.top_depth, "visible_edges"))
+    base_outline = _rect(0, 0, d.external_width, d.external_depth, "visible_edges")
+    base_outline.object_key = "part/base"
+    base_outline.projection_entity = "top.base.outer-footprint"
+    lid_outline = _rect(
+        d.lid_side_inset,
+        d.lid_front_inset,
+        d.top_width,
+        d.top_depth,
+        "visible_edges",
+    )
+    lid_outline.object_key = "part/lid"
+    lid_outline.projection_entity = "top.lid.outer-top"
+    view.add(base_outline, lid_outline)
     if config.feature_layers.pcb_reference.enabled:
         view.add(_board_outline(config, "A"), _board_outline(config, "B"))
     view.add(
@@ -429,9 +453,20 @@ def _assembly_top_view(config: ProjectConfig) -> View2D:
 def _assembly_side_view(config: ProjectConfig) -> View2D:
     d = config.dimensions
     view = View2D("Side", d.external_depth, d.total_height)
-    view.add(_rect(0, 0, d.external_depth, d.base_height, "visible_edges"))
+    base_outline = _rect(0, 0, d.external_depth, d.base_height, "visible_edges")
+    base_outline.object_key = "part/base"
+    base_outline.projection_entity = "side.base.outer-wall"
+    view.add(base_outline)
     lid_points = [(x, y + d.base_height) for x, y in _lid_side_polygon(config)]
-    view.add(Polyline2D(lid_points, closed=True, layer="visible_edges"))
+    view.add(
+        Polyline2D(
+            lid_points,
+            closed=True,
+            layer="visible_edges",
+            object_key="part/lid",
+            projection_entity="side.lid.outer-slope",
+        )
+    )
     center = (config.hinge.axis_y, d.base_height + config.hinge.axis_z_offset_from_base_top)
     if config.feature_layers.hinge.enabled:
         view.add(
@@ -717,7 +752,18 @@ def export_svg(view: View2D, config: ProjectConfig, path: Path) -> None:
             elif isinstance(primitive, Polyline2D):
                 pts = " ".join(f"{sx(x):.3f},{sy(y):.3f}" for x, y in primitive.points)
                 tag = "polygon" if primitive.closed else "polyline"
-                parts.append(f'<{tag} points="{pts}"/>')
+                metadata = ""
+                if primitive.object_key:
+                    xs = [sx(x) for x, _ in primitive.points]
+                    ys = [sy(y) for _, y in primitive.points]
+                    bbox = f"{min(xs):.3f},{min(ys):.3f},{max(xs):.3f},{max(ys):.3f}"
+                    metadata += f' data-object-key="{html.escape(primitive.object_key)}"'
+                    metadata += f' data-selection-bbox="{bbox}"'
+                if primitive.projection_entity:
+                    metadata += (
+                        f' data-projection-entity="{html.escape(primitive.projection_entity)}"'
+                    )
+                parts.append(f'<{tag}{metadata} points="{pts}"/>')
             elif isinstance(primitive, Circle2D):
                 parts.append(f'<circle cx="{sx(primitive.center[0]):.3f}" cy="{sy(primitive.center[1]):.3f}" r="{primitive.radius:.3f}"/>')
             elif isinstance(primitive, Text2D):

@@ -109,9 +109,12 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "viewer2d.projection.ready" in javascript
     assert "viewer2d.projection.unavailable" in javascript
     assert "polygon-order-fallback" in javascript
+    assert "assembly-polygon-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
-    assert 'src="/static/app.js?v=20260812-tab-pdf1"' in HTML.read_text(encoding="utf-8")
+    assert 'src="/static/app.js?v=20260812-cad-regeneration1"' in HTML.read_text(
+        encoding="utf-8"
+    )
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
     assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
     assert 'data-object-uri="poa://demo/demo-rpi5@main/part/base"' in front_svg

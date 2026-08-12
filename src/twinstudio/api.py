@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from base64 import b64decode
 from binascii import Error as Base64Error
 from contextlib import asynccontextmanager
@@ -23,6 +24,7 @@ from twinstudio.artifacts import (
 )
 from twinstudio.auth import AuthService
 from twinstudio.bus import CommandBus, CommandRejected, QueryService
+from twinstudio.cad_regeneration import generate_project_preview
 from twinstudio.change_planner import ChangePlanner
 from twinstudio.domain import (
     Annotation,
@@ -69,6 +71,7 @@ from twinstudio.mqtt_bus import publisher_from_settings
 from twinstudio.observability import (
     UiContext,
     UiContextStore,
+    emit_generation_observation,
     emit_problem,
     emit_request_observation,
     load_error_playbook,
@@ -113,6 +116,7 @@ mcp_gateway = McpGateway(
     ui_contexts,
     ERROR_ROOT,
 )
+_cad_tasks: set[asyncio.Task[Any]] = set()
 
 
 @asynccontextmanager
@@ -120,7 +124,14 @@ async def lifespan(_: FastAPI):
     example = EXAMPLES_ROOT / "rpi5-camera3" / "project.json"
     if example.exists() and store.current_version("demo-rpi5") == 0:
         seed_from_file(store, publisher, example)
-    yield
+    try:
+        yield
+    finally:
+        pending = list(_cad_tasks)
+        for task in pending:
+            task.cancel()
+        if pending:
+            await asyncio.gather(*pending, return_exceptions=True)
 
 
 app = FastAPI(
@@ -326,6 +337,168 @@ def _run_command(
     )
 
 
+def _latest_cad_job(project_id: str) -> str | None:
+    requests = [item for item in store.load(project_id) if item.event_type == "GenerationRequested"]
+    return str(requests[-1].data.get("job_id")) if requests else None
+
+
+def _cad_job_context(project_id: str, job_id: str) -> dict[str, Any]:
+    request = next(
+        (
+            item
+            for item in reversed(store.load(project_id))
+            if item.event_type == "GenerationRequested" and item.data.get("job_id") == job_id
+        ),
+        None,
+    )
+    if request is None:
+        return {}
+    return {
+        key: request.data.get(key)
+        for key in ("plan_id", "source_event_id", "target_uris", "prompt")
+    }
+
+
+async def _complete_cad_regeneration(
+    project_id: str,
+    actor: str,
+    job_id: str,
+    snapshot,
+    prompt: str,
+) -> None:
+    try:
+        result = await asyncio.to_thread(
+            generate_project_preview,
+            snapshot,
+            settings.data_dir,
+            job_id,
+            prompt=prompt,
+        )
+        latest = _latest_cad_job(project_id)
+        context = _cad_job_context(project_id, job_id)
+        if latest != job_id:
+            stored = _run_command(
+                project_id,
+                "generation.complete",
+                actor,
+                {
+                    "job_id": job_id,
+                    "status": "superseded",
+                    "superseded_by": latest,
+                    "artifacts": [],
+                    "objects": [],
+                    "manifest_path": result.manifest_path,
+                    **context,
+                },
+            )
+        else:
+            stored = _run_command(
+                project_id,
+                "generation.complete",
+                actor,
+                {
+                    "job_id": job_id,
+                    "status": "completed",
+                    "revision": snapshot.revision,
+                    "manifest_path": result.manifest_path,
+                    "mapped_parameters": result.mapped_parameters,
+                    "artifacts": [item.model_dump(mode="json") for item in result.artifacts],
+                    "objects": [item.model_dump(mode="json") for item in result.objects],
+                    **context,
+                },
+            )
+        await hub.broadcast(project_id, {"events": [item.model_dump(mode="json") for item in stored]})
+        emit_generation_observation(
+            code=("CAD_REGENERATION_SUPERSEDED" if latest != job_id else "CAD_REGENERATION_COMPLETED"),
+            project_id=project_id,
+            job_id=job_id,
+            status=("superseded" if latest != job_id else "completed"),
+            details={
+                "revision": snapshot.revision,
+                "artifact_count": len(result.artifacts),
+                "manifest": result.manifest_path,
+                "superseded_by": latest if latest != job_id else None,
+            },
+        )
+    except asyncio.CancelledError:
+        raise
+    except Exception as exc:
+        problem = make_problem(
+            code="CAD_REGENERATION_FAILED",
+            message=str(exc),
+            source="twinstudio.cad_regeneration",
+            operation="generate_project_preview",
+            correlation_id=job_id,
+            project_id=project_id,
+            retryable=True,
+            ui_context=ui_contexts.get(project_id),
+            details={"job_id": job_id, "exception_type": type(exc).__name__},
+        )
+        emit_problem(problem)
+        try:
+            stored = _run_command(
+                project_id,
+                "generation.fail",
+                actor,
+                {
+                    "job_id": job_id,
+                    "status": "failed",
+                    "code": "CAD_REGENERATION_FAILED",
+                    "error": str(exc)[:4000],
+                    "registry_uri": problem.registry_uri,
+                    **_cad_job_context(project_id, job_id),
+                },
+            )
+            await hub.broadcast(project_id, {"events": [item.model_dump(mode="json") for item in stored]})
+        except Exception:
+            return
+
+
+def _queue_cad_regeneration(
+    project_id: str,
+    actor: str,
+    *,
+    source_event_id: str,
+    plan_id: str | None,
+    target_uris: list[str],
+    prompt: str,
+) -> tuple[dict[str, Any], list[Any]]:
+    if not settings.cad_regeneration_enabled:
+        return {"status": "disabled", "code": "CAD_REGENERATION_DISABLED"}, []
+    snapshot = queries.project(project_id)
+    job_id = f"cad-{project_id}-{snapshot.stream_version + 1}-{uuid4().hex[:8]}"
+    request = {
+        "job_id": job_id,
+        "status": "queued",
+        "revision": snapshot.revision,
+        "source_event_id": source_event_id,
+        "plan_id": plan_id,
+        "target_uris": target_uris,
+        "prompt": prompt,
+        "generator": "housing-studio",
+    }
+    stored = _run_command(project_id, "generation.request", actor, request)
+    emit_generation_observation(
+        code="CAD_REGENERATION_QUEUED",
+        project_id=project_id,
+        job_id=job_id,
+        status="queued",
+        details={
+            "revision": snapshot.revision,
+            "source_event_id": source_event_id,
+            "target_uris": target_uris,
+        },
+    )
+    generation_snapshot = queries.project(project_id)
+    task = asyncio.create_task(
+        _complete_cad_regeneration(project_id, actor, job_id, generation_snapshot, prompt),
+        name=f"cad-regeneration:{job_id}",
+    )
+    _cad_tasks.add(task)
+    task.add_done_callback(_cad_tasks.discard)
+    return request, stored
+
+
 def _transition_evidence_gaps(
     snapshot,
     blueprint: LifecycleBlueprint,
@@ -457,6 +630,8 @@ def health() -> dict[str, Any]:
         "revision": settings.build_sha,
         "database": settings.database_url.split(":", 1)[0],
         "mqtt_enabled": settings.mqtt_enabled,
+        "cad_regeneration_enabled": settings.cad_regeneration_enabled,
+        "cad_regeneration_in_flight": len(_cad_tasks),
         "litellm_configured": bool(settings.litellm_model),
         "dev_auth_bypass": settings.dev_auth_bypass,
         "feature_lens_catalog": feature_lenses.catalog.catalog_version,
@@ -758,6 +933,9 @@ def get_change_history(
         "ChangePlanCreated",
         "ChangeApplied",
         "ChangeReverted",
+        "GenerationRequested",
+        "GenerationCompleted",
+        "GenerationFailed",
     }
     result: list[dict[str, Any]] = []
     for event in reversed([item for item in events if item.event_type in relevant][-limit:]):
@@ -801,10 +979,15 @@ def get_change_queue(
     snapshot = queries.project(project_id)
     events, reverted = _change_history(project_id)
     applications: dict[str, list[Any]] = {}
+    generations_by_plan: dict[str, list[Any]] = {}
     for event in events:
         if event.event_type == "ChangeApplied" and event.data.get("plan_id"):
             applications.setdefault(str(event.data["plan_id"]), []).append(event)
-    active_statuses = {"ready", "needs_detail", "waiting_cad"}
+        if event.event_type in {"GenerationRequested", "GenerationCompleted", "GenerationFailed"}:
+            generation_plan_id = event.data.get("plan_id")
+            if generation_plan_id:
+                generations_by_plan.setdefault(str(generation_plan_id), []).append(event)
+    active_statuses = {"ready", "needs_detail", "waiting_cad", "cad_failed"}
     tasks: list[dict[str, Any]] = []
     for plan in snapshot.change_plans.values():
         plan_applications = applications.get(plan.plan_id, [])
@@ -814,13 +997,37 @@ def get_change_queue(
         )
         operation_kinds = [str(getattr(operation.kind, "value", operation.kind)) for operation in plan.operations]
         deferred_count = 0
+        generation_events = generations_by_plan.get(plan.plan_id, [])
+        latest_generation = generation_events[-1] if generation_events else None
         if active_application is not None:
             deferred_count = len(active_application.data.get("deferred_operations", []))
-            status = "waiting_cad" if deferred_count else "completed"
-            updated_at = active_application.occurred_at.isoformat()
+            if latest_generation and latest_generation.event_type == "GenerationRequested":
+                status = "waiting_cad"
+                updated_at = latest_generation.occurred_at.isoformat()
+            elif latest_generation and latest_generation.event_type == "GenerationFailed":
+                status = "cad_failed"
+                updated_at = latest_generation.occurred_at.isoformat()
+            else:
+                status = "waiting_cad" if deferred_count else "completed"
+                updated_at = (
+                    latest_generation.occurred_at.isoformat()
+                    if latest_generation
+                    else active_application.occurred_at.isoformat()
+                )
         elif plan_applications:
-            status = "undone"
-            updated_at = plan_applications[-1].occurred_at.isoformat()
+            if latest_generation and latest_generation.event_type == "GenerationRequested":
+                status = "waiting_cad"
+                updated_at = latest_generation.occurred_at.isoformat()
+            elif latest_generation and latest_generation.event_type == "GenerationFailed":
+                status = "cad_failed"
+                updated_at = latest_generation.occurred_at.isoformat()
+            else:
+                status = "undone"
+                updated_at = (
+                    latest_generation.occurred_at.isoformat()
+                    if latest_generation
+                    else plan_applications[-1].occurred_at.isoformat()
+                )
         elif plan.base_revision != snapshot.revision:
             status = "stale"
             updated_at = plan.created_at.isoformat()
@@ -849,6 +1056,11 @@ def get_change_queue(
                 "deferred_count": deferred_count,
                 "created_at": plan.created_at.isoformat(),
                 "updated_at": updated_at,
+                "cad_job_id": (
+                    str(latest_generation.data.get("job_id"))
+                    if latest_generation is not None
+                    else None
+                ),
             }
         )
     tasks.sort(key=lambda task: (task["updated_at"], task["task_id"]), reverse=True)
@@ -1068,19 +1280,40 @@ async def apply_project_dsl(
     if auto_apply:
         authorize_project(project_id, user, "change.apply")
         current = queries.project(project_id)
-        stored_events.extend(
-            _run_command(
+        reversible_patches: list[dict[str, Any]] = []
+        for patch in safe_patches:
+            target = current.objects.get(patch["object_uri"])
+            previous = target.parameters.get(patch["parameter"]) if target else None
+            reversible_patches.append(
+                {
+                    **patch,
+                    "previous_parameter": previous.model_dump(mode="json") if previous else None,
+                }
+            )
+        applied_events = _run_command(
                 project_id,
                 "change.apply",
                 user.email,
                 {
                     "new_revision": f"{current.revision}-dsl-{execution.execution_id[-8:]}",
-                    "parameter_patches": safe_patches,
+                    "parameter_patches": reversible_patches,
                     "approval_state": "approved",
                     "dsl_execution_id": execution.execution_id,
                 },
             )
+        stored_events.extend(applied_events)
+        applied_event = next(item for item in applied_events if item.event_type == "ChangeApplied")
+        generation, generation_events = _queue_cad_regeneration(
+            project_id,
+            user.email,
+            source_event_id=applied_event.event_id,
+            plan_id=None,
+            target_uris=sorted({item["object_uri"] for item in reversible_patches}),
+            prompt=f"TwinScript: {parsed.document.metadata.name}",
         )
+        stored_events.extend(generation_events)
+    else:
+        generation = {"status": "not_required"}
 
     execution = execution.model_copy(
         update={
@@ -1119,6 +1352,7 @@ async def apply_project_dsl(
             "events": events_payload,
             "artifact_keys": artifact_keys,
             "auto_applied_parameter_patches": safe_patches if auto_apply else [],
+            "generation": generation,
         }
     )
     return payload
@@ -1269,8 +1503,24 @@ async def apply_change_plan(
                 )
             )
         )
+    generation: dict[str, Any] = {"status": "not_required"}
+    if payload["parameter_patches"]:
+        applied_event = next(item for item in stored if item.event_type == "ChangeApplied")
+        generation, generation_events = _queue_cad_regeneration(
+            project_id,
+            user.email,
+            source_event_id=applied_event.event_id,
+            plan_id=plan.plan_id,
+            target_uris=sorted({item["object_uri"] for item in payload["parameter_patches"]}),
+            prompt=plan.prompt,
+        )
+        stored.extend(generation_events)
     await hub.broadcast(project_id, {"events": [item.model_dump(mode="json") for item in stored]})
-    return {"result": payload, "events": [item.model_dump(mode="json") for item in stored]}
+    return {
+        "result": payload,
+        "generation": generation,
+        "events": [item.model_dump(mode="json") for item in stored],
+    }
 
 
 @app.post("/api/v1/projects/{project_id}/change-history/{event_id}/undo")
@@ -1348,8 +1598,22 @@ async def undo_change(
                 )
             )
         )
+    reverted_event = next(item for item in stored if item.event_type == "ChangeReverted")
+    generation, generation_events = _queue_cad_regeneration(
+        project_id,
+        user.email,
+        source_event_id=reverted_event.event_id,
+        plan_id=payload.get("plan_id"),
+        target_uris=sorted({item["object_uri"] for item in inverse}),
+        prompt=f"Undo change {event_id}",
+    )
+    stored.extend(generation_events)
     await hub.broadcast(project_id, {"events": [item.model_dump(mode="json") for item in stored]})
-    return {"result": payload, "events": [item.model_dump(mode="json") for item in stored]}
+    return {
+        "result": payload,
+        "generation": generation,
+        "events": [item.model_dump(mode="json") for item in stored],
+    }
 
 
 @app.post("/api/v1/projects/{project_id}/simulations/power")

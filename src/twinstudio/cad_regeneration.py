@@ -1,0 +1,222 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+from twinstudio.domain import ArtifactRecord, ObjectNode, ProjectSnapshot
+
+BASE_SUFFIX = "/part/base"
+LID_SUFFIX = "/part/lid"
+
+
+@dataclass(frozen=True, slots=True)
+class CadRegenerationResult:
+    job_id: str
+    manifest_path: str
+    artifacts: list[ArtifactRecord]
+    objects: list[ObjectNode]
+    mapped_parameters: list[str]
+
+
+def _part(snapshot: ProjectSnapshot, suffix: str) -> ObjectNode:
+    node = next((item for uri, item in snapshot.objects.items() if uri.endswith(suffix)), None)
+    if node is None:
+        raise ValueError(f"Project has no parametric housing object ending with {suffix!r}")
+    return node
+
+
+def _number(node: ObjectNode, parameter: str, default: float) -> float:
+    value = node.parameters.get(parameter)
+    if value is None or isinstance(value.value, bool) or not isinstance(value.value, (int, float)):
+        return default
+    return float(value.value)
+
+
+def housing_config_from_snapshot(snapshot: ProjectSnapshot):
+    """Translate canonical TwinStudio parameters into Housing Studio configuration."""
+
+    from housing_studio.models import default_project_config
+
+    base = _part(snapshot, BASE_SUFFIX)
+    lid = _part(snapshot, LID_SUFFIX)
+    config = default_project_config()
+    dimensions = config.dimensions.model_copy(
+        update={
+            "external_width": _number(base, "width", config.dimensions.external_width),
+            "external_depth": _number(base, "depth", config.dimensions.external_depth),
+            "base_height": _number(base, "height", config.dimensions.base_height),
+            "total_height": _number(lid, "total_height", config.dimensions.total_height),
+            "wall_thickness": _number(base, "wall_thickness", config.dimensions.wall_thickness),
+            "floor_thickness": _number(base, "floor_thickness", config.dimensions.floor_thickness),
+            "lid_top_thickness": _number(lid, "wall_thickness", config.dimensions.lid_top_thickness),
+            "lid_vertical_lower_section": _number(
+                lid,
+                "vertical_joint_section",
+                config.dimensions.lid_vertical_lower_section,
+            ),
+        }
+    )
+    artifact_options = config.artifacts.model_copy(
+        update={
+            "export_step": False,
+            "export_stl": True,
+            "export_obj": False,
+            "export_glb": False,
+            "export_dxf": False,
+            "export_svg": True,
+            "export_pdf": False,
+            "export_open_preview": False,
+            "create_zip": False,
+        }
+    )
+    metadata = config.metadata.model_copy(
+        update={
+            "name": snapshot.name,
+            "revision": snapshot.revision,
+            "description": snapshot.description or config.metadata.description,
+        }
+    )
+    return type(config).model_validate(
+        {
+            **config.model_dump(mode="python"),
+            "metadata": metadata.model_dump(mode="python"),
+            "dimensions": dimensions.model_dump(mode="python"),
+            "artifacts": artifact_options.model_dump(mode="python"),
+        }
+    )
+
+
+def _manifest_record(manifest: dict[str, Any], path: str) -> dict[str, Any]:
+    record = next((item for item in manifest.get("artifacts", []) if item.get("path") == path), None)
+    if record is None:
+        raise ValueError(f"CAD generator did not produce required artifact {path!r}")
+    return record
+
+
+def _relative_data_path(data_dir: Path, path: Path) -> str:
+    resolved_data = data_dir.resolve()
+    resolved = path.resolve()
+    if resolved_data not in resolved.parents:
+        raise ValueError("Generated CAD artifact escaped TWINSTUDIO_DATA_DIR")
+    if not resolved.is_file():
+        raise ValueError(f"Generated CAD artifact is missing: {resolved}")
+    return resolved.relative_to(resolved_data).as_posix()
+
+
+def records_from_manifest(
+    snapshot: ProjectSnapshot,
+    data_dir: Path,
+    job_id: str,
+    manifest: dict[str, Any],
+) -> CadRegenerationResult:
+    """Map generated preview files back onto stable project artifact URIs."""
+
+    base = _part(snapshot, BASE_SUFFIX)
+    lid = _part(snapshot, LID_SUFFIX)
+    enclosure = next(
+        (item for uri, item in snapshot.objects.items() if uri.endswith("/assembly/enclosure")),
+        None,
+    )
+    def artifact_uri(key: str) -> str:
+        existing = next((uri for uri in snapshot.artifacts if uri.endswith(f"/artifact/{key}")), None)
+        if existing is None:
+            raise ValueError(f"Project has no stable artifact URI for {key!r}")
+        return existing
+
+    job_root = data_dir / "cad-jobs" / job_id
+    revision = snapshot.revision
+    mappings = [
+        ("base-stl", "3d/base.stl", "stl", "model/stl", base.uri),
+        ("lid-stl", "3d/lid.stl", "stl", "model/stl", lid.uri),
+        (
+            "assembly-front",
+            "2d/assembly/assembly_front.svg",
+            "drawing_2d",
+            "image/svg+xml",
+            enclosure.uri if enclosure else None,
+        ),
+        (
+            "assembly-top",
+            "2d/assembly/assembly_top.svg",
+            "drawing_2d",
+            "image/svg+xml",
+            enclosure.uri if enclosure else None,
+        ),
+        (
+            "assembly-side",
+            "2d/assembly/assembly_side.svg",
+            "drawing_2d",
+            "image/svg+xml",
+            enclosure.uri if enclosure else None,
+        ),
+    ]
+    artifacts: list[ArtifactRecord] = []
+    for key, generated_path, kind, media_type, object_uri in mappings:
+        source = job_root / generated_path
+        manifest_record = _manifest_record(manifest, generated_path)
+        artifacts.append(
+            ArtifactRecord(
+                uri=artifact_uri(key),
+                name=source.name,
+                kind=kind,
+                path=_relative_data_path(data_dir, source),
+                media_type=media_type,
+                object_uri=object_uri,
+                revision=revision,
+                sha256=manifest_record.get("sha256"),
+                size_bytes=manifest_record.get("size_bytes"),
+                generated=True,
+                metadata={
+                    "generator": "housing-studio",
+                    "cad_job_id": job_id,
+                    "manifest": f"cad-jobs/{job_id}/manifest.json",
+                },
+            )
+        )
+
+    artifact_by_key = {item.uri.rsplit("/", 1)[-1]: item for item in artifacts}
+    object_updates: list[ObjectNode] = []
+    for node, artifact_key in ((base, "base-stl"), (lid, "lid-stl")):
+        metadata = dict(node.metadata)
+        metadata["viewer_mesh"] = artifact_by_key[artifact_key].path
+        metadata["cad_job_id"] = job_id
+        object_updates.append(node.model_copy(update={"revision": revision, "metadata": metadata}))
+
+    mapped_parameters = [
+        f"{base.uri}:width",
+        f"{base.uri}:depth",
+        f"{base.uri}:height",
+        f"{base.uri}:wall_thickness",
+        f"{base.uri}:floor_thickness",
+        f"{lid.uri}:wall_thickness",
+        f"{lid.uri}:total_height",
+        f"{lid.uri}:vertical_joint_section",
+    ]
+    return CadRegenerationResult(
+        job_id=job_id,
+        manifest_path=f"cad-jobs/{job_id}/manifest.json",
+        artifacts=artifacts,
+        objects=object_updates,
+        mapped_parameters=mapped_parameters,
+    )
+
+
+def generate_project_preview(
+    snapshot: ProjectSnapshot,
+    data_dir: Path,
+    job_id: str,
+    *,
+    prompt: str | None = None,
+) -> CadRegenerationResult:
+    from housing_studio.artifacts import generate_artifacts
+
+    config = housing_config_from_snapshot(snapshot)
+    manifest = generate_artifacts(
+        config,
+        data_dir / "cad-jobs",
+        job_id=job_id,
+        source_prompt=prompt,
+        interpretation_mode="twinstudio-parameter-regeneration",
+    )
+    return records_from_manifest(snapshot, data_dir, job_id, manifest)

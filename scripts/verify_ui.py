@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import shutil
@@ -42,14 +43,14 @@ def main() -> int:
             def serve_legacy_projection_svg(route) -> None:
                 response = route.fetch()
                 body = re.sub(
-                    r' data-projection-entity="[^"]+" data-selection-bbox="[^"]+"',
+                    r' data-object-key="[^"]+" data-projection-entity="[^"]+" data-selection-bbox="[^"]+"',
                     "",
                     response.text(),
                 )
                 route.fulfill(response=response, body=body)
 
             context.route(
-                re.compile(r".*/artifacts/assembly-front\?projection-regions=2$"),
+                re.compile(r".*/artifacts/assembly-front\?.*projection-regions=2$"),
                 serve_legacy_projection_svg,
             )
         page = context.new_page()
@@ -125,12 +126,12 @@ def main() -> int:
         assert drawing_box, "Front drawing canvas has no layout box"
         page.mouse.move(
             drawing_box["x"] + drawing_box["width"] * 0.24,
-            drawing_box["y"] + drawing_box["height"] * 0.50,
+            drawing_box["y"] + drawing_box["height"] * 0.68,
         )
         page.mouse.down()
         page.mouse.move(
             drawing_box["x"] + drawing_box["width"] * 0.76,
-            drawing_box["y"] + drawing_box["height"] * 0.72,
+            drawing_box["y"] + drawing_box["height"] * 0.78,
             steps=5,
         )
         page.mouse.up()
@@ -145,6 +146,7 @@ def main() -> int:
         assert "Lower base" in page.locator("#objectTree .tree-row.selected").inner_text()
         plan_verified = False
         automatic_note_verified = False
+        artifacts_auto_reloaded = False
         undo_verified = False
         queue_tree_marker_verified = False
         queue_screenshot = None
@@ -186,10 +188,22 @@ def main() -> int:
                 f"{args.url}/api/v1/projects/{project_id}"
             ).json()["project"]
             base_uri = "poa://demo/demo-rpi5@main/part/base"
+            base_artifact_uri = "poa://demo/demo-rpi5@main/artifact/base-stl"
+            artifact_hash_before = project_before["artifacts"][base_artifact_uri].get(
+                "sha256"
+            ) or hashlib.sha256(
+                page.request.get(
+                    f"{args.url}/api/v1/projects/{project_id}/artifacts/base-stl"
+                ).body()
+            ).hexdigest()
             previous_height = float(
                 project_before["objects"][base_uri]["parameters"]["height"]["value"]
             )
             automatic_height = previous_height - 4
+            regeneration_actions_before = page.evaluate(
+                "[...new URL(location.href).searchParams.getAll('args')]"
+                ".filter(item => item.includes('|artifacts.regenerated|')).length"
+            )
             page.locator("#annotationText").fill("zmniejsz wysokosc o 4mm")
             page.locator("#saveAnnotation").click()
             page.wait_for_function(
@@ -198,6 +212,12 @@ def main() -> int:
             )
             page.locator("#changeHistory [data-undo-event]").first.wait_for(
                 timeout=args.timeout_ms
+            )
+            page.wait_for_function(
+                "expected => [...new URL(location.href).searchParams.getAll('args')]"
+                ".filter(item => item.includes('|artifacts.regenerated|')).length > expected",
+                arg=regeneration_actions_before,
+                timeout=args.timeout_ms,
             )
             project_after_apply = page.request.get(
                 f"{args.url}/api/v1/projects/{project_id}"
@@ -210,7 +230,15 @@ def main() -> int:
                 )
                 == automatic_height
             )
+            artifact_hash_after_apply = project_after_apply["artifacts"][
+                base_artifact_uri
+            ]["sha256"]
+            assert artifact_hash_after_apply != artifact_hash_before
             automatic_note_verified = True
+            regeneration_actions_after_apply = page.evaluate(
+                "[...new URL(location.href).searchParams.getAll('args')]"
+                ".filter(item => item.includes('|artifacts.regenerated|')).length"
+            )
             page.locator("#changeHistory [data-undo-event]").first.click()
             page.wait_for_function(
                 "document.querySelector('#changeHistory')?.textContent.includes('Cofnięcie zmiany')",
@@ -229,10 +257,24 @@ def main() -> int:
                 timeout=args.timeout_ms,
             )
             page.wait_for_function(
+                "expected => [...new URL(location.href).searchParams.getAll('args')]"
+                ".filter(item => item.includes('|artifacts.regenerated|')).length > expected",
+                arg=regeneration_actions_after_apply,
+                timeout=args.timeout_ms,
+            )
+            project_after_undo = page.request.get(
+                f"{args.url}/api/v1/projects/{project_id}"
+            ).json()["project"]
+            assert (
+                project_after_undo["artifacts"][base_artifact_uri]["sha256"]
+                == artifact_hash_before
+            )
+            page.wait_for_function(
                 "[...new URL(location.href).searchParams.getAll('args')]"
                 ".some(item => item.includes('|change.undo.completed|'))",
                 timeout=args.timeout_ms,
             )
+            artifacts_auto_reloaded = True
             undo_verified = True
         page.wait_for_function(
             """async expected => {
@@ -407,6 +449,7 @@ def main() -> int:
                 not page.locator("#applyButton").is_disabled() if plan_verified else None
             ),
             "automatic_note_execution": automatic_note_verified,
+            "artifacts_auto_reloaded_after_apply_and_undo": artifacts_auto_reloaded,
             "undo_from_change_history": undo_verified,
             "change_queue_tree_marker": queue_tree_marker_verified,
             "queue_screenshot": str(queue_screenshot) if queue_screenshot else None,

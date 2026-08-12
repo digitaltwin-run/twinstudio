@@ -43,5 +43,9 @@ def test_svg_keeps_disabled_layers_for_interactive_preview(tmp_path: Path) -> No
     export_all_2d(config, tmp_path)
     source = (tmp_path / "base" / "base_front.svg").read_text(encoding="utf-8")
     assert 'data-layer-key="hidden_edges"' in source
+    assembly_front = (tmp_path / "assembly" / "assembly_front.svg").read_text(encoding="utf-8")
+    assert 'data-object-key="part/base"' in assembly_front
+    assert 'data-projection-entity="front.base.outer-wall"' in assembly_front
+    assert 'data-selection-bbox=' in assembly_front
     assert 'data-default-enabled="false"' in source
     assert 'style="display:none"' in source

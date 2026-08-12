@@ -250,3 +250,43 @@ def emit_request_observation(
     payload["dsl"] = "\n".join(dsl_lines)
     observation_logs.append(payload)
     logger.info(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
+
+
+def emit_generation_observation(
+    *,
+    code: str,
+    project_id: str,
+    job_id: str,
+    status: str,
+    details: dict[str, Any] | None = None,
+) -> None:
+    if not ERROR_CODE_PATTERN.fullmatch(code):
+        raise ValueError("Invalid observation code")
+    occurred_at = _now().isoformat()
+    payload: dict[str, Any] = {
+        "kind": "CadGeneration",
+        "schema_version": "1.0",
+        "occurred_at": occurred_at,
+        "level": "info",
+        "code": code,
+        "correlation_id": job_id,
+        "project_id": project_id,
+        "status": status,
+        "details": details or {},
+    }
+    lines = [
+        "TWINOBS 1.0",
+        'KIND "CadGeneration"',
+        'LEVEL "info"',
+        f"CODE {json.dumps(code)}",
+        f"OCCURRED_AT {json.dumps(occurred_at)}",
+        f"CORRELATION {json.dumps(job_id)}",
+        f"PROJECT {json.dumps(project_id)}",
+        f"STATUS {json.dumps(status)}",
+    ]
+    if details:
+        lines.append(f"DETAILS {json.dumps(details, ensure_ascii=False, separators=(',', ':'))}")
+    lines.append("END")
+    payload["dsl"] = "\n".join(lines)
+    observation_logs.append(payload)
+    logger.info(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))

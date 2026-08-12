@@ -319,6 +319,7 @@ with TestClient(app) as client:
             "TWINSTUDIO_BUILD_SHA": "test-revision",
             "DEV_AUTH_BYPASS": "true",
             "MQTT_ENABLED": "false",
+            "TWINSTUDIO_CAD_REGEN_ENABLED": "false",
         }
     )
     completed = subprocess.run([sys.executable, "-c", code], cwd=root, env=env, text=True, capture_output=True)
