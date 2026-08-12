@@ -177,14 +177,23 @@ def test_selected_lid_context_resolves_lower_to_as_physical_component_height(
     ).plan
 
     assert plan.unresolved_questions == []
-    assert len(plan.operations) == 1
-    operation = plan.operations[0]
+    assert len(plan.operations) == 2
+    operation, dependency = plan.operations
     assert operation.kind == "set_parameter"
     assert operation.target_uri == lid_uri
     assert operation.arguments == {"parameter": "height", "value": 12.0, "unit": "mm"}
+    assert dependency.kind == "set_parameter"
+    assert dependency.target_uri == lid_uri
+    assert dependency.arguments == {
+        "parameter": "auxiliary_boss_top_z",
+        "value": 11.0,
+        "unit": "mm",
+    }
+    assert dependency.selector["constraint"] == "AUX_BOSS_TOP_ABOVE_LID"
     payload = planner.compile_apply_payload(plan, project_snapshot)
     assert payload["parameter_patches"][0]["previous_parameter"]["value"] == 15.0
     assert payload["parameter_patches"][0]["previous_parameter"]["status"] == "derived"
+    assert payload["parameter_patches"][1]["previous_parameter"]["value"] == 14.0
 
 
 @pytest.mark.parametrize(

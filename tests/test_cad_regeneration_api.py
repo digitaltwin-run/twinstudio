@@ -111,6 +111,7 @@ with TestClient(app) as client:
         'lid_height_mm': 15.0,
         'total_height_mm': 36.0,
         'source_total_height_mm': 40.0,
+        'auxiliary_boss_top_z_mm': 14.0,
     }
     config_path = Path(os.environ['TWINSTUDIO_DATA_DIR']) / 'cad-jobs' / height_job / 'project_config.json'
     generated_config = json.loads(config_path.read_text())
@@ -151,51 +152,58 @@ with TestClient(app) as client:
         json={'prompt': 'obniż do 12mm', 'selection': lid_selection},
     )
     assert lid_plan.status_code == 200, lid_plan.text
-    lid_operation = lid_plan.json()['plan']['operations'][0]
+    lid_operations = lid_plan.json()['plan']['operations']
+    assert len(lid_operations) == 2
+    lid_operation, lid_dependency = lid_operations
     assert lid_operation['kind'] == 'set_parameter'
     assert lid_operation['target_uri'] == lid_uri
     assert lid_operation['arguments'] == {'parameter': 'height', 'value': 12.0, 'unit': 'mm'}
+    assert lid_dependency['kind'] == 'set_parameter'
+    assert lid_dependency['target_uri'] == lid_uri
+    assert lid_dependency['arguments'] == {
+        'parameter': 'auxiliary_boss_top_z',
+        'value': 11.0,
+        'unit': 'mm',
+    }
+    assert lid_dependency['selector']['constraint'] == 'AUX_BOSS_TOP_ABOVE_LID'
     lid_plan_id = lid_plan.json()['plan']['plan_id']
-    invalid_lid_apply = client.post(
+    lid_applied = client.post(
         f'/api/v1/projects/demo-rpi5/change-plans/{lid_plan_id}/apply',
         json={},
     )
-    assert invalid_lid_apply.status_code == 422, invalid_lid_apply.text
-    invalid_problem = invalid_lid_apply.json()['error']
-    assert invalid_problem['code'] == 'CAD-CHANGE-INVALID'
-    assert invalid_problem['details']['warnings'][0]['code'] == 'AUX_BOSS_TOP_ABOVE_LID'
-    unchanged_after_rejection = client.get('/api/v1/projects/demo-rpi5').json()['project']
-    assert unchanged_after_rejection['objects'][base_uri]['parameters']['height']['value'] == 25
-    assert unchanged_after_rejection['objects'][lid_uri]['parameters']['height']['value'] == 15
-
-    valid_lid_plan = client.post(
-        '/api/v1/projects/demo-rpi5/change-plans',
-        json={'prompt': 'obniż do 14mm', 'selection': lid_selection},
-    )
-    assert valid_lid_plan.status_code == 200, valid_lid_plan.text
-    valid_lid_operation = valid_lid_plan.json()['plan']['operations'][0]
-    assert valid_lid_operation['kind'] == 'set_parameter'
-    assert valid_lid_operation['target_uri'] == lid_uri
-    assert valid_lid_operation['arguments'] == {'parameter': 'height', 'value': 14.0, 'unit': 'mm'}
-    lid_applied = client.post(
-        f"/api/v1/projects/demo-rpi5/change-plans/{valid_lid_plan.json()['plan']['plan_id']}/apply",
-        json={},
-    )
     assert lid_applied.status_code == 200, lid_applied.text
-    assert lid_applied.json()['generation']['dimension_overrides'] == {'lid_height_mm': 14.0}
+    assert lid_applied.json()['generation']['dimension_overrides'] == {'lid_height_mm': 12.0}
+    lid_event = next(
+        item for item in lid_applied.json()['events'] if item['event_type'] == 'ChangeApplied'
+    )
+    patches = lid_event['data']['parameter_patches']
+    assert [(item['parameter'], item['value']) for item in patches] == [
+        ('height', 12.0),
+        ('auxiliary_boss_top_z', 11.0),
+    ]
     lid_job = lid_applied.json()['generation']['job_id']
     wait_for_generation(client, lid_job)
     lid_resized = client.get('/api/v1/projects/demo-rpi5').json()['project']
     lid_dimensions = lid_resized['objects'][lid_uri]['metadata']['cad_dimensions']
     assert lid_resized['objects'][base_uri]['parameters']['height']['value'] == 25
-    assert lid_resized['objects'][lid_uri]['parameters']['height']['value'] == 14
-    assert lid_dimensions['base_height_mm'] == 25
-    assert lid_dimensions['lid_height_mm'] == 14
-    assert lid_dimensions['total_height_mm'] == 39
-
-    lid_event = next(
-        item for item in lid_applied.json()['events'] if item['event_type'] == 'ChangeApplied'
+    assert lid_resized['objects'][lid_uri]['parameters']['height']['value'] == 12
+    assert lid_resized['objects'][lid_uri]['parameters']['auxiliary_boss_top_z']['value'] == 11
+    resized_aux_feature = next(
+        feature
+        for feature in lid_resized['objects'][lid_uri]['features']
+        if feature['uri'].endswith('/feature/aux-bosses')
     )
+    assert resized_aux_feature['parameters']['top_above_base']['value'] == 11
+    assert lid_dimensions['base_height_mm'] == 25
+    assert lid_dimensions['lid_height_mm'] == 12
+    assert lid_dimensions['total_height_mm'] == 37
+    assert lid_dimensions['auxiliary_boss_top_z_mm'] == 11
+    lid_config_path = (
+        Path(os.environ['TWINSTUDIO_DATA_DIR']) / 'cad-jobs' / lid_job / 'project_config.json'
+    )
+    lid_config = json.loads(lid_config_path.read_text())
+    assert lid_config['auxiliary_lid_bosses']['top_z_from_base_mating_plane'] == 11
+
     lid_undo = client.post(
         f"/api/v1/projects/demo-rpi5/change-history/{lid_event['event_id']}/undo"
     )
@@ -205,9 +213,17 @@ with TestClient(app) as client:
     lid_restored = client.get('/api/v1/projects/demo-rpi5').json()['project']
     restored_lid_dimensions = lid_restored['objects'][lid_uri]['metadata']['cad_dimensions']
     assert lid_restored['objects'][lid_uri]['parameters']['height']['value'] == 15
+    assert lid_restored['objects'][lid_uri]['parameters']['auxiliary_boss_top_z']['value'] == 14
+    restored_aux_feature = next(
+        feature
+        for feature in lid_restored['objects'][lid_uri]['features']
+        if feature['uri'].endswith('/feature/aux-bosses')
+    )
+    assert restored_aux_feature['parameters']['top_above_base']['value'] == 14
     assert restored_lid_dimensions['base_height_mm'] == 25
     assert restored_lid_dimensions['lid_height_mm'] == 15
     assert restored_lid_dimensions['total_height_mm'] == 40
+    assert restored_lid_dimensions['auxiliary_boss_top_z_mm'] == 14
 
     logs = client.get('/api/v1/projects/demo-rpi5/logs.dsl?limit=100').text
     assert 'CODE "CAD_REGENERATION_QUEUED"' in logs

@@ -5,7 +5,12 @@ import unicodedata
 from dataclasses import dataclass
 from typing import Any
 
-from twinstudio.cad_regeneration import physical_component_height
+from twinstudio.cad_regeneration import (
+    AUXILIARY_BOSS_TOP_PARAMETER,
+    lid_height_dependency,
+    physical_component_height,
+    physical_component_parameter,
+)
 from twinstudio.domain import (
     ChangeOperation,
     ChangeOperationKind,
@@ -64,17 +69,92 @@ class ChangePlanner:
         if self.settings.litellm_model:
             try:
                 plan = self._litellm_plan(prompt, selection, project, actor)
+                plan = self._with_cad_dependencies(plan, project)
                 self.validate_scope(plan)
                 return PlannerResult(plan, "litellm", "Structured plan produced by LiteLLM and scope-validated.")
             except LlmInvalidResponse:
                 raise
             except Exception as exc:
                 local = self._local_plan(prompt, selection, project, actor)
+                local = self._with_cad_dependencies(local, project)
                 return PlannerResult(local, "local-fallback", f"LiteLLM failed; local plan used: {exc}")
         return PlannerResult(
-            self._local_plan(prompt, selection, project, actor),
+            self._with_cad_dependencies(
+                self._local_plan(prompt, selection, project, actor),
+                project,
+            ),
             "local",
             "Deterministic local planner used because LITELLM_MODEL is empty.",
+        )
+
+    @staticmethod
+    def _with_cad_dependencies(plan: ChangePlan, project: ProjectSnapshot) -> ChangePlan:
+        operations = list(plan.operations)
+        impact = list(plan.impact)
+        assumptions = list(plan.assumptions)
+        existing_parameters = {
+            (operation.target_uri, operation.arguments.get("parameter"))
+            for operation in operations
+            if operation.kind == ChangeOperationKind.SET_PARAMETER
+        }
+        for operation in list(operations):
+            if (
+                operation.kind != ChangeOperationKind.SET_PARAMETER
+                or operation.arguments.get("parameter") != "height"
+            ):
+                continue
+            dependency = lid_height_dependency(
+                project,
+                operation.target_uri,
+                float(operation.arguments["value"]),
+            )
+            key = (operation.target_uri, AUXILIARY_BOSS_TOP_PARAMETER)
+            if dependency is None or key in existing_parameters:
+                continue
+            target_value = dependency["target_value"]
+            operations.append(
+                ChangeOperation(
+                    kind=ChangeOperationKind.SET_PARAMETER,
+                    target_uri=operation.target_uri,
+                    selector={
+                        "parameter": AUXILIARY_BOSS_TOP_PARAMETER,
+                        "scope": "selected_object",
+                        "derived_dependency_for": operation.operation_id,
+                        "constraint": "AUX_BOSS_TOP_ABOVE_LID",
+                    },
+                    arguments={
+                        "parameter": AUXILIARY_BOSS_TOP_PARAMETER,
+                        "value": target_value,
+                        "unit": "mm",
+                    },
+                    rationale=(
+                        "The auxiliary boss belongs to the selected lid and must move with the "
+                        f"lower roof; its top datum changes to {target_value:g} mm while preserving "
+                        f"{dependency['roof_embedding']:g} mm roof embedding."
+                    ),
+                    confidence=1.0,
+                    validation_steps=[
+                        "Verify the boss remains embedded in the lid roof.",
+                        "Regenerate the lid and check boss-hole continuity.",
+                    ],
+                )
+            )
+            impact.append(
+                ImpactItem(
+                    uri=operation.target_uri,
+                    impact="dependent",
+                    summary=(
+                        "Auxiliary boss top datum follows the selected lid roof: "
+                        f"{dependency['previous_value']:g} → {target_value:g} mm."
+                    ),
+                )
+            )
+            assumptions.append(
+                "Preserve the configured structural embedding of the auxiliary boss in the lid roof."
+            )
+            existing_parameters.add(key)
+        return plan.model_copy(
+            update={"operations": operations, "impact": impact, "assumptions": assumptions}
         )
 
     def _selected_context(self, selection: RegionSelection, project: ProjectSnapshot) -> list[dict[str, Any]]:
@@ -403,16 +483,20 @@ class ChangePlanner:
                 object_uri = _owning_object_uri(operation.target_uri, project)
                 existing = project.objects[object_uri].parameters.get(operation.arguments["parameter"])
                 previous_parameter = existing.model_dump(mode="json") if existing is not None else None
-                if previous_parameter is None and operation.arguments["parameter"] == "height":
-                    physical_height = physical_component_height(project, object_uri)
-                    if physical_height is not None:
+                if previous_parameter is None:
+                    physical_value = physical_component_parameter(
+                        project,
+                        object_uri,
+                        operation.arguments["parameter"],
+                    )
+                    if physical_value is not None:
                         previous_parameter = {
-                            "value": physical_height,
+                            "value": physical_value,
                             "unit": "mm",
                             "status": "derived",
                             "source_uri": None,
                             "confidence": 1.0,
-                            "notes": "Physical component height inferred from current CAD state.",
+                            "notes": "Physical component parameter inferred from current CAD state.",
                         }
                 parameter_patches.append(
                     {
@@ -428,6 +512,39 @@ class ChangePlanner:
                 deferred.append(operation.model_dump(mode="json"))
             else:
                 deferred.append(operation.model_dump(mode="json"))
+        height_patches = [
+            item for item in parameter_patches if item["parameter"] == "height"
+        ]
+        dependency_keys = {
+            (item["object_uri"], item["parameter"]) for item in parameter_patches
+        }
+        for height_patch in height_patches:
+            dependency = lid_height_dependency(
+                project,
+                height_patch["object_uri"],
+                float(height_patch["value"]),
+            )
+            key = (height_patch["object_uri"], AUXILIARY_BOSS_TOP_PARAMETER)
+            if dependency is None or key in dependency_keys:
+                continue
+            parameter_patches.append(
+                {
+                    "object_uri": height_patch["object_uri"],
+                    "parameter": AUXILIARY_BOSS_TOP_PARAMETER,
+                    "value": dependency["target_value"],
+                    "unit": "mm",
+                    "operation_id": f"derived:{height_patch['operation_id']}:auxiliary-boss-top",
+                    "previous_parameter": {
+                        "value": dependency["previous_value"],
+                        "unit": "mm",
+                        "status": "derived",
+                        "source_uri": None,
+                        "confidence": 1.0,
+                        "notes": "Physical component parameter inferred from current CAD state.",
+                    },
+                }
+            )
+            dependency_keys.add(key)
         return {
             "plan_id": plan.plan_id,
             "base_revision": plan.base_revision,

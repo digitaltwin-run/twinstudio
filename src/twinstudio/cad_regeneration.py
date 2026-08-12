@@ -8,6 +8,7 @@ from twinstudio.domain import ArtifactRecord, ObjectNode, ParameterValue, Projec
 
 BASE_SUFFIX = "/part/base"
 LID_SUFFIX = "/part/lid"
+AUXILIARY_BOSS_TOP_PARAMETER = "auxiliary_boss_top_z"
 
 
 @dataclass(frozen=True, slots=True)
@@ -100,6 +101,69 @@ def physical_component_height(snapshot: ProjectSnapshot, object_uri: str) -> flo
     return source_total_height - base_height
 
 
+def physical_component_parameter(
+    snapshot: ProjectSnapshot,
+    object_uri: str,
+    parameter: str,
+) -> float | None:
+    """Read a directly stored or CAD-derived scalar component parameter."""
+
+    if parameter == "height":
+        return physical_component_height(snapshot, object_uri)
+    if parameter != AUXILIARY_BOSS_TOP_PARAMETER or not object_uri.endswith(LID_SUFFIX):
+        return None
+    node = snapshot.objects.get(object_uri)
+    if node is None:
+        return None
+    direct = _parameter_number(node, parameter)
+    if direct is not None:
+        return direct
+    try:
+        return float(
+            housing_config_from_snapshot(snapshot).auxiliary_lid_bosses.top_z_from_base_mating_plane
+        )
+    except ValueError:
+        return None
+
+
+def lid_height_dependency(
+    snapshot: ProjectSnapshot,
+    object_uri: str,
+    target_height: float,
+) -> dict[str, float] | None:
+    """Return the required in-lid boss adjustment for a lower physical lid."""
+
+    if not object_uri.endswith(LID_SUFFIX):
+        return None
+    try:
+        config = housing_config_from_snapshot(snapshot)
+    except ValueError:
+        return None
+    current_top = float(config.auxiliary_lid_bosses.top_z_from_base_mating_plane)
+    if current_top <= target_height:
+        return None
+    from housing_studio.models import default_project_config
+
+    default_config = default_project_config()
+    default_embedding = (
+        default_config.auxiliary_lid_bosses.top_z_from_base_mating_plane
+        - (
+            default_config.dimensions.lid_height
+            - default_config.dimensions.lid_top_thickness
+        )
+    )
+    current_embedding = current_top - (
+        config.dimensions.lid_height - config.dimensions.lid_top_thickness
+    )
+    embedding = current_embedding if 0.1 <= current_embedding <= 5.0 else default_embedding
+    target_top = round(target_height - config.dimensions.lid_top_thickness + embedding, 6)
+    return {
+        "previous_value": current_top,
+        "target_value": target_top,
+        "roof_embedding": embedding,
+    }
+
+
 def housing_config_from_snapshot(
     snapshot: ProjectSnapshot,
     *,
@@ -121,6 +185,12 @@ def housing_config_from_snapshot(
     if "lid_height_mm" in overrides:
         lid_height = float(overrides["lid_height_mm"])
     total_height = base_height + lid_height if lid_height is not None else source_total_height
+    auxiliary_boss_top = _parameter_number(lid, AUXILIARY_BOSS_TOP_PARAMETER)
+    auxiliary_lid_bosses = config.auxiliary_lid_bosses
+    if auxiliary_boss_top is not None:
+        auxiliary_lid_bosses = auxiliary_lid_bosses.model_copy(
+            update={"top_z_from_base_mating_plane": auxiliary_boss_top}
+        )
     dimensions = config.dimensions.model_copy(
         update={
             "external_width": _number(base, "width", config.dimensions.external_width),
@@ -162,6 +232,7 @@ def housing_config_from_snapshot(
             **config.model_dump(mode="python"),
             "metadata": metadata.model_dump(mode="python"),
             "dimensions": dimensions.model_dump(mode="python"),
+            "auxiliary_lid_bosses": auxiliary_lid_bosses.model_dump(mode="python"),
             "artifacts": artifact_options.model_dump(mode="python"),
         }
     )
@@ -366,6 +437,7 @@ def records_from_manifest(
     for node, artifact_key in ((base, "base-stl"), (lid, "lid-stl")):
         metadata = dict(node.metadata)
         parameters = dict(node.parameters)
+        features = list(node.features)
         metadata["viewer_mesh"] = artifact_by_key[artifact_key].path
         metadata["cad_job_id"] = job_id
         if generated_dimensions:
@@ -383,9 +455,31 @@ def records_from_manifest(
                         notes="Physical component height synchronized from the latest CAD generation.",
                     )
                 )
+                boss_top = generated_dimensions.get("auxiliary_boss_top_z_mm")
+                if boss_top is not None:
+                    existing_boss_top = parameters.get(AUXILIARY_BOSS_TOP_PARAMETER)
+                    parameters[AUXILIARY_BOSS_TOP_PARAMETER] = (
+                        existing_boss_top.model_copy(update={"value": boss_top, "unit": "mm"})
+                        if existing_boss_top is not None
+                        else ParameterValue(
+                            value=boss_top,
+                            unit="mm",
+                            status="derived",
+                            notes="Dependent boss datum synchronized from CAD generation.",
+                        )
+                    )
+                    features = [
+                        _with_auxiliary_boss_top(feature, float(boss_top))
+                        for feature in features
+                    ]
         object_updates.append(
             node.model_copy(
-                update={"revision": revision, "metadata": metadata, "parameters": parameters}
+                update={
+                    "revision": revision,
+                    "metadata": metadata,
+                    "parameters": parameters,
+                    "features": features,
+                }
             )
         )
 
@@ -397,6 +491,7 @@ def records_from_manifest(
         f"{base.uri}:floor_thickness",
         f"{lid.uri}:wall_thickness",
         f"{lid.uri}:height",
+        f"{lid.uri}:{AUXILIARY_BOSS_TOP_PARAMETER}",
         f"{lid.uri}:total_height",
         f"{lid.uri}:vertical_joint_section",
     ]
@@ -407,6 +502,24 @@ def records_from_manifest(
         objects=object_updates,
         mapped_parameters=mapped_parameters,
     )
+
+
+def _with_auxiliary_boss_top(feature: Any, boss_top: float) -> Any:
+    if not feature.uri.endswith("/feature/aux-bosses"):
+        return feature
+    parameters = dict(feature.parameters)
+    existing = parameters.get("top_above_base")
+    parameters["top_above_base"] = (
+        existing.model_copy(update={"value": boss_top, "unit": "mm"})
+        if existing is not None
+        else ParameterValue(
+            value=boss_top,
+            unit="mm",
+            status="derived",
+            notes="Synchronized from the auxiliary lid boss CAD configuration.",
+        )
+    )
+    return feature.model_copy(update={"parameters": parameters})
 
 
 def generate_project_preview(
@@ -436,6 +549,9 @@ def generate_project_preview(
             lid,
             "total_height",
             config.dimensions.total_height,
+        ),
+        "auxiliary_boss_top_z_mm": (
+            config.auxiliary_lid_bosses.top_z_from_base_mating_plane
         ),
     }
     return records_from_manifest(

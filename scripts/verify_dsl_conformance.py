@@ -111,26 +111,38 @@ def _validate_nl_matrix() -> list[dict[str, object]]:
             "projection_entity_ids": ["front.lid.outer-slope"],
         }
     )
-    contextual_prompt = "obniż do 14 mm"
+    contextual_prompt = "obniż do 12 mm"
     contextual_plan = planner.plan(
         contextual_prompt,
         lid_selection,
         project,
         "conformance@twinstudio.local",
     ).plan
-    contextual_operation = contextual_plan.operations[0]
+    if len(contextual_plan.operations) != 2:
+        raise AssertionError(
+            f"expected a height operation and its CAD dependency for: {contextual_prompt}"
+        )
+    contextual_operation, contextual_dependency = contextual_plan.operations
     contextual_payload = planner.compile_apply_payload(contextual_plan, project)
     observed_contextual = (
         contextual_operation.kind,
         contextual_operation.target_uri,
         contextual_operation.arguments,
+        contextual_dependency.kind,
+        contextual_dependency.target_uri,
+        contextual_dependency.arguments,
         contextual_payload["parameter_patches"][0]["previous_parameter"]["value"],
+        contextual_payload["parameter_patches"][1]["previous_parameter"]["value"],
     )
     expected_contextual = (
         "set_parameter",
         lid_uri,
-        {"parameter": "height", "value": 14.0, "unit": "mm"},
+        {"parameter": "height", "value": 12.0, "unit": "mm"},
+        "set_parameter",
+        lid_uri,
+        {"parameter": "auxiliary_boss_top_z", "value": 11.0, "unit": "mm"},
         15.0,
+        14.0,
     )
     if observed_contextual != expected_contextual:
         raise AssertionError(
@@ -143,7 +155,8 @@ def _validate_nl_matrix() -> list[dict[str, object]]:
             "kind": contextual_operation.kind,
             "target": contextual_operation.target_uri,
             "arguments": contextual_operation.arguments,
-            "runtime": "safe-parameter-patch-with-cad-preflight",
+            "dependency": contextual_dependency.arguments,
+            "runtime": "safe-parameter-patch-with-cad-dependency-preflight",
         }
     )
     return results

@@ -93,6 +93,27 @@ def test_invalid_lid_height_is_rejected_before_project_state_changes() -> None:
     assert lid.parameters["total_height"].value == 40.0
 
 
+def test_lid_height_with_dependent_boss_adjustment_passes_preflight() -> None:
+    snapshot = _snapshot()
+    lid = snapshot.objects["poa://demo/demo-rpi5@main/part/lid"]
+    patches = [
+        {"object_uri": lid.uri, "parameter": "height", "value": 12.0, "unit": "mm"},
+        {
+            "object_uri": lid.uri,
+            "parameter": "auxiliary_boss_top_z",
+            "value": 11.0,
+            "unit": "mm",
+        },
+    ]
+    overrides = dimension_overrides_for_change(snapshot, patches)
+
+    warnings = validate_parameter_change(snapshot, patches, dimension_overrides=overrides)
+
+    assert not any(item["severity"] == "error" for item in warnings)
+    assert "height" not in lid.parameters
+    assert "auxiliary_boss_top_z" not in lid.parameters
+
+
 def test_valid_lid_height_passes_preflight_without_mutating_snapshot() -> None:
     snapshot = _snapshot()
     lid = snapshot.objects["poa://demo/demo-rpi5@main/part/lid"]
@@ -194,6 +215,7 @@ def test_generated_files_replace_stable_artifact_uris_and_viewer_paths(tmp_path:
             "lid_height_mm": 15.0,
             "total_height_mm": 36.0,
             "source_total_height_mm": 40.0,
+            "auxiliary_boss_top_z_mm": 14.0,
         },
     )
 
@@ -211,5 +233,12 @@ def test_generated_files_replace_stable_artifact_uris_and_viewer_paths(tmp_path:
     assert result.objects[0].metadata["viewer_mesh"] == by_key["base-stl"].path
     assert result.objects[1].metadata["viewer_mesh"] == by_key["lid-stl"].path
     assert result.objects[1].metadata["cad_dimensions"]["lid_height_mm"] == 15.0
+    assert result.objects[1].parameters["auxiliary_boss_top_z"].value == 14.0
+    auxiliary_bosses = next(
+        feature
+        for feature in result.objects[1].features
+        if feature.uri.endswith("/feature/aux-bosses")
+    )
+    assert auxiliary_bosses.parameters["top_above_base"].value == 14.0
     assert result.objects[1].parameters["height"].value == 15.0
     assert result.objects[1].parameters["height"].status == "derived"

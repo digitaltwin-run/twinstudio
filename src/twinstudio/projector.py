@@ -81,7 +81,30 @@ def _membership_revoked(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None
 
 def _object_upserted(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
     node = ObjectNode.model_validate(data["object"])
+    _synchronize_object_parameter_views(node)
     snapshot.objects[node.uri] = node
+
+
+def _synchronize_object_parameter_views(node: ObjectNode) -> None:
+    """Keep feature-level mirrors consistent with canonical object parameters."""
+
+    boss_top = node.parameters.get("auxiliary_boss_top_z")
+    if boss_top is None:
+        return
+    for feature in node.features:
+        if not feature.uri.endswith("/feature/aux-bosses"):
+            continue
+        existing = feature.parameters.get("top_above_base")
+        feature.parameters["top_above_base"] = (
+            existing.model_copy(update={"value": boss_top.value, "unit": boss_top.unit or "mm"})
+            if existing is not None
+            else ParameterValue(
+                value=boss_top.value,
+                unit=boss_top.unit or "mm",
+                status="derived",
+                notes="Synchronized from the canonical object parameter.",
+            )
+        )
 
 
 def _object_removed(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
@@ -163,11 +186,9 @@ def _change_applied(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
         parameter = patch["parameter"]
         if patch.get("remove"):
             target.parameters.pop(parameter, None)
-            continue
-        if patch.get("restore_parameter") is not None:
+        elif patch.get("restore_parameter") is not None:
             target.parameters[parameter] = ParameterValue.model_validate(patch["restore_parameter"])
-            continue
-        if parameter in target.parameters:
+        elif parameter in target.parameters:
             target.parameters[parameter].value = patch["value"]
             if patch.get("unit") is not None:
                 target.parameters[parameter].unit = patch["unit"]
@@ -175,6 +196,7 @@ def _change_applied(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
             target.parameters[parameter] = ParameterValue(
                 value=patch["value"], unit=patch.get("unit"), status="approved"
             )
+        _synchronize_object_parameter_views(target)
 
 
 def _requirement_upserted(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:

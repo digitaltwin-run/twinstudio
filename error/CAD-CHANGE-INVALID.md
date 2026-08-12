@@ -9,12 +9,13 @@ Plan zawiera poprawną operację parametryczną, ale `apply` zwraca 422 i nie tw
 CHECK
 1. Odczytaj `error.details.warnings` albo rekord TWINOBS `CAD-CHANGE-INVALID`.
 2. Sprawdź `warning.code`, `message` i `suggestion`.
-3. Potwierdź obiekt i parametr planu. Dla `AUX_BOSS_TOP_ABOVE_LID` wysokość pokrywy
-   nie może być mniejsza od górnego poziomu bossa pomocniczego.
+3. Potwierdź obiekt i komplet parametrów planu. Dla `AUX_BOSS_TOP_ABOVE_LID`
+   obniżenie pokrywy wymaga zależnego przesunięcia górnego poziomu bossa pomocniczego.
 
 REPAIR
-1. Podaj wartość zgodną z ograniczeniem opisanym w `suggestion` albo zmień zależną cechę.
-2. Utwórz nowy plan dla bieżącej rewizji i zastosuj go ponownie.
+1. Utwórz nowy plan NL dla bieżącej rewizji; planner automatycznie dodaje obsługiwaną
+   zależność bossa do obniżenia pokrywy.
+2. Dla bezpośredniego planu API jawnie dodaj wszystkie zależne parametry wskazane przez warning.
 3. Nie wykonuj ręcznego rollbacku: preflight działa przed zapisem i projekt nie został zmieniony.
 
 VERIFY

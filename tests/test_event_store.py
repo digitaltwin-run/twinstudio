@@ -3,10 +3,42 @@ from pathlib import Path
 import pytest
 
 from twinstudio.bus import CommandBus, QueryService
-from twinstudio.domain import CommandEnvelope
+from twinstudio.domain import CommandEnvelope, EventEnvelope, ParameterValue
 from twinstudio.event_store import ConcurrencyError, EventStore
 from twinstudio.mqtt_bus import NullPublisher
 from twinstudio.seed import seed_from_file
+
+
+def test_projection_synchronizes_canonical_boss_parameter_into_feature(
+    project_snapshot,
+) -> None:
+    from twinstudio.projector import apply_event
+
+    lid_uri = "poa://demo/demo-rpi5@main/part/lid"
+    lid = project_snapshot.objects[lid_uri].model_copy(deep=True)
+    lid.parameters["auxiliary_boss_top_z"] = ParameterValue(
+        value=11.0,
+        unit="mm",
+        status="approved",
+    )
+    apply_event(
+        project_snapshot,
+        EventEnvelope(
+            stream_id=project_snapshot.project_id,
+            stream_version=project_snapshot.stream_version + 1,
+            event_type="ObjectUpserted",
+            data={"object": lid.model_dump(mode="json")},
+            actor="cad-worker@example.test",
+        ),
+    )
+
+    projected_lid = project_snapshot.objects[lid_uri]
+    auxiliary_bosses = next(
+        feature
+        for feature in projected_lid.features
+        if feature.uri.endswith("/feature/aux-bosses")
+    )
+    assert auxiliary_bosses.parameters["top_above_base"].value == 11.0
 
 
 def test_seed_reconstructs_full_project(tmp_path: Path) -> None:
