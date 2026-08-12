@@ -33,7 +33,37 @@ def _number(node: ObjectNode, parameter: str, default: float) -> float:
     return float(value.value)
 
 
-def housing_config_from_snapshot(snapshot: ProjectSnapshot):
+def _cad_dimensions(node: ObjectNode) -> dict[str, Any]:
+    value = node.metadata.get("cad_dimensions")
+    return value if isinstance(value, dict) else {}
+
+
+def _finite_number(value: Any) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    number = float(value)
+    return number if number == number and abs(number) != float("inf") else None
+
+
+def _generated_lid_height(base: ObjectNode, lid: ObjectNode, source_total_height: float) -> float | None:
+    """Return the last physical lid height when its source parameter is still current."""
+
+    stored = _cad_dimensions(lid) or _cad_dimensions(base)
+    lid_height = _finite_number(stored.get("lid_height_mm"))
+    stored_source_total = _finite_number(stored.get("source_total_height_mm"))
+    if lid_height is None or stored_source_total is None:
+        return None
+    if abs(stored_source_total - source_total_height) > 1e-9:
+        # The total-height parameter was explicitly changed after the last CAD build.
+        return None
+    return lid_height
+
+
+def housing_config_from_snapshot(
+    snapshot: ProjectSnapshot,
+    *,
+    dimension_overrides: dict[str, float] | None = None,
+):
     """Translate canonical TwinStudio parameters into Housing Studio configuration."""
 
     from housing_studio.models import default_project_config
@@ -41,12 +71,19 @@ def housing_config_from_snapshot(snapshot: ProjectSnapshot):
     base = _part(snapshot, BASE_SUFFIX)
     lid = _part(snapshot, LID_SUFFIX)
     config = default_project_config()
+    base_height = _number(base, "height", config.dimensions.base_height)
+    source_total_height = _number(lid, "total_height", config.dimensions.total_height)
+    lid_height = _generated_lid_height(base, lid, source_total_height)
+    overrides = dimension_overrides or {}
+    if "lid_height_mm" in overrides:
+        lid_height = float(overrides["lid_height_mm"])
+    total_height = base_height + lid_height if lid_height is not None else source_total_height
     dimensions = config.dimensions.model_copy(
         update={
             "external_width": _number(base, "width", config.dimensions.external_width),
             "external_depth": _number(base, "depth", config.dimensions.external_depth),
-            "base_height": _number(base, "height", config.dimensions.base_height),
-            "total_height": _number(lid, "total_height", config.dimensions.total_height),
+            "base_height": base_height,
+            "total_height": total_height,
             "wall_thickness": _number(base, "wall_thickness", config.dimensions.wall_thickness),
             "floor_thickness": _number(base, "floor_thickness", config.dimensions.floor_thickness),
             "lid_top_thickness": _number(lid, "wall_thickness", config.dimensions.lid_top_thickness),
@@ -87,6 +124,26 @@ def housing_config_from_snapshot(snapshot: ProjectSnapshot):
     )
 
 
+def dimension_overrides_for_change(
+    snapshot: ProjectSnapshot,
+    parameter_patches: list[dict[str, Any]],
+) -> dict[str, float]:
+    """Preserve unedited component dimensions across a coupled assembly regeneration."""
+
+    try:
+        base = _part(snapshot, BASE_SUFFIX)
+        lid = _part(snapshot, LID_SUFFIX)
+    except ValueError:
+        return {}
+    changed = {(item.get("object_uri"), item.get("parameter")) for item in parameter_patches}
+    base_height_changed = (base.uri, "height") in changed
+    total_height_changed = (lid.uri, "total_height") in changed
+    if not base_height_changed or total_height_changed:
+        return {}
+    config = housing_config_from_snapshot(snapshot)
+    return {"lid_height_mm": config.dimensions.lid_height}
+
+
 def _manifest_record(manifest: dict[str, Any], path: str) -> dict[str, Any]:
     record = next((item for item in manifest.get("artifacts", []) if item.get("path") == path), None)
     if record is None:
@@ -109,6 +166,8 @@ def records_from_manifest(
     data_dir: Path,
     job_id: str,
     manifest: dict[str, Any],
+    *,
+    generated_dimensions: dict[str, float] | None = None,
 ) -> CadRegenerationResult:
     """Map generated preview files back onto stable project artifact URIs."""
 
@@ -118,6 +177,7 @@ def records_from_manifest(
         (item for uri, item in snapshot.objects.items() if uri.endswith("/assembly/enclosure")),
         None,
     )
+
     def artifact_uri(key: str) -> str:
         existing = next((uri for uri in snapshot.artifacts if uri.endswith(f"/artifact/{key}")), None)
         if existing is None:
@@ -181,6 +241,8 @@ def records_from_manifest(
         metadata = dict(node.metadata)
         metadata["viewer_mesh"] = artifact_by_key[artifact_key].path
         metadata["cad_job_id"] = job_id
+        if generated_dimensions:
+            metadata["cad_dimensions"] = generated_dimensions
         object_updates.append(node.model_copy(update={"revision": revision, "metadata": metadata}))
 
     mapped_parameters = [
@@ -208,10 +270,11 @@ def generate_project_preview(
     job_id: str,
     *,
     prompt: str | None = None,
+    dimension_overrides: dict[str, float] | None = None,
 ) -> CadRegenerationResult:
     from housing_studio.artifacts import generate_artifacts
 
-    config = housing_config_from_snapshot(snapshot)
+    config = housing_config_from_snapshot(snapshot, dimension_overrides=dimension_overrides)
     manifest = generate_artifacts(
         config,
         data_dir / "cad-jobs",
@@ -219,4 +282,21 @@ def generate_project_preview(
         source_prompt=prompt,
         interpretation_mode="twinstudio-parameter-regeneration",
     )
-    return records_from_manifest(snapshot, data_dir, job_id, manifest)
+    lid = _part(snapshot, LID_SUFFIX)
+    generated_dimensions = {
+        "base_height_mm": config.dimensions.base_height,
+        "lid_height_mm": config.dimensions.lid_height,
+        "total_height_mm": config.dimensions.total_height,
+        "source_total_height_mm": _number(
+            lid,
+            "total_height",
+            config.dimensions.total_height,
+        ),
+    }
+    return records_from_manifest(
+        snapshot,
+        data_dir,
+        job_id,
+        manifest,
+        generated_dimensions=generated_dimensions,
+    )

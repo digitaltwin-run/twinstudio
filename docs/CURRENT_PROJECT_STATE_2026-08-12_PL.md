@@ -135,7 +135,7 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **93/93 passed**, łącznie z testami API przez FastAPI `TestClient`, prawdziwą regeneracją i ponowną regeneracją po cofnięciu przez CadQuery, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
+- pełny pytest: **97/97 passed**, łącznie z testami API przez FastAPI `TestClient`, prawdziwą regeneracją i ponowną regeneracją po cofnięciu przez CadQuery, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
@@ -151,6 +151,7 @@ Interpretacja wyniku:
 - scenariusz `zmniejsz o 4mm` poprawnie kończy się lokalnym `add_annotation` z pytaniem o konkretny wymiar/operację; UI pokazuje, że plan nie zmieni bryły, blokuje pustą aplikację i nie sugeruje odświeżania strony;
 - test Chromium zapisał uwagę `ustaw grubość ścian na 2.25 mm`, automatycznie zmienił parametr z 2.0 na 2.25, pokazał zastosowanie na liście historii, a następnie cofnął je do 2.0 przez `ChangeReverted`; akcje `plan.apply.completed` i `change.undo.completed` znalazły się w URL/DSL;
 - izolowany test Chromium pełnego cyklu zmienił wysokość podstawy z 25 na 21 mm, poczekał na zmianę SHA-256 STL i akcję `artifacts.regenerated`, a następnie wykonał `Cofnij` i potwierdził drugą regenerację, powrót parametru oraz zawartości artefaktu bez przeładowania strony;
+- zależne wymiary CAD są rozdzielone na wysokość podstawy, fizyczną wysokość pokrywy i wysokość całego złożenia. Operacja `zmniejsz wysokość podstawy o 4 mm` zachowuje pokrywę 15 mm, zmienia podstawę 25→21 mm i złożenie 40→36 mm; runtime zapisuje użyty kontekst w `GenerationRequested.dimension_overrides` oraz `ObjectNode.metadata.cad_dimensions`, a test API potwierdza również poprawny powrót 21→25 mm i 36→40 mm po cofnięciu;
 - test Chromium potwierdził również trwałe zadanie `needs_detail` dla `zmniejsz o 4mm`, kartę w kolejce, licznik aktywnych zadań oraz odpowiadający mu znacznik `?` i żółtą krawędź na `Lower base` w drzewie projektu;
 - lokalny lifecycle przez Makefile udostępnia `start`, `restart`/`recreate`, `stop`/`kill`, `status`, `health`, `logs`, `logs-follow` i `run`; `start` zastępuje istniejącą instancję TwinStudio z bieżącego workspace, ale odmawia zabicia obcego procesu na tym samym porcie;
 - zrzut kontrolny testu UI jest zapisywany domyślnie jako `/tmp/twinstudio-ui.png`; test jest odtwarzalny poleceniem `python scripts/verify_ui.py --url <adres>`.

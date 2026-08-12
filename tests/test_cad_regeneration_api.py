@@ -8,10 +8,12 @@ from pathlib import Path
 
 def test_apply_and_undo_regenerate_visible_artifacts_in_isolated_process(tmp_path: Path) -> None:
     root = Path(__file__).resolve().parents[1]
-    code = r'''
+    code = r"""
 import hashlib
 import json
+import os
 import time
+from pathlib import Path
 from fastapi.testclient import TestClient
 from twinstudio.api import app
 
@@ -83,10 +85,58 @@ with TestClient(app) as client:
     assert restored_hash == restored['artifacts'][base_artifact_uri]['sha256']
     assert restored_hash != changed_hash
 
+    height_plan = client.post(
+        '/api/v1/projects/demo-rpi5/change-plans',
+        json={'prompt': 'zmniejsz wysokość podstawy o 4 mm', 'selection': selection},
+    )
+    assert height_plan.status_code == 200, height_plan.text
+    height_plan_id = height_plan.json()['plan']['plan_id']
+    height_applied = client.post(
+        f'/api/v1/projects/demo-rpi5/change-plans/{height_plan_id}/apply',
+        json={},
+    )
+    assert height_applied.status_code == 200, height_applied.text
+    height_generation = height_applied.json()['generation']
+    assert height_generation['dimension_overrides'] == {'lid_height_mm': 15.0}
+    height_job = height_generation['job_id']
+    wait_for_generation(client, height_job)
+
+    resized = client.get('/api/v1/projects/demo-rpi5').json()['project']
+    lid_uri = 'poa://demo/demo-rpi5@main/part/lid'
+    assert resized['objects'][base_uri]['parameters']['height']['value'] == 21
+    assert resized['objects'][lid_uri]['parameters']['total_height']['value'] == 40
+    cad_dimensions = resized['objects'][lid_uri]['metadata']['cad_dimensions']
+    assert cad_dimensions == {
+        'base_height_mm': 21.0,
+        'lid_height_mm': 15.0,
+        'total_height_mm': 36.0,
+        'source_total_height_mm': 40.0,
+    }
+    config_path = Path(os.environ['TWINSTUDIO_DATA_DIR']) / 'cad-jobs' / height_job / 'project_config.json'
+    generated_config = json.loads(config_path.read_text())
+    assert generated_config['dimensions']['base_height'] == 21
+    assert generated_config['dimensions']['total_height'] == 36
+
+    height_event = next(
+        item for item in height_applied.json()['events'] if item['event_type'] == 'ChangeApplied'
+    )
+    height_undo = client.post(
+        f"/api/v1/projects/demo-rpi5/change-history/{height_event['event_id']}/undo"
+    )
+    assert height_undo.status_code == 200, height_undo.text
+    height_undo_job = height_undo.json()['generation']['job_id']
+    wait_for_generation(client, height_undo_job)
+    height_restored = client.get('/api/v1/projects/demo-rpi5').json()['project']
+    restored_dimensions = height_restored['objects'][lid_uri]['metadata']['cad_dimensions']
+    assert height_restored['objects'][base_uri]['parameters']['height']['value'] == 25
+    assert restored_dimensions['base_height_mm'] == 25
+    assert restored_dimensions['lid_height_mm'] == 15
+    assert restored_dimensions['total_height_mm'] == 40
+
     logs = client.get('/api/v1/projects/demo-rpi5/logs.dsl?limit=100').text
     assert 'CODE "CAD_REGENERATION_QUEUED"' in logs
     assert 'CODE "CAD_REGENERATION_COMPLETED"' in logs
-'''
+"""
     env = os.environ.copy()
     env.update(
         {
@@ -105,6 +155,6 @@ with TestClient(app) as client:
         env=env,
         text=True,
         capture_output=True,
-        timeout=60,
+        timeout=100,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr

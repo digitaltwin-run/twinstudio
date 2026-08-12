@@ -24,7 +24,7 @@ from twinstudio.artifacts import (
 )
 from twinstudio.auth import AuthService
 from twinstudio.bus import CommandBus, CommandRejected, QueryService
-from twinstudio.cad_regeneration import generate_project_preview
+from twinstudio.cad_regeneration import dimension_overrides_for_change, generate_project_preview
 from twinstudio.change_planner import ChangePlanner
 from twinstudio.domain import (
     Annotation,
@@ -355,7 +355,13 @@ def _cad_job_context(project_id: str, job_id: str) -> dict[str, Any]:
         return {}
     return {
         key: request.data.get(key)
-        for key in ("plan_id", "source_event_id", "target_uris", "prompt")
+        for key in (
+            "plan_id",
+            "source_event_id",
+            "target_uris",
+            "prompt",
+            "dimension_overrides",
+        )
     }
 
 
@@ -365,6 +371,7 @@ async def _complete_cad_regeneration(
     job_id: str,
     snapshot,
     prompt: str,
+    dimension_overrides: dict[str, float],
 ) -> None:
     try:
         result = await asyncio.to_thread(
@@ -373,6 +380,7 @@ async def _complete_cad_regeneration(
             settings.data_dir,
             job_id,
             prompt=prompt,
+            dimension_overrides=dimension_overrides,
         )
         latest = _latest_cad_job(project_id)
         context = _cad_job_context(project_id, job_id)
@@ -418,6 +426,10 @@ async def _complete_cad_regeneration(
                 "artifact_count": len(result.artifacts),
                 "manifest": result.manifest_path,
                 "superseded_by": latest if latest != job_id else None,
+                "dimension_overrides": dimension_overrides,
+                "generated_dimensions": (
+                    result.objects[0].metadata.get("cad_dimensions") if result.objects else None
+                ),
             },
         )
     except asyncio.CancelledError:
@@ -462,6 +474,7 @@ def _queue_cad_regeneration(
     plan_id: str | None,
     target_uris: list[str],
     prompt: str,
+    dimension_overrides: dict[str, float] | None = None,
 ) -> tuple[dict[str, Any], list[Any]]:
     if not settings.cad_regeneration_enabled:
         return {"status": "disabled", "code": "CAD_REGENERATION_DISABLED"}, []
@@ -476,6 +489,7 @@ def _queue_cad_regeneration(
         "target_uris": target_uris,
         "prompt": prompt,
         "generator": "housing-studio",
+        "dimension_overrides": dimension_overrides or {},
     }
     stored = _run_command(project_id, "generation.request", actor, request)
     emit_generation_observation(
@@ -487,11 +501,19 @@ def _queue_cad_regeneration(
             "revision": snapshot.revision,
             "source_event_id": source_event_id,
             "target_uris": target_uris,
+            "dimension_overrides": dimension_overrides or {},
         },
     )
     generation_snapshot = queries.project(project_id)
     task = asyncio.create_task(
-        _complete_cad_regeneration(project_id, actor, job_id, generation_snapshot, prompt),
+        _complete_cad_regeneration(
+            project_id,
+            actor,
+            job_id,
+            generation_snapshot,
+            prompt,
+            dimension_overrides or {},
+        ),
         name=f"cad-regeneration:{job_id}",
     )
     _cad_tasks.add(task)
@@ -1290,17 +1312,18 @@ async def apply_project_dsl(
                     "previous_parameter": previous.model_dump(mode="json") if previous else None,
                 }
             )
+        dimension_overrides = dimension_overrides_for_change(current, reversible_patches)
         applied_events = _run_command(
-                project_id,
-                "change.apply",
-                user.email,
-                {
-                    "new_revision": f"{current.revision}-dsl-{execution.execution_id[-8:]}",
-                    "parameter_patches": reversible_patches,
-                    "approval_state": "approved",
-                    "dsl_execution_id": execution.execution_id,
-                },
-            )
+            project_id,
+            "change.apply",
+            user.email,
+            {
+                "new_revision": f"{current.revision}-dsl-{execution.execution_id[-8:]}",
+                "parameter_patches": reversible_patches,
+                "approval_state": "approved",
+                "dsl_execution_id": execution.execution_id,
+            },
+        )
         stored_events.extend(applied_events)
         applied_event = next(item for item in applied_events if item.event_type == "ChangeApplied")
         generation, generation_events = _queue_cad_regeneration(
@@ -1310,6 +1333,7 @@ async def apply_project_dsl(
             plan_id=None,
             target_uris=sorted({item["object_uri"] for item in reversible_patches}),
             prompt=f"TwinScript: {parsed.document.metadata.name}",
+            dimension_overrides=dimension_overrides,
         )
         stored_events.extend(generation_events)
     else:
@@ -1475,6 +1499,7 @@ async def apply_change_plan(
         raise HTTPException(status_code=404, detail="Change plan not found")
     plan = snapshot.change_plans[plan_id]
     payload = planner.compile_apply_payload(plan, snapshot)
+    dimension_overrides = dimension_overrides_for_change(snapshot, payload["parameter_patches"])
     annotation_uri = body.annotation_uri if body else None
     if annotation_uri:
         annotation = snapshot.annotations.get(annotation_uri)
@@ -1513,6 +1538,7 @@ async def apply_change_plan(
             plan_id=plan.plan_id,
             target_uris=sorted({item["object_uri"] for item in payload["parameter_patches"]}),
             prompt=plan.prompt,
+            dimension_overrides=dimension_overrides,
         )
         stored.extend(generation_events)
     await hub.broadcast(project_id, {"events": [item.model_dump(mode="json") for item in stored]})
