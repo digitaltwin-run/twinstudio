@@ -83,8 +83,15 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "drawingProjectionPromises:new Map()" in javascript
     assert "async function loadDrawingProjectionRegions" in javascript
     assert "function inferDrawingProjection" in javascript
+    assert "function polygonSelectionBbox" in javascript
+    assert "projection-regions=2" in javascript
+    assert "cache:'no-store'" in javascript
+    assert "viewer2d.projection.ready" in javascript
+    assert "viewer2d.projection.unavailable" in javascript
+    assert "polygon-order-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
+    assert 'src="/static/app.js?v=20260812-selection2"' in HTML.read_text(encoding="utf-8")
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
     assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
     assert "data-selection-bbox" in front_svg

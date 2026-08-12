@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -17,6 +18,7 @@ def main() -> int:
     parser.add_argument("--screenshot", type=Path, default=Path("/tmp/twinstudio-ui.png"))
     parser.add_argument("--timeout-ms", type=int, default=45_000)
     parser.add_argument("--verify-plan", action="store_true")
+    parser.add_argument("--simulate-legacy-svg-cache", action="store_true")
     args = parser.parse_args()
 
     executable = next(
@@ -36,6 +38,20 @@ def main() -> int:
             viewport={"width": 1600, "height": 1000},
             permissions=["clipboard-read", "clipboard-write"],
         )
+        if args.simulate_legacy_svg_cache:
+            def serve_legacy_projection_svg(route) -> None:
+                response = route.fetch()
+                body = re.sub(
+                    r' data-projection-entity="[^"]+" data-selection-bbox="[^"]+"',
+                    "",
+                    response.text(),
+                )
+                route.fulfill(response=response, body=body)
+
+            context.route(
+                re.compile(r".*/artifacts/assembly-front\?projection-regions=2$"),
+                serve_legacy_projection_svg,
+            )
         page = context.new_page()
         page.on(
             "console",
@@ -157,6 +173,12 @@ def main() -> int:
         assert not any("|click|" in item and "tree-row" in item for item in action_args), action_args
         assert any("|selection.created|" in item for item in action_args), action_args
         assert any("|object.inferred|" in item for item in action_args), action_args
+        projection_actions = [
+            item for item in action_args if "|viewer2d.projection.ready|" in item
+        ]
+        assert projection_actions, action_args
+        if args.simulate_legacy_svg_cache:
+            assert any("source=polygon-order-fallback" in item for item in projection_actions)
         assert "?args=" in final_context["route"], final_context["route"]
         page.locator("#copyDslLogs").click()
         page.wait_for_function(
@@ -187,6 +209,11 @@ def main() -> int:
             "drawing_selection": "ok",
             "drawing_selection_target": "part/base",
             "drawing_projection_entity": "front.base.outer-wall",
+            "drawing_projection_loader": (
+                "polygon-order-fallback"
+                if args.simulate_legacy_svg_cache
+                else "svg-metadata"
+            ),
             "plan_from_inferred_selection": plan_verified,
             "url_action_args": len(action_args),
             "clipboard_dsl_characters": len(clipboard_dsl),
