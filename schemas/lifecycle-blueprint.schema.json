@@ -1,0 +1,302 @@
+{
+  "$defs": {
+    "ArtifactKind": {
+      "enum": [
+        "photo",
+        "video",
+        "pdf",
+        "drawing_2d",
+        "cad_source",
+        "step",
+        "stl",
+        "obj",
+        "glb",
+        "pcb",
+        "schematic",
+        "gerber",
+        "bom",
+        "software_source",
+        "container_image",
+        "test_result",
+        "simulation_result",
+        "product_listing",
+        "other"
+      ],
+      "title": "ArtifactKind",
+      "type": "string"
+    },
+    "ChangeOperationKind": {
+      "enum": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "title": "ChangeOperationKind",
+      "type": "string"
+    },
+    "EvolutionMethod": {
+      "enum": [
+        "goal_ladder",
+        "object_decomposition",
+        "bidirectional_graph",
+        "feature_lenses",
+        "adjacent_possible",
+        "brainswarm",
+        "analogy",
+        "assumption_reversal",
+        "constraint_relaxation",
+        "mutation",
+        "recombination",
+        "experiment"
+      ],
+      "title": "EvolutionMethod",
+      "type": "string"
+    },
+    "LifecycleStage": {
+      "enum": [
+        "evidence_intake",
+        "discovery",
+        "problem_framing",
+        "opportunity",
+        "requirements",
+        "goal_reframing",
+        "ideation",
+        "concept",
+        "feasibility",
+        "architecture",
+        "detailed_design",
+        "design_review",
+        "prototype",
+        "integration",
+        "engineering_verification",
+        "verification",
+        "validation",
+        "compliance",
+        "pilot",
+        "pilot_production",
+        "industrialization",
+        "release",
+        "production",
+        "quality_control",
+        "fulfillment",
+        "deployment",
+        "operation",
+        "observation",
+        "monitoring",
+        "maintenance",
+        "service",
+        "improvement",
+        "evolution",
+        "upgrade",
+        "recall",
+        "reuse",
+        "reuse_remanufacture",
+        "retirement",
+        "decommission",
+        "recycling",
+        "circular_recovery",
+        "end_of_life"
+      ],
+      "title": "LifecycleStage",
+      "type": "string"
+    },
+    "LifecycleStageDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "$ref": "#/$defs/LifecycleStage"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "purpose": {
+          "default": "",
+          "title": "Purpose",
+          "type": "string"
+        },
+        "entry_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Entry Criteria",
+          "type": "array"
+        },
+        "exit_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Exit Criteria",
+          "type": "array"
+        },
+        "required_artifact_kinds": {
+          "items": {
+            "$ref": "#/$defs/ArtifactKind"
+          },
+          "title": "Required Artifact Kinds",
+          "type": "array"
+        },
+        "required_test_types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Test Types",
+          "type": "array"
+        },
+        "recommended_evolution_methods": {
+          "items": {
+            "$ref": "#/$defs/EvolutionMethod"
+          },
+          "title": "Recommended Evolution Methods",
+          "type": "array"
+        },
+        "allowed_change_operations": {
+          "items": {
+            "$ref": "#/$defs/ChangeOperationKind"
+          },
+          "title": "Allowed Change Operations",
+          "type": "array"
+        },
+        "approver_roles": {
+          "items": {
+            "$ref": "#/$defs/Role"
+          },
+          "title": "Approver Roles",
+          "type": "array"
+        },
+        "optional": {
+          "default": false,
+          "title": "Optional",
+          "type": "boolean"
+        },
+        "repeatable": {
+          "default": false,
+          "title": "Repeatable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "stage",
+        "name"
+      ],
+      "title": "LifecycleStageDefinition",
+      "type": "object"
+    },
+    "LifecycleTransition": {
+      "additionalProperties": false,
+      "properties": {
+        "from_stage": {
+          "$ref": "#/$defs/LifecycleStage"
+        },
+        "to_stage": {
+          "$ref": "#/$defs/LifecycleStage"
+        },
+        "conditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "required_gate_status": {
+          "default": "approved",
+          "enum": [
+            "not_started",
+            "in_progress",
+            "blocked",
+            "approved",
+            "rejected"
+          ],
+          "title": "Required Gate Status",
+          "type": "string"
+        },
+        "approver_roles": {
+          "items": {
+            "$ref": "#/$defs/Role"
+          },
+          "title": "Approver Roles",
+          "type": "array"
+        }
+      },
+      "required": [
+        "from_stage",
+        "to_stage"
+      ],
+      "title": "LifecycleTransition",
+      "type": "object"
+    },
+    "Role": {
+      "enum": [
+        "reader",
+        "editor",
+        "admin",
+        "creator"
+      ],
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "blueprint_id": {
+      "title": "Blueprint Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "default": "1",
+      "title": "Version",
+      "type": "string"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/LifecycleStageDefinition"
+      },
+      "title": "Stages",
+      "type": "array"
+    },
+    "transitions": {
+      "items": {
+        "$ref": "#/$defs/LifecycleTransition"
+      },
+      "title": "Transitions",
+      "type": "array"
+    },
+    "current_stage": {
+      "$ref": "#/$defs/LifecycleStage",
+      "default": "evidence_intake"
+    },
+    "tailored": {
+      "default": false,
+      "title": "Tailored",
+      "type": "boolean"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "blueprint_id",
+    "name",
+    "stages"
+  ],
+  "title": "LifecycleBlueprint",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/lifecycle-blueprint.schema.json"
+}

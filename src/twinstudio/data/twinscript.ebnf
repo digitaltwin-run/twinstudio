@@ -1,0 +1,87 @@
+(* TwinScript 1.0 surface syntax. Semantic validation is defined by
+   twin-dsl.schema.json and the TwinStudio compiler. *)
+
+program          = { blank | comment | statement }, [ end-statement ] ;
+blank            = white-space ;
+comment          = ( "#" | "//" ), { any-character - new-line }, new-line ;
+statement        = version-statement
+                 | name-statement | namespace-statement | label-statement | annotation-statement
+                 | project-statement | focus-statement
+                 | goal-statement | outcome-statement | preserve-statement | avoid-statement
+                 | assumption-statement | constraint-statement
+                 | methods-statement | seed-verbs-statement | lenses-statement | dimensions-statement
+                 | lens-options-statement | resource-options-statement | search-statement
+                 | evolve-statement | operator-statement | weight-statement
+                 | select-statement | min-score-statement
+                 | lifecycle-statement | enable-stage-statement | disable-stage-statement | gate-statement
+                 | change-statement | verify-statement | realize-statement | allow-operations-statement
+                 | output-statement | persist-artifacts-statement | include-plans-statement
+                 | note-statement ;
+
+version-statement = ( "TWINSCRIPT" | "TWINDL" ), space, ( "1" | "1.0" | "v1" ) ;
+name-statement    = "NAME", space, text ;
+namespace-statement = "NAMESPACE", space, token ;
+label-statement   = "LABEL", space, assignment ;
+annotation-statement = "ANNOTATION", space, assignment ;
+project-statement = "PROJECT", space, token, [ space, "REVISION", space, token ] ;
+focus-statement   = ( "FOCUS" | "TARGET" ), space, csv-text ;
+
+goal-statement    = "GOAL", space,
+                    [ "VERB", space, token, space ],
+                    [ "OBJECT", space, text, space ],
+                    [ "OUTCOME", space, text, space ],
+                    [ "STATEMENT", space, text ] ;
+outcome-statement = "OUTCOME", space, text ;
+preserve-statement = "PRESERVE", space, text ;
+avoid-statement   = ( "AVOID" | "PREVENT" ), space, text ;
+assumption-statement = ( "ASSUME" | "ASSUMPTION" ), space, text ;
+constraint-statement = "CONSTRAINT", space, text ;
+
+methods-statement = "METHODS", space, csv-token ;
+seed-verbs-statement = "SEED_VERBS", space, csv-token ;
+lenses-statement  = ( "LENS" | "LENSES" ), space, csv-token ;
+dimensions-statement = ( "DIMENSION" | "DIMENSIONS" ), space, csv-token ;
+lens-options-statement = "LENS_OPTIONS", { space, option } ;
+resource-options-statement = "RESOURCE_OPTIONS", { space, option } ;
+search-statement  = "SEARCH", { space, option } ;
+evolve-statement  = "EVOLVE", { space, option } ;
+operator-statement = "OPERATOR", space, token, { space, option | assignment } ;
+weight-statement  = "WEIGHT", space, token, space, number ;
+select-statement  = "SELECT_TOP", space, integer ;
+min-score-statement = "MIN_SCORE", space, number ;
+
+lifecycle-statement = "LIFECYCLE", space, token, { space, option } ;
+enable-stage-statement = "ENABLE_STAGE", space, csv-token ;
+disable-stage-statement = "DISABLE_STAGE", space, csv-token ;
+gate-statement    = "GATE", space, token, { space, option } ;
+
+change-statement  = "CHANGE", space, token, space, text, { space, assignment } ;
+verify-statement  = "VERIFY", space, text ;
+realize-statement = "REALIZE", space, token, { space, option } ;
+allow-operations-statement = "ALLOW_OPERATIONS", space, csv-token ;
+output-statement  = "OUTPUT", { space, option } ;
+persist-artifacts-statement = "PERSIST_ARTIFACTS", space, boolean ;
+include-plans-statement = "INCLUDE_CHANGE_PLANS", space, boolean ;
+note-statement    = "NOTE", space, text ;
+end-statement     = "END" ;
+
+option           = upper-token, space, scalar ;
+assignment       = token, "=", scalar ;
+csv-token        = token, { ",", token } ;
+csv-text         = text, { ",", text } ;
+boolean          = "true" | "false" | "yes" | "no" | "on" | "off" | "1" | "0" ;
+integer          = [ "-" ], digit, { digit } ;
+number           = integer, [ ".", digit, { digit } ] ;
+scalar           = boolean | number | text | csv-token ;
+text             = quoted-string | token, { space, token } ;
+token            = unquoted-character, { unquoted-character } ;
+upper-token      = upper-letter, { upper-letter | "_" } ;
+quoted-string    = '"', { escaped-character | any-character - '"' }, '"' ;
+space            = " ", { " " | "\t" } ;
+white-space      = { " " | "\t" }, new-line ;
+new-line         = "\n" | "\r\n" ;
+digit            = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+upper-letter     = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+                 | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" ;
+unquoted-character = any-character - ( " " | "\t" | "\r" | "\n" | '"' ) ;
+escaped-character = "\\", any-character ;

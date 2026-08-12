@@ -4,13 +4,13 @@ import re
 from dataclasses import replace
 from pathlib import Path
 
-from living_product_studio.auth import AuthService
-from living_product_studio.bus import CommandBus, QueryService
-from living_product_studio.domain import InvitationRequest
-from living_product_studio.event_store import EventStore
-from living_product_studio.mqtt_bus import NullPublisher
-from living_product_studio.seed import seed_from_file
-from living_product_studio.settings import settings
+from twinstudio.auth import AuthService
+from twinstudio.bus import CommandBus, QueryService
+from twinstudio.domain import InvitationRequest
+from twinstudio.event_store import EventStore
+from twinstudio.mqtt_bus import NullPublisher
+from twinstudio.seed import seed_from_file
+from twinstudio.settings import settings
 
 
 def _latest_email(outbox: Path, recipient_fragment: str) -> str:

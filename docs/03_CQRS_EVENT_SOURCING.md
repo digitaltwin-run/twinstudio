@@ -2,7 +2,7 @@
 
 ## Why CQRS+ES
 
-A multidisciplinary product needs an auditable answer to “who changed what, from which evidence, and who approved it?” Replacing a JSON file in place cannot provide that history. Living Product Studio stores decisions as append-only events and reconstructs a current read model.
+A multidisciplinary product needs an auditable answer to “who changed what, from which evidence, and who approved it?” Replacing a JSON file in place cannot provide that history. TwinStudio stores decisions as append-only events and reconstructs a current read model.
 
 ## Command side
 

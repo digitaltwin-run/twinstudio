@@ -2,11 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from living_product_studio.bus import CommandBus, QueryService
-from living_product_studio.domain import CommandEnvelope
-from living_product_studio.event_store import ConcurrencyError, EventStore
-from living_product_studio.mqtt_bus import NullPublisher
-from living_product_studio.seed import seed_from_file
+from twinstudio.bus import CommandBus, QueryService
+from twinstudio.domain import CommandEnvelope
+from twinstudio.event_store import ConcurrencyError, EventStore
+from twinstudio.mqtt_bus import NullPublisher
+from twinstudio.seed import seed_from_file
 
 
 def test_seed_reconstructs_full_project(tmp_path: Path) -> None:
@@ -43,3 +43,51 @@ def test_optimistic_concurrency(tmp_path: Path, project_snapshot) -> None:
                 payload={"stage": "requirements"},
             )
         )
+
+
+def test_design_fixation_review_event_reconstructs(tmp_path: Path, project_snapshot) -> None:
+    from twinstudio.feature_lenses import FeatureLensEngine
+    from twinstudio.settings import Settings
+
+    store = EventStore(f"sqlite:///{tmp_path / 'reviews.db'}")
+    bus = CommandBus(store, NullPublisher())
+    bus.execute(
+        CommandEnvelope(
+            command_type="project.create",
+            project_id="review-project",
+            expected_version=0,
+            actor="creator@example.test",
+            payload={
+                "project_id": "review-project",
+                "tenant": "demo",
+                "name": "Review project",
+                "memberships": {"creator@example.test": "creator"},
+                "objects": project_snapshot.objects,
+            },
+        )
+    )
+    snapshot = QueryService(store).project("review-project")
+    result = FeatureLensEngine(Settings(litellm_model="")).scan(
+        snapshot,
+        target_uri="poa://demo/demo-rpi5@main/part/base",
+        challenge="challenge current hinge assumptions",
+        actor="creator@example.test",
+        lens_ids=["shape", "connectivity_among_parts"],
+        max_alternatives=2,
+        use_llm=False,
+    )
+    bus.execute(
+        CommandEnvelope(
+            command_type="design_fixation.review.record",
+            project_id="review-project",
+            expected_version=snapshot.stream_version,
+            actor="creator@example.test",
+            payload={"review": result.review.model_dump(mode="json")},
+        )
+    )
+    reconstructed = QueryService(store).project("review-project")
+    assert result.review.review_id in reconstructed.design_fixation_reviews
+    assert reconstructed.design_fixation_reviews[result.review.review_id].selected_lens_ids == [
+        "shape",
+        "connectivity_among_parts",
+    ]

@@ -1,62 +1,68 @@
-# Verification record
+# TwinStudio 0.5.0 — verification record
 
-## Live runtime and publication addendum
+Verification was performed in the release build environment on **2026-08-12**. The machine-readable result is stored in `docs/verification-report.json`.
 
-Additional live verification was performed on 2026-08-11 after the original package-build record below:
+## Result
 
-- the base Compose stack (`app`, PostgreSQL, MQTT and Mailpit) was built and started;
-- the application, PostgreSQL and Mailpit healthchecks passed, and MQTT accepted a live TCP connection;
-- the application returned HTTP 200 for the web UI, health endpoint and OpenAPI document;
-- startup seeding reconstructed `demo-rpi5` with 15 objects and 58 events in PostgreSQL;
-- project tree, unified specification, power simulation, human-use evaluation and mechanical checks were queried over live REST;
-- MCP `tools/list` returned 12 tools using the modern 2026-07-28 request shape;
-- Mailpit API and MQTT connectivity were checked;
-- all 24 recorded example artifacts existed and their SHA-256 hashes matched;
-- the unpacked LPS example contained all 27 files declared by its internal manifest, with matching sizes and hashes;
-- local validation passed 52 tests with one Node-only test skipped in the CAD container; the skipped JavaScript check passed separately with Node;
-- GitHub Actions passed all 53 tests with Node available;
-- `buf lint` passed under the `STANDARD` profile and Compose configuration validation passed;
-- the public CI run completed successfully: <https://github.com/digitaltwin-run/twinstudio/actions/runs/31529121492>.
-
-The local host used alternate ports `8400` and `8425` because the documented defaults were already occupied.
-The published Compose file retains defaults `8000` and `8025` and permits overrides through
-`LPS_HOST_PORT` and `MAILPIT_HOST_PORT`.
-
-See `docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md` for the issues found, corrections made and remaining
-production-hardening priorities.
-
-## Original package-build record
-
-The following section preserves the earlier build-environment record from 2026-08-11. Its “not executed”
-statements describe that earlier environment and are superseded by the live addendum where applicable.
+Overall status: **passed**.
 
 ## Passed checks
 
-- Pydantic validation of the complete example project.
-- 15 product/object nodes reconstructed.
-- 24 example source/generated artifacts found; all recorded hashes matched.
-- Selected-region B-Rep demonstration generated a valid single-solid STEP/STL result; the 3 mm hole cut reduced volume by approximately 14.137 mm³ and produced an auditable JSON journal.
-- Compose YAML parsed with 9 services.
-- Static structural check of 8 Protobuf source files: syntax declaration, package, local imports and balanced braces.
+- The complete `demo-rpi5` source snapshot passed Pydantic validation and contains **15 product/object nodes**.
+- All **24 source/example artifacts** referenced by `project.json` exist; no recorded SHA-256 mismatch was found.
+- The selected-region B-Rep demonstration produced valid STEP/STL output and an auditable operation journal. Its 3 mm directional hole cut reduced volume by approximately **14.137 mm³**.
+- `compose.yaml` parsed successfully with **9 services**: application, PostgreSQL, MQTT, Mailpit, CAD worker, object store, Open WebUI, MQTT gateway and device simulator.
+- The static structural check passed for all **8 Protobuf source files**. The `lps.v1` package remains intentionally unchanged as a wire-compatibility namespace.
+- The package contains **12 JSON Schema documents plus `schemas/index.json`** and a TwinScript EBNF grammar. The packaged schema and grammar copies match the canonical files.
+- The evolution catalogs contain:
+  - **20 controlled verbs**;
+  - **34 TwinStudio engineering dimensions**;
+  - **17 evolution operators**;
+  - three lifecycle templates with **30**, **19** and **10** stages;
+  - **50 declared feature-lens slots**, of which **49 are active** and one remains explicitly unresolved from the supplied source material.
+- TwinScript, YAML and JSON examples parse to the same canonical DSL document.
+- A direct source-snapshot compile generated **48 goal variants, 26 resources, 48 candidates, 5 shortlisted candidates and 3 typed change plans**. A seeded event-sourced runtime adds derived resources; the packaged demonstration run contains **30 resources**.
+- The portable demonstration bundle passed ZIP, manifest, file-size and SHA-256 verification. It contains **37 ZIP entries**, a project at stream version **73**, **15 objects**, **33 artifacts**, one evolution run, three change plans and one DSL execution, with no missing artifact.
+- The browser DOM contract passed: no duplicate HTML IDs and no unresolved JavaScript element references.
+- Python sources passed `compileall`.
 - Browser JavaScript passed `node --check`.
-- Python source compiled with `compileall`.
-- 26 automated tests passed.
-- Tests cover POA parsing/scope, role permissions, GTIN check digit, event reconstruction, optimistic concurrency, selection resolution, 2D projection mapping, local scoped planning, scope rejection, allow-listed derived B-Rep hole editing, CAD scope rejection, deferred unsupported geometry, power/thermal/human/mechanical evaluation, project export, primary REST paths, email approval onboarding, modern MCP discovery and mirrored-header validation, unsupported-version handling, Base64 `Mcp-Name`, legacy initialization fallback and Origin rejection.
-- Editable package installation and CLI discovery worked with `pip --no-build-isolation --no-deps -e .` in the offline environment.
-- CLI seed, power simulation and project export completed.
-- Example `.lps.zip` export contained 28 files/entries and reported no missing artifacts.
-- Synthetic camera-image analysis ran and produced deterministic JSON output.
+- CLI discovery passed and exposed the DSL/evolution commands.
+- **38 automated Python tests passed** in one regression run. One test launches the API in an isolated subprocess to verify startup, REST and MCP behavior without sharing application state.
 
-Machine-readable details: `docs/verification-report.json`.
+The automated tests cover, among other things:
 
-## Not executed in this environment
+- POA parsing and scope enforcement;
+- permissions, onboarding and optimistic concurrency;
+- event reconstruction and CQRS commands;
+- 2D/3D selection resolution and projection maps;
+- scoped change planning and rejection outside the selected scope;
+- allow-listed B-Rep edits;
+- feature-lens and design-fixation analysis;
+- TwinScript parsing, YAML/JSON equivalence, schema-backed compilation, evolution runs, lifecycle blueprints and generated artifacts;
+- REST and web application paths;
+- MCP discovery, 21-tool listing, modern/legacy protocol flows and Origin rejection;
+- power, thermal, human-use and mechanical evaluations;
+- portable project export and manifest integrity.
 
-- Docker image builds and live Compose orchestration, because Docker was unavailable.
-- `buf lint`, `buf generate` or `protoc` compiler validation, because Buf/protoc were unavailable and the environment had no package-network access. The `.proto` files passed only the included static structural check.
-- A real LiteLLM provider request, because no provider credentials/network were used.
-- Live MQTT broker interoperability, MCP client/Open WebUI connection or production SMTP delivery.
-- KiCad CLI adapter execution, because no KiCad source project or `kicad-cli` was installed.
-- Physical 3D printing, Raspberry Pi/Camera assembly, cable/connector measurement, thermal calibration, transport testing, usability study or bench electrical validation.
-- Arbitrary/free-form local B-Rep editing and native parametric history reconstruction. The included adapter was exercised for a selected directional hole cut and scope rejection, but only allow-listed hole/local-box operations are implemented.
+## Source-archive and Python-package checks
 
-These exclusions are capability boundaries, not hidden pass claims.
+- The source ZIP was extracted into a clean directory.
+- All **319** entries in its internal `PACKAGE_MANIFEST.sha256` matched.
+- The archive excludes the runtime SQLite database, `.pytest_cache`, `__pycache__` and Python bytecode.
+- The complete **38-test** suite passed again from the extracted source archive.
+- The extracted source built successfully as `twinstudio-0.5.0-py3-none-any.whl`.
+- The wheel contains the browser assets, evolution and feature-lens catalogs, canonical DSL schema and EBNF grammar.
+- Importing from the unpacked wheel confirmed that the packaged schema/grammar fallback works without the repository-level `schemas/` directory.
+- A separate nested-venv editable-install attempt could not start because that container-created venv did not inherit `setuptools.build_meta`. This was treated as an environment limitation and replaced by the successful wheel build/import check; it is not claimed as an editable-install pass.
+
+## Not executed for this 0.5.0 build
+
+- A complete live Docker Compose deployment after adding the 0.5.0 evolution layer.
+- A real LiteLLM provider request, because provider credentials and an external model endpoint were not used.
+- `buf generate`/`protoc` code generation in this environment. Protobuf files received the included static check; compiler validation belongs in CI.
+- A live MQTT/Open WebUI integration session or production SMTP delivery.
+- KiCad CLI execution against a real PCB source project.
+- Physical 3D printing, Raspberry Pi/Camera assembly, hinge cycling, cable/connector measurement, thermal/electrical bench validation, transport tests or a usability study.
+- Arbitrary free-form B-Rep editing or reconstruction of native SolidWorks feature history. The included CAD adapter remains limited to allow-listed hole and local-box operations.
+
+These exclusions are capability boundaries, not hidden pass claims. Evolution candidates are hypotheses until supported by simulation, prototype and test evidence.

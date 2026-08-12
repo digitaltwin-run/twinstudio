@@ -13,8 +13,8 @@ from scoped_brep_adapter import apply_scoped_operation
 
 HOST = os.getenv("MQTT_HOST", "mqtt")
 PORT = int(os.getenv("MQTT_PORT", "1883"))
-PREFIX = os.getenv("MQTT_TOPIC_PREFIX", "lps/v1").strip("/")
-DATA = Path(os.getenv("LPS_DATA_DIR", "/data")).resolve()
+PREFIX = os.getenv("MQTT_TOPIC_PREFIX", "twinstudio/v1").strip("/")
+DATA = Path(os.getenv("TWINSTUDIO_DATA_DIR", os.getenv("LPS_DATA_DIR", "/data"))).resolve()
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -28,7 +28,7 @@ def _safe_data_path(raw: str) -> Path:
         candidate = DATA / candidate
     resolved = candidate.resolve()
     if resolved != DATA and DATA not in resolved.parents:
-        raise ValueError("CAD worker input must be inside LPS_DATA_DIR")
+        raise ValueError("CAD worker input must be inside TWINSTUDIO_DATA_DIR")
     return resolved
 
 

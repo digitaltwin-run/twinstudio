@@ -350,5 +350,7 @@
     "created_by"
   ],
   "title": "RegionSelection",
-  "type": "object"
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/region-selection.schema.json"
 }

@@ -1,0 +1,582 @@
+flowchart TB
+  goal-5bebe9d07c26fbcc["improve front hinge support-free printing, a clean external joint and opening above 190 degrees"]
+  goal-e3b64f3454fef3b3["change"]
+  goal-2c97ffebf0dd04a1["modify"]
+  goal-7057069db728ed20["develop"]
+  goal-15f18b3c9f516f4e["polish"]
+  goal-d1e7dbfec2d4ff7a["simplify"]
+  goal-a5e37e90c7509c46["merge"]
+  goal-24de72e53e6032ca["remove"]
+  goal-d625c3743d56f1a6["standardize"]
+  goal-e8707924e0b38939["parameterize"]
+  goal-5d749d64312491fd["automate"]
+  goal-ab12102b7148ba34["reinforce"]
+  goal-f24abc8f35d4e324["tune"]
+  goal-c31e5e8e13a5243f["smooth"]
+  goal-27ee93dba701b4a7["shorten"]
+  goal-6594b17368ee5b6b["lighten"]
+  goal-6371d56d9007b609["enhance"]
+  goal-13d31b5f5502ef99["optimize"]
+  goal-5773b3049fa0abfc["refine"]
+  goal-debc513ebe64ed3b["strengthen"]
+  goal-c15cfb6709844401["degrade"]
+  goal-429fe5f1d0602c91["weaken"]
+  goal-1aafcb830fc2ee72["complicate"]
+  goal-34b487c2fafb0e11["move"]
+  goal-4ac7cf37ab4c73c0["rotate"]
+  goal-b6841b95ad582a04["slide"]
+  goal-caca50a198b50bc0["lift"]
+  goal-cb3c542e7c5b8d2f["peel"]
+  goal-dc12ec26f790bc6e["split"]
+  goal-6099c03993471390["expand"]
+  goal-14b3ec999cbeb233["uncover"]
+  goal-c26ad29b131327e7["expose"]
+  goal-89b35bd863f1479a["release"]
+  goal-b57aa7df8a34f33a["unfold"]
+  goal-32d0b476cd61f8a9["close"]
+  goal-9bce1c9c71eec989["seal"]
+  goal-0237ef13cae38170["lock"]
+  goal-30d57c15a87ceb61["assemble"]
+  goal-6ad8b57606f283d9["form"]
+  goal-a72499e9b9911df0["tie"]
+  goal-b57f2e754d7ff4b0["clamp"]
+  goal-57235d61c9088038["clip"]
+  goal-4cdc7ca92e9df971["buckle"]
+  goal-1401e541836758da["weld"]
+  goal-3f72ec711dde9019["rivet"]
+  goal-4af19ccfea71e245["pin"]
+  goal-1aa8b070a04a9dc0["latch"]
+  goal-c558f9da8b02cbac["screw"]
+  resource-736f8f016812604e["Lower base"]
+  feature-47f7d71977c06b5f["Base shell"]
+  feature-b65d281d17bb7b97["RPi mounting position A"]
+  feature-5f0b935f37219239["RPi mounting position B"]
+  feature-8f2be0908af7be35["Base hinge knuckles"]
+  parameter-900ff95d7caa4e4d["width"]
+  parameter-920a578652477b7a["depth"]
+  parameter-62129304acd95e43["height"]
+  parameter-cbe1ac2ecf9e47d4["wall_thickness"]
+  parameter-41b0bd304232d114["floor_thickness"]
+  material-074898099f51aaa0["PETG"]
+  process-7e43150c2e9adaa1["fdm_print"]
+  artifact-148b86f1e86135e8["base.stl"]
+  artifact-e874e52173fe4702["base.step"]
+  resource-5fc3230bc456c2da["Upper lid"]
+  feature-e153d7577073cc99["Sloped lid shell"]
+  feature-16eb916281c250b1["Camera mounting grid"]
+  feature-7ba67ee05ced1097["Auxiliary lid bosses"]
+  feature-497634cbf4995e4a["Lid hinge knuckles"]
+  parameter-93ff3a532deb5da7["wall_thickness"]
+  parameter-d88ffe86b502c1b7["total_height"]
+  parameter-46d57e04a5d44346["vertical_joint_section"]
+  material-ba98dcf281f298cd["PETG"]
+  process-5d374c8f35f3191c["fdm_print"]
+  artifact-bc03ceeabded3b21["lid.stl"]
+  artifact-79e6e419b1d23630["lid.step"]
+  requirement-ae6096e34ad03119["Base and lid general wall thickness shall be 2 mm."]
+  requirement-cfc5f34c6a6f7fe6["Separate front, top and side 2D views shall be generated for each housing part."]
+  human-57ffcf98ed5928fc["rotate_lid"]
+  environment-23562d99c53b45f7["intended environment"]
+  bridge-b6e7dbd474059fc3["improve ↔ Base hinge knuckles"]
+  bridge-88ddf0c64bb86840["improve ↔ Lid hinge knuckles"]
+  bridge-a9a78fde88f96438["improve ↔ rotate_lid"]
+  bridge-085640bfb20fa4e4["change ↔ Auxiliary lid bosses"]
+  bridge-58149abfcf9916bb["change ↔ Base hinge knuckles"]
+  bridge-d55f9b2e2b05eecf["change ↔ Base shell"]
+  bridge-83ac70d6ea84c8c1["modify ↔ Auxiliary lid bosses"]
+  bridge-0a634ba7d0dd78cf["modify ↔ Base hinge knuckles"]
+  bridge-9e1e33f5fe57da6b["modify ↔ Base shell"]
+  bridge-21545d72357614b0["develop ↔ Auxiliary lid bosses"]
+  bridge-1a1db2b36fd15f3a["develop ↔ Base hinge knuckles"]
+  bridge-ef72816f59ff2e0f["develop ↔ Base shell"]
+  bridge-88e23effe98d594c["polish ↔ Auxiliary lid bosses"]
+  bridge-bc72a3be5d75c9e2["polish ↔ Base hinge knuckles"]
+  bridge-bedb7b1399bf1ea7["polish ↔ Base shell"]
+  bridge-5a4a7933ef56684f["simplify ↔ Auxiliary lid bosses"]
+  bridge-f1c077b73a0b7e32["simplify ↔ Base hinge knuckles"]
+  bridge-44d2a9cffec7c4ea["simplify ↔ Base shell"]
+  bridge-fabaf97f7526d27c["merge ↔ Auxiliary lid bosses"]
+  bridge-5656c5cc71d5f479["merge ↔ Base hinge knuckles"]
+  bridge-6ce66dd9fbc34374["merge ↔ Base shell"]
+  bridge-4145dbdafdefca27["remove ↔ Auxiliary lid bosses"]
+  bridge-da007ba10d534256["remove ↔ Base hinge knuckles"]
+  bridge-a0c171f3f3fc0806["remove ↔ Base shell"]
+  bridge-70512d4817cdc124["standardize ↔ Auxiliary lid bosses"]
+  bridge-ddd2dcc87334dcfc["standardize ↔ Base hinge knuckles"]
+  bridge-4b2366748f0eb095["standardize ↔ Base shell"]
+  bridge-890d1f57c2d2a06f["parameterize ↔ Auxiliary lid bosses"]
+  bridge-94f4acf07ecef377["parameterize ↔ Base hinge knuckles"]
+  bridge-0cea7b9df1dcb7a0["parameterize ↔ Base shell"]
+  bridge-cecf0421867aadd8["automate ↔ Auxiliary lid bosses"]
+  bridge-b33ce43f2979e682["automate ↔ Base hinge knuckles"]
+  bridge-e392291a45e0e9bb["automate ↔ Base shell"]
+  bridge-6cbb928253e1f590["reinforce ↔ Auxiliary lid bosses"]
+  bridge-43439cb36a7397dc["reinforce ↔ Base hinge knuckles"]
+  bridge-35fe2363491578eb["reinforce ↔ Base shell"]
+  bridge-31f4ebc0dda7158b["tune ↔ Auxiliary lid bosses"]
+  bridge-6148ae34c9016a1f["tune ↔ Base hinge knuckles"]
+  bridge-35fec8b973a5f1ab["tune ↔ Base shell"]
+  bridge-d9421811fd461b8a["smooth ↔ Auxiliary lid bosses"]
+  bridge-5f6e524bca71899a["smooth ↔ Base hinge knuckles"]
+  bridge-db0b2c2b44f1b15a["smooth ↔ Base shell"]
+  bridge-253e3fb603b8576c["shorten ↔ Auxiliary lid bosses"]
+  bridge-a63a100f46966d36["shorten ↔ Base hinge knuckles"]
+  bridge-30b41b81cd7d9f11["shorten ↔ Base shell"]
+  bridge-fa6064046eab1914["lighten ↔ Auxiliary lid bosses"]
+  bridge-0ad972c39a57c6a8["lighten ↔ Base hinge knuckles"]
+  bridge-af93fc3664f074af["lighten ↔ Base shell"]
+  bridge-60e2bf6db1cf4eab["enhance ↔ Auxiliary lid bosses"]
+  bridge-3ddf14ce1bd910cf["enhance ↔ Base hinge knuckles"]
+  bridge-2503e022143198df["enhance ↔ Base shell"]
+  bridge-acda9fcd5e9a55c8["optimize ↔ Auxiliary lid bosses"]
+  bridge-c7141c4dfb97cabf["optimize ↔ Base hinge knuckles"]
+  bridge-0a931a07a5a6add0["optimize ↔ Base shell"]
+  bridge-9f3fa010fc7fd144["refine ↔ Auxiliary lid bosses"]
+  bridge-6307a18e473404e1["refine ↔ Base hinge knuckles"]
+  bridge-82933ef3a0a0ac6c["refine ↔ Base shell"]
+  bridge-0ee8d290871d35f0["strengthen ↔ Auxiliary lid bosses"]
+  bridge-6fe86f385b523e14["strengthen ↔ Base hinge knuckles"]
+  bridge-591cdfee4145afda["strengthen ↔ Base shell"]
+  bridge-2672a7b0bd3d6c17["degrade ↔ Auxiliary lid bosses"]
+  bridge-bdbfd42cdee6c90e["degrade ↔ Base hinge knuckles"]
+  bridge-c64995351e55b0ab["degrade ↔ Base shell"]
+  bridge-23bbc7a6bba67e38["weaken ↔ Auxiliary lid bosses"]
+  bridge-1917d3e2402ef761["weaken ↔ Base hinge knuckles"]
+  bridge-3e2dcf5d18ec212a["weaken ↔ Base shell"]
+  bridge-ccf982704fdbab57["complicate ↔ Auxiliary lid bosses"]
+  bridge-b7dc17dd43aee3df["complicate ↔ Base hinge knuckles"]
+  bridge-1528b2d0853e1ce7["complicate ↔ Base shell"]
+  bridge-cf659b67bec1a92f["move ↔ Auxiliary lid bosses"]
+  bridge-4495603cb8c4c459["move ↔ Base hinge knuckles"]
+  bridge-53f5c8710657f777["move ↔ Base shell"]
+  bridge-903dc3ea3718a55c["rotate ↔ Auxiliary lid bosses"]
+  bridge-b8be645c84a3c48a["rotate ↔ Base hinge knuckles"]
+  bridge-0783dd75a5c7e7a2["rotate ↔ Base shell"]
+  bridge-cdf2a65dda000d3c["slide ↔ Auxiliary lid bosses"]
+  bridge-3f60283b7a5d44e4["slide ↔ Base hinge knuckles"]
+  bridge-7d33ca3587880db7["slide ↔ Base shell"]
+  bridge-049a4dbba66e4b65["lift ↔ Auxiliary lid bosses"]
+  bridge-0c3612acf370a24f["lift ↔ Base hinge knuckles"]
+  bridge-b0f1230a3deac168["lift ↔ Base shell"]
+  bridge-955c9d3cbc733149["peel ↔ Auxiliary lid bosses"]
+  bridge-408afcd0569785d3["peel ↔ Base hinge knuckles"]
+  bridge-c045882d6d71c45f["peel ↔ Base shell"]
+  bridge-036161986c7943c7["split ↔ Auxiliary lid bosses"]
+  bridge-e75f761980b80204["split ↔ Base hinge knuckles"]
+  bridge-5aef954f79e787b5["split ↔ Base shell"]
+  bridge-030646e3bcf15a79["expand ↔ Auxiliary lid bosses"]
+  bridge-84a24c84ad8f94ff["expand ↔ Base hinge knuckles"]
+  bridge-bb42f0949f4b829a["expand ↔ Base shell"]
+  bridge-635af83e4a0a0fac["uncover ↔ Auxiliary lid bosses"]
+  bridge-c9598a4409be7eaa["uncover ↔ Base hinge knuckles"]
+  bridge-9fe126473bc12ba5["uncover ↔ Base shell"]
+  bridge-f5d9d626cd27b290["expose ↔ Auxiliary lid bosses"]
+  bridge-731c791c7cc32c9e["expose ↔ Base hinge knuckles"]
+  bridge-b5e869e0f6b69636["expose ↔ Base shell"]
+  bridge-bc0f065087428607["release ↔ Auxiliary lid bosses"]
+  bridge-fe3b18e67fa229de["release ↔ Base hinge knuckles"]
+  bridge-5e03651d9f573262["release ↔ Base shell"]
+  bridge-b2a51d02e63ea813["unfold ↔ Auxiliary lid bosses"]
+  bridge-5f5238aa948daf4b["unfold ↔ Base hinge knuckles"]
+  bridge-16396437033932bf["unfold ↔ Base shell"]
+  bridge-bec073e143026332["close ↔ Auxiliary lid bosses"]
+  bridge-68940fd037bed392["close ↔ Base hinge knuckles"]
+  bridge-228f034cf720b91e["close ↔ Base shell"]
+  bridge-1bcce9f84195f52e["seal ↔ intended environment"]
+  bridge-b70d6b8c8cdd32f9["seal ↔ Auxiliary lid bosses"]
+  bridge-472b9a5a97e9399a["seal ↔ Base hinge knuckles"]
+  bridge-c17c9689b9217cb2["lock ↔ Auxiliary lid bosses"]
+  bridge-1eb2dbd359b7248f["lock ↔ Base hinge knuckles"]
+  bridge-d17a6f3d23bf9ecf["lock ↔ Base shell"]
+  bridge-b624c267d54fd0b8["assemble ↔ Auxiliary lid bosses"]
+  bridge-42578ab715feffb6["assemble ↔ Base hinge knuckles"]
+  bridge-cdf3313d389069a2["assemble ↔ Base shell"]
+  bridge-294cc9e75a17cc9f["form ↔ Auxiliary lid bosses"]
+  bridge-7e0f25b2f72f0f0b["form ↔ Base hinge knuckles"]
+  bridge-528a766949f9d60c["form ↔ Base shell"]
+  bridge-0b21b6c6ede7def1["tie ↔ Auxiliary lid bosses"]
+  bridge-5d18677e84b50c83["tie ↔ Base hinge knuckles"]
+  bridge-cce18d31cdccaa59["tie ↔ Base shell"]
+  bridge-bffbca935022b47f["clamp ↔ Auxiliary lid bosses"]
+  bridge-42ea9967e3be6989["clamp ↔ Base hinge knuckles"]
+  bridge-f2476d0c100d2ed5["clamp ↔ Base shell"]
+  bridge-064a77e54efada8f["clip ↔ Auxiliary lid bosses"]
+  bridge-7be848365a9ea8f3["clip ↔ Base hinge knuckles"]
+  bridge-7a1515f13858fb09["clip ↔ Base shell"]
+  bridge-78df81a0812ca613["buckle ↔ Auxiliary lid bosses"]
+  bridge-63f52f20a0bbd661["buckle ↔ Base hinge knuckles"]
+  bridge-ead42b6450de442e["buckle ↔ Base shell"]
+  bridge-379af0ecad56d8eb["weld ↔ Auxiliary lid bosses"]
+  bridge-89ee54cd7171678a["weld ↔ Base hinge knuckles"]
+  bridge-a51178c355b47f4e["weld ↔ Base shell"]
+  bridge-67419c8708fec034["rivet ↔ Auxiliary lid bosses"]
+  bridge-0283759d9f4187d2["rivet ↔ Base hinge knuckles"]
+  bridge-e557e2028e895a7d["rivet ↔ Base shell"]
+  bridge-17edc2582636ae8d["pin ↔ Auxiliary lid bosses"]
+  bridge-677ab2913b53132f["pin ↔ Base hinge knuckles"]
+  bridge-5c330783adeffabe["pin ↔ Base shell"]
+  bridge-166f9a5ace16e739["latch ↔ Auxiliary lid bosses"]
+  bridge-7fb071fee247372a["latch ↔ Base hinge knuckles"]
+  bridge-d8cc987ddfa18f2f["latch ↔ Base shell"]
+  bridge-5bf893b98ba1c8e4["screw ↔ Auxiliary lid bosses"]
+  bridge-ef236ec040ed803e["screw ↔ Base hinge knuckles"]
+  bridge-11eb6e8a2bb1396b["screw ↔ Base shell"]
+  goal-5bebe9d07c26fbcc -->|hypernym| goal-e3b64f3454fef3b3
+  goal-5bebe9d07c26fbcc -->|hypernym| goal-2c97ffebf0dd04a1
+  goal-5bebe9d07c26fbcc -->|hypernym| goal-7057069db728ed20
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-15f18b3c9f516f4e
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-d1e7dbfec2d4ff7a
+  goal-d1e7dbfec2d4ff7a -->|hyponym| goal-a5e37e90c7509c46
+  goal-d1e7dbfec2d4ff7a -->|hyponym| goal-24de72e53e6032ca
+  goal-d1e7dbfec2d4ff7a -->|hyponym| goal-d625c3743d56f1a6
+  goal-d1e7dbfec2d4ff7a -->|hyponym| goal-e8707924e0b38939
+  goal-d1e7dbfec2d4ff7a -->|hyponym| goal-5d749d64312491fd
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-ab12102b7148ba34
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-f24abc8f35d4e324
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-c31e5e8e13a5243f
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-27ee93dba701b4a7
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-6594b17368ee5b6b
+  goal-5bebe9d07c26fbcc -->|synonym| goal-6371d56d9007b609
+  goal-5bebe9d07c26fbcc -->|synonym| goal-13d31b5f5502ef99
+  goal-5bebe9d07c26fbcc -->|synonym| goal-5773b3049fa0abfc
+  goal-5bebe9d07c26fbcc -->|synonym| goal-debc513ebe64ed3b
+  goal-5bebe9d07c26fbcc -->|opposite| goal-c15cfb6709844401
+  goal-5bebe9d07c26fbcc -->|opposite| goal-429fe5f1d0602c91
+  goal-5bebe9d07c26fbcc -->|opposite| goal-1aafcb830fc2ee72
+  goal-5bebe9d07c26fbcc -->|hypernym| goal-34b487c2fafb0e11
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-4ac7cf37ab4c73c0
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-b6841b95ad582a04
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-caca50a198b50bc0
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-cb3c542e7c5b8d2f
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-dc12ec26f790bc6e
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-6099c03993471390
+  goal-5bebe9d07c26fbcc -->|synonym| goal-14b3ec999cbeb233
+  goal-5bebe9d07c26fbcc -->|synonym| goal-c26ad29b131327e7
+  goal-5bebe9d07c26fbcc -->|synonym| goal-89b35bd863f1479a
+  goal-5bebe9d07c26fbcc -->|synonym| goal-b57aa7df8a34f33a
+  goal-5bebe9d07c26fbcc -->|opposite| goal-32d0b476cd61f8a9
+  goal-5bebe9d07c26fbcc -->|opposite| goal-9bce1c9c71eec989
+  goal-5bebe9d07c26fbcc -->|opposite| goal-0237ef13cae38170
+  goal-5bebe9d07c26fbcc -->|hypernym| goal-30d57c15a87ceb61
+  goal-5bebe9d07c26fbcc -->|hypernym| goal-6ad8b57606f283d9
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-a72499e9b9911df0
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-b57f2e754d7ff4b0
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-57235d61c9088038
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-4cdc7ca92e9df971
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-1401e541836758da
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-3f72ec711dde9019
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-4af19ccfea71e245
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-1aa8b070a04a9dc0
+  goal-5bebe9d07c26fbcc -->|hyponym| goal-c558f9da8b02cbac
+  feature-47f7d71977c06b5f -->|part_of| resource-736f8f016812604e
+  feature-b65d281d17bb7b97 -->|part_of| resource-736f8f016812604e
+  feature-5f0b935f37219239 -->|part_of| resource-736f8f016812604e
+  feature-8f2be0908af7be35 -->|part_of| resource-736f8f016812604e
+  parameter-900ff95d7caa4e4d -->|part_of| resource-736f8f016812604e
+  parameter-920a578652477b7a -->|part_of| resource-736f8f016812604e
+  parameter-62129304acd95e43 -->|part_of| resource-736f8f016812604e
+  parameter-cbe1ac2ecf9e47d4 -->|part_of| resource-736f8f016812604e
+  parameter-41b0bd304232d114 -->|part_of| resource-736f8f016812604e
+  material-074898099f51aaa0 -->|part_of| resource-736f8f016812604e
+  process-7e43150c2e9adaa1 -->|part_of| resource-736f8f016812604e
+  artifact-148b86f1e86135e8 -->|part_of| resource-736f8f016812604e
+  artifact-e874e52173fe4702 -->|part_of| resource-736f8f016812604e
+  feature-e153d7577073cc99 -->|part_of| resource-5fc3230bc456c2da
+  feature-16eb916281c250b1 -->|part_of| resource-5fc3230bc456c2da
+  feature-7ba67ee05ced1097 -->|part_of| resource-5fc3230bc456c2da
+  feature-497634cbf4995e4a -->|part_of| resource-5fc3230bc456c2da
+  parameter-93ff3a532deb5da7 -->|part_of| resource-5fc3230bc456c2da
+  parameter-d88ffe86b502c1b7 -->|part_of| resource-5fc3230bc456c2da
+  parameter-46d57e04a5d44346 -->|part_of| resource-5fc3230bc456c2da
+  material-ba98dcf281f298cd -->|part_of| resource-5fc3230bc456c2da
+  process-5d374c8f35f3191c -->|part_of| resource-5fc3230bc456c2da
+  artifact-bc03ceeabded3b21 -->|part_of| resource-5fc3230bc456c2da
+  artifact-79e6e419b1d23630 -->|part_of| resource-5fc3230bc456c2da
+  goal-5bebe9d07c26fbcc -->|can_be_realized_by| bridge-b6e7dbd474059fc3
+  bridge-b6e7dbd474059fc3 -->|uses_resource| feature-8f2be0908af7be35
+  goal-5bebe9d07c26fbcc -->|can_be_realized_by| bridge-88ddf0c64bb86840
+  bridge-88ddf0c64bb86840 -->|uses_resource| feature-497634cbf4995e4a
+  goal-5bebe9d07c26fbcc -->|can_be_realized_by| bridge-a9a78fde88f96438
+  bridge-a9a78fde88f96438 -->|uses_resource| human-57ffcf98ed5928fc
+  goal-e3b64f3454fef3b3 -->|can_be_realized_by| bridge-085640bfb20fa4e4
+  bridge-085640bfb20fa4e4 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-e3b64f3454fef3b3 -->|can_be_realized_by| bridge-58149abfcf9916bb
+  bridge-58149abfcf9916bb -->|uses_resource| feature-8f2be0908af7be35
+  goal-e3b64f3454fef3b3 -->|can_be_realized_by| bridge-d55f9b2e2b05eecf
+  bridge-d55f9b2e2b05eecf -->|uses_resource| feature-47f7d71977c06b5f
+  goal-2c97ffebf0dd04a1 -->|can_be_realized_by| bridge-83ac70d6ea84c8c1
+  bridge-83ac70d6ea84c8c1 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-2c97ffebf0dd04a1 -->|can_be_realized_by| bridge-0a634ba7d0dd78cf
+  bridge-0a634ba7d0dd78cf -->|uses_resource| feature-8f2be0908af7be35
+  goal-2c97ffebf0dd04a1 -->|can_be_realized_by| bridge-9e1e33f5fe57da6b
+  bridge-9e1e33f5fe57da6b -->|uses_resource| feature-47f7d71977c06b5f
+  goal-7057069db728ed20 -->|can_be_realized_by| bridge-21545d72357614b0
+  bridge-21545d72357614b0 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-7057069db728ed20 -->|can_be_realized_by| bridge-1a1db2b36fd15f3a
+  bridge-1a1db2b36fd15f3a -->|uses_resource| feature-8f2be0908af7be35
+  goal-7057069db728ed20 -->|can_be_realized_by| bridge-ef72816f59ff2e0f
+  bridge-ef72816f59ff2e0f -->|uses_resource| feature-47f7d71977c06b5f
+  goal-15f18b3c9f516f4e -->|can_be_realized_by| bridge-88e23effe98d594c
+  bridge-88e23effe98d594c -->|uses_resource| feature-7ba67ee05ced1097
+  goal-15f18b3c9f516f4e -->|can_be_realized_by| bridge-bc72a3be5d75c9e2
+  bridge-bc72a3be5d75c9e2 -->|uses_resource| feature-8f2be0908af7be35
+  goal-15f18b3c9f516f4e -->|can_be_realized_by| bridge-bedb7b1399bf1ea7
+  bridge-bedb7b1399bf1ea7 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-d1e7dbfec2d4ff7a -->|can_be_realized_by| bridge-5a4a7933ef56684f
+  bridge-5a4a7933ef56684f -->|uses_resource| feature-7ba67ee05ced1097
+  goal-d1e7dbfec2d4ff7a -->|can_be_realized_by| bridge-f1c077b73a0b7e32
+  bridge-f1c077b73a0b7e32 -->|uses_resource| feature-8f2be0908af7be35
+  goal-d1e7dbfec2d4ff7a -->|can_be_realized_by| bridge-44d2a9cffec7c4ea
+  bridge-44d2a9cffec7c4ea -->|uses_resource| feature-47f7d71977c06b5f
+  goal-a5e37e90c7509c46 -->|can_be_realized_by| bridge-fabaf97f7526d27c
+  bridge-fabaf97f7526d27c -->|uses_resource| feature-7ba67ee05ced1097
+  goal-a5e37e90c7509c46 -->|can_be_realized_by| bridge-5656c5cc71d5f479
+  bridge-5656c5cc71d5f479 -->|uses_resource| feature-8f2be0908af7be35
+  goal-a5e37e90c7509c46 -->|can_be_realized_by| bridge-6ce66dd9fbc34374
+  bridge-6ce66dd9fbc34374 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-24de72e53e6032ca -->|can_be_realized_by| bridge-4145dbdafdefca27
+  bridge-4145dbdafdefca27 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-24de72e53e6032ca -->|can_be_realized_by| bridge-da007ba10d534256
+  bridge-da007ba10d534256 -->|uses_resource| feature-8f2be0908af7be35
+  goal-24de72e53e6032ca -->|can_be_realized_by| bridge-a0c171f3f3fc0806
+  bridge-a0c171f3f3fc0806 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-d625c3743d56f1a6 -->|can_be_realized_by| bridge-70512d4817cdc124
+  bridge-70512d4817cdc124 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-d625c3743d56f1a6 -->|can_be_realized_by| bridge-ddd2dcc87334dcfc
+  bridge-ddd2dcc87334dcfc -->|uses_resource| feature-8f2be0908af7be35
+  goal-d625c3743d56f1a6 -->|can_be_realized_by| bridge-4b2366748f0eb095
+  bridge-4b2366748f0eb095 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-e8707924e0b38939 -->|can_be_realized_by| bridge-890d1f57c2d2a06f
+  bridge-890d1f57c2d2a06f -->|uses_resource| feature-7ba67ee05ced1097
+  goal-e8707924e0b38939 -->|can_be_realized_by| bridge-94f4acf07ecef377
+  bridge-94f4acf07ecef377 -->|uses_resource| feature-8f2be0908af7be35
+  goal-e8707924e0b38939 -->|can_be_realized_by| bridge-0cea7b9df1dcb7a0
+  bridge-0cea7b9df1dcb7a0 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-5d749d64312491fd -->|can_be_realized_by| bridge-cecf0421867aadd8
+  bridge-cecf0421867aadd8 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-5d749d64312491fd -->|can_be_realized_by| bridge-b33ce43f2979e682
+  bridge-b33ce43f2979e682 -->|uses_resource| feature-8f2be0908af7be35
+  goal-5d749d64312491fd -->|can_be_realized_by| bridge-e392291a45e0e9bb
+  bridge-e392291a45e0e9bb -->|uses_resource| feature-47f7d71977c06b5f
+  goal-ab12102b7148ba34 -->|can_be_realized_by| bridge-6cbb928253e1f590
+  bridge-6cbb928253e1f590 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-ab12102b7148ba34 -->|can_be_realized_by| bridge-43439cb36a7397dc
+  bridge-43439cb36a7397dc -->|uses_resource| feature-8f2be0908af7be35
+  goal-ab12102b7148ba34 -->|can_be_realized_by| bridge-35fe2363491578eb
+  bridge-35fe2363491578eb -->|uses_resource| feature-47f7d71977c06b5f
+  goal-f24abc8f35d4e324 -->|can_be_realized_by| bridge-31f4ebc0dda7158b
+  bridge-31f4ebc0dda7158b -->|uses_resource| feature-7ba67ee05ced1097
+  goal-f24abc8f35d4e324 -->|can_be_realized_by| bridge-6148ae34c9016a1f
+  bridge-6148ae34c9016a1f -->|uses_resource| feature-8f2be0908af7be35
+  goal-f24abc8f35d4e324 -->|can_be_realized_by| bridge-35fec8b973a5f1ab
+  bridge-35fec8b973a5f1ab -->|uses_resource| feature-47f7d71977c06b5f
+  goal-c31e5e8e13a5243f -->|can_be_realized_by| bridge-d9421811fd461b8a
+  bridge-d9421811fd461b8a -->|uses_resource| feature-7ba67ee05ced1097
+  goal-c31e5e8e13a5243f -->|can_be_realized_by| bridge-5f6e524bca71899a
+  bridge-5f6e524bca71899a -->|uses_resource| feature-8f2be0908af7be35
+  goal-c31e5e8e13a5243f -->|can_be_realized_by| bridge-db0b2c2b44f1b15a
+  bridge-db0b2c2b44f1b15a -->|uses_resource| feature-47f7d71977c06b5f
+  goal-27ee93dba701b4a7 -->|can_be_realized_by| bridge-253e3fb603b8576c
+  bridge-253e3fb603b8576c -->|uses_resource| feature-7ba67ee05ced1097
+  goal-27ee93dba701b4a7 -->|can_be_realized_by| bridge-a63a100f46966d36
+  bridge-a63a100f46966d36 -->|uses_resource| feature-8f2be0908af7be35
+  goal-27ee93dba701b4a7 -->|can_be_realized_by| bridge-30b41b81cd7d9f11
+  bridge-30b41b81cd7d9f11 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-6594b17368ee5b6b -->|can_be_realized_by| bridge-fa6064046eab1914
+  bridge-fa6064046eab1914 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-6594b17368ee5b6b -->|can_be_realized_by| bridge-0ad972c39a57c6a8
+  bridge-0ad972c39a57c6a8 -->|uses_resource| feature-8f2be0908af7be35
+  goal-6594b17368ee5b6b -->|can_be_realized_by| bridge-af93fc3664f074af
+  bridge-af93fc3664f074af -->|uses_resource| feature-47f7d71977c06b5f
+  goal-6371d56d9007b609 -->|can_be_realized_by| bridge-60e2bf6db1cf4eab
+  bridge-60e2bf6db1cf4eab -->|uses_resource| feature-7ba67ee05ced1097
+  goal-6371d56d9007b609 -->|can_be_realized_by| bridge-3ddf14ce1bd910cf
+  bridge-3ddf14ce1bd910cf -->|uses_resource| feature-8f2be0908af7be35
+  goal-6371d56d9007b609 -->|can_be_realized_by| bridge-2503e022143198df
+  bridge-2503e022143198df -->|uses_resource| feature-47f7d71977c06b5f
+  goal-13d31b5f5502ef99 -->|can_be_realized_by| bridge-acda9fcd5e9a55c8
+  bridge-acda9fcd5e9a55c8 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-13d31b5f5502ef99 -->|can_be_realized_by| bridge-c7141c4dfb97cabf
+  bridge-c7141c4dfb97cabf -->|uses_resource| feature-8f2be0908af7be35
+  goal-13d31b5f5502ef99 -->|can_be_realized_by| bridge-0a931a07a5a6add0
+  bridge-0a931a07a5a6add0 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-5773b3049fa0abfc -->|can_be_realized_by| bridge-9f3fa010fc7fd144
+  bridge-9f3fa010fc7fd144 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-5773b3049fa0abfc -->|can_be_realized_by| bridge-6307a18e473404e1
+  bridge-6307a18e473404e1 -->|uses_resource| feature-8f2be0908af7be35
+  goal-5773b3049fa0abfc -->|can_be_realized_by| bridge-82933ef3a0a0ac6c
+  bridge-82933ef3a0a0ac6c -->|uses_resource| feature-47f7d71977c06b5f
+  goal-debc513ebe64ed3b -->|can_be_realized_by| bridge-0ee8d290871d35f0
+  bridge-0ee8d290871d35f0 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-debc513ebe64ed3b -->|can_be_realized_by| bridge-6fe86f385b523e14
+  bridge-6fe86f385b523e14 -->|uses_resource| feature-8f2be0908af7be35
+  goal-debc513ebe64ed3b -->|can_be_realized_by| bridge-591cdfee4145afda
+  bridge-591cdfee4145afda -->|uses_resource| feature-47f7d71977c06b5f
+  goal-c15cfb6709844401 -->|can_be_realized_by| bridge-2672a7b0bd3d6c17
+  bridge-2672a7b0bd3d6c17 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-c15cfb6709844401 -->|can_be_realized_by| bridge-bdbfd42cdee6c90e
+  bridge-bdbfd42cdee6c90e -->|uses_resource| feature-8f2be0908af7be35
+  goal-c15cfb6709844401 -->|can_be_realized_by| bridge-c64995351e55b0ab
+  bridge-c64995351e55b0ab -->|uses_resource| feature-47f7d71977c06b5f
+  goal-429fe5f1d0602c91 -->|can_be_realized_by| bridge-23bbc7a6bba67e38
+  bridge-23bbc7a6bba67e38 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-429fe5f1d0602c91 -->|can_be_realized_by| bridge-1917d3e2402ef761
+  bridge-1917d3e2402ef761 -->|uses_resource| feature-8f2be0908af7be35
+  goal-429fe5f1d0602c91 -->|can_be_realized_by| bridge-3e2dcf5d18ec212a
+  bridge-3e2dcf5d18ec212a -->|uses_resource| feature-47f7d71977c06b5f
+  goal-1aafcb830fc2ee72 -->|can_be_realized_by| bridge-ccf982704fdbab57
+  bridge-ccf982704fdbab57 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-1aafcb830fc2ee72 -->|can_be_realized_by| bridge-b7dc17dd43aee3df
+  bridge-b7dc17dd43aee3df -->|uses_resource| feature-8f2be0908af7be35
+  goal-1aafcb830fc2ee72 -->|can_be_realized_by| bridge-1528b2d0853e1ce7
+  bridge-1528b2d0853e1ce7 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-34b487c2fafb0e11 -->|can_be_realized_by| bridge-cf659b67bec1a92f
+  bridge-cf659b67bec1a92f -->|uses_resource| feature-7ba67ee05ced1097
+  goal-34b487c2fafb0e11 -->|can_be_realized_by| bridge-4495603cb8c4c459
+  bridge-4495603cb8c4c459 -->|uses_resource| feature-8f2be0908af7be35
+  goal-34b487c2fafb0e11 -->|can_be_realized_by| bridge-53f5c8710657f777
+  bridge-53f5c8710657f777 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-4ac7cf37ab4c73c0 -->|can_be_realized_by| bridge-903dc3ea3718a55c
+  bridge-903dc3ea3718a55c -->|uses_resource| feature-7ba67ee05ced1097
+  goal-4ac7cf37ab4c73c0 -->|can_be_realized_by| bridge-b8be645c84a3c48a
+  bridge-b8be645c84a3c48a -->|uses_resource| feature-8f2be0908af7be35
+  goal-4ac7cf37ab4c73c0 -->|can_be_realized_by| bridge-0783dd75a5c7e7a2
+  bridge-0783dd75a5c7e7a2 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-b6841b95ad582a04 -->|can_be_realized_by| bridge-cdf2a65dda000d3c
+  bridge-cdf2a65dda000d3c -->|uses_resource| feature-7ba67ee05ced1097
+  goal-b6841b95ad582a04 -->|can_be_realized_by| bridge-3f60283b7a5d44e4
+  bridge-3f60283b7a5d44e4 -->|uses_resource| feature-8f2be0908af7be35
+  goal-b6841b95ad582a04 -->|can_be_realized_by| bridge-7d33ca3587880db7
+  bridge-7d33ca3587880db7 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-caca50a198b50bc0 -->|can_be_realized_by| bridge-049a4dbba66e4b65
+  bridge-049a4dbba66e4b65 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-caca50a198b50bc0 -->|can_be_realized_by| bridge-0c3612acf370a24f
+  bridge-0c3612acf370a24f -->|uses_resource| feature-8f2be0908af7be35
+  goal-caca50a198b50bc0 -->|can_be_realized_by| bridge-b0f1230a3deac168
+  bridge-b0f1230a3deac168 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-cb3c542e7c5b8d2f -->|can_be_realized_by| bridge-955c9d3cbc733149
+  bridge-955c9d3cbc733149 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-cb3c542e7c5b8d2f -->|can_be_realized_by| bridge-408afcd0569785d3
+  bridge-408afcd0569785d3 -->|uses_resource| feature-8f2be0908af7be35
+  goal-cb3c542e7c5b8d2f -->|can_be_realized_by| bridge-c045882d6d71c45f
+  bridge-c045882d6d71c45f -->|uses_resource| feature-47f7d71977c06b5f
+  goal-dc12ec26f790bc6e -->|can_be_realized_by| bridge-036161986c7943c7
+  bridge-036161986c7943c7 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-dc12ec26f790bc6e -->|can_be_realized_by| bridge-e75f761980b80204
+  bridge-e75f761980b80204 -->|uses_resource| feature-8f2be0908af7be35
+  goal-dc12ec26f790bc6e -->|can_be_realized_by| bridge-5aef954f79e787b5
+  bridge-5aef954f79e787b5 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-6099c03993471390 -->|can_be_realized_by| bridge-030646e3bcf15a79
+  bridge-030646e3bcf15a79 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-6099c03993471390 -->|can_be_realized_by| bridge-84a24c84ad8f94ff
+  bridge-84a24c84ad8f94ff -->|uses_resource| feature-8f2be0908af7be35
+  goal-6099c03993471390 -->|can_be_realized_by| bridge-bb42f0949f4b829a
+  bridge-bb42f0949f4b829a -->|uses_resource| feature-47f7d71977c06b5f
+  goal-14b3ec999cbeb233 -->|can_be_realized_by| bridge-635af83e4a0a0fac
+  bridge-635af83e4a0a0fac -->|uses_resource| feature-7ba67ee05ced1097
+  goal-14b3ec999cbeb233 -->|can_be_realized_by| bridge-c9598a4409be7eaa
+  bridge-c9598a4409be7eaa -->|uses_resource| feature-8f2be0908af7be35
+  goal-14b3ec999cbeb233 -->|can_be_realized_by| bridge-9fe126473bc12ba5
+  bridge-9fe126473bc12ba5 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-c26ad29b131327e7 -->|can_be_realized_by| bridge-f5d9d626cd27b290
+  bridge-f5d9d626cd27b290 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-c26ad29b131327e7 -->|can_be_realized_by| bridge-731c791c7cc32c9e
+  bridge-731c791c7cc32c9e -->|uses_resource| feature-8f2be0908af7be35
+  goal-c26ad29b131327e7 -->|can_be_realized_by| bridge-b5e869e0f6b69636
+  bridge-b5e869e0f6b69636 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-89b35bd863f1479a -->|can_be_realized_by| bridge-bc0f065087428607
+  bridge-bc0f065087428607 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-89b35bd863f1479a -->|can_be_realized_by| bridge-fe3b18e67fa229de
+  bridge-fe3b18e67fa229de -->|uses_resource| feature-8f2be0908af7be35
+  goal-89b35bd863f1479a -->|can_be_realized_by| bridge-5e03651d9f573262
+  bridge-5e03651d9f573262 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-b57aa7df8a34f33a -->|can_be_realized_by| bridge-b2a51d02e63ea813
+  bridge-b2a51d02e63ea813 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-b57aa7df8a34f33a -->|can_be_realized_by| bridge-5f5238aa948daf4b
+  bridge-5f5238aa948daf4b -->|uses_resource| feature-8f2be0908af7be35
+  goal-b57aa7df8a34f33a -->|can_be_realized_by| bridge-16396437033932bf
+  bridge-16396437033932bf -->|uses_resource| feature-47f7d71977c06b5f
+  goal-32d0b476cd61f8a9 -->|can_be_realized_by| bridge-bec073e143026332
+  bridge-bec073e143026332 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-32d0b476cd61f8a9 -->|can_be_realized_by| bridge-68940fd037bed392
+  bridge-68940fd037bed392 -->|uses_resource| feature-8f2be0908af7be35
+  goal-32d0b476cd61f8a9 -->|can_be_realized_by| bridge-228f034cf720b91e
+  bridge-228f034cf720b91e -->|uses_resource| feature-47f7d71977c06b5f
+  goal-9bce1c9c71eec989 -->|can_be_realized_by| bridge-1bcce9f84195f52e
+  bridge-1bcce9f84195f52e -->|uses_resource| environment-23562d99c53b45f7
+  goal-9bce1c9c71eec989 -->|can_be_realized_by| bridge-b70d6b8c8cdd32f9
+  bridge-b70d6b8c8cdd32f9 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-9bce1c9c71eec989 -->|can_be_realized_by| bridge-472b9a5a97e9399a
+  bridge-472b9a5a97e9399a -->|uses_resource| feature-8f2be0908af7be35
+  goal-0237ef13cae38170 -->|can_be_realized_by| bridge-c17c9689b9217cb2
+  bridge-c17c9689b9217cb2 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-0237ef13cae38170 -->|can_be_realized_by| bridge-1eb2dbd359b7248f
+  bridge-1eb2dbd359b7248f -->|uses_resource| feature-8f2be0908af7be35
+  goal-0237ef13cae38170 -->|can_be_realized_by| bridge-d17a6f3d23bf9ecf
+  bridge-d17a6f3d23bf9ecf -->|uses_resource| feature-47f7d71977c06b5f
+  goal-30d57c15a87ceb61 -->|can_be_realized_by| bridge-b624c267d54fd0b8
+  bridge-b624c267d54fd0b8 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-30d57c15a87ceb61 -->|can_be_realized_by| bridge-42578ab715feffb6
+  bridge-42578ab715feffb6 -->|uses_resource| feature-8f2be0908af7be35
+  goal-30d57c15a87ceb61 -->|can_be_realized_by| bridge-cdf3313d389069a2
+  bridge-cdf3313d389069a2 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-6ad8b57606f283d9 -->|can_be_realized_by| bridge-294cc9e75a17cc9f
+  bridge-294cc9e75a17cc9f -->|uses_resource| feature-7ba67ee05ced1097
+  goal-6ad8b57606f283d9 -->|can_be_realized_by| bridge-7e0f25b2f72f0f0b
+  bridge-7e0f25b2f72f0f0b -->|uses_resource| feature-8f2be0908af7be35
+  goal-6ad8b57606f283d9 -->|can_be_realized_by| bridge-528a766949f9d60c
+  bridge-528a766949f9d60c -->|uses_resource| feature-47f7d71977c06b5f
+  goal-a72499e9b9911df0 -->|can_be_realized_by| bridge-0b21b6c6ede7def1
+  bridge-0b21b6c6ede7def1 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-a72499e9b9911df0 -->|can_be_realized_by| bridge-5d18677e84b50c83
+  bridge-5d18677e84b50c83 -->|uses_resource| feature-8f2be0908af7be35
+  goal-a72499e9b9911df0 -->|can_be_realized_by| bridge-cce18d31cdccaa59
+  bridge-cce18d31cdccaa59 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-b57f2e754d7ff4b0 -->|can_be_realized_by| bridge-bffbca935022b47f
+  bridge-bffbca935022b47f -->|uses_resource| feature-7ba67ee05ced1097
+  goal-b57f2e754d7ff4b0 -->|can_be_realized_by| bridge-42ea9967e3be6989
+  bridge-42ea9967e3be6989 -->|uses_resource| feature-8f2be0908af7be35
+  goal-b57f2e754d7ff4b0 -->|can_be_realized_by| bridge-f2476d0c100d2ed5
+  bridge-f2476d0c100d2ed5 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-57235d61c9088038 -->|can_be_realized_by| bridge-064a77e54efada8f
+  bridge-064a77e54efada8f -->|uses_resource| feature-7ba67ee05ced1097
+  goal-57235d61c9088038 -->|can_be_realized_by| bridge-7be848365a9ea8f3
+  bridge-7be848365a9ea8f3 -->|uses_resource| feature-8f2be0908af7be35
+  goal-57235d61c9088038 -->|can_be_realized_by| bridge-7a1515f13858fb09
+  bridge-7a1515f13858fb09 -->|uses_resource| feature-47f7d71977c06b5f
+  goal-4cdc7ca92e9df971 -->|can_be_realized_by| bridge-78df81a0812ca613
+  bridge-78df81a0812ca613 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-4cdc7ca92e9df971 -->|can_be_realized_by| bridge-63f52f20a0bbd661
+  bridge-63f52f20a0bbd661 -->|uses_resource| feature-8f2be0908af7be35
+  goal-4cdc7ca92e9df971 -->|can_be_realized_by| bridge-ead42b6450de442e
+  bridge-ead42b6450de442e -->|uses_resource| feature-47f7d71977c06b5f
+  goal-1401e541836758da -->|can_be_realized_by| bridge-379af0ecad56d8eb
+  bridge-379af0ecad56d8eb -->|uses_resource| feature-7ba67ee05ced1097
+  goal-1401e541836758da -->|can_be_realized_by| bridge-89ee54cd7171678a
+  bridge-89ee54cd7171678a -->|uses_resource| feature-8f2be0908af7be35
+  goal-1401e541836758da -->|can_be_realized_by| bridge-a51178c355b47f4e
+  bridge-a51178c355b47f4e -->|uses_resource| feature-47f7d71977c06b5f
+  goal-3f72ec711dde9019 -->|can_be_realized_by| bridge-67419c8708fec034
+  bridge-67419c8708fec034 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-3f72ec711dde9019 -->|can_be_realized_by| bridge-0283759d9f4187d2
+  bridge-0283759d9f4187d2 -->|uses_resource| feature-8f2be0908af7be35
+  goal-3f72ec711dde9019 -->|can_be_realized_by| bridge-e557e2028e895a7d
+  bridge-e557e2028e895a7d -->|uses_resource| feature-47f7d71977c06b5f
+  goal-4af19ccfea71e245 -->|can_be_realized_by| bridge-17edc2582636ae8d
+  bridge-17edc2582636ae8d -->|uses_resource| feature-7ba67ee05ced1097
+  goal-4af19ccfea71e245 -->|can_be_realized_by| bridge-677ab2913b53132f
+  bridge-677ab2913b53132f -->|uses_resource| feature-8f2be0908af7be35
+  goal-4af19ccfea71e245 -->|can_be_realized_by| bridge-5c330783adeffabe
+  bridge-5c330783adeffabe -->|uses_resource| feature-47f7d71977c06b5f
+  goal-1aa8b070a04a9dc0 -->|can_be_realized_by| bridge-166f9a5ace16e739
+  bridge-166f9a5ace16e739 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-1aa8b070a04a9dc0 -->|can_be_realized_by| bridge-7fb071fee247372a
+  bridge-7fb071fee247372a -->|uses_resource| feature-8f2be0908af7be35
+  goal-1aa8b070a04a9dc0 -->|can_be_realized_by| bridge-d8cc987ddfa18f2f
+  bridge-d8cc987ddfa18f2f -->|uses_resource| feature-47f7d71977c06b5f
+  goal-c558f9da8b02cbac -->|can_be_realized_by| bridge-5bf893b98ba1c8e4
+  bridge-5bf893b98ba1c8e4 -->|uses_resource| feature-7ba67ee05ced1097
+  goal-c558f9da8b02cbac -->|can_be_realized_by| bridge-ef236ec040ed803e
+  bridge-ef236ec040ed803e -->|uses_resource| feature-8f2be0908af7be35
+  goal-c558f9da8b02cbac -->|can_be_realized_by| bridge-11eb6e8a2bb1396b
+  bridge-11eb6e8a2bb1396b -->|uses_resource| feature-47f7d71977c06b5f

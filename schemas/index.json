@@ -1,0 +1,68 @@
+{
+  "product": "TwinStudio",
+  "schema_set_version": "0.5.0",
+  "draft": "2020-12",
+  "schemas": [
+    {
+      "file": "product-project.schema.json",
+      "model": "ProjectSnapshot",
+      "id": "https://twinstudio.local/schemas/product-project.schema.json"
+    },
+    {
+      "file": "change-plan.schema.json",
+      "model": "ChangePlan",
+      "id": "https://twinstudio.local/schemas/change-plan.schema.json"
+    },
+    {
+      "file": "design-fixation-review.schema.json",
+      "model": "DesignFixationReview",
+      "id": "https://twinstudio.local/schemas/design-fixation-review.schema.json"
+    },
+    {
+      "file": "region-selection.schema.json",
+      "model": "RegionSelection",
+      "id": "https://twinstudio.local/schemas/region-selection.schema.json"
+    },
+    {
+      "file": "projection-map.schema.json",
+      "model": "ProjectionMap",
+      "id": "https://twinstudio.local/schemas/projection-map.schema.json"
+    },
+    {
+      "file": "selection-map.schema.json",
+      "model": "SelectionMap",
+      "id": "https://twinstudio.local/schemas/selection-map.schema.json"
+    },
+    {
+      "file": "test-plan.schema.json",
+      "model": "TestPlan",
+      "id": "https://twinstudio.local/schemas/test-plan.schema.json"
+    },
+    {
+      "file": "twin-dsl.schema.json",
+      "model": "TwinDslDocument",
+      "id": "https://twinstudio.local/schemas/twin-dsl.schema.json"
+    },
+    {
+      "file": "evolution-run.schema.json",
+      "model": "EvolutionRun",
+      "id": "https://twinstudio.local/schemas/evolution-run.schema.json"
+    },
+    {
+      "file": "lifecycle-blueprint.schema.json",
+      "model": "LifecycleBlueprint",
+      "id": "https://twinstudio.local/schemas/lifecycle-blueprint.schema.json"
+    },
+    {
+      "file": "dsl-execution.schema.json",
+      "model": "DslExecutionRecord",
+      "id": "https://twinstudio.local/schemas/dsl-execution.schema.json"
+    },
+    {
+      "file": "evolution-catalog.schema.json",
+      "model": "EvolutionCatalog",
+      "id": "https://twinstudio.local/schemas/evolution-catalog.schema.json"
+    }
+  ],
+  "text_dsl_grammar": "twinscript.ebnf"
+}

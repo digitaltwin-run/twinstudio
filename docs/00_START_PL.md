@@ -4,7 +4,7 @@
 
 Paczka źródłowa zawiera aplikację, model danych, interfejs webowy, usługę API, CQRS/Event Sourcing, konfigurację Docker, Protobuf, MQTT/MCP, przykład urządzenia Raspberry Pi 5 + Camera Module 3, modele STEP/STL, rzuty SVG, materiały referencyjne, scenariusze symulacji i kompletny plan lifecycle.
 
-Projekt przykładowy można także przekazywać niezależnie jako `demo-rpi5.lps.zip`. Ten format zachowuje snapshot, eventy, unified specification/xBOM, artefakty, manifest i sumy SHA-256.
+Projekt przykładowy można także przekazywać niezależnie jako `demo-rpi5.twinstudio.zip`. Ten format zachowuje snapshot, eventy, unified specification/xBOM, artefakty, manifest i sumy SHA-256.
 
 ## 2. Uruchomienie Docker
 
@@ -65,5 +65,3 @@ Osoba zewnętrzna podaje email i rolę. Decydent dostaje email approve/reject. P
 - GTIN/EAN wymaga legalnej alokacji właściciela w GS1; narzędzie oblicza tylko cyfrę kontrolną.
 
 Pełny opis znajduje się w `docs/16_MASTER_PRODUCT_LIFECYCLE_BLUEPRINT_PL.md`, a stan implementacji w `docs/IMPLEMENTATION_STATUS.md`.
-Wnioski z uruchomienia, publikacji i lista dalszych prac znajdują się w
-`docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md`.

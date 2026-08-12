@@ -2,7 +2,7 @@
   "adapter": "cadquery-scoped-brep-v1",
   "target_uri": "poa://demo/demo-rpi5@main/part/base",
   "input": {
-    "path": "/mnt/data/living_product_studio_v2/examples/rpi5-camera3/artifacts/3d/base.step",
+    "path": "/mnt/data/twinstudio_v2/examples/rpi5-camera3/artifacts/3d/base.step",
     "sha256": "856c264e79a6629c1ef01fef5b8471bd96599f678ff87aa4df066271a1afcd7b",
     "volume_mm3": 32340.209028228604
   },
@@ -105,11 +105,11 @@
   },
   "outputs": {
     "step": {
-      "path": "/mnt/data/living_product_studio_v2/examples/rpi5-camera3/scoped-edit-demo/output/scoped-result.step",
+      "path": "/mnt/data/twinstudio_v2/examples/rpi5-camera3/scoped-edit-demo/output/scoped-result.step",
       "sha256": "a82c6537cbd80cb1556f4dfff1b1adb1c65b35fca06289f048797fcc5368d392"
     },
     "stl": {
-      "path": "/mnt/data/living_product_studio_v2/examples/rpi5-camera3/scoped-edit-demo/output/scoped-result.stl",
+      "path": "/mnt/data/twinstudio_v2/examples/rpi5-camera3/scoped-edit-demo/output/scoped-result.stl",
       "sha256": "b05be5c6696ca2ef6e3a3d7702fd7f4cd30c03a7fc98b709105cbe11bbecd389"
     }
   },

@@ -1,0 +1,71 @@
+# TwinStudio Evolution DSL example: evolve the front hinge without treating the current form as fixed.
+TWINSCRIPT 1.0
+NAME "RPi5 hinge evolution"
+NAMESPACE "demo"
+LABEL domain=mechanical
+LABEL product=rpi5-enclosure
+ANNOTATION intent="Explore alternatives before committing CAD changes"
+
+PROJECT demo-rpi5 REVISION main
+FOCUS "poa://demo/demo-rpi5@main/part/base"
+FOCUS "poa://demo/demo-rpi5@main/part/lid"
+
+GOAL VERB improve OBJECT "front hinge" \
+  OUTCOME "support-free printing, a clean external joint and opening above 190 degrees"
+PRESERVE "wall thickness remains 2 mm"
+PRESERVE "Raspberry Pi and connector access remain valid"
+AVOID "hinge collision"
+AVOID "unsupported overhangs below the configured printability limit"
+ASSUME "the existing circular hinge is not the only feasible opening mechanism"
+CONSTRAINT "the result must remain manufacturable by the selected FDM route"
+
+METHODS goal_ladder,object_decomposition,bidirectional_graph,feature_lenses,adjacent_possible,brainswarm,assumption_reversal,mutation,recombination,experiment
+SEED_VERBS improve,open,fasten,manufacture,inspect
+LENSES shape,connectivity_among_parts,spatial_relations_among_parts,force_characteristics,durability_characteristics,human_use,aesthetics
+DIMENSIONS manufacturability,assemblability,serviceability,testability,reversibility,cost_value,adjacent_possible
+LENS_OPTIONS SOURCE true EXTENSIONS true ASSUMPTIONS true MAX 96
+RESOURCE_OPTIONS DESCENDANTS true FEATURES true PARAMETERS true MATERIALS true PROCESSES true ARTIFACTS true REQUIREMENTS true EVIDENCE true HUMAN true ENVIRONMENT true MAX 300
+SEARCH UP 1 DOWN 2 SIDEWAYS 1 MAX 48 OPPOSITES true
+
+EVOLVE POPULATION 12 GENERATIONS 4 OFFSPRING 2 MUTATION 0.82 CROSSOVER 0.35 SEED 17 ADJACENT_DEPTH 2
+OPERATOR reframe_goal WEIGHT 1.0
+OPERATOR repurpose_feature WEIGHT 1.0
+OPERATOR parameter_shift WEIGHT 0.8
+OPERATOR substitute_process WEIGHT 0.7
+OPERATOR modularize WEIGHT 0.7
+OPERATOR make_reversible WEIGHT 0.8
+OPERATOR add_observability WEIGHT 0.5
+OPERATOR adjacent_association WEIGHT 1.0
+OPERATOR crossover WEIGHT 0.4
+
+WEIGHT feasibility 0.18
+WEIGHT novelty 0.10
+WEIGHT manufacturability 0.18
+WEIGHT evidence 0.10
+WEIGHT risk_control 0.12
+WEIGHT reversibility 0.10
+WEIGHT sustainability 0.06
+WEIGHT cost_value 0.06
+WEIGHT user_value 0.04
+WEIGHT lifecycle_fit 0.06
+SELECT_TOP 5
+MIN_SCORE 0.30
+
+LIFECYCLE hardware-product START detailed_design TARGET verification APPROVAL true AUTO_ADVANCE false
+ENABLE_STAGE detailed_design,design_review,prototype,engineering_verification,verification
+GATE convergence CHECK "at least three materially different mechanisms remain" ROLE creator,admin BLOCKING true
+GATE experiment CHECK "each selected mechanism has a physical or slicing experiment" ROLE creator,admin BLOCKING true
+GATE verification CHECK "hinge opens above 190 degrees and both parts slice without geometry repair" ROLE creator,admin BLOCKING true
+
+VERIFY "confirm opening angle above 190 degrees in the assembly"
+VERIFY "slice both enclosure parts without geometry repair"
+VERIFY "print and cycle the hinge prototype"
+VERIFY "inspect connector access and external joint quality"
+
+REALIZE change_plan DRY_RUN true APPROVAL true MAX_PLANS 3
+ALLOW_OPERATIONS set_parameter,add_feature,suppress_feature,transform_feature,boolean_cut,boolean_add,update_manufacturing,add_test,attach_requirement,add_annotation
+OUTPUT GRAPHS json,dot,mermaid REPORTS json,markdown,csv
+PERSIST_ARTIFACTS true
+INCLUDE_CHANGE_PLANS true
+NOTE "Candidates are hypotheses; the graph does not prove mechanical feasibility."
+END

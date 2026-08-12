@@ -5,14 +5,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
     && rm -rf /var/lib/apt/lists/*
 COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
-RUN python -m pip install --upgrade pip && python -m pip install -e ".[llm]"
+RUN python -m pip install --upgrade pip && python -m pip install ".[llm]"
 COPY examples ./examples
 COPY proto ./proto
 COPY schemas ./schemas
 COPY scripts ./scripts
-RUN useradd --create-home --uid 10001 lps && mkdir -p /data && chown -R lps:lps /app /data
-USER lps
+RUN useradd --create-home --uid 10001 twinstudio && mkdir -p /data \
+    && chown -R twinstudio:twinstudio /app /data
+USER twinstudio
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=5 \
   CMD curl -fsS http://127.0.0.1:8000/health || exit 1
-CMD ["uvicorn", "living_product_studio.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "twinstudio.api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,366 @@
+catalog_version: "twinstudio-actions-2026.08-v1"
+title: "TwinStudio action hierarchy for goal defixation"
+notes:
+  - "This is a curated engineering lexicon, not a complete WordNet export."
+  - "Parents generalize a verb, children specialize it, related terms move sideways, and opposites challenge the direction of change."
+actions:
+  - id: change
+    lemma: change
+    parents: []
+    children: [create, remove, move, combine, separate, modify, adapt, maintain, prevent]
+    related: [transform, evolve]
+    opposites: [preserve]
+    capabilities: [transform, vary, replace]
+    assumptions: ["A current state exists and another state is preferred."]
+  - id: create
+    lemma: create
+    parents: [change]
+    children: [form, generate, grow, assemble]
+    related: [add, originate]
+    opposites: [remove]
+    capabilities: [add_feature, add_part, generate_artifact]
+    assumptions: ["Something new must be introduced rather than reused."]
+  - id: remove
+    lemma: remove
+    parents: [change]
+    children: [delete, cut, detach, dissolve, suppress]
+    related: [reduce, eliminate]
+    opposites: [create, retain]
+    capabilities: [suppress_feature, boolean_cut, reduce_parts]
+    assumptions: ["The selected thing is unnecessary or harmful."]
+  - id: move
+    lemma: move
+    parents: [change]
+    children: [translate, rotate, relocate, transport, guide]
+    related: [reorient, offset]
+    opposites: [fix, stabilize]
+    capabilities: [transform_feature, change_position, change_orientation]
+    assumptions: ["The object or function remains identifiable while its location changes."]
+  - id: combine
+    lemma: combine
+    parents: [change]
+    children: [join, merge, blend, integrate, assemble]
+    related: [share, couple]
+    opposites: [separate]
+    capabilities: [combine_parts, merge_functions, reduce_interfaces]
+    assumptions: ["Two or more entities must become one system or act together."]
+  - id: separate
+    lemma: separate
+    parents: [change]
+    children: [split, detach, isolate, sort, filter]
+    related: [modularize, decouple]
+    opposites: [combine, join]
+    capabilities: [split_part, modularize, isolate]
+    assumptions: ["Entities can remain useful after their connection or mixture changes."]
+  - id: modify
+    lemma: modify
+    parents: [change]
+    children: [resize, reshape, tune, reinforce, lighten]
+    related: [enhance, adapt]
+    opposites: [preserve]
+    capabilities: [set_parameter, transform_feature, substitute_material]
+    assumptions: ["The current concept is mostly retained."]
+  - id: adapt
+    lemma: adapt
+    parents: [change]
+    children: [configure, customize, scale, compensate]
+    related: [evolve, learn]
+    opposites: [standardize]
+    capabilities: [configure, parameterize, add_compliance]
+    assumptions: ["The environment or requirement varies."]
+  - id: maintain
+    lemma: maintain
+    parents: [change]
+    children: [preserve, retain, support, stabilize, repair]
+    related: [service, sustain]
+    opposites: [change, remove]
+    capabilities: [preserve_constraint, add_support, repair]
+    assumptions: ["An existing state or performance is valuable."]
+  - id: prevent
+    lemma: prevent
+    parents: [change]
+    children: [block, limit, interlock, shield, inhibit]
+    related: [protect, constrain]
+    opposites: [enable, allow]
+    capabilities: [add_guard, add_constraint, fail_safe]
+    assumptions: ["A particular event or transition is undesirable."]
+  - id: connect
+    lemma: connect
+    parents: [combine]
+    children: [attach, link, couple, interface, wire]
+    related: [communicate, align]
+    opposites: [disconnect, isolate]
+    capabilities: [add_interface, add_joint, route_signal]
+    assumptions: ["At least two entities and a relationship between them are needed."]
+  - id: attach
+    lemma: attach
+    parents: [connect]
+    children: [fasten, bond, clamp, latch, hinge, tether]
+    related: [mount, anchor]
+    opposites: [detach]
+    capabilities: [add_joint, add_mount, retain]
+    assumptions: ["A persistent physical relationship is needed."]
+  - id: fasten
+    lemma: fasten
+    parents: [attach]
+    children: [screw, bolt, rivet, clip, snap, pin, tie, weld, solder]
+    related: [lock, buckle, hook, strap]
+    opposites: [release, detach]
+    capabilities: [add_fastener, add_joint, retain]
+    assumptions: ["The parts should resist separation under expected loads."]
+  - id: join
+    lemma: join
+    parents: [combine]
+    children: [weld, solder, bond, stitch, interlock]
+    related: [attach, merge]
+    opposites: [split, separate]
+    capabilities: [merge_parts, add_joint]
+    assumptions: ["A boundary between entities may remain or disappear."]
+  - id: assemble
+    lemma: assemble
+    parents: [create, combine]
+    children: [stack, insert, fold, screw, snap]
+    related: [build, integrate]
+    opposites: [disassemble]
+    capabilities: [assembly_sequence, join_parts]
+    assumptions: ["The product is produced from distinguishable parts or modules."]
+  - id: support
+    lemma: support
+    parents: [maintain]
+    children: [brace, prop, suspend, cradle, bear]
+    related: [mount, stabilize]
+    opposites: [release]
+    capabilities: [add_support, distribute_load, locate]
+    assumptions: ["A load or position needs an external reaction path."]
+  - id: position
+    lemma: position
+    parents: [move]
+    children: [locate, align, center, offset, orient]
+    related: [guide, index]
+    opposites: [randomize]
+    capabilities: [set_position, add_datum, add_locator]
+    assumptions: ["Relative location or orientation matters to function."]
+  - id: align
+    lemma: align
+    parents: [position]
+    children: [center, square, level, register]
+    related: [index, guide]
+    opposites: [misalign]
+    capabilities: [add_datum, self_align, constrain]
+    assumptions: ["A reference geometry or direction exists."]
+  - id: enclose
+    lemma: enclose
+    parents: [protect]
+    children: [cover, case, wrap, encapsulate]
+    related: [contain, surround]
+    opposites: [expose, open]
+    capabilities: [add_shell, add_cover, define_boundary]
+    assumptions: ["A spatial boundary is the preferred protection mechanism."]
+  - id: protect
+    lemma: protect
+    parents: [prevent]
+    children: [enclose, shield, isolate, cushion, seal]
+    related: [guard, absorb]
+    opposites: [expose]
+    capabilities: [add_guard, add_shell, add_damping]
+    assumptions: ["A hazard or damaging interaction is known or anticipated."]
+  - id: seal
+    lemma: seal
+    parents: [protect, attach]
+    children: [gasket, weld, bond, compress]
+    related: [close, isolate]
+    opposites: [vent, open]
+    capabilities: [add_gasket, close_gap, add_barrier]
+    assumptions: ["Transport across a boundary must be limited."]
+  - id: cool
+    lemma: cool
+    parents: [change]
+    children: [vent, conduct, convect, radiate, refrigerate]
+    related: [spread_heat, insulate]
+    opposites: [heat]
+    capabilities: [add_vent, add_heat_sink, change_material]
+    assumptions: ["Lower temperature is the desired outcome."]
+  - id: heat
+    lemma: heat
+    parents: [change]
+    children: [conduct, radiate, resist, ignite]
+    related: [store_heat, dry]
+    opposites: [cool]
+    capabilities: [add_heater, change_thermal_path]
+    assumptions: ["Raising or maintaining temperature is useful."]
+  - id: vent
+    lemma: vent
+    parents: [cool, open]
+    children: [perforate, duct, exhaust]
+    related: [breathe, circulate]
+    opposites: [seal]
+    capabilities: [boolean_cut, add_duct, add_opening]
+    assumptions: ["Exchange with the environment is acceptable."]
+  - id: power
+    lemma: power
+    parents: [enable]
+    children: [supply, store_energy, convert_energy, distribute_energy]
+    related: [energize, charge]
+    opposites: [depower]
+    capabilities: [add_supply, route_power, add_storage]
+    assumptions: ["An energy source is required for the desired behavior."]
+  - id: sense
+    lemma: sense
+    parents: [observe]
+    children: [detect, measure, monitor]
+    related: [infer, inspect]
+    opposites: [hide]
+    capabilities: [add_sensor, add_test_point, add_observability]
+    assumptions: ["A state can be mapped to an observable signal."]
+  - id: observe
+    lemma: observe
+    parents: [enable]
+    children: [sense, inspect, visualize, log]
+    related: [diagnose, verify]
+    opposites: [conceal]
+    capabilities: [add_indicator, add_logging, add_access]
+    assumptions: ["Making state visible improves decisions."]
+  - id: measure
+    lemma: measure
+    parents: [sense]
+    children: [count, compare, calibrate, quantify]
+    related: [test, inspect]
+    opposites: [estimate]
+    capabilities: [add_sensor, add_datum, add_metric]
+    assumptions: ["A relevant property can be represented quantitatively."]
+  - id: communicate
+    lemma: communicate
+    parents: [connect]
+    children: [signal, display, transmit, notify]
+    related: [encode, indicate]
+    opposites: [silence]
+    capabilities: [add_interface, add_indicator, route_data]
+    assumptions: ["Information must cross a boundary between actors or components."]
+  - id: store
+    lemma: store
+    parents: [maintain]
+    children: [contain, cache, retain, buffer]
+    related: [archive, accumulate]
+    opposites: [release, discard]
+    capabilities: [add_volume, add_memory, add_reservoir]
+    assumptions: ["Something must persist across time or demand variation."]
+  - id: guide
+    lemma: guide
+    parents: [move, position]
+    children: [channel, rail, funnel, key]
+    related: [align, constrain]
+    opposites: [free]
+    capabilities: [add_guide, add_key, constrain_motion]
+    assumptions: ["Motion or assembly should follow a preferred path."]
+  - id: transport
+    lemma: transport
+    parents: [move]
+    children: [carry, convey, pump, roll, slide]
+    related: [route, transfer]
+    opposites: [hold]
+    capabilities: [move_material, move_energy, move_information]
+    assumptions: ["Origin and destination are distinct and the payload remains useful."]
+  - id: repair
+    lemma: repair
+    parents: [maintain]
+    children: [patch, replace, restore, rework]
+    related: [service, refurbish]
+    opposites: [discard]
+    capabilities: [replace_part, add_access, restore_parameter]
+    assumptions: ["The product should remain in service after a failure."]
+  - id: replace
+    lemma: replace
+    parents: [repair, change]
+    children: [swap, substitute, upgrade]
+    related: [modularize, standardize]
+    opposites: [retain]
+    capabilities: [replace_component, substitute_material, substitute_process]
+    assumptions: ["An alternative can satisfy the interface contract."]
+  - id: reuse
+    lemma: reuse
+    parents: [maintain]
+    children: [repurpose, refurbish, remanufacture]
+    related: [share, recover]
+    opposites: [discard]
+    capabilities: [repurpose_feature, extend_lifecycle]
+    assumptions: ["Residual value remains after the first use."]
+  - id: recycle
+    lemma: recycle
+    parents: [change]
+    children: [recover, separate_materials, reprocess]
+    related: [reuse, remanufacture]
+    opposites: [dispose]
+    capabilities: [change_material_flow, design_for_disassembly]
+    assumptions: ["Material value can be recovered after product use."]
+  - id: verify
+    lemma: verify
+    parents: [observe]
+    children: [inspect, test, prove, audit]
+    related: [validate, measure]
+    opposites: [assume]
+    capabilities: [add_test, add_evidence, add_acceptance_criterion]
+    assumptions: ["A claim can be checked against evidence or a criterion."]
+  - id: test
+    lemma: test
+    parents: [verify]
+    children: [experiment, stress, compare, simulate]
+    related: [prototype, inspect]
+    opposites: [accept_unchecked]
+    capabilities: [add_test, run_simulation, create_fixture]
+    assumptions: ["A controlled intervention can reduce uncertainty."]
+  - id: diagnose
+    lemma: diagnose
+    parents: [observe]
+    children: [isolate_fault, trace, classify]
+    related: [inspect, monitor]
+    opposites: [guess]
+    capabilities: [add_observability, add_test_point, add_fault_code]
+    assumptions: ["Different causes can produce distinguishable evidence."]
+  - id: enable
+    lemma: enable
+    parents: [change]
+    children: [allow, power, open, activate]
+    related: [facilitate, support]
+    opposites: [prevent, inhibit]
+    capabilities: [add_capability, remove_constraint]
+    assumptions: ["A blocked capability should become possible."]
+  - id: open
+    lemma: open
+    parents: [enable]
+    children: [uncover, vent, release, expose]
+    related: [access]
+    opposites: [close, seal]
+    capabilities: [add_opening, add_access, release]
+    assumptions: ["Access or transfer through a boundary is desired."]
+  - id: release
+    lemma: release
+    parents: [enable, remove]
+    children: [unlock, detach, eject, publish]
+    related: [open, deploy]
+    opposites: [retain, fasten]
+    capabilities: [remove_constraint, detach, publish_artifact]
+    assumptions: ["Something currently retained should become available or free."]
+  - id: evolve
+    lemma: evolve
+    parents: [change]
+    children: [mutate, select, adapt, learn]
+    related: [iterate, improve]
+    opposites: [freeze]
+    capabilities: [generate_variants, score_candidates, preserve_lineage]
+    assumptions: ["Multiple generations and feedback can improve fitness."]
+  - id: transform
+    lemma: transform
+    parents: [change]
+    children: [reshape, convert, map, translate]
+    related: [modify, evolve]
+    opposites: [preserve]
+    capabilities: [transform_feature, convert_artifact, change_state]
+    assumptions: ["Identity or function may persist while representation changes."]
+  - id: preserve
+    lemma: preserve
+    parents: [maintain]
+    children: [protect, retain, archive]
+    related: [stabilize]
+    opposites: [change, discard]
+    capabilities: [preserve_constraint, archive, protect]
+    assumptions: ["The current property has verified value."]

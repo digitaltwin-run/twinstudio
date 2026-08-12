@@ -32,7 +32,7 @@ Dokument mapuje wymagania produktu na elementy paczki, status realizacji i kryte
 | DSL-001 | Protobuf dla DSL | `proto/lps/v1/*.proto` | Implemented as source contract | Źródła przechodzą kontrolę statyczną; CI powinno wykonywać `buf lint` i generację klientów |
 | POA-001 | URI procesu/obiektu oparte o POA | `poa://tenant/project@revision/kind/id/...` | Implemented | Ten sam identyfikator działa w API, eventach, selekcjach, MQTT i MCP |
 | API-001 | REST | FastAPI + OpenAPI | Implemented | Główne ścieżki są objęte testem subprocess API |
-| API-002 | CLI i shell | Typer `lps` oraz interaktywny shell | Implemented | Seed/tree/plan/power/export działają na tych samych serwisach |
+| API-002 | CLI i shell | Typer `twinstudio` oraz interaktywny shell | Implemented | Seed/tree/plan/power/export działają na tych samych serwisach |
 | API-003 | WebSocket | Kanał eventów UI | Implemented | Klient może odświeżać read model po zdarzeniach |
 | INT-001 | MQTT | Publisher i opcjonalny command gateway | Working scaffold | Wymaga live testu z brokerem i polityk ACL na docelowym środowisku |
 | INT-002 | MCP | MCP 2026-07-28 core subset + legacy initialize | Working scaffold | Discovery/tools/resources i walidacja są testowane; pozostają SSE, MRTR, subscriptions i produkcyjny OAuth |
@@ -58,7 +58,7 @@ Dokument mapuje wymagania produktu na elementy paczki, status realizacji i kryte
 | TEST-001 | Warstwa budowy oddzielona od warstwy testów | Requirements, build routes, test plans i evidence | Implemented | Artefakt budowy nie jest automatycznie „passed”; wynik testu jest osobnym rekordem |
 | COM-001 | Specyfikacja handlowa i ecommerce | Offer, SKU, pricing placeholders, packaging data | Implemented as model | Konektory marketplace i approval ceny są kolejnym etapem |
 | COM-002 | EAN/GTIN | Kalkulator i walidator cyfry kontrolnej | Implemented | Nie przydziela legalnego numeru; właściciel produktu musi otrzymać pulę od GS1 |
-| EXP-001 | Łatwe pobranie całości | `.lps.zip` oraz pojedyncze artefakty | Implemented | Bundle ma snapshot, eventy, specification, manifest i SHA-256 |
+| EXP-001 | Łatwe pobranie całości | `.twinstudio.zip` oraz pojedyncze artefakty | Implemented | Bundle ma snapshot, eventy, specification, manifest i SHA-256 |
 | OPS-001 | Docker-first | `compose.yaml` z 9 usługami i profilami | Implemented as deployment definition | Wymaga live build/test na serwerze z Dockerem |
 | SEC-001 | Produkcyjne bezpieczeństwo | Jawna dokumentacja hardeningu | Roadmap | TLS, secure cookies, CSRF, rate limiting, external IdP/OAuth, backup, audit i secret rotation przed produkcją |
 

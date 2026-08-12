@@ -1,0 +1,125 @@
+version: "2026.08-curated-engineering-1"
+notes:
+  - "This is a curated engineering action lexicon used for deterministic goal expansion."
+  - "It is not a complete WordNet export and does not claim exhaustive synonym coverage."
+actions:
+  improve:
+    broader: [change, enhance]
+    narrower: [strengthen, simplify, lighten, smooth, optimize, refine]
+    related: [modify, repair, upgrade]
+    opposites: [degrade, preserve]
+  fasten:
+    broader: [attach, join, connect]
+    narrower: [tie, clamp, screw, bolt, pin, latch, snap, rivet, weld, bond, stitch, hinge, harness]
+    related: [assemble, retain, secure]
+    opposites: [separate, release, detach]
+  attach:
+    broader: [connect, combine]
+    narrower: [fasten, nail, tether, adhere, yoke, bind, hinge, harness, mount]
+    related: [assemble, join, locate]
+    opposites: [detach, release]
+  connect:
+    broader: [relate, combine]
+    narrower: [attach, couple, plug, wire, link, network, mate]
+    related: [interface, communicate, bridge]
+    opposites: [disconnect, isolate]
+  support:
+    broader: [hold, carry]
+    narrower: [prop, brace, suspend, cradle, reinforce, balance]
+    related: [locate, retain, stabilize]
+    opposites: [release, destabilize]
+  protect:
+    broader: [preserve, maintain]
+    narrower: [shield, seal, insulate, guard, cushion, filter, isolate]
+    related: [contain, cover, enclose]
+    opposites: [expose]
+  cool:
+    broader: [control_temperature]
+    narrower: [vent, conduct, convect, radiate, evaporate, spread_heat]
+    related: [insulate, circulate]
+    opposites: [heat, retain_heat]
+  seal:
+    broader: [protect, isolate]
+    narrower: [gasket, weld, bond, compress, labyrinth, pot]
+    related: [close, contain]
+    opposites: [vent, open, drain]
+  align:
+    broader: [locate, arrange]
+    narrower: [key, guide, center, square, register, self_align]
+    related: [position, orient]
+    opposites: [misalign, randomize]
+  locate:
+    broader: [arrange]
+    narrower: [position, register, index, center, stop]
+    related: [align, guide, retain]
+    opposites: [release, float]
+  hold:
+    broader: [maintain]
+    narrower: [support, retain, grip, clamp, suspend, contain]
+    related: [fasten, stabilize]
+    opposites: [release, eject]
+  open:
+    broader: [change_state]
+    narrower: [unlatch, unfold, rotate, slide, separate]
+    related: [access, expose]
+    opposites: [close, seal]
+  close:
+    broader: [change_state]
+    narrower: [latch, fold, rotate, slide, compress, seal]
+    related: [cover, protect]
+    opposites: [open, vent]
+  inspect:
+    broader: [evaluate, observe]
+    narrower: [measure, scan, test, visualize, probe]
+    related: [diagnose, verify]
+    opposites: [hide, ignore]
+  guide:
+    broader: [control_motion]
+    narrower: [channel, rail, key, constrain, steer, funnel]
+    related: [align, locate]
+    opposites: [release, scatter]
+  transport:
+    broader: [move]
+    narrower: [carry, convey, pump, roll, slide, lift, ship]
+    related: [store, package]
+    opposites: [retain, immobilize]
+  mix:
+    broader: [combine]
+    narrower: [stir, blend, knead, diffuse, emulsify]
+    related: [distribute]
+    opposites: [separate, stratify]
+  separate:
+    broader: [divide]
+    narrower: [cut, filter, sort, detach, isolate, split]
+    related: [release, disassemble]
+    opposites: [combine, fasten]
+  remove:
+    broader: [change]
+    narrower: [cut, unscrew, dissolve, eject, erase, detach]
+    related: [separate, reduce]
+    opposites: [add, retain]
+  maintain:
+    broader: [preserve]
+    narrower: [hold, stabilize, regulate, repair, service]
+    related: [prevent, protect]
+    opposites: [change, abandon]
+  prevent:
+    broader: [control]
+    narrower: [block, inhibit, guard, interlock, isolate]
+    related: [protect, maintain]
+    opposites: [enable, permit]
+  manufacture:
+    broader: [create, realize]
+    narrower: [print, machine, mold, cast, form, cut, assemble]
+    related: [inspect, package]
+    opposites: [disassemble, recycle]
+  repair:
+    broader: [restore, improve]
+    narrower: [replace, patch, rework, recalibrate, clean]
+    related: [service, maintain, diagnose]
+    opposites: [discard]
+  recycle:
+    broader: [recover, reuse]
+    narrower: [separate_materials, remelt, regrind, remanufacture]
+    related: [disassemble, identify_material]
+    opposites: [dispose]

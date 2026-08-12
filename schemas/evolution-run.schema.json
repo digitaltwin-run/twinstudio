@@ -1,0 +1,1526 @@
+{
+  "$defs": {
+    "ActionRelation": {
+      "enum": [
+        "seed",
+        "hypernym",
+        "hyponym",
+        "synonym",
+        "sibling",
+        "opposite",
+        "related",
+        "custom"
+      ],
+      "title": "ActionRelation",
+      "type": "string"
+    },
+    "ActionSearchSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "seed_verbs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Seed Verbs",
+          "type": "array"
+        },
+        "up_depth": {
+          "default": 1,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Up Depth",
+          "type": "integer"
+        },
+        "down_depth": {
+          "default": 2,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Down Depth",
+          "type": "integer"
+        },
+        "sideways_depth": {
+          "default": 1,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Sideways Depth",
+          "type": "integer"
+        },
+        "include_opposites": {
+          "default": true,
+          "title": "Include Opposites",
+          "type": "boolean"
+        },
+        "max_terms": {
+          "default": 40,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Max Terms",
+          "type": "integer"
+        }
+      },
+      "title": "ActionSearchSpec",
+      "type": "object"
+    },
+    "CandidateEvaluation": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "$ref": "#/$defs/EvaluationDimension"
+        },
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evidence_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Uris",
+          "type": "array"
+        }
+      },
+      "required": [
+        "dimension",
+        "score"
+      ],
+      "title": "CandidateEvaluation",
+      "type": "object"
+    },
+    "CandidateStatus": {
+      "enum": [
+        "proposed",
+        "shortlisted",
+        "selected",
+        "rejected",
+        "realized",
+        "verified"
+      ],
+      "title": "CandidateStatus",
+      "type": "string"
+    },
+    "ChangeOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "title": "Operation Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChangeOperationKind"
+        },
+        "target_uri": {
+          "title": "Target Uri",
+          "type": "string"
+        },
+        "selector": {
+          "additionalProperties": true,
+          "title": "Selector",
+          "type": "object"
+        },
+        "arguments": {
+          "additionalProperties": true,
+          "title": "Arguments",
+          "type": "object"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reversible": {
+          "default": true,
+          "title": "Reversible",
+          "type": "boolean"
+        },
+        "validation_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "target_uri"
+      ],
+      "title": "ChangeOperation",
+      "type": "object"
+    },
+    "ChangeOperationKind": {
+      "enum": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "title": "ChangeOperationKind",
+      "type": "string"
+    },
+    "DslMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 3,
+          "title": "Name",
+          "type": "string"
+        },
+        "namespace": {
+          "default": "default",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Labels",
+          "type": "object"
+        },
+        "annotations": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Annotations",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DslMetadata",
+      "type": "object"
+    },
+    "EvaluationDimension": {
+      "enum": [
+        "feasibility",
+        "novelty",
+        "manufacturability",
+        "evidence",
+        "risk_control",
+        "reversibility",
+        "sustainability",
+        "cost_value",
+        "user_value",
+        "lifecycle_fit"
+      ],
+      "title": "EvaluationDimension",
+      "type": "string"
+    },
+    "EvaluationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "weights": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Weights",
+          "type": "object"
+        },
+        "hard_constraints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Hard Constraints",
+          "type": "array"
+        },
+        "select_top": {
+          "default": 5,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Select Top",
+          "type": "integer"
+        },
+        "minimum_overall_score": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Minimum Overall Score",
+          "type": "number"
+        }
+      },
+      "title": "EvaluationPolicy",
+      "type": "object"
+    },
+    "EvolutionCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "generation": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Generation",
+          "type": "integer"
+        },
+        "parent_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Parent Ids",
+          "type": "array"
+        },
+        "methods": {
+          "items": {
+            "$ref": "#/$defs/EvolutionMethod"
+          },
+          "title": "Methods",
+          "type": "array"
+        },
+        "goal_node_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Goal Node Ids",
+          "type": "array"
+        },
+        "resource_node_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Resource Node Ids",
+          "type": "array"
+        },
+        "bridge_edge_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Bridge Edge Ids",
+          "type": "array"
+        },
+        "lens_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Lens Ids",
+          "type": "array"
+        },
+        "operators": {
+          "items": {
+            "$ref": "#/$defs/EvolutionOperatorSpec"
+          },
+          "title": "Operators",
+          "type": "array"
+        },
+        "assumptions_challenged": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions Challenged",
+          "type": "array"
+        },
+        "proposed_changes": {
+          "items": {
+            "$ref": "#/$defs/ChangeOperation"
+          },
+          "title": "Proposed Changes",
+          "type": "array"
+        },
+        "expected_benefits": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Benefits",
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "validation_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Steps",
+          "type": "array"
+        },
+        "evaluations": {
+          "items": {
+            "$ref": "#/$defs/CandidateEvaluation"
+          },
+          "title": "Evaluations",
+          "type": "array"
+        },
+        "overall_score": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Overall Score",
+          "type": "number"
+        },
+        "constraint_violations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Constraint Violations",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/CandidateStatus",
+          "default": "proposed"
+        },
+        "source": {
+          "default": "local",
+          "enum": [
+            "local",
+            "litellm",
+            "human",
+            "dsl"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "summary"
+      ],
+      "title": "EvolutionCandidate",
+      "type": "object"
+    },
+    "EvolutionGateSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "phase": {
+          "$ref": "#/$defs/EvolutionPhase"
+        },
+        "expressions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expressions",
+          "type": "array"
+        },
+        "approver_roles": {
+          "items": {
+            "$ref": "#/$defs/Role"
+          },
+          "title": "Approver Roles",
+          "type": "array"
+        },
+        "blocking": {
+          "default": true,
+          "title": "Blocking",
+          "type": "boolean"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase"
+      ],
+      "title": "EvolutionGateSpec",
+      "type": "object"
+    },
+    "EvolutionGoal": {
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "maxLength": 30000,
+          "minLength": 3,
+          "title": "Statement",
+          "type": "string"
+        },
+        "verb": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verb"
+        },
+        "object_phrase": {
+          "default": "",
+          "title": "Object Phrase",
+          "type": "string"
+        },
+        "outcomes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Outcomes",
+          "type": "array"
+        },
+        "preserve": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preserve",
+          "type": "array"
+        },
+        "avoid": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Avoid",
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "constraints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Constraints",
+          "type": "array"
+        }
+      },
+      "required": [
+        "statement"
+      ],
+      "title": "EvolutionGoal",
+      "type": "object"
+    },
+    "EvolutionGraph": {
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/EvolutionGraphNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/EvolutionGraphEdge"
+          },
+          "title": "Edges",
+          "type": "array"
+        }
+      },
+      "title": "EvolutionGraph",
+      "type": "object"
+    },
+    "EvolutionGraphEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "relation": {
+          "title": "Relation",
+          "type": "string"
+        },
+        "score": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "relation"
+      ],
+      "title": "EvolutionGraphEdge",
+      "type": "object"
+    },
+    "EvolutionGraphNode": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "goal",
+            "resource",
+            "bridge",
+            "idea"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "node_id",
+        "side",
+        "label",
+        "kind"
+      ],
+      "title": "EvolutionGraphNode",
+      "type": "object"
+    },
+    "EvolutionMethod": {
+      "enum": [
+        "goal_ladder",
+        "object_decomposition",
+        "bidirectional_graph",
+        "feature_lenses",
+        "adjacent_possible",
+        "brainswarm",
+        "analogy",
+        "assumption_reversal",
+        "constraint_relaxation",
+        "mutation",
+        "recombination",
+        "experiment"
+      ],
+      "title": "EvolutionMethod",
+      "type": "string"
+    },
+    "EvolutionOperatorSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "operator": {
+          "$ref": "#/$defs/MutationOperatorKind"
+        },
+        "weight": {
+          "default": 1.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 100.0,
+          "title": "Weight",
+          "type": "number"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "operator"
+      ],
+      "title": "EvolutionOperatorSpec",
+      "type": "object"
+    },
+    "EvolutionOutputSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "graph_formats": {
+          "items": {
+            "enum": [
+              "json",
+              "dot",
+              "mermaid"
+            ],
+            "type": "string"
+          },
+          "title": "Graph Formats",
+          "type": "array"
+        },
+        "report_formats": {
+          "items": {
+            "enum": [
+              "json",
+              "markdown",
+              "csv"
+            ],
+            "type": "string"
+          },
+          "title": "Report Formats",
+          "type": "array"
+        },
+        "include_change_plans": {
+          "default": true,
+          "title": "Include Change Plans",
+          "type": "boolean"
+        },
+        "persist_artifacts": {
+          "default": true,
+          "title": "Persist Artifacts",
+          "type": "boolean"
+        }
+      },
+      "title": "EvolutionOutputSpec",
+      "type": "object"
+    },
+    "EvolutionPhase": {
+      "enum": [
+        "intake",
+        "frame",
+        "goal_expansion",
+        "assumption_discovery",
+        "resource_decomposition",
+        "bridge_building",
+        "divergence",
+        "adjacent_possible",
+        "convergence",
+        "prototype",
+        "experiment",
+        "selection",
+        "realization",
+        "verification",
+        "learning",
+        "release",
+        "archive"
+      ],
+      "title": "EvolutionPhase",
+      "type": "string"
+    },
+    "EvolutionPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "generations": {
+          "default": 3,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Generations",
+          "type": "integer"
+        },
+        "population_size": {
+          "default": 12,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Population Size",
+          "type": "integer"
+        },
+        "offspring_per_candidate": {
+          "default": 2,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Offspring Per Candidate",
+          "type": "integer"
+        },
+        "mutation_rate": {
+          "default": 0.8,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Mutation Rate",
+          "type": "number"
+        },
+        "crossover_rate": {
+          "default": 0.25,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Crossover Rate",
+          "type": "number"
+        },
+        "adjacent_possible_depth": {
+          "default": 2,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Adjacent Possible Depth",
+          "type": "integer"
+        },
+        "deterministic_seed": {
+          "default": 17,
+          "title": "Deterministic Seed",
+          "type": "integer"
+        },
+        "operators": {
+          "items": {
+            "$ref": "#/$defs/EvolutionOperatorSpec"
+          },
+          "title": "Operators",
+          "type": "array"
+        }
+      },
+      "title": "EvolutionPolicy",
+      "type": "object"
+    },
+    "EvolutionProgramSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "base_revision": {
+          "default": "main",
+          "title": "Base Revision",
+          "type": "string"
+        },
+        "targets": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Targets",
+          "type": "array"
+        },
+        "goal": {
+          "$ref": "#/$defs/EvolutionGoal"
+        },
+        "methods": {
+          "items": {
+            "$ref": "#/$defs/EvolutionMethod"
+          },
+          "title": "Methods",
+          "type": "array"
+        },
+        "action_search": {
+          "$ref": "#/$defs/ActionSearchSpec"
+        },
+        "resources": {
+          "$ref": "#/$defs/ResourceSearchSpec"
+        },
+        "lenses": {
+          "$ref": "#/$defs/LensSearchSpec"
+        },
+        "evolution": {
+          "$ref": "#/$defs/EvolutionPolicy"
+        },
+        "evaluation": {
+          "$ref": "#/$defs/EvaluationPolicy"
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/LifecycleProgramSpec"
+        },
+        "gates": {
+          "items": {
+            "$ref": "#/$defs/EvolutionGateSpec"
+          },
+          "title": "Gates",
+          "type": "array"
+        },
+        "explicit_changes": {
+          "items": {
+            "$ref": "#/$defs/ChangeOperation"
+          },
+          "title": "Explicit Changes",
+          "type": "array"
+        },
+        "validation_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Steps",
+          "type": "array"
+        },
+        "realization": {
+          "$ref": "#/$defs/RealizationPolicy"
+        },
+        "outputs": {
+          "$ref": "#/$defs/EvolutionOutputSpec"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "targets",
+        "goal"
+      ],
+      "title": "EvolutionProgramSpec",
+      "type": "object"
+    },
+    "EvolutionResource": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ResourceKind"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Properties"
+        },
+        "associations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Associations",
+          "type": "array"
+        },
+        "evidence_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Uris",
+          "type": "array"
+        }
+      },
+      "required": [
+        "node_id",
+        "kind",
+        "label"
+      ],
+      "title": "EvolutionResource",
+      "type": "object"
+    },
+    "EvolutionRunStatus": {
+      "enum": [
+        "draft",
+        "compiled",
+        "running",
+        "blocked",
+        "awaiting_approval",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "EvolutionRunStatus",
+      "type": "string"
+    },
+    "EvolutionStageRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "phase": {
+          "$ref": "#/$defs/EvolutionPhase"
+        },
+        "status": {
+          "$ref": "#/$defs/StageRunStatus",
+          "default": "not_started"
+        },
+        "input_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Ids",
+          "type": "array"
+        },
+        "output_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Output Ids",
+          "type": "array"
+        },
+        "diagnostics": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed At"
+        }
+      },
+      "required": [
+        "phase"
+      ],
+      "title": "EvolutionStageRecord",
+      "type": "object"
+    },
+    "GoalVariant": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "phrase": {
+          "title": "Phrase",
+          "type": "string"
+        },
+        "verb": {
+          "title": "Verb",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/ActionRelation"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        },
+        "depth": {
+          "default": 0,
+          "title": "Depth",
+          "type": "integer"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "source": {
+          "default": "derived",
+          "enum": [
+            "catalog",
+            "human",
+            "litellm",
+            "derived"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "node_id",
+        "phrase",
+        "verb",
+        "relation"
+      ],
+      "title": "GoalVariant",
+      "type": "object"
+    },
+    "LensSearchSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "include_source_lenses": {
+          "default": true,
+          "title": "Include Source Lenses",
+          "type": "boolean"
+        },
+        "include_extension_dimensions": {
+          "default": true,
+          "title": "Include Extension Dimensions",
+          "type": "boolean"
+        },
+        "source_lens_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Lens Ids",
+          "type": "array"
+        },
+        "extension_dimension_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Extension Dimension Ids",
+          "type": "array"
+        },
+        "ask_hidden_assumptions": {
+          "default": true,
+          "title": "Ask Hidden Assumptions",
+          "type": "boolean"
+        },
+        "max_lenses": {
+          "default": 100,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Max Lenses",
+          "type": "integer"
+        }
+      },
+      "title": "LensSearchSpec",
+      "type": "object"
+    },
+    "LifecycleProgramSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "default": "hardware-product",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "start_stage": {
+          "$ref": "#/$defs/LifecycleStage",
+          "default": "problem_framing"
+        },
+        "target_stage": {
+          "$ref": "#/$defs/LifecycleStage",
+          "default": "release"
+        },
+        "enabled_stages": {
+          "items": {
+            "$ref": "#/$defs/LifecycleStage"
+          },
+          "title": "Enabled Stages",
+          "type": "array"
+        },
+        "disabled_stages": {
+          "items": {
+            "$ref": "#/$defs/LifecycleStage"
+          },
+          "title": "Disabled Stages",
+          "type": "array"
+        },
+        "auto_advance": {
+          "default": false,
+          "title": "Auto Advance",
+          "type": "boolean"
+        },
+        "approval_required": {
+          "default": true,
+          "title": "Approval Required",
+          "type": "boolean"
+        }
+      },
+      "title": "LifecycleProgramSpec",
+      "type": "object"
+    },
+    "LifecycleStage": {
+      "enum": [
+        "evidence_intake",
+        "discovery",
+        "problem_framing",
+        "opportunity",
+        "requirements",
+        "goal_reframing",
+        "ideation",
+        "concept",
+        "feasibility",
+        "architecture",
+        "detailed_design",
+        "design_review",
+        "prototype",
+        "integration",
+        "engineering_verification",
+        "verification",
+        "validation",
+        "compliance",
+        "pilot",
+        "pilot_production",
+        "industrialization",
+        "release",
+        "production",
+        "quality_control",
+        "fulfillment",
+        "deployment",
+        "operation",
+        "observation",
+        "monitoring",
+        "maintenance",
+        "service",
+        "improvement",
+        "evolution",
+        "upgrade",
+        "recall",
+        "reuse",
+        "reuse_remanufacture",
+        "retirement",
+        "decommission",
+        "recycling",
+        "circular_recovery",
+        "end_of_life"
+      ],
+      "title": "LifecycleStage",
+      "type": "string"
+    },
+    "MutationOperatorKind": {
+      "enum": [
+        "reframe_goal",
+        "repurpose_feature",
+        "parameter_shift",
+        "invert_relation",
+        "combine_parts",
+        "split_part",
+        "remove_part",
+        "duplicate_feature",
+        "substitute_material",
+        "substitute_process",
+        "change_state",
+        "change_energy",
+        "move_function",
+        "modularize",
+        "make_reversible",
+        "add_observability",
+        "adjacent_association",
+        "crossover"
+      ],
+      "title": "MutationOperatorKind",
+      "type": "string"
+    },
+    "RealizationMode": {
+      "enum": [
+        "analysis_only",
+        "change_plan",
+        "auto_apply_safe"
+      ],
+      "title": "RealizationMode",
+      "type": "string"
+    },
+    "RealizationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "$ref": "#/$defs/RealizationMode",
+          "default": "change_plan"
+        },
+        "dry_run": {
+          "default": true,
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "allowed_operations": {
+          "items": {
+            "$ref": "#/$defs/ChangeOperationKind"
+          },
+          "title": "Allowed Operations",
+          "type": "array"
+        },
+        "max_change_plans": {
+          "default": 3,
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Max Change Plans",
+          "type": "integer"
+        },
+        "require_approval": {
+          "default": true,
+          "title": "Require Approval",
+          "type": "boolean"
+        }
+      },
+      "title": "RealizationPolicy",
+      "type": "object"
+    },
+    "ResourceKind": {
+      "enum": [
+        "object",
+        "part",
+        "feature",
+        "parameter",
+        "material",
+        "process",
+        "artifact",
+        "energy",
+        "human_action",
+        "environment",
+        "interface",
+        "requirement",
+        "evidence"
+      ],
+      "title": "ResourceKind",
+      "type": "string"
+    },
+    "ResourceSearchSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "include_descendants": {
+          "default": true,
+          "title": "Include Descendants",
+          "type": "boolean"
+        },
+        "include_features": {
+          "default": true,
+          "title": "Include Features",
+          "type": "boolean"
+        },
+        "include_parameters": {
+          "default": true,
+          "title": "Include Parameters",
+          "type": "boolean"
+        },
+        "include_materials": {
+          "default": true,
+          "title": "Include Materials",
+          "type": "boolean"
+        },
+        "include_processes": {
+          "default": true,
+          "title": "Include Processes",
+          "type": "boolean"
+        },
+        "include_artifacts": {
+          "default": true,
+          "title": "Include Artifacts",
+          "type": "boolean"
+        },
+        "include_requirements": {
+          "default": true,
+          "title": "Include Requirements",
+          "type": "boolean"
+        },
+        "include_evidence": {
+          "default": true,
+          "title": "Include Evidence",
+          "type": "boolean"
+        },
+        "include_human_actions": {
+          "default": true,
+          "title": "Include Human Actions",
+          "type": "boolean"
+        },
+        "include_environment": {
+          "default": true,
+          "title": "Include Environment",
+          "type": "boolean"
+        },
+        "max_resources": {
+          "default": 250,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Max Resources",
+          "type": "integer"
+        }
+      },
+      "title": "ResourceSearchSpec",
+      "type": "object"
+    },
+    "Role": {
+      "enum": [
+        "reader",
+        "editor",
+        "admin",
+        "creator"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "StageRunStatus": {
+      "enum": [
+        "not_started",
+        "running",
+        "completed",
+        "blocked",
+        "skipped"
+      ],
+      "title": "StageRunStatus",
+      "type": "string"
+    },
+    "TwinDslDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "api_version": {
+          "const": "twinstudio.io/v1alpha1",
+          "default": "twinstudio.io/v1alpha1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "kind": {
+          "const": "EvolutionProgram",
+          "default": "EvolutionProgram",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/DslMetadata"
+        },
+        "spec": {
+          "$ref": "#/$defs/EvolutionProgramSpec"
+        }
+      },
+      "required": [
+        "metadata",
+        "spec"
+      ],
+      "title": "TwinDslDocument",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "uri": {
+      "title": "Uri",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "base_revision": {
+      "title": "Base Revision",
+      "type": "string"
+    },
+    "program": {
+      "$ref": "#/$defs/TwinDslDocument"
+    },
+    "goal_variants": {
+      "items": {
+        "$ref": "#/$defs/GoalVariant"
+      },
+      "title": "Goal Variants",
+      "type": "array"
+    },
+    "resources": {
+      "items": {
+        "$ref": "#/$defs/EvolutionResource"
+      },
+      "title": "Resources",
+      "type": "array"
+    },
+    "graph": {
+      "$ref": "#/$defs/EvolutionGraph"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/EvolutionCandidate"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "selected_candidate_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Selected Candidate Ids",
+      "type": "array"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/EvolutionStageRecord"
+      },
+      "title": "Stages",
+      "type": "array"
+    },
+    "lifecycle_stage": {
+      "$ref": "#/$defs/LifecycleStage",
+      "default": "concept"
+    },
+    "status": {
+      "$ref": "#/$defs/EvolutionRunStatus",
+      "default": "compiled"
+    },
+    "planner": {
+      "default": "local-evolution-engine",
+      "title": "Planner",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "created_by": {
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "uri",
+    "project_id",
+    "base_revision",
+    "program",
+    "created_by"
+  ],
+  "title": "EvolutionRun",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/evolution-run.schema.json"
+}

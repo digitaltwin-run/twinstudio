@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "twinstudio"
-version = "0.3.0"
-description = "Event-sourced collaborative living product studio for scoped NL-to-2D-to-3D edits, specifications, simulations and artifact generation."
+version = "0.5.0"
+description = "Event-sourced collaborative product digital-thread studio with scoped NL-to-2D-to-3D edits, design-fixation lenses, simulations and artifact generation."
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = { text = "MIT" }
-authors = [{ name = "Living Product Studio" }]
+authors = [{ name = "TwinStudio" }]
 dependencies = [
   "fastapi>=0.128,<1",
   "uvicorn[standard]>=0.35,<1",
@@ -30,14 +30,15 @@ llm = ["litellm>=1,<2"]
 dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
 
 [project.scripts]
-lps = "living_product_studio.cli:app"
+twinstudio = "twinstudio.cli:app"
+lps = "twinstudio.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["living_product_studio*"]
+include = ["twinstudio*", "living_product_studio*"]
 
 [tool.setuptools.package-data]
-living_product_studio = ["static/*"]
+twinstudio = ["static/*", "data/*.yaml", "data/*.ebnf", "data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -6,10 +6,6 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "lps/v1/common.proto";
 
-option java_multiple_files = true;
-option java_package = "io.livingproductstudio.v1";
-option csharp_namespace = "LivingProductStudio.V1";
-
 message ScreenPoint {
   double x = 1;
   double y = 2;

@@ -1,4 +1,4 @@
-from living_product_studio.uri import PoaUriError, build_poa_uri, is_within_scope, parse_poa_uri
+from twinstudio.uri import PoaUriError, build_poa_uri, is_within_scope, parse_poa_uri
 
 
 def test_poa_round_trip_and_scope() -> None:

@@ -1,0 +1,65 @@
+{
+  "format": "twinstudio-evolution-artifacts",
+  "version": 1,
+  "project_id": "demo-rpi5",
+  "run_id": "run-e61ec7b06c239433",
+  "execution_id": "dsl-450a500163550a39",
+  "files": [
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/evolution-program.json",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-evolution-program.json",
+      "size_bytes": 7223,
+      "sha256": "7d067be1cbae49e04feb93400732ce507d3de757133ef0a39c4b022fb6479c70",
+      "media_type": "application/json"
+    },
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/evolution-run.json",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-evolution-run.json",
+      "size_bytes": 471841,
+      "sha256": "bf9f35f2894f37c35a0ab14afdf564b829fe5a5d365144341afd1ca4b14d7b4b",
+      "media_type": "application/json"
+    },
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/evolution-graph.dot",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-evolution-graph.dot",
+      "size_bytes": 46361,
+      "sha256": "317a0f7cc0763c7baf99b767b1d0795336cea986ef2a129d988eee4f1c24993b",
+      "media_type": "text/vnd.graphviz"
+    },
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/evolution-graph.mmd",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-evolution-graph.mmd",
+      "size_bytes": 36303,
+      "sha256": "b64e5f21eb460f7e240ddb14d6a749cd1436345cb0cd21729b73fcec97b071ef",
+      "media_type": "text/plain"
+    },
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/evolution-report.md",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-evolution-report.md",
+      "size_bytes": 6839,
+      "sha256": "3ed404c2d806abb6908bafcdfc68fd0e06b96d92adadadc42d304fa0e2739814",
+      "media_type": "text/markdown"
+    },
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/evolution-candidates.csv",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-evolution-candidates.csv",
+      "size_bytes": 9043,
+      "sha256": "9e9715b9ca4b3b1717f3815dbde499015c4600988f5129ddf17d870e243aa248",
+      "media_type": "text/csv"
+    },
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/lifecycle-blueprint.json",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-lifecycle-blueprint.json",
+      "size_bytes": 5249,
+      "sha256": "b0433fec3d9103124710a6315c13d8720374a3d4a4be6a1448338fba010de7be",
+      "media_type": "application/json"
+    },
+    {
+      "path": "/mnt/data/twinstudio_v0.5.0_release_runtime/data/artifacts/demo-rpi5/evolution/run-e61ec7b06c239433/dsl-execution.json",
+      "uri": "poa://demo/demo-rpi5@main/artifact/evolution-run-e61ec7b06c239433-dsl-execution.json",
+      "size_bytes": 4459,
+      "sha256": "a132c28e9b14435539b39456d2ea9f6a2bdf282b4cc3d7844bb1ca3af8f18298",
+      "media_type": "application/json"
+    }
+  ]
+}

@@ -7,10 +7,6 @@ import "google/protobuf/timestamp.proto";
 import "lps/v1/common.proto";
 import "lps/v1/geometry.proto";
 
-option java_multiple_files = true;
-option java_package = "io.livingproductstudio.v1";
-option csharp_namespace = "LivingProductStudio.V1";
-
 message ManufacturingSpec {
   string make_buy = 1;
   string process = 2;

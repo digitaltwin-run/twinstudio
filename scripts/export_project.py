@@ -3,10 +3,10 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from living_product_studio.artifacts import export_project_bundle
-from living_product_studio.bus import QueryService
-from living_product_studio.event_store import EventStore
-from living_product_studio.settings import settings
+from twinstudio.artifacts import export_project_bundle
+from twinstudio.bus import QueryService
+from twinstudio.event_store import EventStore
+from twinstudio.settings import settings
 
 
 parser = argparse.ArgumentParser()

@@ -160,5 +160,7 @@
     "created_by"
   ],
   "title": "ProjectionMap",
-  "type": "object"
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/projection-map.schema.json"
 }

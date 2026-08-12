@@ -1,24 +1,20 @@
-# Pakiet Living Product Studio — indeks odbiorczy
+# TwinStudio 0.5.0 — indeks paczki
 
-## Najważniejsze elementy
+## Najważniejsze pliki
 
-- `README.md` — instalacja, uruchomienie i przegląd funkcji.
-- `RELEASE_NOTES_PL.md` — zakres wydania 0.3.0, testy i granice.
-- `docs/00_START_PL.md` — szybkie uruchomienie i podstawowy workflow po polsku.
-- `docs/16_MASTER_PRODUCT_LIFECYCLE_BLUEPRINT_PL.md` — kompletny plan platformy i cyklu życia produktu.
-- `docs/17_REQUIREMENTS_TRACEABILITY_PL.md` — macierz każdego wymagania, modułu, statusu i kryterium odbioru.
-- `docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md` — wnioski z uruchomienia i publikacji oraz priorytety dalszego hardeningu.
-- `docs/IMPLEMENTATION_STATUS.md` — macierz: zaimplementowane / scaffold / roadmap.
-- `docs/VERIFICATION.md` oraz `docs/verification-report.json` — wykonane testy i jawne ograniczenia.
-- `compose.yaml` — środowisko Docker z profilami CAD, integracji, symulacji, Open WebUI i storage.
-- `src/living_product_studio/` — API, CQRS/ES, auth, POA, planner LiteLLM, symulacje, MCP i UI.
-- `proto/lps/v1/` — kontrakty Protobuf DSL.
-- `services/cad-worker/` — generator obudowy oraz ograniczony adapter zaznaczonego regionu STEP/B-Rep.
-- `services/mqtt-gateway/` — most MQTT → REST.
-- `services/device-sim/` — symulator telemetrii urządzenia.
-- `examples/rpi5-camera3/` — żywy projekt przykładowego urządzenia.
-- `examples/rpi5-camera3/demo-rpi5.lps/` — rozpakowany, przeglądalny eksport projektu; ZIP można wygenerować ponownie.
-- `examples/rpi5-camera3/scoped-edit-demo/` — działający przykład zaznaczenie → lokalny otwór → STEP/STL/journal.
+- `README.md` — architektura, instalacja, DSL i interfejsy.
+- `RELEASE_NOTES_PL.md` — zakres wydania, testy i ograniczenia.
+- `docs/18_PROJECT_EVOLUTION_DSL_PL.md` — metody ewolucji projektu i przeciwdziałanie fiksacji.
+- `docs/19_TWINSCRIPT_API_REFERENCE.md` — składnia DSL, schema, REST, CLI i MCP.
+- `docs/IMPLEMENTATION_STATUS.md` — macierz stanu funkcji.
+- `docs/VERIFICATION.md` — zapis wykonanych kontroli.
+- `schemas/` — JSON Schema Draft 2020-12, indeks oraz EBNF TwinScript.
+- `examples/evolution/` — równoważne przykłady `.twin`, YAML i JSON oraz wygenerowany raport demonstracyjny.
+- `src/twinstudio/` — API, CQRS/ES, auth, POA, LiteLLM, feature lenses, evolution engine, DSL, lifecycle, MCP i web UI.
+- `components/housing-studio/` — parametryczny generator obudowy 2D/3D.
+- `services/cad-worker/` — ograniczony adapter zaznaczonego obszaru STEP/B-Rep.
+- `examples/rpi5-camera3/` — demonstracyjny projekt urządzenia oraz zweryfikowany `demo-rpi5.twinstudio.zip`.
+- `proto/lps/v1/` — zachowana przestrzeń kontraktów przewodowych dla kompatybilności.
 
 ## Uruchomienie
 
@@ -31,38 +27,45 @@ Aplikacja: `http://localhost:8000`
 OpenAPI: `http://localhost:8000/docs`  
 Mailpit: `http://localhost:8025`
 
-Profil CAD:
+Lokalnie:
 
 ```bash
-docker compose --profile cad up --build
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[llm,dev]"
+twinstudio seed
+twinstudio serve
 ```
 
-Wszystkie opcjonalne warstwy:
+## Najkrótszy workflow ewolucji
 
 ```bash
-docker compose \
-  --profile cad \
-  --profile integration \
-  --profile simulation \
-  --profile openwebui \
-  --profile object-store \
-  up --build
+twinstudio dsl-preview examples/evolution/rpi5-hinge-evolution.twin \
+  --project-id demo-rpi5
 ```
 
-## Co jest działającym MVP
+Po przeglądzie kandydatów:
 
-- drzewo obiektów i xBOM;
-- zaznaczenia pointer/pencil/lasso/rectangle w 3D oraz adnotacje 2D;
-- rozwiązywanie zaznaczeń do obiektów/cech/powierzchni semantycznych;
-- prompt naturalny → walidowany `ChangePlan` przez LiteLLM lub parser lokalny;
-- blokada modyfikacji poza zaznaczonym zakresem POA;
-- event-sourced zmiany parametrów;
-- ograniczony lokalny adapter STEP: otwór oraz axis-aligned local-box add/cut;
-- role reader/editor/admin/creator i email approval onboarding;
-- REST, CLI, shell, MQTT, WebSocket i MCP 2026-07-28 core (`server/discover`, tools/resources, wymagane metadane i nagłówki) z legacy initialize;
-- specyfikacja wielotechnologiczna, test plans, lifecycle, FMEA, power/thermal i human-use;
-- eksport `.lps.zip` ze snapshotem, eventami, artefaktami i hashami.
+```bash
+twinstudio dsl-apply examples/evolution/rpi5-hinge-evolution.twin \
+  --project-id demo-rpi5 --execute
+```
 
-## Najważniejsze granice
+Domyślny tryb jest bezpieczny: podgląd nie zapisuje zdarzeń. Wykonanie zapisuje `EvolutionRun`, blueprint lifecycle, typowane `ChangePlan` oraz artefakty raportowe; nie oznacza automatycznego dowodu poprawności konstrukcji.
 
-Nie są gotowe: dowolna swobodna edycja każdego fragmentu B-Rep, rekonstrukcja natywnej historii SolidWorks, automatyczna dokładna geometria ze zdjęcia bez kalibracji, produkcyjny PCB/SCH autorouter, CFD/FEA, emulacja Raspberry Pi i pełny digital-human. Ograniczenia są opisane w macierzy implementacji i raporcie weryfikacji. MCP nie obejmuje jeszcze SSE/MRTR/OAuth server, a połączenie z konkretną wersją Open WebUI pozostaje testem wdrożeniowym.
+## Zakres działającego MVP
+
+- drzewo produktu, xBOM, artefakty i POA;
+- zaznaczenia 2D/3D i kontrolowany NL → `ChangePlan`;
+- 49 aktywnych soczewek źródłowych oraz jawna luka pięćdziesiątej pozycji;
+- katalog czasowników, graf celu i zasobów, adjacent possible, mutacje, rekombinacja i eksperymenty;
+- 34 rozszerzone wymiary inżynierskie i 17 operatorów ewolucji;
+- TwinScript/YAML/JSON, JSON Schema, EBNF, REST, CLI, MCP i edytor webowy;
+- lifecycle sprzętowy, cyfrowy i ciągłej ewolucji;
+- CQRS/Event Sourcing, role i optimistic concurrency;
+- eksport `.twinstudio.zip` z manifestem SHA-256;
+- redukowane modele power/thermal, human-use, reguły mechaniczne i FMEA.
+
+## Jawne granice
+
+Brak dowolnej edycji każdej powierzchni B-Rep, rekonstrukcji historii SolidWorks, automatycznej geometrii ze zdjęcia bez kalibracji, kompletnego edytora/autoroutera PCB, CFD/FEA, pełnej emulacji Raspberry Pi i biomechanicznego digital-human. Kandydaci ewolucji wymagają prototypów i evidence przed akceptacją.

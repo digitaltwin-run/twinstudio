@@ -1,0 +1,508 @@
+catalog_version: "2026.08-source-pages-1"
+title: "Feature Type Spectrum / viewing lenses"
+declared_lens_count: 50
+active_lens_count: 49
+source_notes:
+  - "The supplied table declares fifty feature types, while the visible pages contain forty-nine rows."
+  - "External Relations appears twice in the supplied pages with substantially the same wording."
+  - "TwinStudio preserves both visible rows and reserves one disabled source-gap slot instead of inventing missing source content."
+lenses:
+  - id: parts
+    order: 1
+    name: Parts
+    category: static_physical
+    summary: Identify the components that make up the selected object.
+    prompts:
+      - What could be split, combined, removed, duplicated, or made replaceable?
+      - Which component is currently treated as indivisible but could become modular?
+    enabled: true
+    source_status: transcribed
+  - id: material
+    order: 2
+    name: Material
+    category: static_physical
+    summary: Examine the materials used by the object and its components.
+    prompts:
+      - Which material property is essential, and which is merely inherited from the current design?
+      - Could a local material change improve performance, repairability, cost, or appearance?
+    enabled: true
+    source_status: transcribed
+  - id: shape
+    order: 3
+    name: Shape
+    category: static_physical
+    summary: Examine the overall form and the forms of individual parts.
+    prompts:
+      - What would change if the shape were inverted, flattened, curved, folded, or segmented?
+      - Which form exists only because of the present manufacturing route?
+    enabled: true
+    source_status: transcribed
+  - id: size
+    order: 4
+    name: Size (dimensional)
+    category: static_physical
+    summary: Consider length, width, depth, thickness, clearances, and scale.
+    prompts:
+      - Which dimension could vary independently instead of scaling with the whole object?
+      - What happens at half size, double size, or with deliberately non-uniform thickness?
+    enabled: true
+    source_status: transcribed
+  - id: color
+    order: 5
+    name: Color
+    category: static_physical
+    summary: Consider color of the object, parts, indicators, and interfaces.
+    prompts:
+      - Could color encode assembly, safety, state, ownership, or maintenance information?
+      - Is the current color constrained by material or only by convention?
+    enabled: true
+    source_status: transcribed
+  - id: state_of_matter
+    order: 6
+    name: State of Matter
+    category: static_physical
+    summary: Consider whether parts act as solids, liquids, gases, plasma, or phase-changing media.
+    prompts:
+      - Could a compliant, fluid, foam, gel, or phase-changing element replace a rigid part?
+      - Does any component change state during manufacture, use, service, or disposal?
+    enabled: true
+    source_status: transcribed
+  - id: connectivity_among_parts
+    order: 7
+    name: Connectivity among Parts
+    category: static_physical
+    summary: Examine how components are physically connected when the product is not being used.
+    prompts:
+      - Which joint could become detachable, tool-free, reversible, flexible, or self-aligning?
+      - Could one connection perform several functions or be eliminated entirely?
+    enabled: true
+    source_status: transcribed
+  - id: spatial_relations_among_parts
+    order: 8
+    name: Spatial Relations among Parts
+    category: static_physical
+    summary: Examine distance, direction, order, alignment, nesting, and relative placement of components.
+    prompts:
+      - What if two parts exchange position, overlap, nest, rotate, or move farther apart?
+      - Which spatial relationship is assumed but not functionally required?
+    enabled: true
+    source_status: transcribed
+  - id: mass
+    order: 9
+    name: Mass
+    category: static_physical
+    summary: Consider the amount and distribution of matter in the object and its parts.
+    prompts:
+      - Could mass be moved to another region to improve stability or feel?
+      - Which volume carries material without providing useful function?
+    enabled: true
+    source_status: transcribed
+  - id: weight
+    order: 10
+    name: Weight
+    category: static_physical
+    summary: Consider gravitational load and perceived heaviness in use, transport, and installation.
+    prompts:
+      - Should the product feel lighter, heavier, or balanced differently for the user?
+      - Could orientation or support change the effective weight during use?
+    enabled: true
+    source_status: transcribed
+  - id: number
+    order: 11
+    name: Number
+    category: static_physical
+    summary: Consider how many components, repetitions, interfaces, or instances exist.
+    prompts:
+      - What if there were one, two, many, or zero of this feature?
+      - Could repeated parts be replaced by one continuous or configurable element?
+    enabled: true
+    source_status: transcribed
+  - id: symmetry
+    order: 12
+    name: Symmetry
+    category: static_physical
+    summary: Examine mirror, rotational, translational, and functional symmetry or deliberate asymmetry.
+    prompts:
+      - Is symmetry helping assembly and manufacture, or hiding a useful asymmetry?
+      - Could mirrored geometry remove orientation errors or enable reversible installation?
+    enabled: true
+    source_status: transcribed
+  - id: variety_homogeneity
+    order: 13
+    name: Variety / Homogeneity
+    category: static_physical
+    summary: Consider whether a region is uniform or composed of different materials, textures, or structures.
+    prompts:
+      - Where would a graded, mixed, or locally reinforced structure outperform a uniform one?
+      - Could standardization reduce variety without reducing function?
+    enabled: true
+    source_status: transcribed
+  - id: inside_outside
+    order: 14
+    name: Inside / Outside
+    category: static_physical
+    summary: Contrast internal and external spaces, surfaces, functions, and access.
+    prompts:
+      - What function could move from inside to outside, or from outside to inside?
+      - Could the enclosure become partially open, transparent, reversible, or double-skinned?
+    enabled: true
+    source_status: transcribed
+  - id: texture
+    order: 15
+    name: Texture
+    category: static_physical
+    summary: Examine surface roughness, pattern, grip, finish, and tactile structure.
+    prompts:
+      - Could texture guide touch, hide print artifacts, improve adhesion, or communicate zones?
+      - Where should the product be smooth, rough, soft, ribbed, porous, or patterned?
+    enabled: true
+    source_status: transcribed
+  - id: taste
+    order: 16
+    name: Taste
+    category: static_physical
+    summary: Consider taste only where oral contact, contamination, food use, or safety makes it relevant.
+    prompts:
+      - Could accidental oral contact occur, and what material or coating implications follow?
+      - Is this lens not applicable, or does it reveal a hygiene or safety requirement?
+    enabled: true
+    source_status: transcribed
+  - id: aroma
+    order: 17
+    name: Aroma
+    category: static_physical
+    summary: Consider emitted, absorbed, trapped, or diagnostic odors.
+    prompts:
+      - Could odor reveal overheating, degradation, contamination, or maintenance need?
+      - Should material choice minimize or intentionally use scent?
+    enabled: true
+    source_status: transcribed
+  - id: thermal_characteristics
+    order: 18
+    name: Thermal Characteristics
+    category: dynamic_physical
+    summary: Examine temperature, heat capacity, conductivity, radiation, insulation, and heat paths.
+    prompts:
+      - Where can heat be spread, stored, insulated, vented, or reused?
+      - Which surface temperature matters to components, users, or manufacturing quality?
+    enabled: true
+    source_status: transcribed
+  - id: optical_characteristics
+    order: 19
+    name: Optical Characteristics
+    category: dynamic_physical
+    summary: Examine absorption, reflection, transmission, brightness, contrast, and visibility.
+    prompts:
+      - Could transparency, diffusion, reflection, or contrast improve function or inspection?
+      - Which surfaces should reveal, hide, guide, or block light?
+    enabled: true
+    source_status: transcribed
+  - id: force_characteristics
+    order: 20
+    name: Force Characteristics
+    category: dynamic_physical
+    summary: Examine pressure, tension, compression, friction, torque, vibration, speed, and momentum.
+    prompts:
+      - Where are forces concentrated, and can geometry redirect or distribute them?
+      - Could friction, compliance, leverage, or preload replace a fastener or actuator?
+    enabled: true
+    source_status: transcribed
+  - id: durability_characteristics
+    order: 21
+    name: Durability Characteristics
+    category: dynamic_physical
+    summary: Examine strength, toughness, fatigue, wear, impact resistance, and service life.
+    prompts:
+      - Which failure mode limits life, and can the sacrificial part be made replaceable?
+      - Could geometry reveal wear before failure or make damage non-catastrophic?
+    enabled: true
+    source_status: transcribed
+  - id: acoustic_characteristics
+    order: 22
+    name: Acoustic Characteristics
+    category: dynamic_physical
+    summary: Examine sound, vibration, resonance, damping, loudness, and acoustic feedback.
+    prompts:
+      - Could sound provide state feedback or early warning?
+      - Where can resonance be shifted, damped, isolated, or intentionally amplified?
+    enabled: true
+    source_status: transcribed
+  - id: chemical_characteristics
+    order: 23
+    name: Chemical Characteristics
+    category: dynamic_physical
+    summary: Examine composition, compatibility, corrosion, reaction, aging, and exposure.
+    prompts:
+      - Which cleaning agents, fumes, oils, UV exposure, or contaminants affect the design?
+      - Could a coating, barrier, catalyst, or inert material remove a failure mode?
+    enabled: true
+    source_status: transcribed
+  - id: electrical_characteristics
+    order: 24
+    name: Electrical Characteristics
+    category: dynamic_physical
+    summary: Examine voltage, current, resistance, capacitance, insulation, grounding, and charge.
+    prompts:
+      - Could conductive or insulating regions be integrated into the structure?
+      - Where do grounding, ESD, cable resistance, or connector losses shape the design?
+    enabled: true
+    source_status: transcribed
+  - id: magnetic_characteristics
+    order: 25
+    name: Magnetic Characteristics
+    category: dynamic_physical
+    summary: Examine magnetic strength, polarity, shielding, attraction, sensing, and retention.
+    prompts:
+      - Could magnets replace a latch, alignment feature, sensor target, or temporary fixture?
+      - Are magnetic fields a risk to nearby components or an unused capability?
+    enabled: true
+    source_status: transcribed
+  - id: radioactive_characteristics
+    order: 26
+    name: Radioactive Characteristics
+    category: dynamic_physical
+    summary: Consider radiation, decay, intensity, shielding, and detection where relevant.
+    prompts:
+      - Is this lens genuinely not applicable, or does the environment impose radiation requirements?
+      - Could radiation exposure affect materials, sensors, safety, or service life?
+    enabled: true
+    source_status: transcribed
+  - id: fluid_characteristics
+    order: 27
+    name: Fluid Characteristics
+    category: dynamic_physical
+    summary: Examine flow, pressure, buoyancy, leakage, ventilation, and interaction with liquids or gases.
+    prompts:
+      - Can airflow or liquid flow be guided without adding active components?
+      - Where might water, dust-laden air, condensation, or pressure enter or accumulate?
+    enabled: true
+    source_status: transcribed
+  - id: side_effects
+    order: 28
+    name: Side Effects
+    category: relational_physical
+    summary: Identify unintended effects produced during use, manufacture, service, or disposal.
+    prompts:
+      - Which side effect could become useful information or a secondary function?
+      - What new failure or nuisance appears when the primary function is optimized?
+    enabled: true
+    source_status: transcribed
+  - id: synonyms_by_use
+    order: 29
+    name: Synonyms (based on use)
+    category: relational_physical
+    summary: Look for other objects that achieve the same use by a different form or mechanism.
+    prompts:
+      - What unrelated product solves the same user need?
+      - Which mechanism could be borrowed from a distant domain without copying its appearance?
+    enabled: true
+    source_status: transcribed
+  - id: equipmental_partners
+    order: 30
+    name: Equipmental Partners
+    category: relational_physical
+    summary: Identify tools, accessories, infrastructure, and surrounding equipment used with the object.
+    prompts:
+      - Could the partner equipment absorb a function currently placed in the product?
+      - Can interfaces be standardized, combined, or made self-identifying?
+    enabled: true
+    source_status: transcribed
+  - id: human_use
+    order: 31
+    name: Human Use
+    category: relational_physical
+    summary: Examine how people hold, move, assemble, understand, maintain, and misuse the object.
+    prompts:
+      - What action is difficult, ambiguous, error-prone, or requires an unnecessary tool?
+      - Could the design make the correct action obvious through geometry or feedback?
+    enabled: true
+    source_status: transcribed
+  - id: external_relations_primary
+    order: 32
+    name: External Relations
+    category: relational_physical
+    summary: Examine relations between the object and environmental entities during a particular use.
+    prompts:
+      - Which nearby person, surface, cable, device, or structure constrains the design?
+      - Can the object cooperate with its environment rather than resist it?
+    enabled: true
+    source_status: duplicate_label
+  - id: place_where
+    order: 33
+    name: Place / Where
+    category: relational_physical
+    summary: Consider the physical locations in which the object resides or operates.
+    prompts:
+      - How would the design change for a wall, desk, vehicle, outdoors, workshop, or confined space?
+      - Which location assumption should become a configurable variant?
+    enabled: true
+    source_status: transcribed
+  - id: occasion_when
+    order: 34
+    name: Occasion / When
+    category: relational_physical
+    summary: Consider the situations, events, routines, and contexts in which the object is used.
+    prompts:
+      - What changes between installation, normal use, emergency use, cleaning, and transport?
+      - Could one mode be optimized without compromising the others?
+    enabled: true
+    source_status: transcribed
+  - id: energy_types
+    order: 35
+    name: Energy Types
+    category: relational_physical
+    summary: Examine mechanical, thermal, electrical, chemical, acoustic, biological, and other energy exchanges.
+    prompts:
+      - Which energy enters, leaves, accumulates, or is wasted?
+      - Can one energy form be converted into useful sensing, actuation, or feedback?
+    enabled: true
+    source_status: transcribed
+  - id: force_types
+    order: 36
+    name: Force Types
+    category: relational_physical
+    summary: Consider gravity, inertial, centrifugal, centripetal, contact, fluid, and externally applied forces.
+    prompts:
+      - Which force is treated as a problem but could instead stabilize, close, align, or actuate?
+      - How does the force direction change across use cases?
+    enabled: true
+    source_status: transcribed
+  - id: proximity_in_space
+    order: 37
+    name: Proximity in Space
+    category: relational_physical
+    summary: Examine distance and configuration relative to environmental entities.
+    prompts:
+      - What must stay near, far away, aligned, separated, or shielded?
+      - Could adjustable spacing improve access, thermal behavior, sensing, or packaging?
+    enabled: true
+    source_status: transcribed
+  - id: orientation_in_space
+    order: 38
+    name: Orientation in Space
+    category: relational_physical
+    summary: Examine required or typical orientation during use, transport, installation, and service.
+    prompts:
+      - Can the product work in more orientations or prevent an unsafe one?
+      - Could gravity-assisted orientation simplify drainage, assembly, cooling, or locking?
+    enabled: true
+    source_status: transcribed
+  - id: time_temporal_relations
+    order: 39
+    name: Time / Temporal Relations
+    category: relational_physical
+    summary: Examine duration, sequence, latency, cycles, aging, and timing during use.
+    prompts:
+      - Which action or change should happen earlier, later, faster, slower, or only temporarily?
+      - Can time-dependent behavior replace a sensor, latch, or maintenance interval?
+    enabled: true
+    source_status: transcribed
+  - id: motion
+    order: 40
+    name: Motion
+    category: relational_physical
+    summary: Examine typical motion, stillness, path, speed, direction, and degrees of freedom.
+    prompts:
+      - What if a fixed feature moves, or a moving feature becomes fixed?
+      - Can motion be constrained, guided, amplified, damped, or harvested?
+    enabled: true
+    source_status: transcribed
+  - id: permanence_transience
+    order: 41
+    name: Permanence / Transience
+    category: relational_physical
+    summary: Consider expected duration of use, replaceability, disposability, and persistence.
+    prompts:
+      - Which parts should last for years, and which should be temporary or sacrificial?
+      - Could the product be repaired, upgraded, disassembled, or safely retired by design?
+    enabled: true
+    source_status: transcribed
+  - id: perspective_of_human_user
+    order: 42
+    name: Perspective of Human User
+    category: relational_physical
+    summary: Examine the user’s physical viewpoint and what that viewpoint reveals or hides.
+    prompts:
+      - What does the installer, operator, maintainer, bystander, or customer see first?
+      - Which critical cue is invisible from the normal viewpoint?
+    enabled: true
+    source_status: transcribed
+  - id: environmental_conditions
+    order: 43
+    name: Environmental Conditions
+    category: relational_physical
+    summary: Examine humidity, pressure, temperature, weather, dust, vibration, and atmosphere.
+    prompts:
+      - Which environmental extreme changes fit, material behavior, sensing, or safety?
+      - Could the design self-protect, drain, equalize pressure, or report exposure?
+    enabled: true
+    source_status: transcribed
+  - id: emotional_response
+    order: 44
+    name: Emotional Response
+    category: relational_physical
+    summary: Consider feelings the object may elicit in different people and contexts.
+    prompts:
+      - Does the product feel trustworthy, fragile, technical, friendly, intrusive, or unfinished?
+      - Which form, sound, texture, motion, or feedback could change that response?
+    enabled: true
+    source_status: transcribed
+  - id: causal_relations
+    order: 45
+    name: Causal Relations
+    category: relational_physical
+    summary: Trace cause-and-effect chains among components, users, environment, and outcomes.
+    prompts:
+      - What upstream cause produces the observed defect or behavior?
+      - Can the chain be interrupted, made visible, or converted into fail-safe behavior?
+    enabled: true
+    source_status: transcribed
+  - id: superordinate
+    order: 46
+    name: Superordinate
+    category: relational_physical
+    summary: Consider the broader class of products defined by the object’s typical use.
+    prompts:
+      - What assumptions come from treating this object as a member of its current product class?
+      - Could it be reframed as infrastructure, service, consumable, interface, or software instead?
+    enabled: true
+    source_status: transcribed
+  - id: subordinates
+    order: 47
+    name: Subordinates
+    category: relational_physical
+    summary: Consider more specific variants and specialized forms of the object.
+    prompts:
+      - Which variants deserve configurable parameters rather than separate products?
+      - What extreme specialist version reveals a useful feature for the general design?
+    enabled: true
+    source_status: transcribed
+  - id: external_relations_secondary
+    order: 48
+    name: External Relations
+    category: relational_physical
+    summary: A second visible source row again asks how the object relates to environmental entities during use.
+    prompts:
+      - Re-run the external-relations review from another stakeholder or lifecycle stage.
+      - Which relation was overlooked in the first pass because it seemed outside the product boundary?
+    enabled: true
+    source_status: duplicate_label
+  - id: aesthetics
+    order: 49
+    name: Aesthetics
+    category: relational_physical
+    summary: Examine beauty, coherence, visual quality, proportion, and other artistic responses.
+    prompts:
+      - Which manufacturing marks should be hidden, celebrated, aligned, or made intentional?
+      - Can aesthetic improvement also communicate function, assembly, or quality?
+    enabled: true
+    source_status: transcribed
+  - id: unresolved_source_slot
+    order: 50
+    name: Unresolved source slot
+    category: source_gap
+    summary: Reserved because the supplied pages declare fifty types but expose only forty-nine rows.
+    prompts:
+      - Replace this slot only when an authoritative source page identifies the missing row.
+    enabled: false
+    source_status: unresolved

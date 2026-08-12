@@ -1,4 +1,4 @@
-from living_product_studio.gtin import calculate_check_digit, complete_gtin, validate_gtin
+from twinstudio.gtin import calculate_check_digit, complete_gtin, validate_gtin
 
 
 def test_gtin_check_digit_known_example() -> None:

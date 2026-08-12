@@ -1,0 +1,274 @@
+catalog_version: "1.0.0"
+title: "TwinStudio project-evolution catalog"
+source_notes:
+  - "The goal-ladder, bidirectional graph, adjacent-possible, BrainSwarming and evolutionary-search methods are adapted from the user-supplied design-creativity excerpts."
+  - "The extension dimensions, operators and lifecycle templates are TwinStudio additions; they are not presented as rows from the supplied fifty-lens table."
+
+verb_graph:
+  fasten:
+    synonyms: [attach, connect, secure, join]
+    hypernyms: [assemble, form, modify, change]
+    hyponyms: [tie, clamp, clip, buckle, weld, rivet, pin, latch, screw, sew, solder, hinge]
+    opposites: [separate, release, detach]
+    assumptions:
+      - "Two or more entities must remain related."
+      - "The relation may be mechanical, geometric, chemical, magnetic, electrical or temporary."
+    associations: [joint, interface, preload, friction, bond, reversibility]
+  connect:
+    synonyms: [join, link, couple, interface]
+    hypernyms: [relate, assemble, change]
+    hyponyms: [plug, wire, hinge, latch, pair, network, mate]
+    opposites: [disconnect, isolate, separate]
+    assumptions: ["A path or relation exists between entities."]
+    associations: [interface, continuity, topology, communication]
+  improve:
+    synonyms: [enhance, optimize, refine, strengthen]
+    hypernyms: [change, modify, develop]
+    hyponyms: [polish, simplify, reinforce, tune, smooth, shorten, lighten]
+    opposites: [degrade, weaken, complicate]
+    assumptions: ["A measurable or perceived quality can be made better."]
+    associations: [fitness, quality, tradeoff, evidence]
+  reduce:
+    synonyms: [decrease, minimize, shrink, lower]
+    hypernyms: [change, adjust]
+    hyponyms: [thin, shorten, lighten, simplify, remove, suppress]
+    opposites: [increase, enlarge, add]
+    assumptions: ["Less of a measurable quantity is preferable within constraints."]
+    associations: [mass, cost, time, energy, size, risk]
+  increase:
+    synonyms: [raise, enlarge, amplify, extend]
+    hypernyms: [change, adjust]
+    hyponyms: [thicken, lengthen, reinforce, multiply, widen]
+    opposites: [reduce, shrink, suppress]
+    assumptions: ["More of a measurable quantity is preferable within constraints."]
+    associations: [strength, capacity, clearance, coverage, redundancy]
+  protect:
+    synonyms: [shield, guard, preserve, isolate]
+    hypernyms: [maintain, prevent]
+    hyponyms: [seal, insulate, cushion, enclose, filter, limit]
+    opposites: [expose, release]
+    assumptions: ["A hazard, disturbance or degradation mechanism exists."]
+    associations: [safety, ingress, shock, heat, corrosion, privacy]
+  support:
+    synonyms: [hold, carry, brace, sustain]
+    hypernyms: [maintain, relate]
+    hyponyms: [prop, suspend, cradle, clamp, mount, reinforce]
+    opposites: [release, destabilize]
+    assumptions: ["Loads or position must be maintained."]
+    associations: [force, stiffness, load path, stability]
+  mount:
+    synonyms: [install, attach, seat, locate]
+    hypernyms: [fasten, position]
+    hyponyms: [screw, snap, slide, clamp, press-fit, key, pin]
+    opposites: [remove, eject, detach]
+    assumptions: ["Position and orientation matter during use or service."]
+    associations: [datum, tolerance, access, repeatability]
+  open:
+    synonyms: [uncover, expose, release, unfold]
+    hypernyms: [move, change]
+    hyponyms: [rotate, slide, lift, peel, split, expand]
+    opposites: [close, seal, lock]
+    assumptions: ["A boundary or closure changes configuration."]
+    associations: [motion, clearance, hinge, access, user_force]
+  close:
+    synonyms: [cover, seal, shut, lock]
+    hypernyms: [move, change]
+    hyponyms: [latch, snap, clamp, fold, slide, rotate]
+    opposites: [open, release]
+    assumptions: ["A boundary reaches a retained configuration."]
+    associations: [retention, seal, force, feedback]
+  cool:
+    synonyms: [remove_heat, ventilate, dissipate]
+    hypernyms: [regulate, transfer]
+    hyponyms: [conduct, convect, radiate, fan, spread, sink]
+    opposites: [heat, insulate]
+    assumptions: ["Heat exists and must move to another place or state."]
+    associations: [thermal_path, airflow, surface_area, power]
+  seal:
+    synonyms: [close, isolate, contain]
+    hypernyms: [protect, fasten]
+    hyponyms: [gasket, weld, bond, labyrinth, o_ring, pot]
+    opposites: [vent, open, drain]
+    assumptions: ["Transport through an interface must be controlled."]
+    associations: [fluid, dust, pressure, interface, compression]
+  move:
+    synonyms: [translate, rotate, reposition, transport]
+    hypernyms: [change]
+    hyponyms: [slide, pivot, roll, flex, oscillate, lift]
+    opposites: [fix, lock, stabilize]
+    assumptions: ["A configuration changes over time."]
+    associations: [kinematics, force, friction, path, time]
+  separate:
+    synonyms: [detach, isolate, divide, remove]
+    hypernyms: [change, disassemble]
+    hyponyms: [cut, unscrew, unlatch, split, filter, decouple]
+    opposites: [fasten, combine, merge]
+    assumptions: ["A relation or shared boundary can be broken or prevented."]
+    associations: [service, modularity, recycling, safety]
+  inspect:
+    synonyms: [check, observe, measure, verify]
+    hypernyms: [evaluate, learn]
+    hyponyms: [scan, probe, gauge, test, photograph, log]
+    opposites: [hide, ignore]
+    assumptions: ["Evidence can be gathered about state or quality."]
+    associations: [observability, datum, tolerance, traceability]
+  maintain:
+    synonyms: [preserve, sustain, service]
+    hypernyms: [control]
+    hyponyms: [clean, lubricate, replace, calibrate, update]
+    opposites: [abandon, degrade]
+    assumptions: ["Performance changes with use or time."]
+    associations: [serviceability, access, spare, diagnostics]
+  prevent:
+    synonyms: [avoid, inhibit, stop, constrain]
+    hypernyms: [control, protect]
+    hyponyms: [block, limit, interlock, shield, detect_early]
+    opposites: [enable, permit, cause]
+    assumptions: ["An undesired event has identifiable causes or precursors."]
+    associations: [risk, barrier, detection, fail_safe]
+  manufacture:
+    synonyms: [make, fabricate, produce, build]
+    hypernyms: [realize, transform]
+    hyponyms: [print, mill, mold, cut, cast, assemble]
+    opposites: [discard, disassemble]
+    assumptions: ["A design is transformed into repeatable physical or digital output."]
+    associations: [process, tolerance, tooling, yield, cost]
+  simplify:
+    synonyms: [reduce_complexity, clarify, consolidate]
+    hypernyms: [improve, change]
+    hyponyms: [merge, remove, standardize, parameterize, automate]
+    opposites: [complicate, diversify]
+    assumptions: ["Complexity has a measurable cost or failure mode."]
+    associations: [part_count, steps, interfaces, cognitive_load]
+  observe:
+    synonyms: [monitor, sense, record, inspect]
+    hypernyms: [learn, measure]
+    hyponyms: [log, photograph, sample, instrument, alarm]
+    opposites: [hide, ignore]
+    assumptions: ["State can be represented by signals or evidence."]
+    associations: [telemetry, test_point, indicator, provenance]
+
+extension_dimensions:
+  - {id: function, name: Function, category: functional_behavioral, summary: "What useful transformation or outcome is delivered?", associations: [purpose, outcome, performance]}
+  - {id: behavior, name: Behavior, category: functional_behavioral, summary: "How does state change over time or in response to inputs?", associations: [state, response, dynamics]}
+  - {id: control_logic, name: Control logic, category: functional_behavioral, summary: "What decisions, feedback or interlocks govern behavior?", associations: [feedback, state_machine, interlock]}
+  - {id: interface_contract, name: Interface contract, category: interface_system, summary: "What geometry, signals, forces and tolerances cross each interface?", associations: [interface, protocol, tolerance]}
+  - {id: interoperability, name: Interoperability, category: interface_system, summary: "Can the element work with alternate components, tools and versions?", associations: [compatibility, standard, adapter]}
+  - {id: modularity, name: Modularity, category: interface_system, summary: "Can responsibilities be separated into replaceable modules?", associations: [module, boundary, replace]}
+  - {id: configurability, name: Configurability, category: interface_system, summary: "Which variations should be explicit configurations rather than forks?", associations: [variant, parameter, option]}
+  - {id: manufacturability, name: Manufacturability, category: lifecycle_value, summary: "Can it be made repeatedly with the intended process and tolerances?", associations: [process, support, tooling, yield]}
+  - {id: assemblability, name: Assemblability, category: lifecycle_value, summary: "Can it be assembled correctly with clear order, access and feedback?", associations: [assembly, access, poka_yoke]}
+  - {id: serviceability, name: Serviceability, category: lifecycle_value, summary: "Can it be inspected, opened, repaired and reassembled?", associations: [service, disassembly, spare]}
+  - {id: testability, name: Testability, category: lifecycle_value, summary: "Can requirements be verified with available fixtures and evidence?", associations: [test, fixture, observable]}
+  - {id: reliability, name: Reliability, category: lifecycle_value, summary: "How likely is correct operation over expected time and cycles?", associations: [wear, fatigue, lifetime]}
+  - {id: resilience, name: Resilience, category: lifecycle_value, summary: "How does the system degrade, recover or continue after disturbance?", associations: [redundancy, recovery, fault]}
+  - {id: upgradeability, name: Upgradeability, category: lifecycle_value, summary: "Can capability be improved without replacing the whole product?", associations: [upgrade, module, firmware]}
+  - {id: cost_value, name: Cost and value, category: lifecycle_value, summary: "Where do cost, effort and user value arise across the lifecycle?", associations: [cost, price, labor, value]}
+  - {id: lead_time, name: Lead time, category: lifecycle_value, summary: "Which decisions or dependencies dominate delivery time?", associations: [supplier, queue, build_time]}
+  - {id: supply_risk, name: Supply risk, category: lifecycle_value, summary: "Which components, materials or skills have fragile availability?", associations: [supplier, substitute, availability]}
+  - {id: observability, name: Observability, category: digital_control, summary: "Can internal state, quality and failures be inferred from evidence?", associations: [telemetry, indicator, log, test_point]}
+  - {id: data_quality, name: Data quality, category: digital_control, summary: "Are measurements and records complete, calibrated and traceable?", associations: [calibration, provenance, uncertainty]}
+  - {id: software_maintainability, name: Software maintainability, category: digital_control, summary: "Can software behavior be understood, tested and changed safely?", associations: [source, test, dependency, version]}
+  - {id: cybersecurity, name: Cybersecurity, category: safety_risk, summary: "What assets, trust boundaries and misuse paths must be controlled?", associations: [threat, authentication, update]}
+  - {id: privacy, name: Privacy, category: safety_risk, summary: "What personal or sensitive data is collected, retained or exposed?", associations: [data_minimization, consent, retention]}
+  - {id: functional_safety, name: Functional safety, category: safety_risk, summary: "How can faults create hazards and how are they detected or contained?", associations: [hazard, interlock, fail_safe]}
+  - {id: misuse_resistance, name: Misuse resistance, category: safety_risk, summary: "How does the design prevent foreseeable incorrect use?", associations: [human_error, guard, feedback]}
+  - {id: accessibility, name: Accessibility, category: safety_risk, summary: "Can people with different capabilities perceive and operate it?", associations: [reach, force, contrast, alternative]}
+  - {id: sustainability, name: Sustainability, category: sustainability_compliance, summary: "What energy, material and waste impacts occur across the lifecycle?", associations: [energy, material, waste, transport]}
+  - {id: circularity, name: Circularity, category: sustainability_compliance, summary: "Can parts be reused, repaired, remanufactured or recycled?", associations: [reuse, repair, separation, recycling]}
+  - {id: compliance, name: Compliance, category: sustainability_compliance, summary: "Which legal, safety, EMC, environmental or labeling constraints apply?", associations: [standard, certification, evidence]}
+  - {id: provenance, name: Provenance, category: evidence_decision, summary: "Can each decision, parameter and artifact be traced to source and author?", associations: [event, source, revision, approval]}
+  - {id: uncertainty, name: Uncertainty, category: evidence_decision, summary: "Which claims are assumptions, estimates or measurements with uncertainty?", associations: [confidence, tolerance, assumption]}
+  - {id: reversibility, name: Reversibility, category: evidence_decision, summary: "Can a decision or physical change be undone at acceptable cost?", associations: [rollback, reversible, replaceable]}
+  - {id: experiment_cost, name: Experiment cost, category: evidence_decision, summary: "What is the cheapest safe experiment that can reject a weak idea?", associations: [prototype, test, evidence, learning]}
+  - {id: emotional_response, name: Emotional response, category: evidence_decision, summary: "What feelings, trust or perceived quality does the product evoke?", associations: [aesthetics, trust, brand]}
+  - {id: adjacent_possible, name: Adjacent possible, category: evidence_decision, summary: "Which one-hop association just outside the current concept can be blended in?", associations: [analogy, association, blend]}
+
+operators:
+  - {id: reframe_goal, kind: reframe_goal, description: "Move up, down or sideways in the action hierarchy before selecting a mechanism."}
+  - {id: repurpose_feature, kind: repurpose_feature, description: "Describe an existing feature generically and use it for another purpose."}
+  - {id: parameter_shift, kind: parameter_shift, description: "Vary a parameter within declared constraints and tolerance rules."}
+  - {id: invert_relation, kind: invert_relation, description: "Reverse inside/outside, fixed/moving, active/passive or local/remote relations."}
+  - {id: combine_parts, kind: combine_parts, description: "Merge responsibilities or geometry to remove an interface."}
+  - {id: split_part, kind: split_part, description: "Separate responsibilities to improve manufacture, service or variation."}
+  - {id: remove_part, kind: remove_part, description: "Delete a part and transfer its function elsewhere."}
+  - {id: duplicate_feature, kind: duplicate_feature, description: "Add redundancy, alternative position or parallel path."}
+  - {id: substitute_material, kind: substitute_material, description: "Explore another material or state of matter without assuming the current one."}
+  - {id: substitute_process, kind: substitute_process, description: "Explore a different manufacturing or software realization process."}
+  - {id: change_energy, kind: change_energy, description: "Replace mechanical, thermal, chemical, magnetic or electrical means."}
+  - {id: move_function, kind: move_function, description: "Move a function across a component or system boundary."}
+  - {id: modularize, kind: modularize, description: "Create a stable interface around a replaceable responsibility."}
+  - {id: make_reversible, kind: make_reversible, description: "Prefer disassembly, rollback or temporary attachment where valuable."}
+  - {id: add_observability, kind: add_observability, description: "Add inspection geometry, test points, telemetry or state feedback."}
+  - {id: adjacent_association, kind: adjacent_association, description: "Blend a nearby association that is not part of the common concept."}
+  - {id: crossover, kind: crossover, description: "Combine compatible traits from two candidate lineages."}
+
+lifecycle_templates:
+  hardware-product:
+    name: "Hardware product lifecycle"
+    stages:
+      - opportunity
+      - discovery
+      - evidence_intake
+      - problem_framing
+      - requirements
+      - concept
+      - feasibility
+      - architecture
+      - detailed_design
+      - design_review
+      - prototype
+      - verification
+      - validation
+      - compliance
+      - pilot
+      - industrialization
+      - release
+      - production
+      - quality_control
+      - fulfillment
+      - operation
+      - monitoring
+      - maintenance
+      - service
+      - improvement
+      - recall
+      - end_of_life
+      - retirement
+      - reuse
+      - recycling
+  digital-product:
+    name: "Digital/software product lifecycle"
+    stages:
+      - opportunity
+      - discovery
+      - problem_framing
+      - requirements
+      - concept
+      - architecture
+      - detailed_design
+      - design_review
+      - prototype
+      - verification
+      - validation
+      - compliance
+      - release
+      - operation
+      - monitoring
+      - maintenance
+      - service
+      - improvement
+      - retirement
+  continuous-evolution:
+    name: "Continuous product evolution loop"
+    stages:
+      - evidence_intake
+      - problem_framing
+      - concept
+      - feasibility
+      - prototype
+      - verification
+      - validation
+      - release
+      - monitoring
+      - improvement

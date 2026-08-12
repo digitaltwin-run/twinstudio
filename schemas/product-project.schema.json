@@ -396,6 +396,203 @@
       "title": "ChangePlan",
       "type": "object"
     },
+    "DesignAlternative": {
+      "additionalProperties": false,
+      "properties": {
+        "idea_id": {
+          "title": "Idea Id",
+          "type": "string"
+        },
+        "target_uri": {
+          "title": "Target Uri",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "lens_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Lens Ids",
+          "type": "array"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "proposed_changes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Proposed Changes",
+          "type": "array"
+        },
+        "expected_benefits": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected Benefits",
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "validation_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Steps",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/DesignIdeaSource",
+          "default": "local"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "target_uri",
+        "title",
+        "lens_ids",
+        "summary"
+      ],
+      "title": "DesignAlternative",
+      "type": "object"
+    },
+    "DesignFixationReview": {
+      "additionalProperties": false,
+      "properties": {
+        "review_id": {
+          "title": "Review Id",
+          "type": "string"
+        },
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "base_revision": {
+          "title": "Base Revision",
+          "type": "string"
+        },
+        "target_uri": {
+          "title": "Target Uri",
+          "type": "string"
+        },
+        "challenge": {
+          "default": "",
+          "title": "Challenge",
+          "type": "string"
+        },
+        "catalog_version": {
+          "title": "Catalog Version",
+          "type": "string"
+        },
+        "selected_lens_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Selected Lens Ids",
+          "type": "array"
+        },
+        "observations": {
+          "items": {
+            "$ref": "#/$defs/FeatureLensObservation"
+          },
+          "title": "Observations",
+          "type": "array"
+        },
+        "coverage_ratio": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Coverage Ratio",
+          "type": "number"
+        },
+        "observed_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Observed Count",
+          "type": "integer"
+        },
+        "applicable_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Applicable Count",
+          "type": "integer"
+        },
+        "underexplored_lens_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Underexplored Lens Ids",
+          "type": "array"
+        },
+        "alternatives": {
+          "items": {
+            "$ref": "#/$defs/DesignAlternative"
+          },
+          "title": "Alternatives",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "planner": {
+          "default": "local-feature-lens-engine",
+          "title": "Planner",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "project_id",
+        "base_revision",
+        "target_uri",
+        "catalog_version",
+        "created_by"
+      ],
+      "title": "DesignFixationReview",
+      "type": "object"
+    },
+    "DesignIdeaSource": {
+      "enum": [
+        "local",
+        "litellm",
+        "human"
+      ],
+      "title": "DesignIdeaSource",
+      "type": "string"
+    },
     "EcommerceOffer": {
       "additionalProperties": false,
       "properties": {
@@ -658,6 +855,48 @@
         "detection"
       ],
       "title": "FailureMode",
+      "type": "object"
+    },
+    "FeatureLensObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "lens_id": {
+          "title": "Lens Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/LensObservationStatus",
+          "default": "unknown"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        },
+        "evidence_uris": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Uris",
+          "type": "array"
+        },
+        "confidence": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "generated_by": {
+          "default": "twinstudio:auto-scan",
+          "title": "Generated By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lens_id"
+      ],
+      "title": "FeatureLensObservation",
       "type": "object"
     },
     "FeatureSpec": {
@@ -933,6 +1172,16 @@
       "title": "InclusionSpec",
       "type": "object"
     },
+    "LensObservationStatus": {
+      "enum": [
+        "observed",
+        "partly_observed",
+        "unknown",
+        "not_applicable"
+      ],
+      "title": "LensObservationStatus",
+      "type": "string"
+    },
     "LifecycleGate": {
       "additionalProperties": false,
       "properties": {
@@ -989,18 +1238,46 @@
     "LifecycleStage": {
       "enum": [
         "evidence_intake",
+        "discovery",
+        "problem_framing",
+        "opportunity",
         "requirements",
+        "goal_reframing",
+        "ideation",
         "concept",
+        "feasibility",
         "architecture",
         "detailed_design",
+        "design_review",
         "prototype",
+        "integration",
+        "engineering_verification",
         "verification",
         "validation",
+        "compliance",
+        "pilot",
+        "pilot_production",
         "industrialization",
+        "release",
         "production",
+        "quality_control",
         "fulfillment",
+        "deployment",
         "operation",
+        "observation",
+        "monitoring",
         "maintenance",
+        "service",
+        "improvement",
+        "evolution",
+        "upgrade",
+        "recall",
+        "reuse",
+        "reuse_remanufacture",
+        "retirement",
+        "decommission",
+        "recycling",
+        "circular_recovery",
         "end_of_life"
       ],
       "title": "LifecycleStage",
@@ -2336,6 +2613,53 @@
       "title": "Change Plans",
       "type": "object"
     },
+    "design_fixation_reviews": {
+      "additionalProperties": {
+        "$ref": "#/$defs/DesignFixationReview"
+      },
+      "title": "Design Fixation Reviews",
+      "type": "object"
+    },
+    "evolution_runs": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Evolution Runs",
+      "type": "object"
+    },
+    "lifecycle_blueprints": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Lifecycle Blueprints",
+      "type": "object"
+    },
+    "lifecycle_history": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Lifecycle History",
+      "type": "array"
+    },
+    "dsl_programs": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Dsl Programs",
+      "type": "object"
+    },
+    "dsl_executions": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Dsl Executions",
+      "type": "object"
+    },
     "requirements": {
       "additionalProperties": {
         "$ref": "#/$defs/Requirement"
@@ -2450,5 +2774,7 @@
     "name"
   ],
   "title": "ProjectSnapshot",
-  "type": "object"
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/product-project.schema.json"
 }

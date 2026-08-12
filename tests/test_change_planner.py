@@ -2,9 +2,9 @@ from dataclasses import replace
 
 import pytest
 
-from living_product_studio.change_planner import ChangePlanner, ScopeViolation
-from living_product_studio.domain import ChangeOperation, ChangePlan
-from living_product_studio.settings import settings
+from twinstudio.change_planner import ChangePlanner, ScopeViolation
+from twinstudio.domain import ChangeOperation, ChangePlan
+from twinstudio.settings import settings
 
 
 def test_local_planner_keeps_chamfer_in_selected_scope(project_snapshot, example_selection) -> None:

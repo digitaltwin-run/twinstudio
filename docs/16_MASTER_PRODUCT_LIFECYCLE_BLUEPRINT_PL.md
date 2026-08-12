@@ -1,8 +1,8 @@
-# 16 — Główny plan platformy „Living Product Studio”
+# 16 — Główny plan platformy „TwinStudio”
 
 ## 1. Cel produktu
 
-Living Product Studio ma być wspólną, wersjonowaną przestrzenią dla całego urządzenia, a nie tylko repozytorium pojedynczego modelu STL. Jeden projekt łączy:
+TwinStudio ma być wspólną, wersjonowaną przestrzenią dla całego urządzenia, a nie tylko repozytorium pojedynczego modelu STL. Jeden projekt łączy:
 
 - źródła i dowody: fotografie, szkice, rysunki, pomiary, PDF, modele CAD, dane katalogowe;
 - wymagania i decyzje;
@@ -232,7 +232,7 @@ Dalszy etap powinien dodać:
 
 Snapshot JSON jest wygodnym read model. Kanoniczna historia to event stream. Protobuf definiuje kontrakt między usługami, a POA URI identyfikuje każdy element.
 
-### 6.2. Portable `.lps.zip`
+### 6.2. Portable `.twinstudio.zip`
 
 Eksport projektu zawiera:
 

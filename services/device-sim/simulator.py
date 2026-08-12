@@ -13,7 +13,7 @@ from PIL import Image, ImageStat
 
 HOST = os.getenv("MQTT_HOST", "mqtt")
 PORT = int(os.getenv("MQTT_PORT", "1883"))
-PREFIX = os.getenv("MQTT_TOPIC_PREFIX", "lps/v1").strip("/")
+PREFIX = os.getenv("MQTT_TOPIC_PREFIX", "twinstudio/v1").strip("/")
 PROJECT = os.getenv("PROJECT_ID", "demo-rpi5")
 SCENARIO = Path("/scenario")
 

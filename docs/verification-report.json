@@ -1,4 +1,6 @@
 {
+  "product": "TwinStudio",
+  "version": "0.5.0",
   "project": "demo-rpi5",
   "revision": "main",
   "status": "passed",
@@ -41,18 +43,145 @@
       "status": "passed",
       "file_count": 8,
       "errors": [],
-      "note": "Static source check only; run buf lint/protoc in CI for compiler validation."
+      "note": "The lps.v1 package is retained as a wire-compatibility namespace. Static source check only; use buf/protoc in CI for compiler validation."
+    },
+    {
+      "name": "schema_and_grammar",
+      "status": "passed",
+      "json_files": 13,
+      "schema_documents": 12,
+      "errors": []
+    },
+    {
+      "name": "evolution_catalogs",
+      "status": "passed",
+      "controlled_verbs": 20,
+      "extension_dimensions": 34,
+      "operators": 17,
+      "lifecycle_templates": {
+        "hardware-product": 30,
+        "digital-product": 19,
+        "continuous-evolution": 10
+      },
+      "declared_feature_lenses": 50,
+      "active_feature_lenses": 49
+    },
+    {
+      "name": "dsl_equivalence_and_evolution",
+      "status": "passed",
+      "formats": 3,
+      "goal_variants": 48,
+      "resources": 26,
+      "candidates": 48,
+      "shortlist": 5,
+      "change_plans": 3,
+      "errors": []
+    },
+    {
+      "name": "portable_demo_bundle",
+      "status": "passed",
+      "path": "examples/rpi5-camera3/demo-rpi5.twinstudio.zip",
+      "size_bytes": 3390003,
+      "entries": 37,
+      "manifest_files": 36,
+      "stream_version": 73,
+      "objects": 15,
+      "artifacts": 33,
+      "evolution_runs": 1,
+      "change_plans": 3,
+      "dsl_executions": 1,
+      "errors": []
+    },
+    {
+      "name": "web_dom_contract",
+      "status": "passed",
+      "html_id_count": 60,
+      "javascript_id_reference_count": 53,
+      "duplicate_ids": [],
+      "missing_references": []
+    },
+    {
+      "name": "python_compileall",
+      "status": "passed",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "compileall",
+        "-q",
+        "src",
+        "scripts",
+        "services",
+        "components",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
     },
     {
       "name": "browser_javascript_syntax",
       "status": "passed",
+      "command": [
+        "/opt/nvm/versions/node/v22.16.0/bin/node",
+        "--check",
+        "/mnt/data/twinstudio_v0.5.0/src/twinstudio/static/app.js"
+      ],
+      "returncode": 0,
+      "stdout": "",
       "stderr": ""
+    },
+    {
+      "name": "cli_discovery",
+      "status": "passed",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "twinstudio.cli",
+        "--help"
+      ],
+      "returncode": 0,
+      "stdout": "                                                                                \n Usage: python -m twinstudio.cli [OPTIONS] COMMAND [ARGS]...                    \n                                                                                \n TwinStudio CLI. Uses the same typed command/query contracts as REST, MQTT and  \n MCP. The legacy executable name 'lps' remains a compatibility alias in version \n 0.5.0.                                                                         \n                                                                                \n╭─ Options ────────────────────────────────────────────────────────────────────╮\n│ --install-completion          Install completion for the current shell.      │\n│ --show-completion             Show completion for the current shell, to copy │\n│                               it or customize the installation.              │\n│ --help                        Show this message and exit.                    │\n╰──────────────────────────────────────────────────────────────────────────────╯\n╭─ Commands ───────────────────────────────────────────────────────────────────╮\n│ serve           Run the REST, web and MCP application.                       │\n│ seed            Create or recreate the example project in the configured     │\n│                 event store.                                                 │\n│ projects        List projects available in the configured event store.       │\n│ tree            Print the hierarchical product object tree.                  │\n│ command         Execute one typed CQRS command.                              │\n│ plan            Compile a scoped natural-language change request into a      │\n│                 typed ChangePlan.                                            │\n│ lenses          Print the source-grounded Feature Type Spectrum catalog.     │\n│ fixation        Run a design-fixation review and optionally record it.       │\n│ dsl-schema      Print or write the canonical EvolutionProgram JSON Schema.   │\n│ dsl-grammar     Print the EBNF grammar for TwinScript 1.0.                   │\n│ dsl-parse       Parse TwinScript/YAML/JSON and emit canonical validated      │\n│                 JSON.                                                        │\n│ dsl-preview     Compile a DSL program into an evolution run without writing  │\n│                 project events.                                              │\n│ dsl-apply       Preview or record a validated DSL program through the CQRS   │\n│                 event stream.                                                │\n│ evolution-runs  List recorded evolution runs.                                │\n│ evolution-show  Show one recorded evolution run or a graph representation.   │\n│ lifecycles      Show lifecycle blueprints and transition history.            │\n│ power           Run the reduced-order power and voltage-drop model.          │\n│ export          Export a portable .twinstudio.zip project bundle.            │\n│ gtin-complete   Calculate a GTIN check digit; this does not allocate a GS1   │\n│                 identifier.                                                  │\n│ gtin-validate   Exit with status 0 only when the GTIN check digit is valid.  │\n│ shell           Start a small interactive shell around the same service      │\n│                 layer.                                                       │\n╰──────────────────────────────────────────────────────────────────────────────╯\n\n",
+      "stderr": "",
+      "commands_present": true
     },
     {
       "name": "pytest",
       "status": "passed",
-      "stdout": "..........................                                               [100%]\n",
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "returncode": 0,
+      "collected_tests": 38,
+      "stdout": "......................................                                   [100%]\n",
       "stderr": ""
+    },
+    {
+      "name": "source_archive_extraction",
+      "status": "passed",
+      "archive_filename": "twinstudio_v0.5.0.zip",
+      "package_manifest_entries": 319,
+      "package_manifest_verified": 319,
+      "extracted_tests_passed": 38,
+      "runtime_database_excluded": true,
+      "python_bytecode_excluded": true
+    },
+    {
+      "name": "python_wheel_build",
+      "status": "passed",
+      "wheel_filename": "twinstudio-0.5.0-py3-none-any.whl",
+      "size_bytes": 177613,
+      "entries": 72,
+      "required_package_data_present": true,
+      "installed_package_fallback_schema_and_grammar_verified": true
+    },
+    {
+      "name": "nested_venv_editable_install",
+      "status": "skipped",
+      "reason": "The nested venv available in this container could not import setuptools.build_meta. Packaging was instead verified by building and importing the wheel with no network dependency."
     }
-  ]
+  ],
+  "verified_at": "2026-08-11T22:23:57.949960+00:00"
 }

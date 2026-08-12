@@ -4,7 +4,7 @@ import base64
 
 import pytest
 
-from living_product_studio.mcp_protocol import (
+from twinstudio.mcp_protocol import (
     CLIENT_CAPABILITIES_META,
     MODERN_PROTOCOL_VERSION,
     PROTOCOL_VERSION_META,

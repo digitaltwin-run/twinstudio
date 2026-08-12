@@ -2,7 +2,7 @@
 
 ## Product vision
 
-Living Product Studio treats a product as a continuously evolving, versioned system rather than a folder of unrelated CAD files, photos, spreadsheets and source code. One project contains the physical decomposition, geometry, purchased components, software, power/thermal assumptions, manufacturing choices, test evidence, human-use instructions, lifecycle approvals and commercial package.
+TwinStudio treats a product as a continuously evolving, versioned system rather than a folder of unrelated CAD files, photos, spreadsheets and source code. One project contains the physical decomposition, geometry, purchased components, software, power/thermal assumptions, manufacturing choices, test evidence, human-use instructions, lifecycle approvals and commercial package.
 
 The platform is intended to answer five questions at any revision:
 

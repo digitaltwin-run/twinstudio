@@ -1,0 +1,65 @@
+{
+  "valid": true,
+  "diagnostics": [
+    {
+      "severity": "info",
+      "code": "program.valid",
+      "message": "The program is schema-valid, scope-valid and ready for evolution preview.",
+      "line": null,
+      "column": null,
+      "path": "",
+      "hint": ""
+    },
+    {
+      "severity": "info",
+      "code": "evolution.compiled",
+      "message": "Generated 48 goal variants, 30 resources, 48 candidates and 3 change plan(s).",
+      "line": null,
+      "column": null,
+      "path": "",
+      "hint": ""
+    }
+  ],
+  "run_id": "run-e61ec7b06c239433",
+  "goal_variants": 48,
+  "resources": 30,
+  "candidates": 48,
+  "selected_candidate_ids": [
+    "offspring-a26f9609d696e550",
+    "offspring-64cd85b6a6d17bb1",
+    "offspring-a66606011241c785",
+    "offspring-691e066a19a0c108",
+    "offspring-c20d83f8f39b5475"
+  ],
+  "change_plan_count": 3,
+  "artifact_keys": {
+    "dsl.json": "evolution-run-e61ec7b06c239433-evolution-program.json",
+    "run.json": "evolution-run-e61ec7b06c239433-evolution-run.json",
+    "graph.dot": "evolution-run-e61ec7b06c239433-evolution-graph.dot",
+    "graph.mmd": "evolution-run-e61ec7b06c239433-evolution-graph.mmd",
+    "report.md": "evolution-run-e61ec7b06c239433-evolution-report.md",
+    "candidates.csv": "evolution-run-e61ec7b06c239433-evolution-candidates.csv",
+    "lifecycle.json": "evolution-run-e61ec7b06c239433-lifecycle-blueprint.json",
+    "execution.json": "evolution-run-e61ec7b06c239433-dsl-execution.json",
+    "manifest.json": "evolution-run-e61ec7b06c239433-manifest.json"
+  },
+  "artifact_count": 9,
+  "recorded_event_count": 15,
+  "recorded_event_types": [
+    "EvolutionRunRecorded",
+    "LifecycleBlueprintUpserted",
+    "ChangePlanCreated",
+    "ChangePlanCreated",
+    "ChangePlanCreated",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "ArtifactAttached",
+    "DslExecutionRecorded"
+  ]
+}

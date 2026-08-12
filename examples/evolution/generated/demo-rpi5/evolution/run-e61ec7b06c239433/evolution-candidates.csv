@@ -1,0 +1,49 @@
+candidate_id,generation,status,overall_score,title,operators,lenses
+offspring-a26f9609d696e550,3,shortlisted,0.7936,Improve Base hinge knuckles via reframe goal · repurpose feature · parameter shift · substitute process,"reframe_goal,repurpose_feature,parameter_shift,substitute_process","shape,connectivity_among_parts"
+offspring-64cd85b6a6d17bb1,2,shortlisted,0.7879,Crossover: Improve Base hinge knuckles via reframe goal × Develop Base shell via parameter shift · make reversible,"reframe_goal,parameter_shift,make_reversible","shape,connectivity_among_parts,reversibility"
+offspring-a66606011241c785,3,shortlisted,0.7646,Modify Base hinge knuckles via adjacent association · crossover · reframe goal · repurpose feature,"adjacent_association,crossover,reframe_goal,repurpose_feature",manufacturability
+offspring-691e066a19a0c108,2,shortlisted,0.7619,Improve Base hinge knuckles via reframe goal · repurpose feature · parameter shift,"reframe_goal,repurpose_feature,parameter_shift","shape,connectivity_among_parts"
+offspring-c20d83f8f39b5475,3,shortlisted,0.7458,Change Auxiliary lid bosses via substitute process · modularize · make reversible · add observability,"substitute_process,modularize,make_reversible,add_observability","force_characteristics,durability_characteristics"
+offspring-5a77aec29630b4a5,1,proposed,0.7441,Change Base hinge knuckles via modularize · make reversible,"modularize,make_reversible",durability_characteristics
+crossover-c3ccccaae506a9d4,1,proposed,0.7422,Crossover: Improve Base hinge knuckles via reframe goal × Develop Base shell via parameter shift,"reframe_goal,parameter_shift","shape,connectivity_among_parts,reversibility"
+offspring-7ee143cf086db9a0,1,proposed,0.7396,Change Auxiliary lid bosses via substitute process · modularize,"substitute_process,modularize","force_characteristics,durability_characteristics"
+candidate-5732fa43e45c6e62,0,proposed,0.7374,Change Auxiliary lid bosses via substitute process,substitute_process,"force_characteristics,durability_characteristics"
+offspring-72532d1ccf88b381,1,proposed,0.7306,Improve Base hinge knuckles via reframe goal · repurpose feature,"reframe_goal,repurpose_feature","shape,connectivity_among_parts"
+offspring-7e45cfad6dc09b8b,2,proposed,0.7266,Change Auxiliary lid bosses via substitute process · modularize · make reversible,"substitute_process,modularize,make_reversible","force_characteristics,durability_characteristics"
+offspring-76acb66bd983fb2e,3,proposed,0.7195,Change Base hinge knuckles via modularize · make reversible · add observability · adjacent association,"modularize,make_reversible,add_observability,adjacent_association",durability_characteristics
+offspring-8de200439a4fa52f,3,proposed,0.7148,Change Base shell via make reversible · add observability · adjacent association · crossover,"make_reversible,add_observability,adjacent_association,crossover",human_use
+offspring-28968194db94aff5,2,proposed,0.7146,Modify Auxiliary lid bosses via add observability · adjacent association · crossover,"add_observability,adjacent_association,crossover","aesthetics,manufacturability"
+offspring-9eb92ba80f8b0a0b,2,proposed,0.7137,Modify Base hinge knuckles via adjacent association · crossover · reframe goal,"adjacent_association,crossover,reframe_goal",manufacturability
+offspring-e0e50d7603626e4c,2,proposed,0.7119,Develop Base shell via parameter shift · substitute process · modularize,"parameter_shift,substitute_process,modularize",reversibility
+offspring-9b6d3e9d3fd40d13,1,proposed,0.7108,Develop Base hinge knuckles via repurpose feature · parameter shift,"repurpose_feature,parameter_shift",testability
+candidate-1174deb0f7d0bedb,0,proposed,0.709,Modify Auxiliary lid bosses via add observability,add_observability,"aesthetics,manufacturability"
+offspring-06ae65ad66dbd8bd,3,proposed,0.709,Modify Base shell via crossover · reframe goal · repurpose feature · parameter shift,"crossover,reframe_goal,repurpose_feature,parameter_shift",assemblability
+offspring-9954e8c974a05533,2,proposed,0.7014,Improve rotate_lid via parameter shift · substitute process · modularize,"parameter_shift,substitute_process,modularize",spatial_relations_among_parts
+offspring-31dd9c720b05ac6e,2,proposed,0.7012,Improve Lid hinge knuckles via repurpose feature · parameter shift · substitute process,"repurpose_feature,parameter_shift,substitute_process",connectivity_among_parts
+offspring-24798159fb65d828,3,proposed,0.6997,Modify Auxiliary lid bosses via add observability · adjacent association · crossover · reframe goal,"add_observability,adjacent_association,crossover,reframe_goal","aesthetics,manufacturability"
+candidate-c325edd26fb45a4c,0,proposed,0.6938,Improve Lid hinge knuckles via repurpose feature,repurpose_feature,connectivity_among_parts
+candidate-69e46addaddb3155,0,proposed,0.6857,Improve Base hinge knuckles via reframe goal,reframe_goal,"shape,connectivity_among_parts"
+candidate-f1a8303742ea3995,0,proposed,0.6811,Improve rotate_lid via parameter shift,parameter_shift,spatial_relations_among_parts
+offspring-ca7e8a9d75eeb94a,1,proposed,0.6727,Improve Lid hinge knuckles via repurpose feature · parameter shift,"repurpose_feature,parameter_shift",connectivity_among_parts
+offspring-0a470d6d7e173731,1,proposed,0.6714,Modify Auxiliary lid bosses via add observability · adjacent association,"add_observability,adjacent_association","aesthetics,manufacturability"
+candidate-d6ef35d163828a92,0,proposed,0.671,Modify Base shell via crossover,crossover,assemblability
+candidate-e3bfc331ef3c6b52,0,proposed,0.6705,Modify Base hinge knuckles via adjacent association,adjacent_association,manufacturability
+crossover-26faa523d80cdf80,2,proposed,0.6612,Crossover: Improve Base hinge knuckles via reframe goal · repurpose feature × Crossover: Improve Base hinge knuckles via reframe goal × Develop Base shell via parameter shift,"reframe_goal,repurpose_feature,parameter_shift","shape,connectivity_among_parts,reversibility"
+offspring-d47b84eca845884c,1,proposed,0.6594,Modify Base hinge knuckles via adjacent association · crossover,"adjacent_association,crossover",manufacturability
+offspring-0af2962b7b723bee,1,proposed,0.6556,Change Base shell via make reversible · add observability,"make_reversible,add_observability",human_use
+offspring-7258f61795bc6f78,1,proposed,0.6552,Modify Base shell via crossover · reframe goal,"crossover,reframe_goal",assemblability
+offspring-61d186af72b2a828,3,proposed,0.6543,Improve Lid hinge knuckles via repurpose feature · parameter shift · substitute process · modularize,"repurpose_feature,parameter_shift,substitute_process,modularize",connectivity_among_parts
+candidate-b58bc1989cb442b1,0,proposed,0.643,Change Base shell via make reversible,make_reversible,human_use
+candidate-720530632990e56b,0,proposed,0.6377,Develop Auxiliary lid bosses via reframe goal,reframe_goal,"serviceability,testability"
+offspring-04c44c80b6dbed01,2,proposed,0.6362,Change Base hinge knuckles via modularize · make reversible · add observability,"modularize,make_reversible,add_observability",durability_characteristics
+offspring-46f5cf1d80b8053e,1,proposed,0.6335,Develop Auxiliary lid bosses via reframe goal · repurpose feature,"reframe_goal,repurpose_feature","serviceability,testability"
+offspring-f9b17523dfb4fe2b,2,proposed,0.6306,Change Base shell via make reversible · add observability · adjacent association,"make_reversible,add_observability,adjacent_association",human_use
+offspring-0ea2042a88fc7ed0,2,proposed,0.6293,Develop Auxiliary lid bosses via reframe goal · repurpose feature · parameter shift,"reframe_goal,repurpose_feature,parameter_shift","serviceability,testability"
+candidate-315a752860ba07a9,0,proposed,0.6272,Develop Base shell via parameter shift,parameter_shift,reversibility
+offspring-7ea0cea56d329e21,3,proposed,0.6215,Improve rotate_lid via parameter shift · substitute process · modularize · make reversible,"parameter_shift,substitute_process,modularize,make_reversible",spatial_relations_among_parts
+offspring-f9faf0f8b59dea2c,2,proposed,0.6168,Develop Base hinge knuckles via repurpose feature · parameter shift · substitute process,"repurpose_feature,parameter_shift,substitute_process",testability
+candidate-a7fe04dd6a8bfb7d,0,proposed,0.6163,Develop Base hinge knuckles via repurpose feature,repurpose_feature,testability
+offspring-e7692d96976e2a55,2,proposed,0.6065,Modify Base shell via crossover · reframe goal · repurpose feature,"crossover,reframe_goal,repurpose_feature",assemblability
+candidate-ac2bbf1d463b3922,0,proposed,0.5953,Change Base hinge knuckles via modularize,modularize,durability_characteristics
+offspring-c3170e65a6996cb3,1,proposed,0.5914,Improve rotate_lid via parameter shift · substitute process,"parameter_shift,substitute_process",spatial_relations_among_parts
+offspring-0ff5074c7b53426b,1,proposed,0.5831,Develop Base shell via parameter shift · substitute process,"parameter_shift,substitute_process",reversibility

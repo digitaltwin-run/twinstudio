@@ -1,0 +1,369 @@
+catalog_version: "2026.08-twinstudio-engineering-1"
+title: "TwinStudio engineering and lifecycle lenses"
+declared_lens_count: 36
+active_lens_count: 36
+catalog_kind: twinstudio_extension
+source_notes:
+  - "These lenses are TwinStudio engineering extensions, not rows transcribed from the supplied fifty-viewing-lenses table."
+  - "They complement the source-grounded physical lenses with system, digital, lifecycle, risk, evidence and value concerns."
+lenses:
+  - id: purpose_value
+    order: 1
+    name: Purpose and value
+    category: functional_behavioral
+    summary: Clarify the outcome, beneficiary and value created by the selected object.
+    prompts: ["What outcome must remain even if the current object disappears?", "Who receives value and how is it measured?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [goal, value]
+  - id: primary_function
+    order: 2
+    name: Primary function
+    category: functional_behavioral
+    summary: Describe the essential transformation without naming the current mechanism.
+    prompts: ["What verb-object pair expresses the indispensable change?", "Could another mechanism perform the same transformation?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [function, goal]
+  - id: secondary_functions
+    order: 3
+    name: Secondary functions
+    category: functional_behavioral
+    summary: Identify supporting, convenience and protective functions.
+    prompts: ["Which secondary function is carried accidentally by the current geometry?", "Can two functions be combined or separated?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [function]
+  - id: inputs_outputs
+    order: 4
+    name: Inputs and outputs
+    category: functional_behavioral
+    summary: Trace matter, energy, information and human actions entering and leaving the system.
+    prompts: ["Which input can be removed, reused or sensed?", "Which output is useful, harmful or currently invisible?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [flow, system]
+  - id: states_modes
+    order: 5
+    name: States and modes
+    category: functional_behavioral
+    summary: Examine operating, standby, assembly, transport, fault and service states.
+    prompts: ["Which state is missing or ambiguous?", "Can geometry or software make state transitions safer and clearer?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [behavior, state]
+  - id: sequence_logic
+    order: 6
+    name: Sequence and logic
+    category: functional_behavioral
+    summary: Examine ordering, dependencies and conditional behavior.
+    prompts: ["What must happen before, after or only when another event occurs?", "Can a sequence be shortened, parallelized or made mistake-proof?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [behavior, process]
+  - id: adaptability_configurability
+    order: 7
+    name: Adaptability and configurability
+    category: functional_behavioral
+    summary: Consider parameters, variants, self-adjustment and context-specific behavior.
+    prompts: ["Which fixed choice should become configurable?", "Can one platform cover several variants without unnecessary complexity?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [variant, adaptation]
+  - id: interfaces
+    order: 8
+    name: Interfaces
+    category: interface_system
+    summary: Examine mechanical, electrical, fluid, optical, data and human interfaces.
+    prompts: ["Which interface is implicit, fragile or under-specified?", "Can the interface become standard, keyed, reversible or self-identifying?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [interface]
+  - id: interoperability
+    order: 9
+    name: Interoperability
+    category: interface_system
+    summary: Examine compatibility with tools, components, protocols and ecosystems.
+    prompts: ["What external standard could reduce custom work?", "Which dependency prevents substitution or future integration?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [interface, standard]
+  - id: modularity
+    order: 10
+    name: Modularity
+    category: interface_system
+    summary: Examine replaceable modules, stable boundaries and independent evolution.
+    prompts: ["Which change should not force redesign of the whole product?", "Where is a clean module boundary worth the added interface?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [architecture, module]
+  - id: standardization
+    order: 11
+    name: Standardization
+    category: interface_system
+    summary: Consider common parts, dimensions, protocols and reusable design rules.
+    prompts: ["Which bespoke element could become standard?", "Where would standardization damage useful differentiation?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [standard, reuse]
+  - id: dependencies
+    order: 12
+    name: Dependencies and coupling
+    category: interface_system
+    summary: Trace technical, supplier, software and organizational coupling.
+    prompts: ["Which dependency is hidden until a change is attempted?", "Can coupling be reduced, made explicit or monitored?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [dependency, architecture]
+  - id: manufacturability
+    order: 13
+    name: Manufacturability
+    category: lifecycle_value
+    summary: Examine process capability, support needs, tooling, yield and repeatability.
+    prompts: ["Which feature exists against the natural strengths of the process?", "Can geometry improve yield without losing function?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [dfm, manufacturing]
+  - id: assembly_disassembly
+    order: 14
+    name: Assembly and disassembly
+    category: lifecycle_value
+    summary: Examine joining sequence, access, orientation, error prevention and reversibility.
+    prompts: ["Which assembly step is awkward or irreversible?", "Can the product guide correct assembly and later disassembly?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [dfa, service]
+  - id: tolerances_variation
+    order: 15
+    name: Tolerances and variation
+    category: lifecycle_value
+    summary: Examine dimensional variation, stack-ups, process drift and fit robustness.
+    prompts: ["Which tolerance drives cost without protecting function?", "Where should compliance or adjustment absorb variation?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [tolerance, quality]
+  - id: inspectability
+    order: 16
+    name: Inspectability
+    category: lifecycle_value
+    summary: Consider how critical characteristics are measured, observed and accepted.
+    prompts: ["Can the feature be inspected without destructive access?", "Which datum or indicator would make verification unambiguous?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [inspection, quality]
+  - id: serviceability
+    order: 17
+    name: Serviceability
+    category: lifecycle_value
+    summary: Examine access, cleaning, diagnosis, replacement and maintenance effort.
+    prompts: ["What must be reached most often?", "Can service occur without disturbing unrelated parts or settings?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [service, maintenance]
+  - id: repairability
+    order: 18
+    name: Repairability
+    category: lifecycle_value
+    summary: Examine fault isolation, replaceable wear items and restoration of function.
+    prompts: ["Which likely failure should be locally repairable?", "What information and tools does a repairer need?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [repair, circularity]
+  - id: upgradeability
+    order: 19
+    name: Upgradeability
+    category: lifecycle_value
+    summary: Consider future components, software, interfaces and performance changes.
+    prompts: ["Which likely future change can be prepared for cheaply now?", "Can an upgrade avoid discarding long-lived parts?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [upgrade, lifecycle]
+  - id: control_feedback
+    order: 20
+    name: Control and feedback
+    category: digital_control
+    summary: Examine sensing, control loops, user feedback and automatic correction.
+    prompts: ["What state should be sensed rather than assumed?", "Can passive feedback replace active control or vice versa?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [control, feedback]
+  - id: data_telemetry
+    order: 21
+    name: Data and telemetry
+    category: digital_control
+    summary: Examine data generation, retention, observability and remote insight.
+    prompts: ["Which data would prove performance or reveal degradation?", "What data should not be collected or retained?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [data, telemetry]
+  - id: software_firmware
+    order: 22
+    name: Software and firmware
+    category: digital_control
+    summary: Examine software behavior, versioning, update paths and hardware-software boundaries.
+    prompts: ["Could software absorb a physical variant or create an unsafe dependency?", "How are versions, rollback and compatibility controlled?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [software, firmware]
+  - id: diagnostics_observability
+    order: 23
+    name: Diagnostics and observability
+    category: digital_control
+    summary: Examine how faults, wear and performance are detected and explained.
+    prompts: ["Which failure remains invisible until damage occurs?", "Can a passive witness mark, sensor or log expose it earlier?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [diagnostics, quality]
+  - id: safety
+    order: 24
+    name: Safety
+    category: safety_risk
+    summary: Examine hazards, safe states, misuse, protective measures and residual risk.
+    prompts: ["What credible misuse or single failure creates harm?", "Can the design fail safe rather than merely warn?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [safety, risk]
+  - id: security_privacy
+    order: 25
+    name: Security and privacy
+    category: safety_risk
+    summary: Examine trust boundaries, access, tampering, data exposure and secure updates.
+    prompts: ["What can an unauthorized actor observe or change?", "Which physical and digital assumptions form the attack surface?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [security, privacy]
+  - id: reliability_resilience
+    order: 26
+    name: Reliability and resilience
+    category: safety_risk
+    summary: Examine faults, redundancy, graceful degradation, recovery and robustness.
+    prompts: ["Which single fault dominates loss of function?", "Can the product continue safely in a degraded mode?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [reliability, resilience]
+  - id: usability_accessibility
+    order: 27
+    name: Usability and accessibility
+    category: safety_risk
+    summary: Examine learnability, physical and cognitive access, error recovery and inclusive use.
+    prompts: ["Who cannot comfortably perceive or operate the current design?", "Can the correct action become obvious without instructions?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [human, accessibility]
+  - id: cost_value
+    order: 28
+    name: Cost and value
+    category: lifecycle_value
+    summary: Examine total cost, value contribution and cost drivers across the lifecycle.
+    prompts: ["Which cost does not contribute to customer or lifecycle value?", "Could spending more locally reduce larger downstream cost?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [cost, value]
+  - id: lead_time_capacity
+    order: 29
+    name: Lead time and capacity
+    category: lifecycle_value
+    summary: Examine throughput, queues, setup, batch size and scaling constraints.
+    prompts: ["Which operation controls delivery time?", "Can the design reduce setup, waiting or supplier dependency?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [supply, manufacturing]
+  - id: supply_chain_risk
+    order: 30
+    name: Supply-chain risk
+    category: safety_risk
+    summary: Examine sourcing concentration, obsolescence, substitutions and logistics risk.
+    prompts: ["Which component has no realistic substitute?", "Can interfaces and specifications permit qualified alternatives?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [supply, risk]
+  - id: energy_efficiency
+    order: 31
+    name: Energy efficiency
+    category: sustainability_compliance
+    summary: Examine energy use in manufacture, operation, transport and end-of-life.
+    prompts: ["Where is energy lost without useful function?", "Can passive behavior replace continuous power use?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [energy, sustainability]
+  - id: sustainability
+    order: 32
+    name: Environmental sustainability
+    category: sustainability_compliance
+    summary: Examine material, emissions, waste, transport and environmental burden.
+    prompts: ["Which lifecycle stage dominates impact?", "Can durability, light-weighting or local production reduce burden without shifting it elsewhere?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [environment, lifecycle]
+  - id: circularity_reuse
+    order: 33
+    name: Circularity and reuse
+    category: sustainability_compliance
+    summary: Examine reuse, remanufacture, recycling, separability and material recovery.
+    prompts: ["Which valuable part can survive multiple product lives?", "Can materials be separated and identified at retirement?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [circularity, reuse]
+  - id: regulatory_compliance
+    order: 34
+    name: Regulatory and standards compliance
+    category: sustainability_compliance
+    summary: Examine applicable rules, evidence, markings and conformity obligations.
+    prompts: ["Which requirement changes the architecture rather than only the documentation?", "What evidence must exist before release?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [compliance, evidence]
+  - id: evidence_uncertainty
+    order: 35
+    name: Evidence and uncertainty
+    category: evidence_decision
+    summary: Distinguish measured, assumed, derived and unknown information.
+    prompts: ["Which decision rests on the weakest evidence?", "What is the cheapest experiment that would reduce uncertainty?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [evidence, uncertainty]
+  - id: decision_traceability
+    order: 36
+    name: Decision traceability
+    category: evidence_decision
+    summary: Trace alternatives, rationale, approvals, consequences and later learning.
+    prompts: ["Why was the current design chosen over alternatives?", "What observation would trigger revisiting the decision?"]
+    enabled: true
+    source_status: extension
+    provenance: twinstudio_extension
+    tags: [decision, provenance]

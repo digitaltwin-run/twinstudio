@@ -1,66 +1,43 @@
-# Living Product Studio
+# TwinStudio 0.5.0
 
-Living Product Studio is a Docker-first reference implementation for a **living digital product thread**. It connects evidence, requirements, an object/component tree, parametric geometry, scoped natural-language change requests, manufacturing routes, software, simulations, tests, lifecycle decisions and commercial metadata in one versioned project.
+TwinStudio is a Docker-first reference implementation of an **event-sourced product digital thread**. It joins product structure, CAD and 2D/3D evidence, requirements, manufacturing routes, simulations, lifecycle gates, controlled natural-language changes and project-evolution methods in one versioned workspace.
 
-The included example is a Raspberry Pi 5 + Camera Module 3 appliance with a hinged two-part enclosure. The original requirement was a 3D project intended for printing and an iterative revision process; this repository expands that limited source scope into a broader platform architecture and working MVP.
+The included demonstration project is a Raspberry Pi 5 + Camera Module 3 appliance with a two-part printed enclosure. The enclosure remains an example; the platform is designed to support mixed physical, electronic and software products.
 
-## What is implemented
+## What 0.5.0 adds
 
-- Interactive web viewer with an object tree and per-object feature/parameter inspector.
-- Pointer, pencil, lasso and rectangle selection in 3D; pencil/lasso/rectangle annotations in 2D.
-- Selection evidence containing camera state, screen path, ray hits, mesh hash, semantic faces and optional B-Rep IDs.
-- A resolver that converts screen/mesh evidence to a versioned `SelectionMap`.
-- Natural-language to typed `ChangePlan` compilation through LiteLLM structured output or a deterministic local parser.
-- Strict scope checking: a planned operation cannot target an object outside the selected POA subtree.
-- Safe immediate application of scalar parameter patches plus a narrow CadQuery B-Rep adapter for selected-region hole cuts and axis-aligned local-box add/cut operations; other topology changes remain deferred.
-- Hierarchical object/component tree and cross-domain xBOM views for print, CNC, purchase, PCB fabrication, software and packaging.
-- CQRS command/query split and append-only event streams with optimistic concurrency.
-- Project sharing by email approval, magic-link account creation and HTTP Basic `email:API-token` access.
-- Roles: `reader`, `editor`, `admin`, `creator`.
-- REST, CLI, interactive shell, WebSocket events, MQTT integration and a dual-era MCP endpoint: a stateless 2026-07-28 tools/resources core subset plus a legacy 2025-11-25 `initialize` compatibility path.
-- Protobuf source contracts for the product DSL, geometry selections, commands, events, collaboration and simulations.
-- Project export as a portable `.lps.zip` bundle with snapshot, unified specification, event stream, artifacts, manifest and SHA-256 hashes.
-- Reduced-order power/voltage-drop and thermal RC simulation, human-use checklist evaluation, mechanical rules and FMEA data.
-- Containerized sample-image replay for the example vision application and an MQTT device telemetry simulator.
-- Adapter boundary and roadmap scaffold for future KiCad PCB/SCH work.
+TwinStudio 0.5.0 adds a controlled project-evolution layer intended to reduce design and goal fixation:
 
-## Important implementation boundaries
+- a source-grounded feature-lens catalog with 49 identifiable active lenses and one explicitly unresolved source slot rather than an invented fiftieth item;
+- a controlled action/verb lexicon for goal ladders, synonyms, hypernyms, hyponyms, opposites and adjacent actions;
+- bidirectional goal-resource graphs, object decomposition, BrainSwarming-style idea lineage, adjacent-possible exploration, mutation, recombination and experiment planning;
+- 34 TwinStudio engineering dimensions covering manufacturability, assemblability, serviceability, reliability, security, sustainability, observability, reversibility and other lifecycle concerns;
+- 17 declarative evolution operators, including goal reframing, feature repurposing, parameter shifts, material/process substitution, modularization, reversibility and crossover;
+- expanded hardware, digital-product and continuous-evolution lifecycle templates;
+- **TwinScript 1.0**, YAML and JSON representations of one canonical `EvolutionProgram` model;
+- JSON Schema, EBNF grammar, REST, CLI, MCP and browser access to the DSL;
+- auditable evolution artifacts: canonical program, run, graph in JSON/DOT/Mermaid, candidate CSV, Markdown report, lifecycle blueprint, execution record and manifest.
 
-This package is deliberately explicit about what is **not yet a validated engineering engine**:
+The evolution engine proposes hypotheses. It does not treat a graph score as proof that a mechanical, electrical or software design works. Shortlisted candidates still require simulation, prototyping, tests and approval evidence.
 
-1. A lasso identifies the allowed spatial/semantic scope. The included worker can apply only allow-listed derived B-Rep operations: a directional cylindrical hole cut and axis-aligned local-box add/cut. Arbitrary free-form face moves, shell/fillet repair and unrestricted generated CAD code still require a tool-specific adapter with persistent feature/face identity.
-2. The supplied housing worker can regenerate the parametric housing and create a derived STEP/STL revision for the narrow local operations above. It does not reconstruct native SolidWorks/CadQuery feature history for an imported STEP or rebuild every possible selected patch.
-3. The PCB/SCH portion is a schema and adapter boundary. It can orchestrate safe KiCad CLI checks/exports when KiCad is installed; it is not a production autorouter or circuit synthesizer.
-4. The Raspberry Pi “simulation” runs project software and sample data in containers. It does not emulate Pi silicon, Linux timing, the camera sensor or USB-C electrical negotiation.
-5. Power and thermal models are reduced-order estimates. They require measured cable resistance, calibrated thermal parameters and physical verification.
-6. Human-use evaluation is currently a structured task/checklist and rule engine, not a biomechanical digital-human simulator.
-7. GTIN utilities calculate and validate check digits only. A legitimate GTIN must be allocated through the product owner’s GS1 process.
-8. The default development authentication bypass and non-secure cookie configuration must not be used in production.
-9. The MCP endpoint implements synchronous JSON responses for discovery, tools and resources. It does not yet implement request-scoped SSE streaming, subscriptions, prompts, MRTR or an OAuth 2.1 authorization server, and has not been live-tested against Open WebUI in this build environment.
+## Existing platform capabilities
 
-See [Implementation Status](docs/IMPLEMENTATION_STATUS.md) for the capability matrix and [Requirements Traceability](docs/17_REQUIREMENTS_TRACEABILITY_PL.md) for a requirement-by-requirement acceptance map. Polish delivery index: [PAKIET_PL.md](PAKIET_PL.md).
+- Interactive object tree and 3D/2D viewer.
+- Pointer, pencil, lasso and rectangle selection evidence.
+- Persistent `SelectionMap` resolution to POA object, feature, semantic-face and optional B-Rep identities.
+- Natural-language to typed `ChangePlan` compilation through LiteLLM structured output or a deterministic local planner.
+- Strict Product Object Addressing scope validation.
+- Event-sourced scalar parameter changes and a narrow allow-listed CadQuery STEP/B-Rep adapter for hole and local-box operations.
+- xBOM views for FDM, CNC, purchase, PCB, software, packaging and reference-only objects.
+- CQRS, append-only events and optimistic concurrency.
+- Email-approval onboarding, per-project roles and HTTP Basic `email:personal-token` automation access.
+- REST/OpenAPI, CLI, shell, WebSocket, MQTT and MCP tools/resources.
+- Reduced-order power, voltage-drop and thermal models, human-use checks, mechanical rules, FMEA and test plans.
+- Portable `.twinstudio.zip` project exports with snapshot, event stream, specification, artifacts and SHA-256 manifest.
 
-## Architecture at a glance
+## Quick start
 
-```mermaid
-flowchart LR
-    E[Evidence: photos, PDFs, CAD, measurements] --> C[Claims & requirements]
-    C --> G[Product graph / xBOM / POA URIs]
-    G --> V[2D/3D viewer + object tree]
-    V --> S[RegionSelection]
-    S --> M[SelectionMap]
-    M --> N[NL compiler: LiteLLM or local rules]
-    N --> P[Scoped ChangePlan]
-    P --> Q[CQRS command]
-    Q --> ES[(Event stream)]
-    ES --> RM[Read model]
-    Q --> CAD[CAD / PCB / software adapters]
-    CAD --> A[Generated artifacts]
-    A --> T[Verification, simulation, lifecycle gates]
-    T --> X[Manufacturing, fulfillment, ecommerce]
-```
-
-## Quick start with Docker
+### Docker
 
 ```bash
 cp .env.example .env
@@ -71,28 +48,19 @@ Open:
 
 - application: `http://localhost:8000`
 - REST/OpenAPI: `http://localhost:8000/docs`
-- Mailpit approval inbox: `http://localhost:8025`
+- Mailpit: `http://localhost:8025`
 
 Optional profiles:
 
 ```bash
-# Parametric CadQuery housing worker
 docker compose --profile cad up --build
-
-# MQTT command-to-REST bridge
 docker compose --profile integration up --build
-
-# Device telemetry and camera sample analysis simulator
 docker compose --profile simulation up --build
-
-# Open WebUI plus the application MCP/OpenAPI endpoints
 docker compose --profile openwebui up --build
-
-# All optional services
-docker compose --profile cad --profile integration --profile simulation --profile openwebui up --build
+docker compose --profile object-store up --build
 ```
 
-## Local Python start
+### Local Python
 
 ```bash
 python3.12 -m venv .venv
@@ -100,237 +68,112 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[llm,dev]"
 cp .env.example .env
-lps seed
-lps serve
+twinstudio seed
+twinstudio serve
 ```
 
-LiteLLM is optional. Without `LITELLM_MODEL`, the application uses the deterministic local planner.
+LiteLLM is optional. When `LITELLM_MODEL` is empty, controlled local planners and evolution catalogs are used.
 
-## Scoped NL → 2D → 3D flow
-
-1. Select an object in the tree.
-2. Mark a region using the pointer, pencil, lasso or rectangle.
-3. The browser stores the screen path, camera state, ray hits, semantic face hints and mesh identity.
-4. `/selections/resolve` creates a versioned selection map.
-5. Enter a natural-language instruction such as “add a 45 degree chamfer only along this marked edge.”
-6. LiteLLM or the local compiler returns a schema-valid `ChangePlan`.
-7. Every operation is checked against the selected POA scope.
-8. Safe scalar parameters may be applied immediately. The CAD worker may also execute an allow-listed selected-region hole cut or axis-aligned local-box add/cut; all other topology-sensitive operations remain queued for review or a richer adapter.
-9. The worker emits a derived STEP, STL and JSON operation journal with input/output hashes, selected scope, operation and volume delta.
-10. Regenerated 2D/3D artifacts and verification results are attached to the same event-sourced revision.
-
-A 2D or photograph selection can modify 3D automatically only when a calibrated projection/entity map connects that source region to stable object/feature/face identifiers. Otherwise the platform preserves it as a scoped annotation and asks for calibration rather than inventing geometry.
-
-### Executable scoped B-Rep adapter
-
-The optional `cad` profile contains `services/cad-worker/scoped_brep_adapter.py`. It accepts a STEP input, a resolved selection and one typed operation. The adapter intentionally supports only:
+## TwinScript example
 
 ```text
-boolean_cut + feature_type=hole
-boolean_cut + feature_type=local_box
-boolean_add + feature_type=local_box
+TWINSCRIPT 1.0
+NAME "RPi5 hinge evolution"
+PROJECT demo-rpi5 REVISION main
+FOCUS "poa://demo/demo-rpi5@main/part/base"
+FOCUS "poa://demo/demo-rpi5@main/part/lid"
+
+GOAL VERB improve OBJECT "front hinge" \
+  OUTCOME "support-free printing, a clean joint and opening above 190 degrees"
+PRESERVE "wall thickness remains 2 mm"
+AVOID "hinge collision"
+ASSUME "the current hinge is only one possible mechanism"
+
+METHODS goal_ladder,object_decomposition,bidirectional_graph,feature_lenses,adjacent_possible,brainswarm,mutation,recombination,experiment
+LENSES shape,connectivity_among_parts,force_characteristics,human_use,aesthetics
+DIMENSIONS manufacturability,assemblability,serviceability,testability,reversibility,adjacent_possible
+EVOLVE POPULATION 12 GENERATIONS 3 OFFSPRING 2 MUTATION 0.8 CROSSOVER 0.3 SEED 17
+SELECT_TOP 5
+LIFECYCLE hardware-product START detailed_design TARGET verification APPROVAL true
+VERIFY "print and cycle a hinge prototype"
+REALIZE change_plan DRY_RUN true APPROVAL true MAX_PLANS 3
+OUTPUT GRAPHS json,dot,mermaid REPORTS json,markdown,csv
+END
 ```
 
-A target must be one of the selected object URIs, and every ray hit must remain inside that scope. Results are exported as a derived STEP and STL with an operation journal. This is a reviewable local edit path, not recovery of native CAD sketches or history.
-
-MQTT command topic for the worker:
-
-```text
-lps/v1/{project-id}/commands/apply-scoped-cad-change
-```
-
-## Unified project format
-
-The canonical JSON snapshot follows the Pydantic schema in `src/living_product_studio/domain.py`; equivalent Protobuf contracts are under `proto/lps/v1/`.
-
-A project contains:
-
-- object/component graph and parent-child relationships;
-- features, dimensions, semantic face tags and manufacturing parameters;
-- source and generated artifacts;
-- evidence claims with confidence and provenance;
-- requirements and verification methods;
-- selection/projection maps;
-- change plans and annotations;
-- role memberships;
-- lifecycle gates, FMEA, human-use scenarios and test plans;
-- power and thermal models;
-- software/container objects;
-- packaging and ecommerce offers.
-
-Each object has independent inclusion flags. For example, the enclosure base can be in the FDM print job, a future lid can be routed to CNC, Raspberry Pi 5 and Camera Module 3 are purchase-order items, and the vision application belongs to the software release rather than the physical print job.
-
-## Product Object Addressing
-
-This repository defines **POA as Product Object Addressing**. It is a project-specific URI scheme, not CORBA Portable Object Adapter or blockchain Proof of Authority.
-
-Canonical form:
-
-```text
-poa://{tenant}/{project}@{revision}/{kind}/{id}/...
-```
-
-Examples:
-
-```text
-poa://demo/demo-rpi5@main/part/base
-poa://demo/demo-rpi5@main/part/base/feature/shell
-poa://demo/demo-rpi5@main/part/base/face/front
-poa://demo/demo-rpi5@main/test-plan/product-verification
-```
-
-The same URI is used in JSON/Protobuf, REST payloads, CLI commands, MQTT messages, MCP tools, requirements, artifacts, tests and event data.
-
-## Collaboration and access
-
-The public access-request endpoint needs only:
-
-- project ID;
-- requestor’s email;
-- requested role;
-- optional decision-maker email and message.
-
-The application emails a creator/admin. Approval generates a one-time access link for the external person. Accepting it creates the user, membership, browser session and a personal API token. For automation, use HTTP Basic with the email as username and the personal API token as password.
-
-Production deployment must add TLS, secure cookies, CSRF protection for browser mutations, rate limits, stronger mail delivery controls, token revocation UI, audit monitoring, secret rotation and a trusted reverse proxy/identity provider.
-
-## Interfaces
+The complete example is in `examples/evolution/rpi5-hinge-evolution.twin`, with equivalent YAML and JSON files.
 
 ### CLI
 
 ```bash
-lps projects
-lps tree --project-id demo-rpi5
-lps plan "add a 45 degree chamfer here" \
-  --selection examples/rpi5-camera3/selections/example-selection.json
-lps power --project-id demo-rpi5
-lps export --project-id demo-rpi5 --out demo-rpi5.lps.zip
-lps shell
+twinstudio dsl-parse examples/evolution/rpi5-hinge-evolution.twin
+twinstudio dsl-preview examples/evolution/rpi5-hinge-evolution.twin --project-id demo-rpi5
+# Records the evolution run, lifecycle blueprint, plans and report artifacts:
+twinstudio dsl-apply examples/evolution/rpi5-hinge-evolution.twin --project-id demo-rpi5 --execute
 ```
 
 ### REST
 
-Core paths:
-
 ```text
-GET  /api/v1/projects
-GET  /api/v1/projects/{id}
-GET  /api/v1/projects/{id}/tree
-GET  /api/v1/projects/{id}/specification
-GET  /api/v1/projects/{id}/events
-POST /api/v1/projects/{id}/selections/resolve
-POST /api/v1/projects/{id}/annotations
-POST /api/v1/projects/{id}/change-plans
-POST /api/v1/projects/{id}/change-plans/{plan}/apply
-POST /api/v1/projects/{id}/commands
-POST /api/v1/projects/{id}/simulations/power
-POST /api/v1/projects/{id}/simulations/thermal
-GET  /api/v1/projects/{id}/simulations/human
-GET  /api/v1/projects/{id}/export
-POST /api/v1/access-requests
-POST /mcp
+GET  /api/v1/evolution/catalog
+GET  /api/v1/dsl/schema
+GET  /api/v1/dsl/grammar
+POST /api/v1/dsl/parse
+POST /api/v1/projects/{project_id}/dsl/preview
+POST /api/v1/projects/{project_id}/dsl/apply
+GET  /api/v1/projects/{project_id}/evolution/runs
+GET  /api/v1/projects/{project_id}/evolution/runs/{run_id}/graph
+POST /api/v1/projects/{project_id}/evolution/runs/{run_id}/candidates/{candidate_id}/change-plan
+GET  /api/v1/projects/{project_id}/lifecycles
+POST /api/v1/projects/{project_id}/lifecycles/transition
 ```
 
-### MQTT
+The browser includes an **Evolution DSL** tab with an editor, schema and grammar links, preview, shortlisted candidates and a deliberate confirmation step before CQRS persistence.
 
-Events are published under:
+## Schemas and contracts
 
-```text
-lps/v1/{project-id}/events/{event-name}
-```
+- `schemas/twin-dsl.schema.json` — canonical DSL document.
+- `schemas/twinscript.ebnf` — text syntax.
+- `schemas/evolution-run.schema.json` — generated run and candidate lineage.
+- `schemas/lifecycle-blueprint.schema.json` — tailored lifecycle graph.
+- `schemas/evolution-catalog.schema.json` — controlled catalog.
+- `schemas/index.json` — schema-set index.
+- `proto/lps/v1/` — retained wire-contract namespace for compatibility; new product branding is TwinStudio.
 
-The optional MQTT gateway accepts commands under:
-
-```text
-lps/v1/{project-id}/commands/execute
-lps/v1/{project-id}/commands/resolve-selection
-lps/v1/{project-id}/commands/plan-change
-lps/v1/{project-id}/commands/apply-change
-lps/v1/{project-id}/commands/simulate-power
-```
-
-Responses are published under `lps/v1/{project-id}/responses/{correlation-id}`.
-
-### MCP and Open WebUI
-
-`POST /mcp` implements a tested core subset of the current stateless MCP 2026-07-28 HTTP shape:
-
-- `server/discover`;
-- `tools/list` and `tools/call`;
-- `resources/list` and `resources/read`;
-- per-request `_meta` protocol/capability validation;
-- `MCP-Protocol-Version`, `Mcp-Method` and `Mcp-Name` mirror-header validation;
-- `resultType`, server identity and cache metadata;
-- Origin allow-list checks;
-- a legacy `initialize` compatibility path that reports protocol revision 2025-11-25.
-
-The endpoint returns single JSON responses only; it does not advertise prompts, subscriptions, MRTR or SSE streaming. Set `MCP_ALLOWED_ORIGINS` for every browser-facing deployment. The application keeps the requested HTTP Basic `email:API-token` automation flow, but production Open WebUI/MCP deployments should place the endpoint behind an OAuth 2.1-capable or authenticated reverse proxy. Open WebUI can also consume the application's `/openapi.json` interface, which is often simpler for enterprise policy and observability. Live Open WebUI interoperability was not executed in the build environment.
-
-Example modern discovery request:
+Regenerate JSON Schemas:
 
 ```bash
-curl -u 'creator@example.test:YOUR_API_TOKEN' \
-  -H 'Content-Type: application/json' \
-  -H 'Accept: application/json, text/event-stream' \
-  -H 'MCP-Protocol-Version: 2026-07-28' \
-  -H 'Mcp-Method: server/discover' \
-  --data '{"jsonrpc":"2.0","id":"discover-1","method":"server/discover","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"curl","version":"1"},"io.modelcontextprotocol/clientCapabilities":{}}}}' \
-  http://localhost:8000/mcp
+PYTHONPATH=src python scripts/generate_schemas.py
 ```
 
-## Example project
+## Architecture
 
-`examples/rpi5-camera3/project.json` includes:
-
-- two-part hinged enclosure;
-- lower base and upper lid as FDM parts;
-- purchased hinge pin, Raspberry Pi 5, Camera Module 3 and power supply;
-- software source and runtime container;
-- 2D SVG and STEP/STL artifacts;
-- sample projection/selection maps;
-- a generated scoped B-Rep hole-edit demonstration with STEP, STL and operation journal;
-- manufacturing views;
-- lifecycle gates, FMEA and human-use steps;
-- test plan;
-- power and thermal models;
-- packaging and a draft ecommerce offer.
-
-The depth and some interface positions are still marked as provisional because the supplied historical drawings do not fully determine every manufacturing dimension.
-
-## Validation and tests
-
-```bash
-python scripts/generate_schemas.py
-pytest
-node --check src/living_product_studio/static/app.js
+```mermaid
+flowchart LR
+    E[Evidence and product snapshot] --> F[Goal framing]
+    F --> A[Action hierarchy / goal ladder]
+    E --> R[Objects, parts, features, resources]
+    A --> B[Bidirectional evolution graph]
+    R --> B
+    B --> V[Variants: mutation, recombination, adjacent possible]
+    V --> S[Scoring and shortlist]
+    S --> X[Experiments and lifecycle gates]
+    X --> P[Typed ChangePlans]
+    P --> Q[CQRS commands]
+    Q --> ES[(Append-only event stream)]
+    ES --> M[Read model and artifacts]
 ```
 
-The project tests POA parsing/scope, permissions, event reconstruction, optimistic concurrency, selection resolution, local scoped planning, allow-listed derived B-Rep edits, power/thermal calculations, GTIN check digits, export bundles and primary API paths.
+## Important boundaries
 
-## Documentation map
+1. Arbitrary free-form B-Rep editing and native SolidWorks feature-history reconstruction are not implemented.
+2. Photograph-to-3D automation requires a calibrated projection/entity map; otherwise the system records scoped evidence rather than guessing geometry.
+3. PCB/SCH support is a product model and adapter boundary, not a production autorouter or circuit synthesizer.
+4. Power and thermal calculations are reduced-order models and require measurement and physical validation.
+5. Human-use checks are structured task and rule evaluations, not a biomechanical digital-human simulation.
+6. Evolution scores are prioritization aids, not verification evidence.
+7. LiteLLM is restricted to typed plans and structured alternatives; generated Python or shell code is not executed.
+8. Development authentication defaults are not a production security configuration.
+9. The synchronous MCP core does not yet provide request-scoped SSE, subscriptions, MRTR or a production OAuth server.
 
-- [Start projektu — PL](docs/00_START_PL.md)
-- [Executive overview](docs/00_EXECUTIVE_OVERVIEW.md)
-- [Product graph and xBOM](docs/01_PRODUCT_MODEL_AND_XBOM.md)
-- [Scoped selection and NL→2D→3D](docs/02_SCOPED_SELECTION_NL_2D_3D.md)
-- [CQRS and Event Sourcing](docs/03_CQRS_EVENT_SOURCING.md)
-- [POA URI contract](docs/04_POA_URI_CONTRACT.md)
-- [Authentication and collaboration](docs/05_AUTH_COLLABORATION.md)
-- [Protobuf, REST, CLI and MQTT](docs/06_PROTOBUF_DSL_API_CLI_MQTT.md)
-- [Manufacturing and supply](docs/07_MANUFACTURING_AND_SUPPLY.md)
-- [Software and simulation](docs/08_SIMULATION_POWER_THERMAL_SOFTWARE_CAMERA.md)
-- [Human use, FMEA and lifecycle](docs/09_HUMAN_USE_FMEA_LIFECYCLE.md)
-- [PCB/SCH roadmap](docs/10_PCB_SCH_ROADMAP.md)
-- [MCP and Open WebUI](docs/11_MCP_OPENWEBUI.md)
-- [Ecommerce and GTIN](docs/12_ECOMMERCE_GS1.md)
-- [Security](docs/13_SECURITY.md)
-- [Deployment](docs/14_DEPLOYMENT.md)
-- [Acceptance criteria](docs/15_ACCEPTANCE_CRITERIA.md)
-- [Implementation status](docs/IMPLEMENTATION_STATUS.md)
-- [Główny plan platformy i lifecycle — PL](docs/16_MASTER_PRODUCT_LIFECYCLE_BLUEPRINT_PL.md)
-- [Podsumowanie dopracowania i dalsze zalecenia — PL](docs/18_PUBLICATION_HARDENING_SUMMARY_PL.md)
-- [Polski indeks paczki](PAKIET_PL.md)
-
-## License
-
-MIT. The reference images and third-party component data remain subject to their respective owners’ terms.
+See `docs/IMPLEMENTATION_STATUS.md`, `docs/18_PROJECT_EVOLUTION_DSL_PL.md`, `docs/19_TWINSCRIPT_API_REFERENCE.md` and `docs/VERIFICATION.md`.

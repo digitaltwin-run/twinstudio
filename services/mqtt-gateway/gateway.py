@@ -11,10 +11,10 @@ import paho.mqtt.client as mqtt
 
 MQTT_HOST = os.getenv("MQTT_HOST", "mqtt")
 MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
-PREFIX = os.getenv("MQTT_TOPIC_PREFIX", "lps/v1").strip("/")
-API_BASE = os.getenv("LPS_API_BASE", "http://app:8000").rstrip("/")
-SERVICE_EMAIL = os.getenv("LPS_SERVICE_EMAIL", "mqtt-gateway@example.test")
-SERVICE_TOKEN = os.getenv("LPS_SERVICE_TOKEN", "")
+PREFIX = os.getenv("MQTT_TOPIC_PREFIX", "twinstudio/v1").strip("/")
+API_BASE = os.getenv("TWINSTUDIO_API_BASE", os.getenv("LPS_API_BASE", "http://app:8000")).rstrip("/")
+SERVICE_EMAIL = os.getenv("TWINSTUDIO_SERVICE_EMAIL", os.getenv("LPS_SERVICE_EMAIL", "mqtt-gateway@example.test"))
+SERVICE_TOKEN = os.getenv("TWINSTUDIO_SERVICE_TOKEN", os.getenv("LPS_SERVICE_TOKEN", ""))
 
 
 def auth_headers() -> dict[str, str]:
@@ -66,6 +66,18 @@ def on_message(client, userdata, message):
                 )
             elif command_name == "simulate-power":
                 response = http.post(f"{API_BASE}/api/v1/projects/{project_id}/simulations/power")
+            elif command_name == "review-design-fixation":
+                response = http.post(
+                    f"{API_BASE}/api/v1/projects/{project_id}/design-fixation/scan",
+                    json={
+                        "target_uri": payload["target_uri"],
+                        "challenge": payload.get("challenge", ""),
+                        "lens_ids": payload.get("lens_ids", []),
+                        "max_alternatives": payload.get("max_alternatives", 8),
+                        "use_llm": payload.get("use_llm", True),
+                        "record": payload.get("record", True),
+                    },
+                )
             else:
                 raise ValueError(f"Unsupported MQTT command: {command_name}")
             content_type = response.headers.get("content-type", "")

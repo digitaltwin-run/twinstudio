@@ -1,0 +1,26 @@
+{
+  "product": "TwinStudio",
+  "version": "0.5.0",
+  "release_date": "2026-08-12",
+  "built_at_utc": "2026-08-11T22:30:40.309620+00:00",
+  "automated_tests_passed": 38,
+  "verification_report": "docs/verification-report.json",
+  "verification_report_sha256": "4de9209bb8f7353a297881d01cfee5fed3172944f7382a38b5b12c9ab79de1c2",
+  "portable_demo": {
+    "external_filename": "twinstudio_demo_rpi5_v0.5.0.twinstudio.zip",
+    "included_path": "examples/rpi5-camera3/demo-rpi5.twinstudio.zip",
+    "size_bytes": 3390003,
+    "sha256": "1f3e095be5951306888da4e1073a96a433f02ecff611ff2e5eac8610b4c2a8b4"
+  },
+  "python_wheel": {
+    "external_filename": "twinstudio-0.5.0-py3-none-any.whl",
+    "size_bytes": 177613,
+    "sha256": "4b216427ef9d10c79ba320b0a3139afe390f0188bcba5cccf1b135483d7eef91",
+    "included_in_source_zip": false
+  },
+  "notes": [
+    "The source archive excludes runtime databases, outboxes, caches and Python bytecode.",
+    "The included portable demo contains one recorded project-evolution run and its report artifacts.",
+    "The Python wheel was built from the extracted 0.5.0 source and verified for required package data."
+  ]
+}

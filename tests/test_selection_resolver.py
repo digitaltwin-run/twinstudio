@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from living_product_studio.domain import RegionSelection
-from living_product_studio.selection_resolver import resolve_selection
+from twinstudio.domain import RegionSelection
+from twinstudio.selection_resolver import resolve_selection
 
 
 def test_3d_semantic_selection_resolves_feature(project_snapshot, example_selection) -> None:

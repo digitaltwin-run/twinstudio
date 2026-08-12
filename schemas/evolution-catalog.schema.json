@@ -1,0 +1,273 @@
+{
+  "$defs": {
+    "ExtensionDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "associations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Associations",
+          "type": "array"
+        },
+        "prompts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prompts",
+          "type": "array"
+        },
+        "origin": {
+          "const": "twinstudio_extension",
+          "default": "twinstudio_extension",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "summary"
+      ],
+      "title": "ExtensionDimension",
+      "type": "object"
+    },
+    "LifecycleStage": {
+      "enum": [
+        "evidence_intake",
+        "discovery",
+        "problem_framing",
+        "opportunity",
+        "requirements",
+        "goal_reframing",
+        "ideation",
+        "concept",
+        "feasibility",
+        "architecture",
+        "detailed_design",
+        "design_review",
+        "prototype",
+        "integration",
+        "engineering_verification",
+        "verification",
+        "validation",
+        "compliance",
+        "pilot",
+        "pilot_production",
+        "industrialization",
+        "release",
+        "production",
+        "quality_control",
+        "fulfillment",
+        "deployment",
+        "operation",
+        "observation",
+        "monitoring",
+        "maintenance",
+        "service",
+        "improvement",
+        "evolution",
+        "upgrade",
+        "recall",
+        "reuse",
+        "reuse_remanufacture",
+        "retirement",
+        "decommission",
+        "recycling",
+        "circular_recovery",
+        "end_of_life"
+      ],
+      "title": "LifecycleStage",
+      "type": "string"
+    },
+    "LifecycleTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "stages": {
+          "items": {
+            "$ref": "#/$defs/LifecycleStage"
+          },
+          "title": "Stages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "stages"
+      ],
+      "title": "LifecycleTemplate",
+      "type": "object"
+    },
+    "MutationOperatorKind": {
+      "enum": [
+        "reframe_goal",
+        "repurpose_feature",
+        "parameter_shift",
+        "invert_relation",
+        "combine_parts",
+        "split_part",
+        "remove_part",
+        "duplicate_feature",
+        "substitute_material",
+        "substitute_process",
+        "change_state",
+        "change_energy",
+        "move_function",
+        "modularize",
+        "make_reversible",
+        "add_observability",
+        "adjacent_association",
+        "crossover"
+      ],
+      "title": "MutationOperatorKind",
+      "type": "string"
+    },
+    "OperatorDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/MutationOperatorKind"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "description"
+      ],
+      "title": "OperatorDefinition",
+      "type": "object"
+    },
+    "VerbRelationSet": {
+      "additionalProperties": false,
+      "properties": {
+        "synonyms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Synonyms",
+          "type": "array"
+        },
+        "hypernyms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Hypernyms",
+          "type": "array"
+        },
+        "hyponyms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Hyponyms",
+          "type": "array"
+        },
+        "opposites": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Opposites",
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "associations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Associations",
+          "type": "array"
+        }
+      },
+      "title": "VerbRelationSet",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "catalog_version": {
+      "title": "Catalog Version",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "source_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Notes",
+      "type": "array"
+    },
+    "verb_graph": {
+      "additionalProperties": {
+        "$ref": "#/$defs/VerbRelationSet"
+      },
+      "title": "Verb Graph",
+      "type": "object"
+    },
+    "extension_dimensions": {
+      "items": {
+        "$ref": "#/$defs/ExtensionDimension"
+      },
+      "title": "Extension Dimensions",
+      "type": "array"
+    },
+    "operators": {
+      "items": {
+        "$ref": "#/$defs/OperatorDefinition"
+      },
+      "title": "Operators",
+      "type": "array"
+    },
+    "lifecycle_templates": {
+      "additionalProperties": {
+        "$ref": "#/$defs/LifecycleTemplate"
+      },
+      "title": "Lifecycle Templates",
+      "type": "object"
+    }
+  },
+  "required": [
+    "catalog_version",
+    "title"
+  ],
+  "title": "EvolutionCatalog",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/evolution-catalog.schema.json"
+}

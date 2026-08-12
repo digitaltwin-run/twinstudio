@@ -1,0 +1,203 @@
+{
+  "blueprint_id": "hardware-product",
+  "name": "Hardware product lifecycle",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "stage": "detailed_design",
+      "name": "Detailed Design",
+      "purpose": "Create controlled geometry, electronics, software and documentation.",
+      "entry_criteria": [
+        "Inputs for detailed_design are identified and versioned."
+      ],
+      "exit_criteria": [
+        "Evidence and decisions for detailed_design are reviewed."
+      ],
+      "required_artifact_kinds": [],
+      "required_test_types": [],
+      "recommended_evolution_methods": [],
+      "allowed_change_operations": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "approver_roles": [
+        "admin",
+        "creator"
+      ],
+      "optional": false,
+      "repeatable": false
+    },
+    {
+      "stage": "design_review",
+      "name": "Design Review",
+      "purpose": "Review assumptions, risks, interfaces and evidence before build.",
+      "entry_criteria": [
+        "Inputs for design_review are identified and versioned."
+      ],
+      "exit_criteria": [
+        "Evidence and decisions for design_review are reviewed."
+      ],
+      "required_artifact_kinds": [],
+      "required_test_types": [],
+      "recommended_evolution_methods": [],
+      "allowed_change_operations": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "approver_roles": [
+        "admin",
+        "creator"
+      ],
+      "optional": false,
+      "repeatable": false
+    },
+    {
+      "stage": "prototype",
+      "name": "Prototype",
+      "purpose": "Build the cheapest representative prototype for the next uncertainty.",
+      "entry_criteria": [
+        "Inputs for prototype are identified and versioned."
+      ],
+      "exit_criteria": [
+        "Evidence and decisions for prototype are reviewed."
+      ],
+      "required_artifact_kinds": [
+        "test_result",
+        "simulation_result",
+        "drawing_2d"
+      ],
+      "required_test_types": [
+        "inspection",
+        "mechanical",
+        "human_use"
+      ],
+      "recommended_evolution_methods": [
+        "experiment"
+      ],
+      "allowed_change_operations": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "approver_roles": [
+        "admin",
+        "creator"
+      ],
+      "optional": false,
+      "repeatable": true
+    },
+    {
+      "stage": "verification",
+      "name": "Verification",
+      "purpose": "Verify that implementation meets specified requirements.",
+      "entry_criteria": [
+        "Inputs for verification are identified and versioned."
+      ],
+      "exit_criteria": [
+        "Evidence and decisions for verification are reviewed."
+      ],
+      "required_artifact_kinds": [
+        "test_result",
+        "simulation_result",
+        "drawing_2d"
+      ],
+      "required_test_types": [
+        "inspection",
+        "mechanical",
+        "human_use"
+      ],
+      "recommended_evolution_methods": [
+        "experiment"
+      ],
+      "allowed_change_operations": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "approver_roles": [
+        "admin",
+        "creator"
+      ],
+      "optional": false,
+      "repeatable": true
+    }
+  ],
+  "transitions": [
+    {
+      "from_stage": "detailed_design",
+      "to_stage": "design_review",
+      "conditions": [
+        "Exit criteria for detailed_design are approved."
+      ],
+      "required_gate_status": "approved",
+      "approver_roles": [
+        "admin",
+        "creator"
+      ]
+    },
+    {
+      "from_stage": "design_review",
+      "to_stage": "prototype",
+      "conditions": [
+        "Exit criteria for design_review are approved."
+      ],
+      "required_gate_status": "approved",
+      "approver_roles": [
+        "admin",
+        "creator"
+      ]
+    },
+    {
+      "from_stage": "prototype",
+      "to_stage": "verification",
+      "conditions": [
+        "Exit criteria for prototype are approved."
+      ],
+      "required_gate_status": "approved",
+      "approver_roles": [
+        "admin",
+        "creator"
+      ]
+    }
+  ],
+  "current_stage": "detailed_design",
+  "tailored": true,
+  "notes": [
+    "Target stage: verification",
+    "Lifecycle advancement is evidence- and approval-gated; auto_advance does not bypass gate checks."
+  ]
+}

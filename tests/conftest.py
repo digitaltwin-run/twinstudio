@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from living_product_studio.domain import ProjectSnapshot, RegionSelection
+from twinstudio.domain import ProjectSnapshot, RegionSelection
 
 
 ROOT = Path(__file__).resolve().parents[1]

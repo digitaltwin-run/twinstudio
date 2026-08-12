@@ -1,0 +1,738 @@
+catalog_version: twinstudio-lifecycle-2026.08-v1
+templates:
+- template_id: product-evolution
+  name: Full product evolution
+  description: End-to-end lifecycle from evidence intake through release and retained learning.
+  tags:
+  - product
+  - hardware
+  - software
+  - regulated-ready
+  feedback_loops:
+  - from: experiment
+    to: goal_expansion
+  - from: verification
+    to: resource_decomposition
+  - from: learning
+    to: frame
+  stages:
+  - phase: intake
+    name: Evidence intake
+    objective: Collect source artifacts, claims, constraints, observations, and current-state baselines.
+    entry_criteria:
+    - A project and at least one target exist.
+    exit_criteria:
+    - Critical sources are linked and provenance is recorded.
+    required_outputs:
+    - evidence inventory
+    - current-state snapshot
+    approver_roles: []
+    parallel_allowed: false
+  - phase: frame
+    name: Problem framing
+    objective: State the problem without committing to the current mechanism.
+    entry_criteria:
+    - Evidence intake is complete enough to identify the challenge.
+    exit_criteria:
+    - Outcome, boundaries, preserve conditions, avoid conditions, and unknowns are explicit.
+    required_outputs:
+    - goal frame
+    - assumption register
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: goal_expansion
+    name: Goal expansion
+    objective: Expand the action verb upward, downward, sideways, and toward meaningful opposites.
+    entry_criteria:
+    - A goal verb or action phrase is available.
+    exit_criteria:
+    - Multiple reviewable goal variants exist.
+    required_outputs:
+    - goal network
+    approver_roles: []
+    parallel_allowed: false
+  - phase: assumption_discovery
+    name: Assumption discovery
+    objective: Use source and extension lenses to expose assumptions hidden in wording and current features.
+    entry_criteria:
+    - Goal variants exist.
+    exit_criteria:
+    - Underexplored lenses and high-impact assumptions are recorded.
+    required_outputs:
+    - lens coverage
+    - hidden assumptions
+    approver_roles: []
+    parallel_allowed: false
+  - phase: resource_decomposition
+    name: Resource decomposition
+    objective: Decompose product objects into parts, features, materials, parameters, interfaces, evidence, and actions.
+    entry_criteria:
+    - Targets are addressable through POA.
+    exit_criteria:
+    - A traceable resource network exists.
+    required_outputs:
+    - resource network
+    approver_roles: []
+    parallel_allowed: false
+  - phase: bridge_building
+    name: Bidirectional bridge building
+    objective: Connect goal variants to available resources and capabilities through candidate mechanisms.
+    entry_criteria:
+    - Goal and resource networks exist.
+    exit_criteria:
+    - At least one traceable solution path exists.
+    required_outputs:
+    - bidirectional graph
+    - bridge candidates
+    approver_roles: []
+    parallel_allowed: false
+  - phase: divergence
+    name: Divergent evolution
+    objective: Generate multiple generations through mutation, crossover, and adjacent-possible associations.
+    entry_criteria:
+    - Seed bridge candidates exist.
+    exit_criteria:
+    - Population and lineage meet configured size and diversity.
+    required_outputs:
+    - candidate population
+    - lineage graph
+    approver_roles: []
+    parallel_allowed: false
+  - phase: adjacent_possible
+    name: Adjacent possible exploration
+    objective: Traverse obscure or underused features toward nearby mature mechanisms.
+    entry_criteria:
+    - At least one candidate and one underexplored lens exist.
+    exit_criteria:
+    - Adjacent associations are represented or explicitly rejected.
+    required_outputs:
+    - association paths
+    approver_roles: []
+    parallel_allowed: false
+  - phase: convergence
+    name: Convergence and scoring
+    objective: Score candidates against constraints, evidence, risk, lifecycle fit, and value.
+    entry_criteria:
+    - Candidate population exists.
+    exit_criteria:
+    - A shortlist is traceable to weights and evidence.
+    required_outputs:
+    - scorecard
+    - shortlist
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: prototype
+    name: Prototype planning
+    objective: Define the smallest reversible prototype for the most uncertain candidate assumptions.
+    entry_criteria:
+    - Shortlisted candidates exist.
+    exit_criteria:
+    - Prototype artifacts and success criteria are specified.
+    required_outputs:
+    - prototype plan
+    approver_roles: []
+    parallel_allowed: false
+  - phase: experiment
+    name: Experiment and test
+    objective: Test whether candidate paths actually satisfy the goal rather than merely looking plausible.
+    entry_criteria:
+    - Testable prototypes or simulations are available.
+    exit_criteria:
+    - Results and failed assumptions are recorded.
+    required_outputs:
+    - test results
+    - updated evidence
+    approver_roles: []
+    parallel_allowed: false
+  - phase: selection
+    name: Selection
+    objective: Select, reject, merge, or return candidates for another generation.
+    entry_criteria:
+    - Comparable evidence and scorecards exist.
+    exit_criteria:
+    - A decision with rationale and owner is recorded.
+    required_outputs:
+    - selection decision
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: realization
+    name: Realization
+    objective: Translate the selected candidate into scoped change plans and generated artifacts.
+    entry_criteria:
+    - A candidate is selected and approval policy is satisfied.
+    exit_criteria:
+    - Change plans are generated or safe operations are applied.
+    required_outputs:
+    - change plan
+    - affected-object list
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: verification
+    name: Verification
+    objective: Verify requirements, interfaces, manufacturability, and regressions after realization.
+    entry_criteria:
+    - Changed artifacts or a realized prototype exist.
+    exit_criteria:
+    - Acceptance criteria pass or deviations are explicitly accepted.
+    required_outputs:
+    - verification evidence
+    - traceability update
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: learning
+    name: Learning
+    objective: Preserve rejected paths, failed tests, new evidence, and reusable mechanisms.
+    entry_criteria:
+    - Experiments or verification produced evidence.
+    exit_criteria:
+    - Reusable knowledge and next hypotheses are recorded.
+    required_outputs:
+    - learning record
+    - updated lexicon or lens notes
+    approver_roles: []
+    parallel_allowed: false
+  - phase: release
+    name: Release
+    objective: Package approved artifacts, documentation, manufacturing data, and operational handover.
+    entry_criteria:
+    - Verification and approvals are complete.
+    exit_criteria:
+    - Release bundle is reproducible and signed off.
+    required_outputs:
+    - release bundle
+    - release notes
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: archive
+    name: Archive
+    objective: Preserve lineage, evidence, source models, and retirement or next-evolution triggers.
+    entry_criteria:
+    - Release or cancellation decision exists.
+    exit_criteria:
+    - Record retention and future access are defined.
+    required_outputs:
+    - archive manifest
+    approver_roles: []
+    parallel_allowed: false
+- template_id: rapid-change
+  name: Rapid controlled change
+  description: Short lifecycle for small, reversible changes with explicit scope and regression checks.
+  tags:
+  - maintenance
+  - cad
+  - software
+  - fast-loop
+  feedback_loops:
+  - from: verification
+    to: realization
+  stages:
+  - phase: frame
+    name: Frame
+    objective: Define the outcome, scope, preserve conditions, and rollback.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - goal frame
+    approver_roles: []
+    parallel_allowed: false
+  - phase: goal_expansion
+    name: Reframe
+    objective: Generate several action variants before choosing a mechanism.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - goal variants
+    approver_roles: []
+    parallel_allowed: false
+  - phase: resource_decomposition
+    name: Resolve scope
+    objective: Resolve affected objects, features, interfaces, and tests.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - scope graph
+    approver_roles: []
+    parallel_allowed: false
+  - phase: bridge_building
+    name: Generate options
+    objective: Connect goal variants to scoped resources.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - candidate paths
+    approver_roles: []
+    parallel_allowed: false
+  - phase: convergence
+    name: Score
+    objective: Select the smallest safe change.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - shortlist
+    approver_roles: []
+    parallel_allowed: false
+  - phase: realization
+    name: Plan or apply
+    objective: Emit a typed and reversible change plan.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - change plan
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: verification
+    name: Regression check
+    objective: Run defined checks and compare to baseline.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - verification result
+    approver_roles: []
+    parallel_allowed: false
+  - phase: learning
+    name: Record
+    objective: Preserve the result and rollback knowledge.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - change record
+    approver_roles: []
+    parallel_allowed: false
+- template_id: incident-to-improvement
+  name: Incident to improvement
+  description: Convert a field issue or user complaint into a verified product evolution.
+  tags:
+  - incident
+  - fmea
+  - service
+  feedback_loops:
+  - from: experiment
+    to: assumption_discovery
+  - from: verification
+    to: frame
+  stages:
+  - phase: intake
+    name: Incident intake
+    objective: Capture symptoms, context, evidence, and affected revisions.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - incident record
+    approver_roles: []
+    parallel_allowed: false
+  - phase: frame
+    name: Causal frame
+    objective: Separate observed effect from assumed cause and desired outcome.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - problem statement
+    approver_roles: []
+    parallel_allowed: false
+  - phase: assumption_discovery
+    name: Assumption review
+    objective: Challenge the initial diagnosis with lenses and counter-hypotheses.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - assumption register
+    approver_roles: []
+    parallel_allowed: false
+  - phase: resource_decomposition
+    name: System decomposition
+    objective: Map parts, interfaces, environments, and causal relations.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - causal resource graph
+    approver_roles: []
+    parallel_allowed: false
+  - phase: bridge_building
+    name: Intervention options
+    objective: Connect prevention, detection, and recovery goals to available resources.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - intervention candidates
+    approver_roles: []
+    parallel_allowed: false
+  - phase: experiment
+    name: Reproduce and test
+    objective: Attempt to reproduce failure and test interventions.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - test evidence
+    approver_roles: []
+    parallel_allowed: false
+  - phase: selection
+    name: Corrective action selection
+    objective: Select corrective and preventive actions with owners.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - CAPA decision
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: realization
+    name: Implement
+    objective: Generate scoped changes and release controls.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - change plans
+    approver_roles: []
+    parallel_allowed: false
+  - phase: verification
+    name: Effectiveness check
+    objective: Verify the issue is resolved without unacceptable regression.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - effectiveness evidence
+    approver_roles: []
+    parallel_allowed: false
+  - phase: learning
+    name: Institutionalize
+    objective: Update requirements, tests, FMEA, documentation, and reusable patterns.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - learning record
+    approver_roles: []
+    parallel_allowed: false
+- template_id: cost-down
+  name: Cost-down without value loss
+  description: Explore cost reduction while preserving verified outcomes, interfaces, and quality.
+  tags:
+  - cost
+  - manufacturing
+  - supply
+  feedback_loops:
+  - from: convergence
+    to: goal_expansion
+  stages:
+  - phase: frame
+    name: Value frame
+    objective: Distinguish user value and mandatory performance from inherited cost.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - value map
+    approver_roles: []
+    parallel_allowed: false
+  - phase: goal_expansion
+    name: Cost verb expansion
+    objective: Explore remove, combine, substitute, standardize, defer, and reuse actions.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - goal variants
+    approver_roles: []
+    parallel_allowed: false
+  - phase: resource_decomposition
+    name: Cost decomposition
+    objective: Map cost to parts, process, scrap, tooling, labor, logistics, and lifecycle.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - costed resource graph
+    approver_roles: []
+    parallel_allowed: false
+  - phase: divergence
+    name: Cost-down variants
+    objective: Generate variants across design, process, sourcing, packaging, and service.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - candidate population
+    approver_roles: []
+    parallel_allowed: false
+  - phase: convergence
+    name: Value scoring
+    objective: Score total cost, risk, value preservation, and implementation effort.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - cost value shortlist
+    approver_roles: []
+    parallel_allowed: false
+  - phase: prototype
+    name: Supplier or process trial
+    objective: Test the highest-risk cost assumptions.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - trial plan
+    approver_roles: []
+    parallel_allowed: false
+  - phase: verification
+    name: Equivalence verification
+    objective: Verify retained performance, quality, and compliance.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - equivalence evidence
+    approver_roles: []
+    parallel_allowed: false
+  - phase: release
+    name: Commercial release
+    objective: Update BOM, suppliers, work instructions, price, and inventory transition.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - released cost-down package
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+- template_id: circular-redesign
+  name: Circular redesign
+  description: Evolve a product for longer life, reuse, repair, remanufacture, and material recovery.
+  tags:
+  - sustainability
+  - circularity
+  - end-of-life
+  feedback_loops:
+  - from: learning
+    to: resource_decomposition
+  stages:
+  - phase: intake
+    name: Material and lifecycle evidence
+    objective: Capture material, repair, return, failure, and disposal evidence.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - lifecycle inventory
+    approver_roles: []
+    parallel_allowed: false
+  - phase: frame
+    name: Circular outcome frame
+    objective: Define retained value and avoided waste rather than only material substitution.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - circular goal
+    approver_roles: []
+    parallel_allowed: false
+  - phase: assumption_discovery
+    name: Lifecycle assumptions
+    objective: Challenge ownership, return, cleanliness, disassembly, and market assumptions.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - assumption register
+    approver_roles: []
+    parallel_allowed: false
+  - phase: resource_decomposition
+    name: Value decomposition
+    objective: Map components, joints, material mixtures, wear, and residual value.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - value-retention graph
+    approver_roles: []
+    parallel_allowed: false
+  - phase: adjacent_possible
+    name: Adjacent circular mechanisms
+    objective: Borrow mechanisms from refill, leasing, modular repair, remanufacture, and take-back systems.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - mechanism associations
+    approver_roles: []
+    parallel_allowed: false
+  - phase: divergence
+    name: Circular variants
+    objective: Generate product, service, packaging, and business-model variants.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - candidate population
+    approver_roles: []
+    parallel_allowed: false
+  - phase: experiment
+    name: Disassembly and return trials
+    objective: Test time, damage, contamination, logistics, and economics.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - trial evidence
+    approver_roles: []
+    parallel_allowed: false
+  - phase: selection
+    name: Circular selection
+    objective: Select the best value-retention path across stakeholders.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - selection decision
+    approver_roles: []
+    parallel_allowed: false
+  - phase: realization
+    name: Implement circular design
+    objective: Generate design, supply, service, and commercial changes.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - change plans
+    approver_roles: []
+    parallel_allowed: false
+  - phase: verification
+    name: Circularity verification
+    objective: Verify disassembly, recovery, repair, and retained performance.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - verification evidence
+    approver_roles: []
+    parallel_allowed: false
+  - phase: learning
+    name: Closed-loop learning
+    objective: Feed field returns and recovery data into the next evolution.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - learning record
+    approver_roles: []
+    parallel_allowed: false
+- template_id: hardware-software-coevolution
+  name: Hardware-software coevolution
+  description: Coordinate mechanical, electronic, firmware, cloud, data, and user-interface changes.
+  tags:
+  - hardware
+  - software
+  - pcb
+  - digital-thread
+  feedback_loops:
+  - from: verification
+    to: resource_decomposition
+  stages:
+  - phase: intake
+    name: Cross-domain evidence
+    objective: Collect interface, performance, telemetry, and operational evidence.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - evidence inventory
+    approver_roles: []
+    parallel_allowed: false
+  - phase: frame
+    name: Joint outcome frame
+    objective: State the outcome independently of whether hardware or software implements it.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - joint goal frame
+    approver_roles: []
+    parallel_allowed: false
+  - phase: goal_expansion
+    name: Implementation reframing
+    objective: Explore sense, compute, communicate, constrain, or redesign alternatives.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - goal network
+    approver_roles: []
+    parallel_allowed: false
+  - phase: resource_decomposition
+    name: Cross-domain decomposition
+    objective: Map mechanics, PCB, power, firmware, data, APIs, UI, deployment, and service.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - cross-domain resource graph
+    approver_roles: []
+    parallel_allowed: false
+  - phase: bridge_building
+    name: Interface solutions
+    objective: Connect outcomes to alternative allocations across domains.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - allocation candidates
+    approver_roles: []
+    parallel_allowed: false
+  - phase: divergence
+    name: Coevolution generations
+    objective: Generate compatible hardware-software variants and interface contracts.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - candidate population
+    approver_roles: []
+    parallel_allowed: false
+  - phase: convergence
+    name: Architecture trade-off
+    objective: Score latency, power, cost, updateability, safety, privacy, and lifecycle.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - trade study
+    approver_roles: []
+    parallel_allowed: false
+  - phase: prototype
+    name: Integrated prototype
+    objective: Create minimum integrated hardware-software prototypes.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - prototype bundle
+    approver_roles: []
+    parallel_allowed: false
+  - phase: experiment
+    name: Integrated test
+    objective: Test timing, power, thermals, data, failure recovery, and human use.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - test results
+    approver_roles: []
+    parallel_allowed: false
+  - phase: realization
+    name: Coordinated realization
+    objective: Generate synchronized CAD, PCB, software, tests, and release plans.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - coordinated change plans
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false
+  - phase: verification
+    name: System verification
+    objective: Verify interfaces and end-to-end requirements across revisions.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - system evidence
+    approver_roles: []
+    parallel_allowed: false
+  - phase: release
+    name: Coordinated release
+    objective: Bind compatible hardware, firmware, software, configuration, and documentation.
+    entry_criteria: []
+    exit_criteria: []
+    required_outputs:
+    - release manifest
+    approver_roles:
+    - creator
+    - admin
+    parallel_allowed: false

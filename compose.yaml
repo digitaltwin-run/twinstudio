@@ -6,13 +6,13 @@ services:
       dockerfile: Dockerfile
     env_file: [.env]
     environment:
-      DATABASE_URL: postgresql+psycopg://lps:lps@postgres:5432/lps
-      LPS_DATA_DIR: /data
+      DATABASE_URL: postgresql+psycopg://twinstudio:twinstudio@postgres:5432/twinstudio
+      TWINSTUDIO_DATA_DIR: /data
       MQTT_HOST: mqtt
       SMTP_HOST: mailpit
-    ports: ["${LPS_HOST_PORT:-8000}:8000"]
+    ports: ["${TWINSTUDIO_HOST_PORT:-8000}:8000"]
     volumes:
-      - lps-data:/data
+      - twinstudio-data:/data
       - ./examples:/app/examples:ro
     depends_on:
       postgres:
@@ -20,30 +20,34 @@ services:
       mqtt:
         condition: service_started
     restart: unless-stopped
+    networks: [twinstudio]
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: lps
-      POSTGRES_USER: lps
-      POSTGRES_PASSWORD: lps
+      POSTGRES_DB: twinstudio
+      POSTGRES_USER: twinstudio
+      POSTGRES_PASSWORD: twinstudio
     volumes: ["postgres-data:/var/lib/postgresql/data"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U lps -d lps"]
+      test: ["CMD-SHELL", "pg_isready -U twinstudio -d twinstudio"]
       interval: 5s
       timeout: 5s
       retries: 20
     restart: unless-stopped
+    networks: [twinstudio]
   mqtt:
     image: eclipse-mosquitto:2
-    ports: ["1883:1883"]
+    ports: ["${MQTT_HOST_PORT:-1883}:1883"]
     volumes:
       - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - mqtt-data:/mosquitto/data
     restart: unless-stopped
+    networks: [twinstudio]
   mailpit:
     image: axllent/mailpit:latest
     ports: ["${MAILPIT_HOST_PORT:-8025}:8025"]
     restart: unless-stopped
+    networks: [twinstudio]
   cad-worker:
     profiles: ["cad"]
     build:
@@ -52,10 +56,11 @@ services:
     env_file: [.env]
     environment:
       MQTT_HOST: mqtt
-      LPS_DATA_DIR: /data
-    volumes: ["lps-data:/data"]
+      TWINSTUDIO_DATA_DIR: /data
+    volumes: ["twinstudio-data:/data"]
     depends_on: [mqtt]
     restart: unless-stopped
+    networks: [twinstudio]
   minio:
     profiles: ["object-store"]
     image: quay.io/minio/minio:latest
@@ -65,15 +70,17 @@ services:
       MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
     ports: ["9000:9000", "9001:9001"]
     volumes: ["minio-data:/data"]
+    networks: [twinstudio]
   openwebui:
     profiles: ["openwebui"]
     image: ${OPENWEBUI_IMAGE:-ghcr.io/open-webui/open-webui:main}
     environment:
       WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
-    ports: ["3000:8080"]
+    ports: ["${OPENWEBUI_HOST_PORT:-3000}:8080"]
     volumes: ["openwebui-data:/app/backend/data"]
     depends_on: [app]
     restart: unless-stopped
+    networks: [twinstudio]
   mqtt-gateway:
     profiles: ["integration"]
     build:
@@ -81,12 +88,13 @@ services:
       dockerfile: services/mqtt-gateway/Dockerfile
     environment:
       MQTT_HOST: mqtt
-      MQTT_TOPIC_PREFIX: lps/v1
-      LPS_API_BASE: http://app:8000
-      LPS_SERVICE_EMAIL: ${LPS_SERVICE_EMAIL:-mqtt-gateway@example.test}
-      LPS_SERVICE_TOKEN: ${LPS_SERVICE_TOKEN:-}
+      MQTT_TOPIC_PREFIX: twinstudio/v1
+      TWINSTUDIO_API_BASE: http://app:8000
+      TWINSTUDIO_SERVICE_EMAIL: ${TWINSTUDIO_SERVICE_EMAIL:-mqtt-gateway@example.test}
+      TWINSTUDIO_SERVICE_TOKEN: ${TWINSTUDIO_SERVICE_TOKEN:-}
     depends_on: [app, mqtt]
     restart: unless-stopped
+    networks: [twinstudio]
   device-sim:
     profiles: ["simulation"]
     build:
@@ -94,18 +102,19 @@ services:
       dockerfile: services/device-sim/Dockerfile
     environment:
       MQTT_HOST: mqtt
-      MQTT_TOPIC_PREFIX: lps/v1
+      MQTT_TOPIC_PREFIX: twinstudio/v1
       PROJECT_ID: demo-rpi5
     volumes: ["./examples/rpi5-camera3/software:/scenario:ro"]
     depends_on: [mqtt]
-networks:
-  default:
-    ipam:
-      config:
-        - subnet: 10.250.58.0/24
+    networks: [twinstudio]
 volumes:
-  lps-data:
+  twinstudio-data:
   postgres-data:
   mqtt-data:
   minio-data:
   openwebui-data:
+networks:
+  twinstudio:
+    ipam:
+      config:
+        - subnet: ${TWINSTUDIO_SUBNET:-172.31.50.0/24}

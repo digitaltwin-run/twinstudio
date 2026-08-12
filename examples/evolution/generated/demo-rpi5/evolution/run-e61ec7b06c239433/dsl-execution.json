@@ -1,0 +1,27 @@
+{
+  "execution_id": "dsl-450a500163550a39",
+  "uri": "poa://demo/demo-rpi5@main/dsl-execution/dsl-450a500163550a39",
+  "document_name": "RPi5 hinge evolution",
+  "document_hash": "450a500163550a39513a89a6fce7f7e345f22dbb6c628966859c60fa22a04552",
+  "api_version": "twinstudio.io/v1alpha1",
+  "kind": "EvolutionProgram",
+  "project_id": "demo-rpi5",
+  "base_revision": "main",
+  "source_format": "twin",
+  "source_text": "# TwinStudio Evolution DSL example: evolve the front hinge without treating the current form as fixed.\nTWINSCRIPT 1.0\nNAME \"RPi5 hinge evolution\"\nNAMESPACE \"demo\"\nLABEL domain=mechanical\nLABEL product=rpi5-enclosure\nANNOTATION intent=\"Explore alternatives before committing CAD changes\"\n\nPROJECT demo-rpi5 REVISION main\nFOCUS \"poa://demo/demo-rpi5@main/part/base\"\nFOCUS \"poa://demo/demo-rpi5@main/part/lid\"\n\nGOAL VERB improve OBJECT \"front hinge\" \\\n  OUTCOME \"support-free printing, a clean external joint and opening above 190 degrees\"\nPRESERVE \"wall thickness remains 2 mm\"\nPRESERVE \"Raspberry Pi and connector access remain valid\"\nAVOID \"hinge collision\"\nAVOID \"unsupported overhangs below the configured printability limit\"\nASSUME \"the existing circular hinge is not the only feasible opening mechanism\"\nCONSTRAINT \"the result must remain manufacturable by the selected FDM route\"\n\nMETHODS goal_ladder,object_decomposition,bidirectional_graph,feature_lenses,adjacent_possible,brainswarm,assumption_reversal,mutation,recombination,experiment\nSEED_VERBS improve,open,fasten,manufacture,inspect\nLENSES shape,connectivity_among_parts,spatial_relations_among_parts,force_characteristics,durability_characteristics,human_use,aesthetics\nDIMENSIONS manufacturability,assemblability,serviceability,testability,reversibility,cost_value,adjacent_possible\nLENS_OPTIONS SOURCE true EXTENSIONS true ASSUMPTIONS true MAX 96\nRESOURCE_OPTIONS DESCENDANTS true FEATURES true PARAMETERS true MATERIALS true PROCESSES true ARTIFACTS true REQUIREMENTS true EVIDENCE true HUMAN true ENVIRONMENT true MAX 300\nSEARCH UP 1 DOWN 2 SIDEWAYS 1 MAX 48 OPPOSITES true\n\nEVOLVE POPULATION 12 GENERATIONS 4 OFFSPRING 2 MUTATION 0.82 CROSSOVER 0.35 SEED 17 ADJACENT_DEPTH 2\nOPERATOR reframe_goal WEIGHT 1.0\nOPERATOR repurpose_feature WEIGHT 1.0\nOPERATOR parameter_shift WEIGHT 0.8\nOPERATOR substitute_process WEIGHT 0.7\nOPERATOR modularize WEIGHT 0.7\nOPERATOR make_reversible WEIGHT 0.8\nOPERATOR add_observability WEIGHT 0.5\nOPERATOR adjacent_association WEIGHT 1.0\nOPERATOR crossover WEIGHT 0.4\n\nWEIGHT feasibility 0.18\nWEIGHT novelty 0.10\nWEIGHT manufacturability 0.18\nWEIGHT evidence 0.10\nWEIGHT risk_control 0.12\nWEIGHT reversibility 0.10\nWEIGHT sustainability 0.06\nWEIGHT cost_value 0.06\nWEIGHT user_value 0.04\nWEIGHT lifecycle_fit 0.06\nSELECT_TOP 5\nMIN_SCORE 0.30\n\nLIFECYCLE hardware-product START detailed_design TARGET verification APPROVAL true AUTO_ADVANCE false\nENABLE_STAGE detailed_design,design_review,prototype,engineering_verification,verification\nGATE convergence CHECK \"at least three materially different mechanisms remain\" ROLE creator,admin BLOCKING true\nGATE experiment CHECK \"each selected mechanism has a physical or slicing experiment\" ROLE creator,admin BLOCKING true\nGATE verification CHECK \"hinge opens above 190 degrees and both parts slice without geometry repair\" ROLE creator,admin BLOCKING true\n\nVERIFY \"confirm opening angle above 190 degrees in the assembly\"\nVERIFY \"slice both enclosure parts without geometry repair\"\nVERIFY \"print and cycle the hinge prototype\"\nVERIFY \"inspect connector access and external joint quality\"\n\nREALIZE change_plan DRY_RUN true APPROVAL true MAX_PLANS 3\nALLOW_OPERATIONS set_parameter,add_feature,suppress_feature,transform_feature,boolean_cut,boolean_add,update_manufacturing,add_test,attach_requirement,add_annotation\nOUTPUT GRAPHS json,dot,mermaid REPORTS json,markdown,csv\nPERSIST_ARTIFACTS true\nINCLUDE_CHANGE_PLANS true\nNOTE \"Candidates are hypotheses; the graph does not prove mechanical feasibility.\"\nEND\n",
+  "dry_run": false,
+  "status": "compiled",
+  "command_types": [
+    "DslProgramRecorded",
+    "EvolutionRunRecorded",
+    "LifecycleBlueprintUpserted",
+    "ChangePlanCreated",
+    "ChangePlanCreated",
+    "ChangePlanCreated"
+  ],
+  "event_ids": [],
+  "warnings": [],
+  "errors": [],
+  "created_by": "creator@example.test",
+  "created_at": "2026-08-11T22:10:35.518885Z"
+}

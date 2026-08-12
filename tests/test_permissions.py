@@ -1,7 +1,7 @@
 import pytest
 
-from living_product_studio.domain import Role
-from living_product_studio.permissions import PermissionDenied, has_permission, require_permission
+from twinstudio.domain import Role
+from twinstudio.permissions import PermissionDenied, has_permission, require_permission
 
 
 def test_role_matrix() -> None:

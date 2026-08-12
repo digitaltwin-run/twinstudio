@@ -1,66 +1,49 @@
-# Living Product Studio 0.3.0 — informacje o wydaniu
+# TwinStudio 0.5.0 — informacje o wydaniu
 
-Data pakietu: 2026-08-11.
+Data wydania: 2026-08-12.
 
-## Cel wydania
+## Cel
 
-Wydanie rozszerza generator obudowy w kierunku event-sourced platformy „żywego produktu”: od materiałów źródłowych, przez drzewo obiektów, zaznaczenia 2D/3D i ograniczone zmiany naturalnym językiem, po xBOM, symulacje, testy, lifecycle, software i ofertę ecommerce.
+Wydanie 0.5.0 rozwija istniejący cyfrowy wątek produktu o kontrolowaną **ewolucję projektu**. System nie ogranicza się do modyfikowania obecnej geometrii: rozdziela cel od rozwiązania, rozwija czasowniki celu, dekomponuje dostępne obiekty i cechy, buduje graf dwukierunkowy, tworzy warianty i wymaga planu eksperymentów.
 
-## Najważniejsze funkcje
+## Najważniejsze zmiany
 
-- wybór obiektu, podzespołu lub obszaru bryły kursorem, ołówkiem, lassem i prostokątem;
-- zapis evidence zaznaczenia oraz rozwiązanie do `SelectionMap` i POA URI;
-- NL → walidowany `ChangePlan` przez LiteLLM lub parser deterministyczny;
-- ścisłe blokowanie operacji poza wybranym zakresem;
-- parametryczne zmiany oraz kontrolowany adapter STEP/B-Rep: hole i local-box add/cut;
-- widok drzewa obiektów, cech, parametrów, artefaktów i wariantów produkcji;
-- unified project snapshot, xBOM i routing FDM/CNC/purchase/PCB/software/packaging/reference;
-- współpraca mailowa, role reader/editor/admin/creator i HTTP Basic `email:PAT`;
-- CQRS, Event Sourcing, Protobuf DSL, POA, REST, CLI, shell, MQTT i MCP;
-- projekt przykładowy RPi5 + Camera Module 3 z STEP/STL/SVG, evidence, software i symulacjami;
-- power/voltage-drop, thermal RC, camera sample replay, human-use, mechanical rules, FMEA i lifecycle;
-- przenośny `.lps.zip` ze snapshotem, eventami, specification, artefaktami, manifestem i SHA-256.
+- pełna nazwa produktu i pakietu: **TwinStudio**;
+- TwinScript 1.0 wraz z reprezentacjami YAML i JSON;
+- JSON Schema Draft 2020-12 i EBNF;
+- REST, CLI, MCP i zakładka webowa Evolution DSL;
+- katalog akcji oraz goal ladder: synonimy, hiperonimy, hiponimy, działania przeciwne i sąsiednie;
+- graf celów i zasobów, BrainSwarming, adjacent possible, mutacje, rekombinacja i planowanie eksperymentów;
+- 34 dodatkowe wymiary inżynierskie TwinStudio;
+- 17 operatorów ewolucji;
+- rozszerzony lifecycle od opportunity/discovery do reuse, remanufacture i recycling;
+- artefakty ewolucji: JSON, DOT, Mermaid, Markdown, CSV, blueprint i manifest;
+- 21 narzędzi MCP, w tym katalog ewolucji, schema DSL, podgląd programu, runy, lifecycle i konwersja kandydata do `ChangePlan`;
+- zachowana kompatybilność importu `living_product_studio`, komendy `lps` i wybranych zmiennych `LPS_*` przez okres migracyjny.
 
-## Zmiany 0.3.0
+## Przykład demonstracyjny
 
-- dodano rdzeń MCP 2026-07-28: `server/discover`, wymagane metadane, nagłówki lustrzane, `resultType`, cache metadata i walidację `Origin`;
-- pozostawiono jawny legacy `initialize` dla klientów 2025-11-25;
-- dodano narzędzia MCP do human-use i mechanical rules;
-- rozszerzono testy MCP i REST;
-- dodano polski indeks startowy, plan lifecycle oraz macierz śledzenia wymagań.
+`examples/evolution/rpi5-hinge-evolution.twin` generuje deterministyczny podgląd dla zawiasu obudowy RPi5. Bieżący zapis demonstracyjny, uruchomiony na odtworzonym strumieniu zdarzeń, zawiera 48 wariantów celu, 30 zasobów, 48 kandydatów, pięć pozycji na shortliście i trzy typowane plany zmian. Bezpośrednia kompilacja statycznego `project.json` wykrywa 26 zasobów; dodatkowe cztery wynikają z odtworzonego modelu runtime. Są to propozycje do weryfikacji, nie automatycznie zatwierdzona konstrukcja.
 
-## Zweryfikowano
+## Weryfikacja wydania
 
-- 26 testów automatycznych;
-- kompilację źródeł Python;
-- składnię JavaScript przez `node --check`;
-- spójność 24 przykładowych artefaktów i ich hashy;
-- działający wybrany-region → lokalny hole cut → poprawny STEP/STL/journal;
-- strukturę Compose z 9 usługami;
-- strukturę 8 plików Protobuf;
-- integralność przykładowego `.lps.zip`.
+- 38 testów Python zostało zebranych i zakończyło się powodzeniem;
+- źródła Python przeszły `compileall`;
+- JavaScript przeszedł `node --check`;
+- TwinScript, YAML i JSON dają równoważny dokument kanoniczny;
+- schema i EBNF są dostępne z API i w paczce;
+- podgląd DSL działa bez mutowania strumienia;
+- artefakty ewolucji mają manifest i sumy SHA-256;
+- lista MCP zawiera 21 narzędzi, a nowoczesny i legacy flow protokołu pozostają objęte testami.
+- archiwum źródłowe zostało ponownie rozpakowane, zweryfikowane manifestem i przetestowane pełnym zestawem 38 testów;
+- z rozpakowanych źródeł zbudowano koło Python `twinstudio-0.5.0-py3-none-any.whl`, sprawdzając dane pakietu oraz fallback schema/EBNF.
 
-Szczegóły: `docs/VERIFICATION.md` oraz `docs/verification-report.json`.
+Szczegóły i granice: `docs/VERIFICATION.md`.
 
-## Granice bieżącego wydania
+## Ograniczenia
 
-- Nie ma ogólnego, swobodnego edytora dowolnej powierzchni B-Rep ani rekonstrukcji historii SolidWorks.
-- Mapowanie fotografii/rzutu do 3D wymaga skalibrowanego `ProjectionMap`.
-- PCB/SCH ma model danych i adapter KiCad CLI, ale nie autorouter ani pełny edytor semantyczny.
-- Symulacje elektryczne, termiczne, mechaniczne i human-use są modelami redukowanymi/regułami; wymagają pomiarów, FEA/CFD/HIL i badań użytkowników przed decyzją produkcyjną.
-- Docker, broker MQTT, rzeczywisty dostawca LiteLLM, Open WebUI, SMTP i KiCad nie zostały uruchomione end-to-end w środowisku budowy.
-- Konfiguracja deweloperska nie jest konfiguracją produkcyjną; wymagane są TLS, IdP/OAuth, secure cookies, CSRF, rate limits, backup, audyt i rotacja sekretów.
-
-## Start
-
-```bash
-cp .env.example .env
-docker compose up --build
-```
-
-Aplikacja: `http://localhost:8000`  
-OpenAPI: `http://localhost:8000/docs`  
-Mailpit: `http://localhost:8025`
-
-Pełny zakres i roadmap: `docs/16_MASTER_PRODUCT_LIFECYCLE_BLUEPRINT_PL.md`.  
-Mapowanie wymagań: `docs/17_REQUIREMENTS_TRACEABILITY_PL.md`.
+- W tym etapie nie wykonano ponownie pełnego live testu Docker Compose po dodaniu warstwy 0.5.0.
+- Nie użyto rzeczywistego dostawcy LiteLLM ani kluczy API.
+- Nie przeprowadzono fizycznego wydruku, montażu RPi5, pomiarów termicznych/elektrycznych ani badań użytkowników.
+- Wynik ewolucji nie jest FEA, CFD ani dowodem spełnienia wymagań.
+- Dowolna, swobodna edycja B-Rep i natywna historia SolidWorks pozostają poza zakresem.

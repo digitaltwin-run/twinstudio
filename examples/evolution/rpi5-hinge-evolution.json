@@ -1,0 +1,285 @@
+{
+  "api_version": "twinstudio.io/v1alpha1",
+  "kind": "EvolutionProgram",
+  "metadata": {
+    "name": "RPi5 hinge evolution",
+    "namespace": "demo",
+    "labels": {
+      "domain": "mechanical",
+      "product": "rpi5-enclosure"
+    },
+    "annotations": {
+      "intent": "Explore alternatives before committing CAD changes"
+    }
+  },
+  "spec": {
+    "project_id": "demo-rpi5",
+    "base_revision": "main",
+    "targets": [
+      "poa://demo/demo-rpi5@main/part/base",
+      "poa://demo/demo-rpi5@main/part/lid"
+    ],
+    "goal": {
+      "statement": "improve front hinge support-free printing, a clean external joint and opening above 190 degrees",
+      "verb": "improve",
+      "object_phrase": "front hinge",
+      "outcomes": [
+        "support-free printing, a clean external joint and opening above 190 degrees"
+      ],
+      "preserve": [
+        "wall thickness remains 2 mm",
+        "Raspberry Pi and connector access remain valid"
+      ],
+      "avoid": [
+        "hinge collision",
+        "unsupported overhangs below the configured printability limit"
+      ],
+      "assumptions": [
+        "the existing circular hinge is not the only feasible opening mechanism"
+      ],
+      "constraints": [
+        "the result must remain manufacturable by the selected FDM route"
+      ]
+    },
+    "methods": [
+      "goal_ladder",
+      "object_decomposition",
+      "bidirectional_graph",
+      "feature_lenses",
+      "adjacent_possible",
+      "brainswarm",
+      "assumption_reversal",
+      "mutation",
+      "recombination",
+      "experiment"
+    ],
+    "action_search": {
+      "seed_verbs": [
+        "improve",
+        "open",
+        "fasten",
+        "manufacture",
+        "inspect"
+      ],
+      "up_depth": 1,
+      "down_depth": 2,
+      "sideways_depth": 1,
+      "include_opposites": true,
+      "max_terms": 48
+    },
+    "resources": {
+      "include_descendants": true,
+      "include_features": true,
+      "include_parameters": true,
+      "include_materials": true,
+      "include_processes": true,
+      "include_artifacts": true,
+      "include_requirements": true,
+      "include_evidence": true,
+      "include_human_actions": true,
+      "include_environment": true,
+      "max_resources": 300
+    },
+    "lenses": {
+      "include_source_lenses": true,
+      "include_extension_dimensions": true,
+      "source_lens_ids": [
+        "shape",
+        "connectivity_among_parts",
+        "spatial_relations_among_parts",
+        "force_characteristics",
+        "durability_characteristics",
+        "human_use",
+        "aesthetics"
+      ],
+      "extension_dimension_ids": [
+        "manufacturability",
+        "assemblability",
+        "serviceability",
+        "testability",
+        "reversibility",
+        "cost_value",
+        "adjacent_possible"
+      ],
+      "ask_hidden_assumptions": true,
+      "max_lenses": 96
+    },
+    "evolution": {
+      "generations": 4,
+      "population_size": 12,
+      "offspring_per_candidate": 2,
+      "mutation_rate": 0.82,
+      "crossover_rate": 0.35,
+      "adjacent_possible_depth": 2,
+      "deterministic_seed": 17,
+      "operators": [
+        {
+          "operator": "reframe_goal",
+          "weight": 1.0,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "repurpose_feature",
+          "weight": 1.0,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "parameter_shift",
+          "weight": 0.8,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "substitute_process",
+          "weight": 0.7,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "modularize",
+          "weight": 0.7,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "make_reversible",
+          "weight": 0.8,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "add_observability",
+          "weight": 0.5,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "adjacent_association",
+          "weight": 1.0,
+          "parameters": {},
+          "enabled": true
+        },
+        {
+          "operator": "crossover",
+          "weight": 0.4,
+          "parameters": {},
+          "enabled": true
+        }
+      ]
+    },
+    "evaluation": {
+      "weights": {
+        "feasibility": 0.18,
+        "novelty": 0.1,
+        "manufacturability": 0.18,
+        "evidence": 0.1,
+        "risk_control": 0.12,
+        "reversibility": 0.1,
+        "sustainability": 0.06,
+        "cost_value": 0.06,
+        "user_value": 0.04,
+        "lifecycle_fit": 0.06
+      },
+      "hard_constraints": [],
+      "select_top": 5,
+      "minimum_overall_score": 0.3
+    },
+    "lifecycle": {
+      "template_id": "hardware-product",
+      "start_stage": "detailed_design",
+      "target_stage": "verification",
+      "enabled_stages": [
+        "detailed_design",
+        "design_review",
+        "prototype",
+        "engineering_verification",
+        "verification"
+      ],
+      "disabled_stages": [],
+      "auto_advance": false,
+      "approval_required": true
+    },
+    "gates": [
+      {
+        "phase": "convergence",
+        "expressions": [
+          "at least three materially different mechanisms remain"
+        ],
+        "approver_roles": [
+          "creator",
+          "admin"
+        ],
+        "blocking": true,
+        "notes": ""
+      },
+      {
+        "phase": "experiment",
+        "expressions": [
+          "each selected mechanism has a physical or slicing experiment"
+        ],
+        "approver_roles": [
+          "creator",
+          "admin"
+        ],
+        "blocking": true,
+        "notes": ""
+      },
+      {
+        "phase": "verification",
+        "expressions": [
+          "hinge opens above 190 degrees and both parts slice without geometry repair"
+        ],
+        "approver_roles": [
+          "creator",
+          "admin"
+        ],
+        "blocking": true,
+        "notes": ""
+      }
+    ],
+    "explicit_changes": [],
+    "validation_steps": [
+      "confirm opening angle above 190 degrees in the assembly",
+      "slice both enclosure parts without geometry repair",
+      "print and cycle the hinge prototype",
+      "inspect connector access and external joint quality"
+    ],
+    "realization": {
+      "mode": "change_plan",
+      "dry_run": true,
+      "allowed_operations": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "update_manufacturing",
+        "add_test",
+        "attach_requirement",
+        "add_annotation"
+      ],
+      "max_change_plans": 3,
+      "require_approval": true
+    },
+    "outputs": {
+      "graph_formats": [
+        "json",
+        "dot",
+        "mermaid"
+      ],
+      "report_formats": [
+        "json",
+        "markdown",
+        "csv"
+      ],
+      "include_change_plans": true,
+      "persist_artifacts": true
+    },
+    "notes": [
+      "Candidates are hypotheses; the graph does not prove mechanical feasibility."
+    ]
+  }
+}

@@ -21,7 +21,7 @@ REST is the primary browser interface. Mutations still go through the same comma
 
 ## CLI and shell
 
-`lps` uses the same local command/query services. It supports project listing/tree, raw commands, scoped planning from a saved selection, power simulation, export, GTIN utilities and an interactive shell.
+`twinstudio` uses the same local command/query services. It supports project listing/tree, raw commands, scoped planning from a saved selection, power simulation, export, GTIN utilities and an interactive shell.
 
 For remote production administration, add a thin CLI transport that sends the same Protobuf/JSON commands to REST or gRPC rather than opening the database directly.
 
@@ -30,10 +30,10 @@ For remote production administration, add a thin CLI transport that sends the sa
 MQTT topics are a bridge for workers, test benches and device telemetry:
 
 ```text
-lps/v1/{project}/commands/{command}
-lps/v1/{project}/events/{event}
-lps/v1/{project}/responses/{correlation}
-lps/v1/{project}/telemetry/{channel}
+twinstudio/v1/{project}/commands/{command}
+twinstudio/v1/{project}/events/{event}
+twinstudio/v1/{project}/responses/{correlation}
+twinstudio/v1/{project}/telemetry/{channel}
 ```
 
 QoS and retained-message policies must be chosen per message type. Commands/results should include IDs and be idempotent; high-rate telemetry should be separated from immutable product events.
