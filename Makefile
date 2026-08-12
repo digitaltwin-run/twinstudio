@@ -1,7 +1,7 @@
 .PHONY: install run test lint compose-up compose-down compose-all seed schemas dsl-preview verify proto-lint package
 
 install:
-	python -m pip install -e ".[llm,dev]"
+	python -m pip install -e ".[llm,dev]" -e "./components/housing-studio[dev]"
 
 run:
 	uvicorn twinstudio.api:app --reload --host 0.0.0.0 --port 8000

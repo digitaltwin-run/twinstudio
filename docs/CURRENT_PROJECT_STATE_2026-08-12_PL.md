@@ -9,7 +9,7 @@ Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:
 - `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony do obrazu `cad-worker`;
 - rzeczywista aplikacja ASGI uruchamia się, seeduje projekt demonstracyjny i odpowiada przez HTTP.
 
-Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 65 testów przechodzi, Ruff i `buf lint` nie zgłaszają błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. CI instaluje teraz jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
+Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 66 testów przechodzi, Ruff i `buf lint` nie zgłaszają błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. CI instaluje teraz jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
 
 | Obszar | Ocena | Uzasadnienie |
 |---|---|---|
@@ -17,7 +17,7 @@ Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 65 testów
 | DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 65/65 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 66/66 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -110,7 +110,7 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **65/65 passed**, łącznie z testami API przez FastAPI `TestClient`;
+- pełny pytest: **66/66 passed**, łącznie z testami API przez FastAPI `TestClient` i kolejnością `.env.local`/`.env`;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
@@ -136,18 +136,22 @@ Interpretacja wyniku:
 W czystym checkoutcie wymagane są zależności obu projektów:
 
 ```bash
-python3 -m venv .venv
+python3.12 -m venv --clear .venv
+.venv/bin/python --version
 .venv/bin/python -m pip install -e ".[dev]" -e "./components/housing-studio[dev]"
+test -f .env.local || cp .env.local.example .env.local
 ```
+
+Opcja `--clear` jest istotna przy ponownym użyciu nazwy `.venv`: samo wykonanie
+`python3.12 -m venv .venv` nad istniejącym środowiskiem może pozostawić dowiązania
+do wcześniejszego interpretera. Plik `.env.local` oddziela lokalny SQLite od ustawień
+Compose (`/data`, `postgres`, `mqtt`, `mailpit`) zapisanych w `.env`.
 
 Uruchomienie rdzenia z lokalnym SQLite:
 
 ```bash
-TWINSTUDIO_DATA_DIR=./data \
-DATABASE_URL=sqlite:///./data/twinstudio.db \
-MQTT_ENABLED=false \
-PYTHONPATH=src \
-.venv/bin/python -m uvicorn twinstudio.api:app --host 127.0.0.1 --port 8000
+.venv/bin/twinstudio seed
+.venv/bin/twinstudio serve
 ```
 
 Kontrola domenowa niezależna od problemu `TestClient`:

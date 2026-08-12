@@ -12,7 +12,9 @@ from dotenv import load_dotenv
 from .config_diff import diff_as_dicts
 from .models import ProjectConfig
 
-load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
+_environment_root = Path(__file__).resolve().parents[1]
+load_dotenv(_environment_root / ".env.local", override=False)
+load_dotenv(_environment_root / ".env", override=False)
 
 
 @dataclass(slots=True)

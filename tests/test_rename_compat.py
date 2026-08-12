@@ -58,3 +58,37 @@ print(settings.port)
     assert legacy.returncode == 0, legacy.stderr
     assert str(tmp_path / "legacy") in legacy.stdout
     assert "8125" in legacy.stdout
+
+
+def test_local_dotenv_overrides_compose_dotenv(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    (tmp_path / ".env").write_text(
+        "TWINSTUDIO_DATA_DIR=/data\nTWINSTUDIO_PORT=8000\n",
+        encoding="utf-8",
+    )
+    local_data = tmp_path / "local-data"
+    (tmp_path / ".env.local").write_text(
+        f"TWINSTUDIO_DATA_DIR={local_data}\nTWINSTUDIO_PORT=8126\n",
+        encoding="utf-8",
+    )
+    code = r'''
+from twinstudio.settings import settings
+print(settings.data_dir)
+print(settings.port)
+'''
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(root / "src")
+    env.pop("PYTHON_DOTENV_DISABLED", None)
+    for key in ["TWINSTUDIO_DATA_DIR", "LPS_DATA_DIR", "TWINSTUDIO_PORT", "LPS_PORT"]:
+        env.pop(key, None)
+
+    completed = subprocess.run(
+        [sys.executable, "-c", code],
+        cwd=tmp_path,
+        env=env,
+        text=True,
+        capture_output=True,
+    )
+    assert completed.returncode == 0, completed.stderr
+    assert str(local_data) in completed.stdout
+    assert "8126" in completed.stdout

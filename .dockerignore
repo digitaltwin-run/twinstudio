@@ -1,0 +1,16 @@
+.git
+.github
+.code2llm_cache
+.env
+.env.local
+.pytest_cache
+.ruff_cache
+.venv
+.venv.*
+**/__pycache__
+**/*.egg-info
+**/*.py[cod]
+/data
+/generated
+/sample_output
+/docs/verification-report.json

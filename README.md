@@ -40,7 +40,7 @@ The evolution engine proposes hypotheses. It does not treat a graph score as pro
 ### Docker
 
 ```bash
-cp .env.example .env
+test -f .env || cp .env.example .env
 docker compose up --build
 ```
 
@@ -63,14 +63,19 @@ docker compose --profile object-store up --build
 ### Local Python
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[llm,dev]"
-cp .env.example .env
-twinstudio seed
-twinstudio serve
+python3.12 -m venv --clear .venv
+.venv/bin/python --version
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -e ".[llm,dev]" -e "./components/housing-studio[dev]"
+test -f .env.local || cp .env.local.example .env.local
+.venv/bin/twinstudio seed
+.venv/bin/twinstudio serve
 ```
+
+`--clear` makes an existing `.venv` use the requested interpreter instead of retaining stale
+symlinks from Conda or another Python installation. `.env.local` overrides the Docker-oriented
+`.env` only for the Python process, so both launch methods can coexist in one checkout. Use
+`.venv/bin/...` directly to make the selected interpreter explicit.
 
 LiteLLM is optional. When `LITELLM_MODEL` is empty, controlled local planners and evolution catalogs are used.
 

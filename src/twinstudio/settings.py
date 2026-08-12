@@ -6,7 +6,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+# Host-local settings must be loaded before the Compose-oriented .env. Neither
+# file overrides variables explicitly exported by the caller.
+load_dotenv(".env.local", override=False)
+load_dotenv(override=False)
 
 
 def _env(primary: str, legacy: str | None = None, default: str = "") -> str:
