@@ -187,7 +187,7 @@
     {
       "name": "pytest_current_workspace",
       "status": "passed",
-      "collected_tests": 73
+      "collected_tests": 74
     },
     {
       "name": "postgres_authenticated_healthcheck",
@@ -209,6 +209,15 @@
         "poa://demo/demo-rpi5@main/artifact/lid-stl",
         "poa://demo/demo-rpi5@main/artifact/assembly-front"
       ]
+    },
+    {
+      "name": "browser_all_2d_drawings_and_pdf",
+      "status": "passed",
+      "drawing_views": ["front", "top", "side"],
+      "drawing_cards": 3,
+      "selection": "passed",
+      "pdf_pages": 3,
+      "pdf_size_bytes": 4409
     },
     {
       "name": "llm_observability_contract",

@@ -55,6 +55,11 @@ with TestClient(app) as client:
     assert tree.status_code == 200 and tree.json()['tree']
     artifact = client.get('/api/v1/projects/demo-rpi5/artifacts/base-stl')
     assert artifact.status_code == 200 and len(artifact.content) > 1000
+    drawings_pdf = client.get('/api/v1/projects/demo-rpi5/drawings.pdf')
+    assert drawings_pdf.status_code == 200, drawings_pdf.text
+    assert drawings_pdf.headers['content-type'] == 'application/pdf'
+    assert 'demo-rpi5-main-drawings.pdf' in drawings_pdf.headers['content-disposition']
+    assert drawings_pdf.content.startswith(b'%PDF-') and len(drawings_pdf.content) > 2_000
     ui_context = {
         'session_id': 'pytest-browser-1234',
         'project_id': 'demo-rpi5',

@@ -75,20 +75,21 @@
     </section>
 
     <section id="view2d" class="tab-page viewer-page">
-      <div class="viewer-toolbar">
+      <header class="viewer-toolbar drawing-toolbar">
+        <div class="drawing-toolbar-title">
+          <strong>Rzuty 2D</strong>
+          <span id="drawingCount">Ładowanie…</span>
+        </div>
         <div class="tool-group">
-          <select id="drawingView"><option value="front">Front</option><option value="top">Top</option><option value="side">Side</option></select>
           <button class="tool tool2d active" data-tool="pencil">Ołówek</button>
           <button class="tool tool2d" data-tool="rectangle">Prostokąt</button>
           <button id="clearSelection2d" class="tool danger">Wyczyść</button>
         </div>
-        <span>Obiekt docelowy wybierz w drzewie po lewej.</span>
-      </div>
-      <div id="viewer2d" class="viewer2d">
-        <img id="drawingImage" alt="Rzut 2D" />
-        <canvas id="selectionCanvas2d" class="selection-overlay"></canvas>
-      </div>
-      <div class="view-hint">Rzut wygenerowany z CAD może mieć projection-map do 3D. Dla fotografii bez kalibracji system utworzy propozycję/uwagę, nie zgadnie położenia 3D.</div>
+        <a id="downloadDrawingsPdf" class="button primary" href="#" download>Pobierz wszystkie jako PDF</a>
+      </header>
+      <div class="drawing-context">Wszystkie rzuty projektu są widoczne poniżej. Obiekt docelowy wybierz w drzewie po lewej, a następnie rysuj bezpośrednio na właściwym rzucie.</div>
+      <div id="drawingList" class="drawing-list" aria-live="polite"></div>
+      <div class="drawing-hint">Rzuty wygenerowane z CAD mogą mieć projection-map do 3D. Dla fotografii bez kalibracji system utworzy propozycję/uwagę, nie zgadnie położenia 3D.</div>
     </section>
 
     <section id="spec" class="tab-page data-page"><div id="specContent"></div></section>

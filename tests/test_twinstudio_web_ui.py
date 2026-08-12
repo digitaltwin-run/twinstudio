@@ -44,6 +44,20 @@ def test_viewer_and_llm_context_contract_is_explicit() -> None:
     assert "/ui-context" in javascript
 
 
+def test_all_2d_drawings_replace_the_view_selector() -> None:
+    html = HTML.read_text(encoding="utf-8")
+    javascript = JAVASCRIPT.read_text(encoding="utf-8")
+    assert 'id="drawingView"' not in html
+    assert 'id="drawingList"' in html
+    assert 'id="drawingCount"' in html
+    assert 'id="downloadDrawingsPdf"' in html
+    assert "Pobierz wszystkie jako PDF" in html
+    assert "function loadDrawings()" in javascript
+    assert "document.querySelectorAll('.drawing-canvas')" in javascript
+    assert "state.activeDrawingView=canvas.dataset.view" in javascript
+    assert "/drawings.pdf" in javascript
+
+
 def test_compose_database_healthcheck_executes_authenticated_query() -> None:
     compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
     assert "PGPASSWORD=$${POSTGRES_PASSWORD} psql" in compose

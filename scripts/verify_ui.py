@@ -82,6 +82,29 @@ def main() -> int:
 
         args.screenshot.parent.mkdir(parents=True, exist_ok=True)
         page.screenshot(path=str(args.screenshot), full_page=True)
+        page.locator('.tab[data-tab="view2d"]').click()
+        page.wait_for_function(
+            "[...document.querySelectorAll('#drawingList img')].length > 0 && "
+            "[...document.querySelectorAll('#drawingList img')].every(image => image.complete && image.naturalWidth > 0)",
+            timeout=args.timeout_ms,
+        )
+        drawing_cards = page.locator("#drawingList .drawing-card").count()
+        drawing_labels = page.locator("#drawingList .drawing-card h3").all_text_contents()
+        drawing_canvases = page.locator("#drawingList .drawing-canvas").count()
+        pdf_response = page.request.get(f"{args.url}/api/v1/projects/{project_id}/drawings.pdf")
+        assert drawing_cards == 3, drawing_labels
+        assert drawing_labels == ["Front", "Top", "Side"], drawing_labels
+        assert drawing_canvases == drawing_cards
+        assert page.locator("#drawingView").count() == 0
+        assert pdf_response.ok and pdf_response.headers["content-type"] == "application/pdf"
+        assert (await_pdf := pdf_response.body()).startswith(b"%PDF-") and len(await_pdf) > 2_000
+        page.locator("#objectTree").get_by_text("Lower base", exact=True).click()
+        page.locator(".drawing-canvas").first.click(position={"x": 80, "y": 80})
+        assert "2d" in page.locator("#selectionSummary").inner_text().lower()
+        drawings_screenshot = args.screenshot.with_name(
+            f"{args.screenshot.stem}-2d{args.screenshot.suffix}"
+        )
+        page.screenshot(path=str(drawings_screenshot), full_page=True)
         report = {
             "status": "ok",
             "url": args.url,
@@ -91,8 +114,13 @@ def main() -> int:
             "loaded_meshes": loaded_meshes,
             "expected_meshes": expected_meshes,
             "rendered_triangles": triangles,
+            "drawing_cards": drawing_cards,
+            "drawing_labels": drawing_labels,
+            "drawings_pdf_bytes": len(await_pdf),
+            "drawing_selection": "ok",
             "visible_artifact_uris": context["visible_artifact_uris"],
             "screenshot": str(args.screenshot),
+            "drawings_screenshot": str(drawings_screenshot),
         }
         print(json.dumps(report, ensure_ascii=False, indent=2))
         browser.close()

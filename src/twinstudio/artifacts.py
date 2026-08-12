@@ -4,8 +4,14 @@ import hashlib
 import json
 import tempfile
 import zipfile
+from io import BytesIO
 from pathlib import Path
 from typing import Iterable
+
+from reportlab.graphics import renderPDF
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.pdfgen.canvas import Canvas
+from svglib.svglib import svg2rlg
 
 from twinstudio.domain import EventEnvelope, ProjectSnapshot
 from twinstudio.specification import unified_specification
@@ -74,6 +80,44 @@ def export_project_bundle(
             for path in sorted(item for item in root.rglob("*") if item.is_file()):
                 archive.write(path, path.relative_to(root).as_posix())
     return output_path
+
+
+def render_drawings_pdf(drawings: Iterable[tuple[str, Path]]) -> bytes:
+    """Render ordered SVG drawing artifacts as one vector, multi-page PDF."""
+
+    items = list(drawings)
+    if not items:
+        raise ValueError("Project has no SVG drawing views")
+    page_width, page_height = landscape(A4)
+    margin = 36.0
+    header_height = 38.0
+    footer_height = 20.0
+    buffer = BytesIO()
+    pdf = Canvas(buffer, pagesize=(page_width, page_height), pageCompression=1)
+    pdf.setTitle("TwinStudio drawings")
+    pdf.setAuthor("TwinStudio")
+    for index, (view, path) in enumerate(items, start=1):
+        drawing = svg2rlg(str(path))
+        if drawing is None or not drawing.width or not drawing.height:
+            raise ValueError(f"Cannot render SVG drawing: {path.name}")
+        available_width = page_width - 2 * margin
+        available_height = page_height - 2 * margin - header_height - footer_height
+        scale = min(available_width / drawing.width, available_height / drawing.height)
+        drawing.scale(scale, scale)
+        drawing.width *= scale
+        drawing.height *= scale
+        x = (page_width - drawing.width) / 2
+        y = margin + footer_height + (available_height - drawing.height) / 2
+        pdf.setFont("Helvetica-Bold", 16)
+        pdf.drawString(margin, page_height - margin - 10, f"View: {view.title()}")
+        pdf.setFont("Helvetica", 9)
+        pdf.drawRightString(page_width - margin, page_height - margin - 8, path.name)
+        renderPDF.draw(drawing, pdf, x, y)
+        pdf.setFont("Helvetica", 8)
+        pdf.drawRightString(page_width - margin, margin, f"TwinStudio | {index}/{len(items)}")
+        pdf.showPage()
+    pdf.save()
+    return buffer.getvalue()
 
 
 def _safe_artifact_name(uri: str, name: str) -> str:

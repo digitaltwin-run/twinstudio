@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from twinstudio import __version__
-from twinstudio.artifacts import export_project_bundle
+from twinstudio.artifacts import export_project_bundle, render_drawings_pdf
 from twinstudio.auth import AuthService
 from twinstudio.bus import CommandBus, CommandRejected, QueryService
 from twinstudio.change_planner import ChangePlanner
@@ -1113,6 +1113,34 @@ def download_artifact(
     artifact = snapshot.artifacts[artifact_uri]
     path = _resolved_artifact_path(artifact.path)
     return FileResponse(path, media_type=artifact.media_type, filename=artifact.name)
+
+
+@app.get("/api/v1/projects/{project_id}/drawings.pdf")
+def download_drawings_pdf(
+    project_id: str,
+    user: AuthPrincipal = Depends(principal),
+) -> Response:
+    authorize_project(project_id, user, "artifact.download")
+    snapshot = queries.project(project_id)
+    view_map = snapshot.metadata.get("default_2d_views", {})
+    drawings: list[tuple[str, Path]] = []
+    for view, artifact_uri in view_map.items():
+        artifact = snapshot.artifacts.get(str(artifact_uri))
+        if artifact is None or artifact.media_type != "image/svg+xml":
+            continue
+        drawings.append((str(view), _resolved_artifact_path(artifact.path)))
+    if not drawings:
+        raise HTTPException(status_code=404, detail="Project has no downloadable SVG drawing views")
+    try:
+        content = render_drawings_pdf(drawings)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    filename = f"{project_id}-{snapshot.revision}-drawings.pdf"
+    return Response(
+        content=content,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @app.get("/api/v1/projects/{project_id}/export")
