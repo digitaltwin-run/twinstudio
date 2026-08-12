@@ -55,6 +55,8 @@ def test_all_2d_drawings_replace_the_view_selector() -> None:
     assert "function loadDrawings()" in javascript
     assert "document.querySelectorAll('.drawing-canvas')" in javascript
     assert "state.activeDrawingView=canvas.dataset.view" in javascript
+    assert "uiContextQueue:Promise.resolve()" in javascript
+    assert "state.uiContextQueue=state.uiContextQueue.then" in javascript
     assert "/drawings.pdf" in javascript
 
 

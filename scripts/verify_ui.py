@@ -101,6 +101,23 @@ def main() -> int:
         page.locator("#objectTree").get_by_text("Lower base", exact=True).click()
         page.locator(".drawing-canvas").first.click(position={"x": 80, "y": 80})
         assert "2d" in page.locator("#selectionSummary").inner_text().lower()
+        page.wait_for_function(
+            """async expected => {
+                const response = await fetch(`/api/v1/projects/${document.querySelector('#projectSelect').value}/ui-context`);
+                if (!response.ok) return false;
+                const context = await response.json();
+                return context.visible_artifact_uris.length === expected
+                    && context.artifacts.filter(item => item.status === 'visible').length === expected;
+            }""",
+            arg=loaded_meshes + drawing_cards,
+            timeout=args.timeout_ms,
+        )
+        final_context_response = page.request.get(
+            f"{args.url}/api/v1/projects/{project_id}/ui-context"
+        )
+        final_context = final_context_response.json()
+        assert final_context_response.ok, final_context_response.text()
+        assert len(final_context["visible_artifact_uris"]) == loaded_meshes + drawing_cards
         drawings_screenshot = args.screenshot.with_name(
             f"{args.screenshot.stem}-2d{args.screenshot.suffix}"
         )
@@ -118,7 +135,7 @@ def main() -> int:
             "drawing_labels": drawing_labels,
             "drawings_pdf_bytes": len(await_pdf),
             "drawing_selection": "ok",
-            "visible_artifact_uris": context["visible_artifact_uris"],
+            "visible_artifact_uris": final_context["visible_artifact_uris"],
             "screenshot": str(args.screenshot),
             "drawings_screenshot": str(drawings_screenshot),
         }
