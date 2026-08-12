@@ -110,3 +110,41 @@ def test_relative_wall_thickness_is_not_misread_as_absolute_value(
     assert len(plan.operations) == 1
     assert plan.operations[0].arguments["parameter"] == "wall_thickness"
     assert plan.operations[0].arguments["value"] == 1.5
+
+
+def test_absolute_polish_height_target_with_typo_compiles_to_safe_parameter_patch(
+    project_snapshot, example_selection
+) -> None:
+    base_uri = "poa://demo/demo-rpi5@main/part/base"
+    project_snapshot.objects[base_uri].parameters["height"].value = 9.0
+    planner = ChangePlanner(replace(settings, litellm_model=""))
+
+    plan = planner.plan(
+        "zwiększ wysokośc podstawy do 21mm",
+        example_selection,
+        project_snapshot,
+        "editor@example.test",
+    ).plan
+
+    assert plan.unresolved_questions == []
+    assert len(plan.operations) == 1
+    operation = plan.operations[0]
+    assert operation.kind == "set_parameter"
+    assert operation.selector["adjustment"] == "absolute"
+    assert operation.arguments == {"parameter": "height", "value": 21.0, "unit": "mm"}
+    payload = planner.compile_apply_payload(plan, project_snapshot)
+    assert payload["parameter_patches"][0]["value"] == 21
+    assert payload["parameter_patches"][0]["previous_parameter"]["value"] == 9
+
+
+def test_absolute_depth_target_converts_centimetres(project_snapshot, example_selection) -> None:
+    planner = ChangePlanner(replace(settings, litellm_model=""))
+
+    plan = planner.plan(
+        "ustaw głębokość na 10 cm",
+        example_selection,
+        project_snapshot,
+        "editor@example.test",
+    ).plan
+
+    assert plan.operations[0].arguments == {"parameter": "depth", "value": 100.0, "unit": "mm"}

@@ -180,6 +180,38 @@ class ChangePlanner:
                     summary=f"Parameter {parameter} changes from {previous_value:g} to {new_value:g} {unit}.",
                 )
             )
+        else:
+            absolute_parameter = _absolute_parameter_change(lowered, target, project)
+            if absolute_parameter is not None:
+                parameter, previous_value, new_value, unit = absolute_parameter
+                operations.append(
+                    ChangeOperation(
+                        kind=ChangeOperationKind.SET_PARAMETER,
+                        target_uri=target,
+                        selector={
+                            "parameter": parameter,
+                            "scope": "selected_object",
+                            "adjustment": "absolute",
+                        },
+                        arguments={"parameter": parameter, "value": new_value, "unit": unit},
+                        rationale=(
+                            f"Explicit target value detected: {parameter} changes from "
+                            f"{previous_value:g} {unit} to {new_value:g} {unit}."
+                        ),
+                        confidence=0.97,
+                        validation_steps=[
+                            "Verify the target dimension remains compatible with adjacent features.",
+                            "Regenerate 2D drawings and 3D geometry before manufacturing.",
+                        ],
+                    )
+                )
+                impact.append(
+                    ImpactItem(
+                        uri=target,
+                        impact="direct",
+                        summary=f"Parameter {parameter} changes from {previous_value:g} to {new_value:g} {unit}.",
+                    )
+                )
 
         thickness = None
         if _relative_direction(lowered) is None:
@@ -394,7 +426,9 @@ _PARAMETER_ALIASES: tuple[tuple[str, tuple[str, ...]], ...] = (
 
 def _normalized_text(text: str) -> str:
     decomposed = unicodedata.normalize("NFKD", text.casefold())
-    return "".join(character for character in decomposed if not unicodedata.combining(character))
+    without_marks = "".join(character for character in decomposed if not unicodedata.combining(character))
+    # Unicode NFKD removes combining accents, but Polish ł is a distinct letter.
+    return without_marks.translate(str.maketrans({"ł": "l"}))
 
 
 def _relative_direction(text: str) -> int | None:
@@ -442,6 +476,48 @@ def _relative_parameter_change(
     if amount <= 0 or new_value <= 0:
         return None
     return parameter, previous_value, new_value, delta, existing_unit
+
+
+def _absolute_parameter_change(
+    text: str,
+    target_uri: str,
+    project: ProjectSnapshot,
+) -> tuple[str, float, float, str] | None:
+    """Parse an explicit target such as ``wysokość do 21 mm`` for a selected object."""
+
+    node = project.objects.get(target_uri)
+    if node is None:
+        return None
+    normalized = _normalized_text(text)
+    parameter = next(
+        (
+            name
+            for name, aliases in _PARAMETER_ALIASES
+            if name != "wall_thickness"
+            and name in node.parameters
+            and any(alias in normalized for alias in aliases)
+        ),
+        None,
+    )
+    target_match = re.search(
+        r"\b(?:do|na|to|at)\s*(\d+(?:[.,]\d+)?)\s*(mm|cm)\b",
+        normalized,
+    )
+    if parameter is None or target_match is None:
+        return None
+    existing = node.parameters[parameter]
+    if not isinstance(existing.value, (int, float)) or isinstance(existing.value, bool):
+        return None
+    existing_unit = existing.unit or "mm"
+    if existing_unit != "mm":
+        return None
+    target_value = float(target_match.group(1).replace(",", "."))
+    if target_match.group(2) == "cm":
+        target_value *= 10
+    target_value = round(target_value, 6)
+    if target_value <= 0:
+        return None
+    return parameter, float(existing.value), target_value, existing_unit
 
 
 def _number_near(text: str, terms: tuple[str, ...]) -> float | None:
