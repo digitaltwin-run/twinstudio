@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import RLock
@@ -43,7 +44,7 @@ class UiContext(ObservationModel):
     schema_version: Literal["1.0"] = "1.0"
     session_id: str = Field(min_length=8, max_length=128)
     project_id: str = Field(min_length=1, max_length=200)
-    route: str = Field(default="/", max_length=500)
+    route: str = Field(default="/", max_length=16000)
     active_tab: str = Field(default="view3d", max_length=100)
     selected_object_uri: str | None = None
     selection_uri: str | None = None
@@ -129,6 +130,34 @@ class UiContextStore:
             return self._items.get((project_id, selected)) if selected else None
 
 
+class ObservationLogStore:
+    """Thread-safe, bounded copy of emitted TWINOBS records for diagnostics."""
+
+    def __init__(self, max_entries: int = 2000) -> None:
+        self._lock = RLock()
+        self._items: deque[dict[str, Any]] = deque(maxlen=max_entries)
+
+    def append(self, payload: dict[str, Any]) -> None:
+        with self._lock:
+            self._items.append(dict(payload))
+
+    def recent(self, project_id: str | None = None, limit: int = 200) -> list[dict[str, Any]]:
+        with self._lock:
+            matches = [
+                dict(item)
+                for item in self._items
+                if project_id is None or item.get("project_id") == project_id
+            ]
+        return matches[-max(1, limit) :]
+
+    def to_dsl(self, project_id: str | None = None, limit: int = 200) -> str:
+        records = self.recent(project_id, limit)
+        return "\n\n".join(str(item["dsl"]) for item in records if item.get("dsl"))
+
+
+observation_logs = ObservationLogStore()
+
+
 def error_playbook_path(error_root: Path, code: str) -> Path:
     if not ERROR_CODE_PATTERN.fullmatch(code):
         raise ValueError("Invalid error code")
@@ -175,11 +204,18 @@ def make_problem(
 def emit_problem(problem: ProblemEnvelope) -> None:
     payload = problem.model_dump(mode="json", exclude_none=True)
     payload["dsl"] = problem.to_dsl()
+    observation_logs.append(payload)
     logger.error(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
 
 
 def emit_request_observation(
-    *, correlation_id: str, method: str, path: str, status_code: int, duration_ms: float
+    *,
+    correlation_id: str,
+    method: str,
+    path: str,
+    status_code: int,
+    duration_ms: float,
+    project_id: str | None = None,
 ) -> None:
     payload = {
         "kind": "TwinObservation",
@@ -192,17 +228,25 @@ def emit_request_observation(
         "status_code": status_code,
         "duration_ms": round(duration_ms, 3),
     }
-    payload["dsl"] = "\n".join(
+    if project_id:
+        payload["project_id"] = project_id
+    dsl_lines = [
+        "TWINOBS 1.0",
+        'KIND "TwinObservation"',
+        'LEVEL "info"',
+        'CODE "HTTP_REQUEST_COMPLETED"',
+        f"CORRELATION {json.dumps(correlation_id)}",
+        f"OPERATION {json.dumps(payload['operation'])}",
+    ]
+    if project_id:
+        dsl_lines.append(f"PROJECT {json.dumps(project_id)}")
+    dsl_lines.extend(
         [
-            "TWINOBS 1.0",
-            'KIND "TwinObservation"',
-            'LEVEL "info"',
-            'CODE "HTTP_REQUEST_COMPLETED"',
-            f"CORRELATION {json.dumps(correlation_id)}",
-            f"OPERATION {json.dumps(payload['operation'])}",
             f"STATUS {status_code}",
             f"DURATION_MS {payload['duration_ms']}",
             "END",
         ]
     )
+    payload["dsl"] = "\n".join(dsl_lines)
+    observation_logs.append(payload)
     logger.info(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))

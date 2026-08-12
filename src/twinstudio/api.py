@@ -6,7 +6,7 @@ from time import perf_counter
 from typing import Any
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -66,6 +66,7 @@ from twinstudio.observability import (
     emit_request_observation,
     load_error_playbook,
     make_problem,
+    observation_logs,
 )
 from twinstudio.permissions import PermissionDenied, require_permission
 from twinstudio.projector import ProjectNotFound
@@ -187,6 +188,7 @@ async def observe_http_request(request: Request, call_next):
             path=request.url.path,
             status_code=response.status_code,
             duration_ms=(perf_counter() - started) * 1000,
+            project_id=_request_project_id(request),
         )
     return response
 
@@ -481,6 +483,31 @@ def get_ui_context(
     if context is None:
         raise HTTPException(status_code=404, detail="UI context not found")
     return context.model_dump(mode="json")
+
+
+@app.get("/api/v1/projects/{project_id}/logs.dsl", response_class=Response)
+def get_observation_logs(
+    project_id: str,
+    limit: int = Query(default=200, ge=1, le=1000),
+    user: AuthPrincipal = Depends(principal),
+) -> Response:
+    authorize_project(project_id, user, "project.read")
+    content = observation_logs.to_dsl(project_id, limit)
+    safe_project_id = "".join(
+        character if character.isalnum() or character in "-_" else "_"
+        for character in project_id
+    )[:100]
+    return Response(
+        content=content,
+        media_type="text/plain; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="{safe_project_id or "project"}-observations.twinobs"'
+            ),
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
 
 
 @app.get("/api/v1/me")

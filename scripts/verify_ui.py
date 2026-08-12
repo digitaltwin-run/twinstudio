@@ -31,7 +31,11 @@ def main() -> int:
             headless=True,
             args=["--no-sandbox", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
         )
-        page = browser.new_page(viewport={"width": 1600, "height": 1000})
+        context = browser.new_context(
+            viewport={"width": 1600, "height": 1000},
+            permissions=["clipboard-read", "clipboard-write"],
+        )
+        page = context.new_page()
         page.on(
             "console",
             lambda message: console_errors.append(
@@ -118,6 +122,21 @@ def main() -> int:
         final_context = final_context_response.json()
         assert final_context_response.ok, final_context_response.text()
         assert len(final_context["visible_artifact_uris"]) == loaded_meshes + drawing_cards
+        action_args = page.evaluate("[...new URL(location.href).searchParams.getAll('args')]")
+        assert len(action_args) >= 4, action_args
+        assert any("|click|" in item and "tree-row" in item for item in action_args), action_args
+        assert any("|selection.created|" in item for item in action_args), action_args
+        assert "?args=" in final_context["route"], final_context["route"]
+        page.locator("#copyDslLogs").click()
+        page.wait_for_function(
+            "document.querySelector('#banner').textContent.includes('Skopiowano logi DSL')",
+            timeout=args.timeout_ms,
+        )
+        clipboard_dsl = page.evaluate("navigator.clipboard.readText()")
+        assert 'KIND "UiAction"' in clipboard_dsl
+        assert 'CODE "UI_ACTION_RECORDED"' in clipboard_dsl
+        assert "HTTP_REQUEST_COMPLETED" in clipboard_dsl
+        assert "POSITION" in clipboard_dsl
         drawings_screenshot = args.screenshot.with_name(
             f"{args.screenshot.stem}-2d{args.screenshot.suffix}"
         )
@@ -135,6 +154,8 @@ def main() -> int:
             "drawing_labels": drawing_labels,
             "drawings_pdf_bytes": len(await_pdf),
             "drawing_selection": "ok",
+            "url_action_args": len(action_args),
+            "clipboard_dsl_characters": len(clipboard_dsl),
             "visible_artifact_uris": final_context["visible_artifact_uris"],
             "screenshot": str(args.screenshot),
             "drawings_screenshot": str(drawings_screenshot),

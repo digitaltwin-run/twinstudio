@@ -187,7 +187,7 @@
     {
       "name": "pytest_current_workspace",
       "status": "passed",
-      "collected_tests": 74
+      "collected_tests": 76
     },
     {
       "name": "postgres_authenticated_healthcheck",
@@ -229,7 +229,18 @@
       "ui_context": "UIContext 1.0",
       "ui_context_ordering": "serialized",
       "mcp_tool_count": 23
+    },
+    {
+      "name": "browser_url_action_trace_and_dsl_clipboard",
+      "status": "passed",
+      "url_parameter": "args",
+      "retained_action_limit": 40,
+      "observed_action_args": 11,
+      "records_target_and_cursor_position": true,
+      "text_values_excluded": true,
+      "clipboard_dsl_min_characters": 8000,
+      "clipboard_kinds": ["UiAction", "TwinObservation"]
     }
   ],
-  "verified_at": "2026-08-12T11:29:17+00:00"
+  "verified_at": "2026-08-12T11:42:59+00:00"
 }

@@ -79,6 +79,14 @@ with TestClient(app) as client:
     assert reported.status_code == 200, reported.text
     current_ui = client.get('/api/v1/projects/demo-rpi5/ui-context')
     assert current_ui.status_code == 200 and current_ui.json()['rendered_triangles'] == 100
+    observation_logs = client.get('/api/v1/projects/demo-rpi5/logs.dsl?limit=100')
+    assert observation_logs.status_code == 200
+    assert observation_logs.headers['content-type'].startswith('text/plain')
+    assert 'demo-rpi5-observations.twinobs' in observation_logs.headers['content-disposition']
+    assert observation_logs.headers['cache-control'] == 'no-store'
+    assert 'TWINOBS 1.0' in observation_logs.text
+    assert 'HTTP_REQUEST_COMPLETED' in observation_logs.text
+    assert 'PROJECT "demo-rpi5"' in observation_logs.text
     spec = client.get('/api/v1/projects/demo-rpi5/specification')
     assert spec.status_code == 200 and spec.json()['manufacturing_views']['print_job']
     power = client.post('/api/v1/projects/demo-rpi5/simulations/power')

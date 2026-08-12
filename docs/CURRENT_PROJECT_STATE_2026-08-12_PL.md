@@ -17,7 +17,7 @@ Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 74 testy p
 | DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 74/74 testy przechodzą z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 76/76 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -54,6 +54,8 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - każde żądanie aplikacyjne emituje JSON/NDJSON z osadzonym DSL `TWINOBS 1.0` i `correlation_id`;
 - błędy REST zwracają kompatybilne pole `detail` oraz typowany `ProblemEnvelope` z kodem, kontekstem ekranu, artefaktami i adresem registry;
 - przeglądarka publikuje `UIContext`: aktywną kartę i narzędzie, zaznaczenie, stan renderera, liczbę siatek i trójkątów oraz listę użytych artefaktów;
+- ostatnie 40 akcji UI jest widoczne jako uporządkowane parametry `args` w URL; rekord zawiera sekwencję, czas, rodzaj akcji, kliknięty element, współrzędne kursora i zwięzły kontekst semantyczny, ale dla pól tekstowych ujawnia tylko długość;
+- autoryzowany `GET /api/v1/projects/{project_id}/logs.dsl` udostępnia ostatnie projektowe rekordy z ograniczonego bufora TWINOBS; przycisk `Kopiuj logi DSL` łączy je ze śladem `UiAction` z URL i zapisuje całość w schowku;
 - LLM może odczytać ostatni `UIContext` i playbook `error/<CODE>.md` przez REST lub dwa kontrolowane narzędzia MCP;
 - playbooki używają prostego, deklaratywnego `REPAIR 1.0`; nie dają LLM swobodnego wykonania powłoki ani ominięcia autoryzacji.
 
@@ -118,7 +120,7 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **74/74 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext` i kolejnością `.env.local`/`.env`;
+- pełny pytest: **76/76 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i kolejnością `.env.local`/`.env`;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
@@ -128,6 +130,7 @@ Interpretacja wyniku:
 - karta 2D pokazuje wszystkie rzuty z `default_2d_views` jako jedną przewijaną listę; każdy rzut zachowuje własną warstwę zaznaczeń i link SVG, a autoryzowany endpoint `/drawings.pdf` składa wszystkie SVG w jeden wektorowy, wielostronicowy PDF A4;
 - test Playwright na wdrożeniu `http://127.0.0.1:8400` potwierdził projekt `demo-rpi5`, 15 wierszy drzewa, **2/2 załadowane siatki STL**, **20 096 trójkątów** oraz trzy kolejne rzuty Front/Top/Side bez błędów konsoli i sieci;
 - aktualizacje `UIContext` są sekwencjonowane, więc końcowy stan dla LLM zawiera komplet pięciu widocznych artefaktów (dwa STL i trzy SVG), niezależnie od kolejności zakończenia żądań przeglądarki;
+- test Chromium potwierdził 11 kolejnych rekordów `args`, współrzędne i identyfikatory klikniętych elementów, zapis pełnej trasy diagnostycznej w `UIContext.route` oraz skopiowanie ponad 8 tys. znaków DSL z rekordami `UiAction` i `HTTP_REQUEST_COMPLETED`;
 - zrzut kontrolny testu UI jest zapisywany domyślnie jako `/tmp/twinstudio-ui.png`; test jest odtwarzalny poleceniem `python scripts/verify_ui.py --url <adres>`.
 
 ### 5.2. Kontrole nadal niewykonane
@@ -145,7 +148,7 @@ Interpretacja wyniku:
 4. **Rozstrzygnąć politykę dużych artefaktów.** Dowody release powinny mieć jawny manifest i proces odtworzenia; artefakty instalacyjne `*.egg-info` zostały usunięte ze źródeł i ponownie ignorowane.
 5. **Zaktualizować dowody intencji.** Dodać kuratorowany task/ticket 0.5.0, powiązać changelog z plikami/symbolami i wykluczyć wygenerowane artefakty z analizy `todo2code`.
 6. **Usunąć runtime CDN dla Three.js.** Bieżący test potwierdza działanie, ale import map nadal pobiera Three.js z jsDelivr; dla instalacji odciętych od Internetu zależności przeglądarkowe powinny zostać przypięte i dostarczone z obrazem.
-7. **Wynieść `UIContext` do współdzielonego store dla wielu replik.** Aktualny magazyn jest świadomie procesowy i wystarcza dla wdrożenia single-host/single-worker; deployment wieloreplikowy powinien użyć Redis lub trwałego strumienia z TTL.
+7. **Wynieść `UIContext` i bufor TWINOBS do współdzielonego store dla wielu replik.** Aktualne magazyny są świadomie procesowe i ograniczone (bufor: 2000 rekordów), co wystarcza dla wdrożenia single-host/single-worker; deployment wieloreplikowy powinien użyć Redis lub trwałego strumienia z TTL.
 
 ## 7. Odtwarzalne uruchomienie
 

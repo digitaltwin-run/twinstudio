@@ -44,6 +44,20 @@ def test_viewer_and_llm_context_contract_is_explicit() -> None:
     assert "/ui-context" in javascript
 
 
+def test_actions_are_serialized_in_url_and_dsl_logs_can_be_copied() -> None:
+    html = HTML.read_text(encoding="utf-8")
+    javascript = JAVASCRIPT.read_text(encoding="utf-8")
+    assert 'id="copyDslLogs"' in html
+    assert "Kopiuj logi DSL" in html
+    assert "searchParams.append('args'" in javascript
+    assert "history.replaceState" in javascript
+    assert "POSITION ${JSON.stringify" in javascript
+    assert "CODE \"UI_ACTION_RECORDED\"" in javascript
+    assert "/logs.dsl?limit=300" in javascript
+    assert "navigator.clipboard?.writeText" in javascript
+    assert "text_length=${element.value.length}" in javascript
+
+
 def test_all_2d_drawings_replace_the_view_selector() -> None:
     html = HTML.read_text(encoding="utf-8")
     javascript = JAVASCRIPT.read_text(encoding="utf-8")

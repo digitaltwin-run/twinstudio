@@ -6,6 +6,7 @@ import pytest
 
 from twinstudio.observability import (
     ArtifactUse,
+    ObservationLogStore,
     UiContext,
     UiContextStore,
     error_playbook_path,
@@ -53,6 +54,36 @@ def test_ui_context_store_returns_latest_session() -> None:
     second = store.put(UiContext(session_id="browser-2222", project_id="demo-rpi5", active_tab="spec"))
     assert store.get("demo-rpi5", first.session_id) == first
     assert store.get("demo-rpi5") == second
+
+
+def test_observation_log_store_is_bounded_and_filters_project_dsl() -> None:
+    store = ObservationLogStore(max_entries=2)
+    store.append(
+        {
+            "project_id": "other-project",
+            "operation": "GET /api/v1/projects/other-project",
+            "dsl": 'TWINOBS 1.0\nPROJECT "other-project"\nEND',
+        }
+    )
+    store.append(
+        {
+            "project_id": "demo-rpi5",
+            "operation": "GET /api/v1/projects/demo-rpi5/tree",
+            "dsl": 'TWINOBS 1.0\nCODE "FIRST"\nEND',
+        }
+    )
+    store.append(
+        {
+            "project_id": "demo-rpi5",
+            "operation": "GET /api/v1/projects/demo-rpi5/ui-context",
+            "dsl": 'TWINOBS 1.0\nCODE "SECOND"\nEND',
+        }
+    )
+    dsl = store.to_dsl("demo-rpi5", limit=10)
+    assert 'CODE "FIRST"' in dsl
+    assert 'CODE "SECOND"' in dsl
+    assert "other-project" not in dsl
+    assert store.to_dsl("demo", limit=10) == ""
 
 
 def test_error_registry_rejects_path_traversal_and_reads_known_code() -> None:

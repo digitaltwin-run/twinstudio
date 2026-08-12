@@ -46,13 +46,15 @@ The automated tests cover, among other things:
 
 ## Live browser and Compose verification (2026-08-12 follow-up)
 
-- The current full Python suite passes: **74 tests**.
+- The current full Python suite passes: **76 tests**.
 - PostgreSQL health now performs an authenticated `SELECT 1` with the credentials of the initialized volume. The previous false-positive `pg_isready` check and repeated missing-role log entries are gone.
 - A real headless Chromium session loaded `demo-rpi5`, 15 product-tree rows, both declared STL meshes and all three ordered 2D drawings (Front, Top, Side) in one scrollable view.
 - The combined drawing download is a valid three-page vector A4 PDF; per-view 2D selection remains functional without the former view selector.
 - The 3D viewer reported **2/2 meshes** and **20,096 rendered triangles**; the browser had no relevant console, page or failed-request errors.
 - REST artifact downloads returned the full `base.stl` (406,084 bytes), and serialized UI-context updates exposed all five visible artifact URIs (two STL and three SVG) to REST and MCP without request-order races.
 - Application request logs are emitted as JSON records with an embedded `TWINOBS 1.0` DSL and correlation identifier. Errors link to guarded `error/<CODE>.md` repair playbooks.
+- Browser actions are retained in ordered, repeated URL `args` parameters with target and cursor coordinates. Text contents are excluded; only field lengths are recorded.
+- The authorized project `logs.dsl` endpoint and top-bar clipboard action combine recent server TWINOBS records with URL-derived `UiAction` DSL. Chromium verified the actual clipboard payload.
 
 ## Source-archive and Python-package checks
 
