@@ -150,6 +150,43 @@ def test_absolute_depth_target_converts_centimetres(project_snapshot, example_se
     assert plan.operations[0].arguments == {"parameter": "depth", "value": 100.0, "unit": "mm"}
 
 
+def test_selected_lid_context_resolves_lower_to_as_physical_component_height(
+    project_snapshot,
+    example_selection,
+) -> None:
+    lid_uri = "poa://demo/demo-rpi5@main/part/lid"
+    selection_2d = example_selection.model_copy(
+        update={
+            "source_view": "2d",
+            "tool": "pencil",
+            "screen_path": [{"x": 1130, "y": 611}],
+            "ray_hits": [],
+            "world_aabb": None,
+            "camera": None,
+            "target_object_uris": [lid_uri],
+            "projection_entity_ids": ["front.lid.outer-slope"],
+        }
+    )
+    planner = ChangePlanner(replace(settings, litellm_model=""))
+
+    plan = planner.plan(
+        "obniż do 12mm",
+        selection_2d,
+        project_snapshot,
+        "editor@example.test",
+    ).plan
+
+    assert plan.unresolved_questions == []
+    assert len(plan.operations) == 1
+    operation = plan.operations[0]
+    assert operation.kind == "set_parameter"
+    assert operation.target_uri == lid_uri
+    assert operation.arguments == {"parameter": "height", "value": 12.0, "unit": "mm"}
+    payload = planner.compile_apply_payload(plan, project_snapshot)
+    assert payload["parameter_patches"][0]["previous_parameter"]["value"] == 15.0
+    assert payload["parameter_patches"][0]["previous_parameter"]["status"] == "derived"
+
+
 @pytest.mark.parametrize(
     ("prompt", "kind", "arguments", "applyable"),
     [

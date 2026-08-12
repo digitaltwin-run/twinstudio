@@ -4,9 +4,12 @@ import json
 from pathlib import Path
 
 from twinstudio.cad_regeneration import (
+    CadChangeInvalid,
     dimension_overrides_for_change,
     housing_config_from_snapshot,
+    physical_component_height,
     records_from_manifest,
+    validate_parameter_change,
 )
 from twinstudio.domain import ProjectSnapshot
 
@@ -54,6 +57,53 @@ def test_base_height_change_preserves_physical_lid_height() -> None:
     assert config.dimensions.lid_height == 15.0
     assert config.dimensions.total_height == 36.0
     assert lid.parameters["total_height"].value == 40.0
+
+
+def test_lid_physical_height_change_does_not_resize_base() -> None:
+    snapshot = _snapshot()
+    base = snapshot.objects["poa://demo/demo-rpi5@main/part/base"]
+    lid = snapshot.objects["poa://demo/demo-rpi5@main/part/lid"]
+    patches = [{"object_uri": lid.uri, "parameter": "height", "value": 12.0}]
+
+    assert physical_component_height(snapshot, lid.uri) == 15.0
+    overrides = dimension_overrides_for_change(snapshot, patches)
+    config = housing_config_from_snapshot(snapshot, dimension_overrides=overrides)
+
+    assert overrides == {"lid_height_mm": 12.0}
+    assert config.dimensions.base_height == 25.0
+    assert config.dimensions.lid_height == 12.0
+    assert config.dimensions.total_height == 37.0
+    assert base.parameters["height"].value == 25.0
+
+
+def test_invalid_lid_height_is_rejected_before_project_state_changes() -> None:
+    snapshot = _snapshot()
+    lid = snapshot.objects["poa://demo/demo-rpi5@main/part/lid"]
+    patches = [{"object_uri": lid.uri, "parameter": "height", "value": 12.0, "unit": "mm"}]
+    overrides = dimension_overrides_for_change(snapshot, patches)
+
+    try:
+        validate_parameter_change(snapshot, patches, dimension_overrides=overrides)
+    except CadChangeInvalid as exc:
+        assert [item["code"] for item in exc.warnings] == ["AUX_BOSS_TOP_ABOVE_LID"]
+    else:
+        raise AssertionError("invalid lid geometry was accepted")
+
+    assert "height" not in lid.parameters
+    assert lid.parameters["total_height"].value == 40.0
+
+
+def test_valid_lid_height_passes_preflight_without_mutating_snapshot() -> None:
+    snapshot = _snapshot()
+    lid = snapshot.objects["poa://demo/demo-rpi5@main/part/lid"]
+    patches = [{"object_uri": lid.uri, "parameter": "height", "value": 14.0, "unit": "mm"}]
+    overrides = dimension_overrides_for_change(snapshot, patches)
+
+    warnings = validate_parameter_change(snapshot, patches, dimension_overrides=overrides)
+
+    assert warnings
+    assert not any(item["severity"] == "error" for item in warnings)
+    assert "height" not in lid.parameters
 
 
 def test_last_generated_lid_height_survives_subsequent_base_changes() -> None:
@@ -161,3 +211,5 @@ def test_generated_files_replace_stable_artifact_uris_and_viewer_paths(tmp_path:
     assert result.objects[0].metadata["viewer_mesh"] == by_key["base-stl"].path
     assert result.objects[1].metadata["viewer_mesh"] == by_key["lid-stl"].path
     assert result.objects[1].metadata["cad_dimensions"]["lid_height_mm"] == 15.0
+    assert result.objects[1].parameters["height"].value == 15.0
+    assert result.objects[1].parameters["height"].status == "derived"

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from twinstudio.domain import ArtifactRecord, ObjectNode, ProjectSnapshot
+from twinstudio.domain import ArtifactRecord, ObjectNode, ParameterValue, ProjectSnapshot
 
 BASE_SUFFIX = "/part/base"
 LID_SUFFIX = "/part/lid"
@@ -19,6 +19,15 @@ class CadRegenerationResult:
     mapped_parameters: list[str]
 
 
+class CadChangeInvalid(ValueError):
+    """A proposed scalar change would create an invalid CAD configuration."""
+
+    def __init__(self, warnings: list[dict[str, Any]]) -> None:
+        self.warnings = warnings
+        messages = "; ".join(str(item.get("message", item.get("code"))) for item in warnings)
+        super().__init__(f"Blocking design validation errors: {messages}")
+
+
 def _part(snapshot: ProjectSnapshot, suffix: str) -> ObjectNode:
     node = next((item for uri, item in snapshot.objects.items() if uri.endswith(suffix)), None)
     if node is None:
@@ -26,11 +35,16 @@ def _part(snapshot: ProjectSnapshot, suffix: str) -> ObjectNode:
     return node
 
 
-def _number(node: ObjectNode, parameter: str, default: float) -> float:
+def _parameter_number(node: ObjectNode, parameter: str) -> float | None:
     value = node.parameters.get(parameter)
     if value is None or isinstance(value.value, bool) or not isinstance(value.value, (int, float)):
-        return default
+        return None
     return float(value.value)
+
+
+def _number(node: ObjectNode, parameter: str, default: float) -> float:
+    value = _parameter_number(node, parameter)
+    return default if value is None else value
 
 
 def _cad_dimensions(node: ObjectNode) -> dict[str, Any]:
@@ -59,6 +73,33 @@ def _generated_lid_height(base: ObjectNode, lid: ObjectNode, source_total_height
     return lid_height
 
 
+def physical_component_height(snapshot: ProjectSnapshot, object_uri: str) -> float | None:
+    """Return the current physical component height represented by project state."""
+
+    node = snapshot.objects.get(object_uri)
+    if node is None:
+        return None
+    direct_height = _parameter_number(node, "height")
+    if direct_height is not None:
+        return direct_height
+    if not object_uri.endswith(LID_SUFFIX):
+        return None
+    try:
+        base = _part(snapshot, BASE_SUFFIX)
+    except ValueError:
+        return None
+    source_total_height = _parameter_number(node, "total_height")
+    if source_total_height is None:
+        return None
+    generated_height = _generated_lid_height(base, node, source_total_height)
+    if generated_height is not None:
+        return generated_height
+    base_height = _parameter_number(base, "height")
+    if base_height is None or source_total_height <= base_height:
+        return None
+    return source_total_height - base_height
+
+
 def housing_config_from_snapshot(
     snapshot: ProjectSnapshot,
     *,
@@ -73,7 +114,9 @@ def housing_config_from_snapshot(
     config = default_project_config()
     base_height = _number(base, "height", config.dimensions.base_height)
     source_total_height = _number(lid, "total_height", config.dimensions.total_height)
-    lid_height = _generated_lid_height(base, lid, source_total_height)
+    lid_height = _parameter_number(lid, "height")
+    if lid_height is None:
+        lid_height = _generated_lid_height(base, lid, source_total_height)
     overrides = dimension_overrides or {}
     if "lid_height_mm" in overrides:
         lid_height = float(overrides["lid_height_mm"])
@@ -136,12 +179,95 @@ def dimension_overrides_for_change(
     except ValueError:
         return {}
     changed = {(item.get("object_uri"), item.get("parameter")) for item in parameter_patches}
+    lid_height_patch = next(
+        (
+            item
+            for item in parameter_patches
+            if item.get("object_uri") == lid.uri and item.get("parameter") == "height"
+        ),
+        None,
+    )
+    if lid_height_patch is not None:
+        lid_height = _finite_number(lid_height_patch.get("value"))
+        return {"lid_height_mm": lid_height} if lid_height is not None and lid_height > 0 else {}
     base_height_changed = (base.uri, "height") in changed
     total_height_changed = (lid.uri, "total_height") in changed
     if not base_height_changed or total_height_changed:
         return {}
     config = housing_config_from_snapshot(snapshot)
     return {"lid_height_mm": config.dimensions.lid_height}
+
+
+def validate_parameter_change(
+    snapshot: ProjectSnapshot,
+    parameter_patches: list[dict[str, Any]],
+    *,
+    dimension_overrides: dict[str, float] | None = None,
+) -> list[dict[str, Any]]:
+    """Preflight scalar patches against the CAD adapter without mutating project state.
+
+    Non-housing projects have no Housing Studio configuration and are intentionally
+    ignored here. Their adapters remain responsible for their own validation.
+    """
+
+    if not parameter_patches:
+        return []
+    candidate = snapshot.model_copy(deep=True)
+    for patch in parameter_patches:
+        target = candidate.objects.get(str(patch.get("object_uri", "")))
+        if target is None:
+            continue
+        parameter = str(patch.get("parameter", ""))
+        if not parameter:
+            continue
+        if patch.get("remove"):
+            target.parameters.pop(parameter, None)
+            continue
+        restored = patch.get("restore_parameter")
+        if restored is not None:
+            target.parameters[parameter] = ParameterValue.model_validate(restored)
+            continue
+        existing = target.parameters.get(parameter)
+        if existing is not None:
+            target.parameters[parameter] = existing.model_copy(
+                update={
+                    "value": patch.get("value"),
+                    "unit": patch.get("unit") if patch.get("unit") is not None else existing.unit,
+                }
+            )
+        else:
+            target.parameters[parameter] = ParameterValue(
+                value=patch.get("value"),
+                unit=patch.get("unit"),
+                status="approved",
+            )
+
+    try:
+        _part(candidate, BASE_SUFFIX)
+        _part(candidate, LID_SUFFIX)
+    except ValueError:
+        return []
+
+    from housing_studio.validation import collect_warnings
+
+    try:
+        config = housing_config_from_snapshot(candidate, dimension_overrides=dimension_overrides)
+    except ValueError as exc:
+        raise CadChangeInvalid(
+            [
+                {
+                    "code": "CAD_CONFIGURATION_INVALID",
+                    "severity": "error",
+                    "message": str(exc),
+                    "suggestion": "Use a positive value inside the supported parameter range.",
+                }
+            ]
+        ) from exc
+    warnings = [item.to_dict() for item in collect_warnings(config)]
+    blocking = [item for item in warnings if item["severity"] == "error"]
+    if blocking:
+        raise CadChangeInvalid(blocking)
+    return warnings
 
 
 def _manifest_record(manifest: dict[str, Any], path: str) -> dict[str, Any]:
@@ -239,11 +365,29 @@ def records_from_manifest(
     object_updates: list[ObjectNode] = []
     for node, artifact_key in ((base, "base-stl"), (lid, "lid-stl")):
         metadata = dict(node.metadata)
+        parameters = dict(node.parameters)
         metadata["viewer_mesh"] = artifact_by_key[artifact_key].path
         metadata["cad_job_id"] = job_id
         if generated_dimensions:
             metadata["cad_dimensions"] = generated_dimensions
-        object_updates.append(node.model_copy(update={"revision": revision, "metadata": metadata}))
+            if node.uri == lid.uri:
+                physical_height = float(generated_dimensions["lid_height_mm"])
+                existing_height = parameters.get("height")
+                parameters["height"] = (
+                    existing_height.model_copy(update={"value": physical_height, "unit": "mm"})
+                    if existing_height is not None
+                    else ParameterValue(
+                        value=physical_height,
+                        unit="mm",
+                        status="derived",
+                        notes="Physical component height synchronized from the latest CAD generation.",
+                    )
+                )
+        object_updates.append(
+            node.model_copy(
+                update={"revision": revision, "metadata": metadata, "parameters": parameters}
+            )
+        )
 
     mapped_parameters = [
         f"{base.uri}:width",
@@ -252,6 +396,7 @@ def records_from_manifest(
         f"{base.uri}:wall_thickness",
         f"{base.uri}:floor_thickness",
         f"{lid.uri}:wall_thickness",
+        f"{lid.uri}:height",
         f"{lid.uri}:total_height",
         f"{lid.uri}:vertical_joint_section",
     ]

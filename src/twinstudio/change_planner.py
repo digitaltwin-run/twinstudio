@@ -5,6 +5,7 @@ import unicodedata
 from dataclasses import dataclass
 from typing import Any
 
+from twinstudio.cad_regeneration import physical_component_height
 from twinstudio.domain import (
     ChangeOperation,
     ChangeOperationKind,
@@ -401,6 +402,18 @@ class ChangePlanner:
             if operation.kind == ChangeOperationKind.SET_PARAMETER:
                 object_uri = _owning_object_uri(operation.target_uri, project)
                 existing = project.objects[object_uri].parameters.get(operation.arguments["parameter"])
+                previous_parameter = existing.model_dump(mode="json") if existing is not None else None
+                if previous_parameter is None and operation.arguments["parameter"] == "height":
+                    physical_height = physical_component_height(project, object_uri)
+                    if physical_height is not None:
+                        previous_parameter = {
+                            "value": physical_height,
+                            "unit": "mm",
+                            "status": "derived",
+                            "source_uri": None,
+                            "confidence": 1.0,
+                            "notes": "Physical component height inferred from current CAD state.",
+                        }
                 parameter_patches.append(
                     {
                         "object_uri": object_uri,
@@ -408,9 +421,7 @@ class ChangePlanner:
                         "value": operation.arguments["value"],
                         "unit": operation.arguments.get("unit"),
                         "operation_id": operation.operation_id,
-                        "previous_parameter": (
-                            existing.model_dump(mode="json") if existing is not None else None
-                        ),
+                        "previous_parameter": previous_parameter,
                     }
                 )
             elif operation.kind == ChangeOperationKind.ADD_ANNOTATION:
@@ -454,6 +465,8 @@ def _language_hint(text: str) -> str:
         "ustaw",
         "zmniejsz",
         "zwieksz",
+        "obniz",
+        "podnies",
         "wysokosc",
         "szerokosc",
         "glebokosc",
@@ -508,19 +521,20 @@ def _relative_parameter_change(
         None,
     )
     amount_match = re.search(r"\b(?:o|by)\s*(\d+(?:[.,]\d+)?)\s*(mm|cm)\b", normalized)
+    if parameter is None and _implies_selected_height(normalized):
+        parameter = "height"
     if parameter is None or amount_match is None:
         return None
-    existing = node.parameters[parameter]
-    if not isinstance(existing.value, (int, float)) or isinstance(existing.value, bool):
+    measurement = _parameter_measurement(project, target_uri, parameter)
+    if measurement is None:
         return None
-    existing_unit = existing.unit or "mm"
+    previous_value, existing_unit = measurement
     if existing_unit != "mm":
         return None
     amount = float(amount_match.group(1).replace(",", "."))
     if amount_match.group(2) == "cm":
         amount *= 10
     delta = direction * amount
-    previous_value = float(existing.value)
     new_value = round(previous_value + delta, 6)
     if amount <= 0 or new_value <= 0:
         return None
@@ -552,12 +566,14 @@ def _absolute_parameter_change(
         r"\b(?:do|na|to|at)\s*(\d+(?:[.,]\d+)?)\s*(mm|cm)\b",
         normalized,
     )
+    if parameter is None and _implies_selected_height(normalized):
+        parameter = "height"
     if parameter is None or target_match is None:
         return None
-    existing = node.parameters[parameter]
-    if not isinstance(existing.value, (int, float)) or isinstance(existing.value, bool):
+    measurement = _parameter_measurement(project, target_uri, parameter)
+    if measurement is None:
         return None
-    existing_unit = existing.unit or "mm"
+    previous_value, existing_unit = measurement
     if existing_unit != "mm":
         return None
     target_value = float(target_match.group(1).replace(",", "."))
@@ -566,7 +582,31 @@ def _absolute_parameter_change(
     target_value = round(target_value, 6)
     if target_value <= 0:
         return None
-    return parameter, float(existing.value), target_value, existing_unit
+    return parameter, previous_value, target_value, existing_unit
+
+
+def _implies_selected_height(normalized: str) -> bool:
+    return bool(re.search(r"\b(?:obniz|podnies|lower|raise)\b", normalized))
+
+
+def _parameter_measurement(
+    project: ProjectSnapshot,
+    target_uri: str,
+    parameter: str,
+) -> tuple[float, str] | None:
+    node = project.objects.get(target_uri)
+    if node is None:
+        return None
+    existing = node.parameters.get(parameter)
+    if existing is not None:
+        if isinstance(existing.value, bool) or not isinstance(existing.value, (int, float)):
+            return None
+        return float(existing.value), existing.unit or "mm"
+    if parameter == "height":
+        physical_height = physical_component_height(project, target_uri)
+        if physical_height is not None:
+            return physical_height, "mm"
+    return None
 
 
 def _number_near(text: str, terms: tuple[str, ...]) -> float | None:

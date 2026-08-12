@@ -98,6 +98,54 @@ def _validate_nl_matrix() -> list[dict[str, object]]:
                 "runtime": "safe-parameter-patch" if applyable else "deferred-cad-operation",
             }
         )
+    lid_uri = "poa://demo/demo-rpi5@main/part/lid"
+    lid_selection = selection.model_copy(
+        update={
+            "source_view": "2d",
+            "tool": "pencil",
+            "screen_path": [{"x": 1130, "y": 611}],
+            "ray_hits": [],
+            "world_aabb": None,
+            "camera": None,
+            "target_object_uris": [lid_uri],
+            "projection_entity_ids": ["front.lid.outer-slope"],
+        }
+    )
+    contextual_prompt = "obniż do 14 mm"
+    contextual_plan = planner.plan(
+        contextual_prompt,
+        lid_selection,
+        project,
+        "conformance@twinstudio.local",
+    ).plan
+    contextual_operation = contextual_plan.operations[0]
+    contextual_payload = planner.compile_apply_payload(contextual_plan, project)
+    observed_contextual = (
+        contextual_operation.kind,
+        contextual_operation.target_uri,
+        contextual_operation.arguments,
+        contextual_payload["parameter_patches"][0]["previous_parameter"]["value"],
+    )
+    expected_contextual = (
+        "set_parameter",
+        lid_uri,
+        {"parameter": "height", "value": 14.0, "unit": "mm"},
+        15.0,
+    )
+    if observed_contextual != expected_contextual:
+        raise AssertionError(
+            f"contextual NL mismatch for {contextual_prompt!r}: "
+            f"expected {expected_contextual}, observed {observed_contextual}"
+        )
+    results.append(
+        {
+            "nl": contextual_prompt,
+            "kind": contextual_operation.kind,
+            "target": contextual_operation.target_uri,
+            "arguments": contextual_operation.arguments,
+            "runtime": "safe-parameter-patch-with-cad-preflight",
+        }
+    )
     return results
 
 

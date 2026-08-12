@@ -133,6 +133,82 @@ with TestClient(app) as client:
     assert restored_dimensions['lid_height_mm'] == 15
     assert restored_dimensions['total_height_mm'] == 40
 
+    lid_selection = dict(selection)
+    lid_selection.update({
+        'selection_id': 'cad-lid-height-selection',
+        'uri': 'poa://demo/demo-rpi5@main/region/cad-lid-height-selection',
+        'source_view': '2d',
+        'tool': 'pencil',
+        'screen_path': [{'x': 1130, 'y': 611}],
+        'ray_hits': [],
+        'world_aabb': None,
+        'camera': None,
+        'target_object_uris': [lid_uri],
+        'projection_entity_ids': ['front.lid.outer-slope'],
+    })
+    lid_plan = client.post(
+        '/api/v1/projects/demo-rpi5/change-plans',
+        json={'prompt': 'obniż do 12mm', 'selection': lid_selection},
+    )
+    assert lid_plan.status_code == 200, lid_plan.text
+    lid_operation = lid_plan.json()['plan']['operations'][0]
+    assert lid_operation['kind'] == 'set_parameter'
+    assert lid_operation['target_uri'] == lid_uri
+    assert lid_operation['arguments'] == {'parameter': 'height', 'value': 12.0, 'unit': 'mm'}
+    lid_plan_id = lid_plan.json()['plan']['plan_id']
+    invalid_lid_apply = client.post(
+        f'/api/v1/projects/demo-rpi5/change-plans/{lid_plan_id}/apply',
+        json={},
+    )
+    assert invalid_lid_apply.status_code == 422, invalid_lid_apply.text
+    invalid_problem = invalid_lid_apply.json()['error']
+    assert invalid_problem['code'] == 'CAD-CHANGE-INVALID'
+    assert invalid_problem['details']['warnings'][0]['code'] == 'AUX_BOSS_TOP_ABOVE_LID'
+    unchanged_after_rejection = client.get('/api/v1/projects/demo-rpi5').json()['project']
+    assert unchanged_after_rejection['objects'][base_uri]['parameters']['height']['value'] == 25
+    assert unchanged_after_rejection['objects'][lid_uri]['parameters']['height']['value'] == 15
+
+    valid_lid_plan = client.post(
+        '/api/v1/projects/demo-rpi5/change-plans',
+        json={'prompt': 'obniż do 14mm', 'selection': lid_selection},
+    )
+    assert valid_lid_plan.status_code == 200, valid_lid_plan.text
+    valid_lid_operation = valid_lid_plan.json()['plan']['operations'][0]
+    assert valid_lid_operation['kind'] == 'set_parameter'
+    assert valid_lid_operation['target_uri'] == lid_uri
+    assert valid_lid_operation['arguments'] == {'parameter': 'height', 'value': 14.0, 'unit': 'mm'}
+    lid_applied = client.post(
+        f"/api/v1/projects/demo-rpi5/change-plans/{valid_lid_plan.json()['plan']['plan_id']}/apply",
+        json={},
+    )
+    assert lid_applied.status_code == 200, lid_applied.text
+    assert lid_applied.json()['generation']['dimension_overrides'] == {'lid_height_mm': 14.0}
+    lid_job = lid_applied.json()['generation']['job_id']
+    wait_for_generation(client, lid_job)
+    lid_resized = client.get('/api/v1/projects/demo-rpi5').json()['project']
+    lid_dimensions = lid_resized['objects'][lid_uri]['metadata']['cad_dimensions']
+    assert lid_resized['objects'][base_uri]['parameters']['height']['value'] == 25
+    assert lid_resized['objects'][lid_uri]['parameters']['height']['value'] == 14
+    assert lid_dimensions['base_height_mm'] == 25
+    assert lid_dimensions['lid_height_mm'] == 14
+    assert lid_dimensions['total_height_mm'] == 39
+
+    lid_event = next(
+        item for item in lid_applied.json()['events'] if item['event_type'] == 'ChangeApplied'
+    )
+    lid_undo = client.post(
+        f"/api/v1/projects/demo-rpi5/change-history/{lid_event['event_id']}/undo"
+    )
+    assert lid_undo.status_code == 200, lid_undo.text
+    lid_undo_job = lid_undo.json()['generation']['job_id']
+    wait_for_generation(client, lid_undo_job)
+    lid_restored = client.get('/api/v1/projects/demo-rpi5').json()['project']
+    restored_lid_dimensions = lid_restored['objects'][lid_uri]['metadata']['cad_dimensions']
+    assert lid_restored['objects'][lid_uri]['parameters']['height']['value'] == 15
+    assert restored_lid_dimensions['base_height_mm'] == 25
+    assert restored_lid_dimensions['lid_height_mm'] == 15
+    assert restored_lid_dimensions['total_height_mm'] == 40
+
     logs = client.get('/api/v1/projects/demo-rpi5/logs.dsl?limit=100').text
     assert 'CODE "CAD_REGENERATION_QUEUED"' in logs
     assert 'CODE "CAD_REGENERATION_COMPLETED"' in logs

@@ -206,6 +206,12 @@ with TestClient(app) as client:
     assert applied_event['data']['authority']['schema_version'] == 'twinstudio.change-authority/v1'
     assert applied_event['data']['authority']['actor'] == 'creator@example.test'
     assert applied_event['data']['authority']['permission'] == 'change.apply'
+    stale_reapply = client.post(
+        f'/api/v1/projects/demo-rpi5/change-plans/{reversible_plan_id}/apply',
+        json={},
+    )
+    assert stale_reapply.status_code == 409, stale_reapply.text
+    assert stale_reapply.json()['error']['code'] == 'CONCURRENCY_CONFLICT'
     changed_project = client.get('/api/v1/projects/demo-rpi5').json()['project']
     base_uri = 'poa://demo/demo-rpi5@main/part/base'
     assert changed_project['objects'][base_uri]['parameters']['wall_thickness']['value'] == 3

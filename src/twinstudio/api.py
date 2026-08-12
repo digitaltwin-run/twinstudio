@@ -24,7 +24,12 @@ from twinstudio.artifacts import (
 )
 from twinstudio.auth import AuthService
 from twinstudio.bus import CommandBus, CommandRejected, QueryService
-from twinstudio.cad_regeneration import dimension_overrides_for_change, generate_project_preview
+from twinstudio.cad_regeneration import (
+    CadChangeInvalid,
+    dimension_overrides_for_change,
+    generate_project_preview,
+    validate_parameter_change,
+)
 from twinstudio.change_planner import ChangePlanner, LlmInvalidResponse
 from twinstudio.domain import (
     Annotation,
@@ -574,6 +579,17 @@ def concurrency_error(request: Request, exc: ConcurrencyError) -> JSONResponse:
         code="CONCURRENCY_CONFLICT",
         message=str(exc),
         retryable=True,
+    )
+
+
+@app.exception_handler(CadChangeInvalid)
+def cad_change_invalid(request: Request, exc: CadChangeInvalid) -> JSONResponse:
+    return _problem_response(
+        request,
+        status_code=422,
+        code="CAD-CHANGE-INVALID",
+        message=str(exc),
+        details={"warnings": exc.warnings},
     )
 
 
@@ -1512,8 +1528,18 @@ async def apply_change_plan(
     if plan_id not in snapshot.change_plans:
         raise HTTPException(status_code=404, detail="Change plan not found")
     plan = snapshot.change_plans[plan_id]
+    if plan.base_revision != snapshot.revision:
+        raise ConcurrencyError(
+            f"Change plan {plan_id} is stale: base revision {plan.base_revision!r}, "
+            f"current revision {snapshot.revision!r}; create a new plan"
+        )
     payload = planner.compile_apply_payload(plan, snapshot)
     dimension_overrides = dimension_overrides_for_change(snapshot, payload["parameter_patches"])
+    validate_parameter_change(
+        snapshot,
+        payload["parameter_patches"],
+        dimension_overrides=dimension_overrides,
+    )
     annotation_uri = body.annotation_uri if body else None
     if annotation_uri:
         annotation = snapshot.annotations.get(annotation_uri)
