@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TwinStudio</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563eb'/%3E%3Cpath d='M7 9h18v4h-7v12h-4V13H7z' fill='white'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="/static/style.css?v=20260812-change-queue2" />
+  <link rel="stylesheet" href="/static/style.css?v=20260812-change-queue3" />
   <script type="importmap">
     {
       "imports": {
@@ -25,6 +25,7 @@
     <select id="projectSelect" aria-label="Projekt"></select>
     <span id="roleBadge" class="badge">—</span>
     <button id="copyDslLogs" class="button secondary" type="button" title="Kopiuje ślad akcji z URL i ostatnie logi TWINOBS">Kopiuj logi DSL</button>
+    <a id="downloadDslLogs" class="button secondary" href="#" download title="Pobiera logi TWINOBS niezależnie od uprawnień schowka">Pobierz logi DSL</a>
     <a id="exportLink" class="button" href="#">Pobierz .twinstudio.zip</a>
     <a class="button secondary" href="/docs" target="_blank">REST API</a>
   </div>
@@ -206,6 +207,6 @@
     <div id="banner" class="banner hidden"></div>
   </aside>
 </main>
-<script type="module" src="/static/app.js?v=20260812-change-queue2"></script>
+<script type="module" src="/static/app.js?v=20260812-change-queue3"></script>
 </body>
 </html>

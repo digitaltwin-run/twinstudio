@@ -280,6 +280,23 @@ def main() -> int:
         assert 'CODE "UI_ACTION_RECORDED"' in clipboard_dsl
         assert "HTTP_REQUEST_COMPLETED" in clipboard_dsl
         assert "POSITION" in clipboard_dsl
+        page.evaluate(
+            """
+            Object.defineProperty(navigator.clipboard, 'writeText', {
+              configurable: true,
+              value: async () => { throw new DOMException('test permission rejection', 'NotAllowedError'); },
+            })
+            """
+        )
+        page.locator("#copyDslLogs").click()
+        page.wait_for_function(
+            "document.querySelector('#banner').textContent.includes('tryb zgodności')",
+            timeout=args.timeout_ms,
+        )
+        fallback_clipboard_dsl = page.evaluate("navigator.clipboard.readText()")
+        assert 'KIND "UiAction"' in fallback_clipboard_dsl
+        download_logs_href = page.locator("#downloadDslLogs").get_attribute("href")
+        assert download_logs_href == f"/api/v1/projects/{project_id}/logs.dsl?limit=300"
         drawings_screenshot = args.screenshot.with_name(
             f"{args.screenshot.stem}-2d{args.screenshot.suffix}"
         )
@@ -318,6 +335,8 @@ def main() -> int:
             "wall_thickness_automatic": automatic_wall_thickness,
             "url_action_args": len(action_args),
             "clipboard_dsl_characters": len(clipboard_dsl),
+            "clipboard_fallback_verified": True,
+            "download_logs_href": download_logs_href,
             "visible_artifact_uris": final_context["visible_artifact_uris"],
             "screenshot": str(args.screenshot),
             "drawings_screenshot": str(drawings_screenshot),

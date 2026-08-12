@@ -55,7 +55,7 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - błędy REST zwracają kompatybilne pole `detail` oraz typowany `ProblemEnvelope` z kodem, kontekstem ekranu, artefaktami i adresem registry;
 - przeglądarka publikuje `UIContext`: aktywną kartę i narzędzie, zaznaczenie, stan renderera, liczbę siatek i trójkątów oraz listę użytych artefaktów;
 - ostatnie 40 akcji UI jest widoczne jako uporządkowane parametry `args` w URL; rekord zawiera sekwencję, czas, rodzaj akcji, kliknięty element, współrzędne kursora i zwięzły kontekst semantyczny, ale dla pól tekstowych ujawnia tylko długość;
-- autoryzowany `GET /api/v1/projects/{project_id}/logs.dsl` udostępnia ostatnie projektowe rekordy z ograniczonego bufora TWINOBS; przycisk `Kopiuj logi DSL` łączy je ze śladem `UiAction` z URL i zapisuje całość w schowku;
+- autoryzowany `GET /api/v1/projects/{project_id}/logs.dsl` udostępnia ostatnie projektowe rekordy z ograniczonego bufora TWINOBS; `Kopiuj logi DSL` łączy je ze śladem `UiAction` z URL i po odrzuceniu nowoczesnego Clipboard API próbuje trybu zgodności, a niezależne `Pobierz logi DSL` działa bez uprawnienia do schowka;
 - panel planera odczytuje `/health`, rozróżnia tryb lokalny od LiteLLM, pokazuje czas bieżącego oczekiwania i typowy przedział odpowiedzi oraz zapisuje `plan.requested`, `plan.completed`/`plan.failed` i wynik zastosowania w śladzie URL/DSL;
 - UI odróżnia zapis parametru od odroczonej operacji CAD: plan bez `set_parameter` nie udostępnia mylącego przycisku zastosowania i jawnie informuje, że refresh nie przebuduje STL/SVG;
 - `Zapisz i wykonaj uwagę` od razu tworzy `ChangePlan`; bezpieczne `set_parameter` jest wykonywane automatycznie, a geometria bez stabilnego mappingu pozostaje otwarta i jawnie odroczona do CAD workera;

@@ -48,13 +48,18 @@ def test_actions_are_serialized_in_url_and_dsl_logs_can_be_copied() -> None:
     html = HTML.read_text(encoding="utf-8")
     javascript = JAVASCRIPT.read_text(encoding="utf-8")
     assert 'id="copyDslLogs"' in html
+    assert 'id="downloadDslLogs"' in html
     assert "Kopiuj logi DSL" in html
+    assert "Pobierz logi DSL" in html
     assert "searchParams.append('args'" in javascript
     assert "history.replaceState" in javascript
     assert "POSITION ${JSON.stringify" in javascript
     assert "CODE \"UI_ACTION_RECORDED\"" in javascript
     assert "/logs.dsl?limit=300" in javascript
     assert "navigator.clipboard?.writeText" in javascript
+    assert "execCommand('copy')" in javascript
+    assert "method==='execCommand'" in javascript
+    assert "$('downloadDslLogs').href" in javascript
     assert "text_length=${element.value.length}" in javascript
 
 
@@ -91,7 +96,7 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "polygon-order-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
-    assert 'src="/static/app.js?v=20260812-change-queue2"' in HTML.read_text(encoding="utf-8")
+    assert 'src="/static/app.js?v=20260812-change-queue3"' in HTML.read_text(encoding="utf-8")
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
     assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
     assert "data-selection-bbox" in front_svg

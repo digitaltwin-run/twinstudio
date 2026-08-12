@@ -265,7 +265,9 @@
       "records_target_and_cursor_position": true,
       "text_values_excluded": true,
       "clipboard_dsl_min_characters": 8000,
-      "clipboard_kinds": ["UiAction", "TwinObservation"]
+      "clipboard_kinds": ["UiAction", "TwinObservation"],
+      "clipboard_rejection_fallback": "execCommand",
+      "direct_download_without_clipboard_permission": true
     },
     {
       "name": "makefile_local_process_lifecycle",
@@ -276,5 +278,5 @@
       "runtime_directory": ".run"
     }
   ],
-  "verified_at": "2026-08-12T15:36:57+02:00"
+  "verified_at": "2026-08-12T15:59:28+02:00"
 }
