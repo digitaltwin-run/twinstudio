@@ -1,0 +1,37 @@
+{
+  "schema_version": "twinstudio.change-plan-request/v1",
+  "project_id": "demo-rpi5",
+  "base_revision": "main",
+  "source": {
+    "schema_version": "twinstudio.nl-source/v1",
+    "text": "ustaw wysokość na 21 mm",
+    "language": "pl",
+    "media_type": "text/plain",
+    "provenance": "example:valid-request",
+    "sha256": "1719c6b05968c4a3649ccd3ab97329fd411d1a915872db2b212bf96d94418853"
+  },
+  "selection": {
+    "uri": "poa://demo/demo-rpi5@main/region/example-front-wall",
+    "project_id": "demo-rpi5",
+    "project_revision": "main",
+    "source_view": "2d",
+    "tool": "rectangle",
+    "target_object_uris": ["poa://demo/demo-rpi5@main/part/base"],
+    "screen_path": [
+      {"x": 320.0, "y": 220.0},
+      {"x": 460.0, "y": 220.0},
+      {"x": 460.0, "y": 330.0},
+      {"x": 320.0, "y": 330.0}
+    ],
+    "projection_entity_ids": ["front.base.outer-wall"],
+    "created_by": "editor@example.test"
+  },
+  "selected_context": [
+    {
+      "uri": "poa://demo/demo-rpi5@main/part/base",
+      "name": "Lower base",
+      "parameters": {"height": {"value": 25.0, "unit": "mm"}}
+    }
+  ],
+  "allowed_operations": ["set_parameter"]
+}

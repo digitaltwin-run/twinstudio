@@ -9,15 +9,15 @@ Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:
 - `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony zarówno do głównego obrazu aplikacji, jak i obrazu `cad-worker`;
 - rzeczywista aplikacja ASGI uruchamia się, seeduje projekt demonstracyjny i odpowiada przez HTTP.
 
-Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 93 testy przechodzą, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Testy API wykonują prawdziwą przebudowę CadQuery po zastosowaniu i cofnięciu parametru, a test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
+Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 107 testów przechodzi, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Testy API wykonują prawdziwą przebudowę CadQuery po zastosowaniu i cofnięciu parametru, a test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio, waliduje granicę NL/DSL względem przypiętego `wellmanifest/dsl` i uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
 
 | Obszar | Ocena | Uzasadnienie |
 |---|---|---|
 | Migracja nazwy i zgodność wsteczna | zgodna z intencją | `twinstudio` jest źródłem kanonicznym, `lps` i `living_product_studio` pozostają aliasami migracyjnymi, `lps.v1` pozostaje namespace wire |
-| DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
+| DSL i ewolucja projektu | zgodne z intencją i działające | manifest Wellmanifest, SHA-256, ownership, findings gate, walidator i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 93/93 testy przechodzą z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 107/107 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -67,6 +67,8 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - UI łączy trwałą kolejkę z lokalnymi stanami `planning`, `applying` i `undoing`; obiekty POA objęte zadaniem mają w drzewie kolorową krawędź i znaczniki `PLAN`, `ZAPIS`, `CAD`, `?`, `GOTOWE` albo `COFNIJ` (wszystkie aktywne typy stanu są widoczne, a kilka zadań tego samego typu jest agregowanych, np. `?×2`), a karta kolejki pozwala ponownie otworzyć zapisany plan po odświeżeniu strony;
 - LLM może odczytać ostatni `UIContext` i playbook `error/<CODE>.md` przez REST lub dwa kontrolowane narzędzia MCP;
 - playbooki używają prostego, deklaratywnego `REPAIR 1.0`; nie dają LLM swobodnego wykonania powłoki ani ominięcia autoryzacji.
+
+Granica planowania zmian jest zgodna z roboczym standardem `wellmanifest.dsl/manifest/v1` z repozytorium `wellmanifest/dsl` na przypiętej rewizji `550e5f441c709e15f2679c1af151352d1eba2f1e`. `dsl-manifest.json` deklaruje kanoniczny ChangePlan JSON AST, pełny katalog 11 operacji, wersjonowanie SemVer, controlled-effects, politykę unknown=`preserve`, schemat autoryzacji oraz ścisłą dwukierunkową granicę LLM. Tekst NL trafia do modelu wyłącznie jako `twinstudio.nl-source/v1` z językiem, pochodzeniem, media type i SHA-256. Model zwraca wyłącznie `ChangePlanProposal`: nie może nadać `plan_id`, `operation_id`, `requires_approval`, aktora ani autoryzacji. Te pola tworzy runtime, a `ChangeApplied` zawiera receipt `twinstudio.change-authority/v1` wystawiony dopiero po kontroli uprawnienia `change.apply`.
 
 `src/living_product_studio` jest warstwą kompatybilności, która przekierowuje importy do `twinstudio` i emituje `DeprecationWarning`. Polecenie `lps` pozostaje aliasem `twinstudio`. Namespace Protobuf `lps.v1` jest zachowany celowo jako kontrakt wire.
 
@@ -129,13 +131,14 @@ Interpretacja wyniku:
 - walidacja snapshotu: 15 obiektów i 24 artefakty bez braków lub błędów SHA-256;
 - demo scoped B-Rep: poprawne STEP/STL, ubytek objętości około 14,137 mm³;
 - 8 plików Protobuf: poprawna kontrola strukturalna;
-- 12 schematów domenowych plus `schemas/index.json`, zsynchronizowane schema/EBNF w package data;
+- 16 schematów domenowych plus `schemas/index.json`, w tym osobne kontrakty request/proposal/authority oraz jawny artefakt niepoprawnej odpowiedzi LLM dla planera, a także zsynchronizowane schema/EBNF w package data;
 - równoważność TwinScript/YAML/JSON i kompilacja przykładu ewolucji;
 - paczka demonstracyjna: 37 wpisów ZIP, poprawny manifest, rozmiary i SHA-256;
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **99/99 passed**, łącznie z testami API przez FastAPI `TestClient`, prawdziwą regeneracją i ponowną regeneracją po cofnięciu przez CadQuery, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
+- pełny pytest: **107/107 passed**, łącznie z testami API przez FastAPI `TestClient`, macierzą prostych poleceń NL, ścisłą granicą propozycji LLM, odrzuceniem niezgodnej odpowiedzi jako jawnego `LLM-INVALID-RESPONSE`, kontrolą zakresu POA, runtime authority receipt, prawdziwą regeneracją i ponowną regeneracją po cofnięciu przez CadQuery, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
+- `make dsl-conformance`: **passed**; zewnętrzny checker Wellmanifest potwierdził manifest i digests, ownership zmian, revision-bound findings gate, 2 poprawne i 2 celowo błędne fixture'y, zgodność katalogu 11 operacji oraz sześć scenariuszy NL→DSL→runtime;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
@@ -211,6 +214,7 @@ Pełna kontrola lokalna:
 
 ```bash
 ruff check .
+make dsl-conformance
 python scripts/verify_project.py --run-tests
 docker run --rm -v "$PWD:/workspace" -w /workspace bufbuild/buf:latest lint
 .venv/bin/python scripts/verify_ui.py --url http://127.0.0.1:8500

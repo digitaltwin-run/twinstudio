@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Any, Literal
@@ -540,6 +541,39 @@ class Annotation(StrictModel):
     created_at: datetime = Field(default_factory=utcnow)
 
 
+class NaturalLanguageSource(StrictModel):
+    """Typed, integrity-bound natural-language input at the planner boundary."""
+
+    schema_version: Literal["twinstudio.nl-source/v1"] = "twinstudio.nl-source/v1"
+    text: str = Field(min_length=1, max_length=20_000)
+    language: str = Field(default="und", pattern=r"^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$|^und$")
+    media_type: Literal["text/plain"] = "text/plain"
+    provenance: str = Field(min_length=1, max_length=500)
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+    @classmethod
+    def from_text(
+        cls,
+        text: str,
+        *,
+        language: str = "und",
+        provenance: str,
+    ) -> "NaturalLanguageSource":
+        return cls(
+            text=text,
+            language=language,
+            provenance=provenance,
+            sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
+        )
+
+    @model_validator(mode="after")
+    def validate_digest(self) -> "NaturalLanguageSource":
+        observed = hashlib.sha256(self.text.encode("utf-8")).hexdigest()
+        if observed != self.sha256:
+            raise ValueError("sha256 does not match the UTF-8 natural-language source")
+        return self
+
+
 class ChangeOperation(StrictModel):
     operation_id: str = Field(default_factory=lambda: str(uuid4()))
     kind: ChangeOperationKind
@@ -552,10 +586,81 @@ class ChangeOperation(StrictModel):
     validation_steps: list[str] = Field(default_factory=list)
 
 
+class ChangeOperationProposal(StrictModel):
+    """Operation fields an LLM may propose before runtime elevation."""
+
+    kind: ChangeOperationKind
+    target_uri: str
+    selector: dict[str, Any] = Field(default_factory=dict)
+    arguments: dict[str, Any] = Field(default_factory=dict)
+    rationale: str = ""
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    validation_steps: list[str] = Field(default_factory=list)
+
+
 class ImpactItem(StrictModel):
     uri: str
     impact: Literal["direct", "dependent", "manufacturing", "test", "software", "commercial"]
     summary: str
+
+
+class ChangePlanProposal(StrictModel):
+    """Schema-constrained LLM output; runtime-owned identity and authority are absent."""
+
+    operations: list[ChangeOperationProposal]
+    impact: list[ImpactItem] = Field(default_factory=list)
+    assumptions: list[str] = Field(default_factory=list)
+    unresolved_questions: list[str] = Field(default_factory=list)
+
+
+class ChangePlanLlmRequest(StrictModel):
+    """Complete semantic payload sent to an LLM change planner."""
+
+    schema_version: Literal["twinstudio.change-plan-request/v1"] = (
+        "twinstudio.change-plan-request/v1"
+    )
+    project_id: str
+    base_revision: str
+    source: NaturalLanguageSource
+    selection: RegionSelection
+    selected_context: list[dict[str, Any]]
+    allowed_operations: list[ChangeOperationKind]
+
+
+class InvalidLlmResponseArtifact(StrictModel):
+    """Integrity-safe evidence that an LLM response failed strict validation."""
+
+    schema_version: Literal["twinstudio.invalid-llm-response/v1"] = (
+        "twinstudio.invalid-llm-response/v1"
+    )
+    response_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    response_length: int = Field(ge=0)
+    validation_error: str
+    received_at: datetime = Field(default_factory=utcnow)
+
+    @classmethod
+    def from_content(cls, content: str, validation_error: str) -> "InvalidLlmResponseArtifact":
+        return cls(
+            response_sha256=hashlib.sha256(content.encode("utf-8")).hexdigest(),
+            response_length=len(content),
+            validation_error=validation_error,
+        )
+
+
+class ChangeExecutionAuthority(StrictModel):
+    """Runtime-minted authorization receipt for a controlled change effect."""
+
+    schema_version: Literal["twinstudio.change-authority/v1"] = (
+        "twinstudio.change-authority/v1"
+    )
+    actor: str
+    role: Role
+    permission: Literal["change.apply"] = "change.apply"
+    project_id: str
+    plan_id: str
+    decision: Literal["authorized"] = "authorized"
+    authorization_source: Literal["project_membership"] = "project_membership"
+    issued_at: datetime = Field(default_factory=utcnow)
 
 
 class ChangePlan(StrictModel):

@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "Role": {
+      "enum": [
+        "reader",
+        "editor",
+        "admin",
+        "creator"
+      ],
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Runtime-minted authorization receipt for a controlled change effect.",
+  "properties": {
+    "schema_version": {
+      "const": "twinstudio.change-authority/v1",
+      "default": "twinstudio.change-authority/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "actor": {
+      "title": "Actor",
+      "type": "string"
+    },
+    "role": {
+      "$ref": "#/$defs/Role"
+    },
+    "permission": {
+      "const": "change.apply",
+      "default": "change.apply",
+      "title": "Permission",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "plan_id": {
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "decision": {
+      "const": "authorized",
+      "default": "authorized",
+      "title": "Decision",
+      "type": "string"
+    },
+    "authorization_source": {
+      "const": "project_membership",
+      "default": "project_membership",
+      "title": "Authorization Source",
+      "type": "string"
+    },
+    "issued_at": {
+      "format": "date-time",
+      "title": "Issued At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "actor",
+    "role",
+    "project_id",
+    "plan_id"
+  ],
+  "title": "ChangeExecutionAuthority",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/change-authority.schema.json"
+}

@@ -5,8 +5,12 @@ import shutil
 from pathlib import Path
 
 from twinstudio.domain import (
+    ChangeExecutionAuthority,
     ChangePlan,
+    ChangePlanLlmRequest,
+    ChangePlanProposal,
     DesignFixationReview,
+    InvalidLlmResponseArtifact,
     ProjectionMap,
     ProjectSnapshot,
     RegionSelection,
@@ -30,6 +34,10 @@ PACKAGE_DATA_ROOT.mkdir(parents=True, exist_ok=True)
 MODELS = {
     "product-project.schema.json": ProjectSnapshot,
     "change-plan.schema.json": ChangePlan,
+    "change-plan-request.schema.json": ChangePlanLlmRequest,
+    "change-plan-proposal.schema.json": ChangePlanProposal,
+    "change-authority.schema.json": ChangeExecutionAuthority,
+    "invalid-llm-response.schema.json": InvalidLlmResponseArtifact,
     "design-fixation-review.schema.json": DesignFixationReview,
     "region-selection.schema.json": RegionSelection,
     "projection-map.schema.json": ProjectionMap,

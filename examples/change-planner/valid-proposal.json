@@ -1,0 +1,26 @@
+{
+  "operations": [
+    {
+      "kind": "set_parameter",
+      "target_uri": "poa://demo/demo-rpi5@main/part/base",
+      "selector": {
+        "parameter": "height",
+        "scope": "selected_object",
+        "adjustment": "absolute"
+      },
+      "arguments": {"parameter": "height", "value": 21.0, "unit": "mm"},
+      "rationale": "The selected base height has an explicit target value.",
+      "confidence": 0.97,
+      "validation_steps": ["Regenerate and inspect the 2D and 3D artifacts."]
+    }
+  ],
+  "impact": [
+    {
+      "uri": "poa://demo/demo-rpi5@main/part/base",
+      "impact": "direct",
+      "summary": "Base height changes from 25 mm to 21 mm."
+    }
+  ],
+  "assumptions": [],
+  "unresolved_questions": []
+}

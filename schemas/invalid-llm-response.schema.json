@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "description": "Integrity-safe evidence that an LLM response failed strict validation.",
+  "properties": {
+    "schema_version": {
+      "const": "twinstudio.invalid-llm-response/v1",
+      "default": "twinstudio.invalid-llm-response/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "response_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Response Sha256",
+      "type": "string"
+    },
+    "response_length": {
+      "minimum": 0,
+      "title": "Response Length",
+      "type": "integer"
+    },
+    "validation_error": {
+      "title": "Validation Error",
+      "type": "string"
+    },
+    "received_at": {
+      "format": "date-time",
+      "title": "Received At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "response_sha256",
+    "response_length",
+    "validation_error"
+  ],
+  "title": "InvalidLlmResponseArtifact",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/invalid-llm-response.schema.json"
+}

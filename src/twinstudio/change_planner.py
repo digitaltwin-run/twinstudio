@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import re
 import unicodedata
 from dataclasses import dataclass
@@ -10,7 +9,11 @@ from twinstudio.domain import (
     ChangeOperation,
     ChangeOperationKind,
     ChangePlan,
+    ChangePlanLlmRequest,
+    ChangePlanProposal,
     ImpactItem,
+    InvalidLlmResponseArtifact,
+    NaturalLanguageSource,
     ProjectSnapshot,
     RegionSelection,
 )
@@ -27,6 +30,16 @@ class PlannerResult:
 
 class ScopeViolation(ValueError):
     pass
+
+
+class LlmInvalidResponse(ValueError):
+    """A strict LLM response failed the proposal schema and must not be coerced."""
+
+    def __init__(self, content: str, cause: Exception):
+        self.artifact = InvalidLlmResponseArtifact.from_content(content, str(cause))
+        self.response_sha256 = self.artifact.response_sha256
+        self.validation_error = self.artifact.validation_error
+        super().__init__("LLM response does not conform to ChangePlanProposal")
 
 
 class ChangePlanner:
@@ -52,6 +65,8 @@ class ChangePlanner:
                 plan = self._litellm_plan(prompt, selection, project, actor)
                 self.validate_scope(plan)
                 return PlannerResult(plan, "litellm", "Structured plan produced by LiteLLM and scope-validated.")
+            except LlmInvalidResponse:
+                raise
             except Exception as exc:
                 local = self._local_plan(prompt, selection, project, actor)
                 return PlannerResult(local, "local-fallback", f"LiteLLM failed; local plan used: {exc}")
@@ -87,7 +102,7 @@ class ChangePlanner:
     ) -> ChangePlan:
         from litellm import completion
 
-        schema = ChangePlan.model_json_schema()
+        schema = ChangePlanProposal.model_json_schema()
         selected_context = self._selected_context(selection, project)
         system = (
             "You are a product CAD change compiler. Return JSON only. Never emit code. "
@@ -97,23 +112,28 @@ class ChangePlanner:
             "For a 2D/photo selection without a projection map, create an annotation/test or ask a question rather than "
             "inventing a 3D location. The result must validate against the supplied JSON Schema."
         )
-        user_payload = {
-            "project_id": project.project_id,
-            "base_revision": project.revision,
-            "request": prompt,
-            "selection": selection.model_dump(mode="json"),
-            "selected_context": selected_context,
-            "allowed_operations": [item.value for item in ChangeOperationKind],
-        }
+        source = NaturalLanguageSource.from_text(
+            prompt,
+            language=_language_hint(prompt),
+            provenance=f"ui-selection:{selection.uri}",
+        )
+        user_payload = ChangePlanLlmRequest(
+            project_id=project.project_id,
+            base_revision=project.revision,
+            source=source,
+            selection=selection,
+            selected_context=selected_context,
+            allowed_operations=list(ChangeOperationKind),
+        )
         kwargs: dict[str, Any] = {
             "model": self.settings.litellm_model,
             "messages": [
                 {"role": "system", "content": system},
-                {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+                {"role": "user", "content": user_payload.model_dump_json()},
             ],
             "response_format": {
                 "type": "json_schema",
-                "json_schema": {"name": "change_plan", "strict": True, "schema": schema},
+                "json_schema": {"name": "change_plan_proposal", "strict": True, "schema": schema},
             },
         }
         if self.settings.litellm_api_base:
@@ -124,15 +144,28 @@ class ChangePlanner:
         content = response.choices[0].message.content
         if isinstance(content, list):
             content = "".join(part.get("text", "") if isinstance(part, dict) else str(part) for part in content)
-        data = json.loads(content)
-        data["project_id"] = project.project_id
-        data["base_revision"] = project.revision
-        data["prompt"] = prompt
-        data["selection_uri"] = selection.uri
-        data["selected_scope_uris"] = selection.target_object_uris
-        data["created_by"] = actor
-        data["planner"] = f"litellm:{self.settings.litellm_model}"
-        return ChangePlan.model_validate(data)
+        raw_content = content if isinstance(content, str) else str(content)
+        try:
+            proposal = ChangePlanProposal.model_validate_json(raw_content)
+        except Exception as exc:
+            raise LlmInvalidResponse(raw_content, exc) from exc
+        return ChangePlan(
+            project_id=project.project_id,
+            base_revision=project.revision,
+            prompt=prompt,
+            selection_uri=selection.uri,
+            selected_scope_uris=selection.target_object_uris,
+            operations=[
+                ChangeOperation.model_validate(operation.model_dump(mode="json"))
+                for operation in proposal.operations
+            ],
+            impact=proposal.impact,
+            assumptions=proposal.assumptions,
+            unresolved_questions=proposal.unresolved_questions,
+            requires_approval=True,
+            planner=f"litellm:{self.settings.litellm_model}",
+            created_by=actor,
+        )
 
     def _local_plan(
         self,
@@ -413,6 +446,22 @@ def _owning_object_uri(target_uri: str, project: ProjectSnapshot) -> str:
 def _first_number(text: str) -> float | None:
     match = re.search(r"(?<![\w.])(\d+(?:[.,]\d+)?)", text)
     return float(match.group(1).replace(",", ".")) if match else None
+
+
+def _language_hint(text: str) -> str:
+    normalized = _normalized_text(text)
+    polish_tokens = (
+        "ustaw",
+        "zmniejsz",
+        "zwieksz",
+        "wysokosc",
+        "szerokosc",
+        "glebokosc",
+        "grubosc",
+        "otwor",
+        "przesun",
+    )
+    return "pl" if any(re.search(rf"\b{token}\b", normalized) for token in polish_tokens) else "en"
 
 
 _PARAMETER_ALIASES: tuple[tuple[str, tuple[str, ...]], ...] = (

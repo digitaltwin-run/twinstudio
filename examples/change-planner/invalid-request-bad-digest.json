@@ -1,0 +1,25 @@
+{
+  "schema_version": "twinstudio.change-plan-request/v1",
+  "project_id": "demo-rpi5",
+  "base_revision": "main",
+  "source": {
+    "schema_version": "twinstudio.nl-source/v1",
+    "text": "ustaw wysokość na 21 mm",
+    "language": "pl",
+    "media_type": "text/plain",
+    "provenance": "example:invalid-digest",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "selection": {
+    "uri": "poa://demo/demo-rpi5@main/region/example-front-wall",
+    "project_id": "demo-rpi5",
+    "project_revision": "main",
+    "source_view": "2d",
+    "tool": "rectangle",
+    "target_object_uris": ["poa://demo/demo-rpi5@main/part/base"],
+    "screen_path": [{"x": 1, "y": 1}, {"x": 2, "y": 2}],
+    "created_by": "editor@example.test"
+  },
+  "selected_context": [],
+  "allowed_operations": ["set_parameter"]
+}

@@ -2,8 +2,8 @@ from dataclasses import replace
 
 import pytest
 
-from twinstudio.change_planner import ChangePlanner, ScopeViolation
-from twinstudio.domain import ChangeOperation, ChangePlan
+from twinstudio.change_planner import ChangePlanner, LlmInvalidResponse, ScopeViolation
+from twinstudio.domain import ChangeOperation, ChangeOperationProposal, ChangePlan, ChangePlanProposal
 from twinstudio.settings import settings
 
 
@@ -148,3 +148,152 @@ def test_absolute_depth_target_converts_centimetres(project_snapshot, example_se
     ).plan
 
     assert plan.operations[0].arguments == {"parameter": "depth", "value": 100.0, "unit": "mm"}
+
+
+@pytest.mark.parametrize(
+    ("prompt", "kind", "arguments", "applyable"),
+    [
+        ("zmniejsz wysokość o 4 mm", "set_parameter", {"parameter": "height", "value": 21.0, "unit": "mm"}, True),
+        ("zwiększ wysokość o 4 mm", "set_parameter", {"parameter": "height", "value": 29.0, "unit": "mm"}, True),
+        ("ustaw szerokość na 80 mm", "set_parameter", {"parameter": "width", "value": 80.0, "unit": "mm"}, True),
+        ("dodaj otwór o średnicy 3 mm", "boolean_cut", {"feature_type": "hole", "diameter_mm": 3.0, "depth_mode": "through_selected_wall"}, False),
+        ("dodaj fazę 45 stopni", "add_feature", {"feature_type": "chamfer", "angle_deg": 45.0}, False),
+    ],
+)
+def test_simple_nl_examples_compile_to_typed_scoped_operations(
+    project_snapshot,
+    example_selection,
+    prompt,
+    kind,
+    arguments,
+    applyable,
+) -> None:
+    planner = ChangePlanner(replace(settings, litellm_model=""))
+    plan = planner.plan(prompt, example_selection, project_snapshot, "editor@example.test").plan
+
+    assert len(plan.operations) == 1
+    assert plan.operations[0].kind == kind
+    assert plan.operations[0].target_uri == "poa://demo/demo-rpi5@main/part/base"
+    assert plan.operations[0].arguments == arguments
+    assert ChangePlan.model_validate(plan.model_dump(mode="json")) == plan
+    payload = planner.compile_apply_payload(plan, project_snapshot)
+    assert bool(payload["parameter_patches"]) is applyable
+
+
+def test_litellm_boundary_uses_typed_nl_source_and_propose_only_response(
+    monkeypatch,
+    project_snapshot,
+    example_selection,
+) -> None:
+    import sys
+    from types import ModuleType, SimpleNamespace
+
+    proposal = ChangePlanProposal(
+        operations=[
+            ChangeOperationProposal(
+                kind="set_parameter",
+                target_uri="poa://demo/demo-rpi5@main/part/base",
+                arguments={"parameter": "height", "value": 21.0, "unit": "mm"},
+            )
+        ]
+    )
+
+    def fake_completion(**kwargs):
+        user_payload = __import__("json").loads(kwargs["messages"][1]["content"])
+        assert user_payload["schema_version"] == "twinstudio.change-plan-request/v1"
+        assert user_payload["source"]["schema_version"] == "twinstudio.nl-source/v1"
+        assert user_payload["source"]["language"] == "pl"
+        assert len(user_payload["source"]["sha256"]) == 64
+        schema = kwargs["response_format"]["json_schema"]
+        assert schema["name"] == "change_plan_proposal"
+        assert schema["strict"] is True
+        assert "plan_id" not in schema["schema"]["properties"]
+        assert "created_by" not in schema["schema"]["properties"]
+        operation_schema = schema["schema"]["$defs"]["ChangeOperationProposal"]
+        assert "operation_id" not in operation_schema["properties"]
+        assert "reversible" not in operation_schema["properties"]
+        return SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content=proposal.model_dump_json()))]
+        )
+
+    fake_module = ModuleType("litellm")
+    fake_module.completion = fake_completion
+    monkeypatch.setitem(sys.modules, "litellm", fake_module)
+    planner = ChangePlanner(replace(settings, litellm_model="test/model"))
+
+    result = planner.plan(
+        "ustaw wysokość na 21 mm",
+        example_selection,
+        project_snapshot,
+        "editor@example.test",
+    )
+
+    assert result.mode == "litellm"
+    assert result.plan.created_by == "editor@example.test"
+    assert result.plan.requires_approval is True
+    assert result.plan.planner == "litellm:test/model"
+
+
+def test_invalid_litellm_response_is_explicit_and_never_silently_coerced(
+    monkeypatch,
+    project_snapshot,
+    example_selection,
+) -> None:
+    import sys
+    from types import ModuleType, SimpleNamespace
+
+    fake_module = ModuleType("litellm")
+    fake_module.completion = lambda **_: SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content='{"requires_approval": false}'))]
+    )
+    monkeypatch.setitem(sys.modules, "litellm", fake_module)
+    planner = ChangePlanner(replace(settings, litellm_model="test/model"))
+
+    with pytest.raises(LlmInvalidResponse) as caught:
+        planner.plan(
+            "ustaw wysokość na 21 mm",
+            example_selection,
+            project_snapshot,
+            "editor@example.test",
+        )
+
+    assert len(caught.value.response_sha256) == 64
+    assert "operations" in caught.value.validation_error
+    assert caught.value.artifact.schema_version == "twinstudio.invalid-llm-response/v1"
+    assert caught.value.artifact.response_length > 0
+
+
+def test_valid_litellm_proposal_outside_selected_scope_is_rejected_then_local_fallback_is_used(
+    monkeypatch,
+    project_snapshot,
+    example_selection,
+) -> None:
+    import sys
+    from types import ModuleType, SimpleNamespace
+
+    proposal = ChangePlanProposal(
+        operations=[
+            ChangeOperationProposal(
+                kind="set_parameter",
+                target_uri="poa://demo/demo-rpi5@main/part/lid",
+                arguments={"parameter": "height", "value": 21.0, "unit": "mm"},
+            )
+        ]
+    )
+    fake_module = ModuleType("litellm")
+    fake_module.completion = lambda **_: SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content=proposal.model_dump_json()))]
+    )
+    monkeypatch.setitem(sys.modules, "litellm", fake_module)
+    planner = ChangePlanner(replace(settings, litellm_model="test/model"))
+
+    result = planner.plan(
+        "ustaw wysokość na 21 mm",
+        example_selection,
+        project_snapshot,
+        "editor@example.test",
+    )
+
+    assert result.mode == "local-fallback"
+    assert "outside selected scope" in result.message
+    assert result.plan.operations[0].target_uri == "poa://demo/demo-rpi5@main/part/base"

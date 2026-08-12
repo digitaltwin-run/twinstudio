@@ -5,6 +5,7 @@ from typing import Any
 from twinstudio.domain import (
     Annotation,
     ArtifactRecord,
+    ChangeExecutionAuthority,
     ChangePlan,
     CommandEnvelope,
     DesignFixationReview,
@@ -256,6 +257,14 @@ class CommandBus:
             case _:
                 raise CommandRejected(f"Unknown command type: {command.command_type}")
         require_permission(role, permission)
+        if command.command_type == "change.apply":
+            authority = ChangeExecutionAuthority(
+                actor=command.actor,
+                role=Role(role),
+                project_id=command.project_id,
+                plan_id=str(payload["plan_id"]),
+            )
+            data["authority"] = authority.model_dump(mode="json")
         return [self._event(command, event_type, data)]
 
     @staticmethod

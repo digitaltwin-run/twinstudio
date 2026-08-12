@@ -25,7 +25,7 @@ from twinstudio.artifacts import (
 from twinstudio.auth import AuthService
 from twinstudio.bus import CommandBus, CommandRejected, QueryService
 from twinstudio.cad_regeneration import dimension_overrides_for_change, generate_project_preview
-from twinstudio.change_planner import ChangePlanner
+from twinstudio.change_planner import ChangePlanner, LlmInvalidResponse
 from twinstudio.domain import (
     Annotation,
     ArtifactRecord,
@@ -574,6 +574,20 @@ def concurrency_error(request: Request, exc: ConcurrencyError) -> JSONResponse:
         code="CONCURRENCY_CONFLICT",
         message=str(exc),
         retryable=True,
+    )
+
+
+@app.exception_handler(LlmInvalidResponse)
+def llm_invalid_response(request: Request, exc: LlmInvalidResponse) -> JSONResponse:
+    return _problem_response(
+        request,
+        status_code=502,
+        code="LLM-INVALID-RESPONSE",
+        message=str(exc),
+        retryable=True,
+        details={
+            "invalid_response_artifact": exc.artifact.model_dump(mode="json"),
+        },
     )
 
 

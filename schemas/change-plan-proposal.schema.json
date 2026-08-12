@@ -1,0 +1,140 @@
+{
+  "$defs": {
+    "ChangeOperationKind": {
+      "enum": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "title": "ChangeOperationKind",
+      "type": "string"
+    },
+    "ChangeOperationProposal": {
+      "additionalProperties": false,
+      "description": "Operation fields an LLM may propose before runtime elevation.",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/ChangeOperationKind"
+        },
+        "target_uri": {
+          "title": "Target Uri",
+          "type": "string"
+        },
+        "selector": {
+          "additionalProperties": true,
+          "title": "Selector",
+          "type": "object"
+        },
+        "arguments": {
+          "additionalProperties": true,
+          "title": "Arguments",
+          "type": "object"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "validation_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Validation Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "target_uri"
+      ],
+      "title": "ChangeOperationProposal",
+      "type": "object"
+    },
+    "ImpactItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "impact": {
+          "enum": [
+            "direct",
+            "dependent",
+            "manufacturing",
+            "test",
+            "software",
+            "commercial"
+          ],
+          "title": "Impact",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "impact",
+        "summary"
+      ],
+      "title": "ImpactItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Schema-constrained LLM output; runtime-owned identity and authority are absent.",
+  "properties": {
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/ChangeOperationProposal"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "impact": {
+      "items": {
+        "$ref": "#/$defs/ImpactItem"
+      },
+      "title": "Impact",
+      "type": "array"
+    },
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "unresolved_questions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unresolved Questions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "operations"
+  ],
+  "title": "ChangePlanProposal",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/change-plan-proposal.schema.json"
+}

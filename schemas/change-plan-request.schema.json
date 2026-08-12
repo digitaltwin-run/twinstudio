@@ -1,0 +1,472 @@
+{
+  "$defs": {
+    "CameraState": {
+      "additionalProperties": false,
+      "properties": {
+        "projection": {
+          "default": "perspective",
+          "enum": [
+            "perspective",
+            "orthographic"
+          ],
+          "title": "Projection",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "target": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "up": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "fov": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fov"
+        },
+        "zoom": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zoom"
+        },
+        "viewport_width": {
+          "exclusiveMinimum": 0,
+          "title": "Viewport Width",
+          "type": "integer"
+        },
+        "viewport_height": {
+          "exclusiveMinimum": 0,
+          "title": "Viewport Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "position",
+        "target",
+        "up",
+        "viewport_width",
+        "viewport_height"
+      ],
+      "title": "CameraState",
+      "type": "object"
+    },
+    "ChangeOperationKind": {
+      "enum": [
+        "set_parameter",
+        "add_feature",
+        "suppress_feature",
+        "transform_feature",
+        "boolean_cut",
+        "boolean_add",
+        "replace_component",
+        "update_manufacturing",
+        "attach_requirement",
+        "add_test",
+        "add_annotation"
+      ],
+      "title": "ChangeOperationKind",
+      "type": "string"
+    },
+    "NaturalLanguageSource": {
+      "additionalProperties": false,
+      "description": "Typed, integrity-bound natural-language input at the planner boundary.",
+      "properties": {
+        "schema_version": {
+          "const": "twinstudio.nl-source/v1",
+          "default": "twinstudio.nl-source/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "language": {
+          "default": "und",
+          "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$|^und$",
+          "title": "Language",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "text/plain",
+          "default": "text/plain",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provenance",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "provenance",
+        "sha256"
+      ],
+      "title": "NaturalLanguageSource",
+      "type": "object"
+    },
+    "RayHit": {
+      "additionalProperties": false,
+      "properties": {
+        "object_uri": {
+          "title": "Object Uri",
+          "type": "string"
+        },
+        "mesh_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mesh Hash"
+        },
+        "face_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Face Index"
+        },
+        "semantic_face_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Face Uri"
+        },
+        "brep_face_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brep Face Id"
+        },
+        "point": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "normal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldPoint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "distance": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance"
+        }
+      },
+      "required": [
+        "object_uri",
+        "point"
+      ],
+      "title": "RayHit",
+      "type": "object"
+    },
+    "RegionSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "selection_id": {
+          "title": "Selection Id",
+          "type": "string"
+        },
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "project_revision": {
+          "title": "Project Revision",
+          "type": "string"
+        },
+        "source_view": {
+          "$ref": "#/$defs/SourceView"
+        },
+        "tool": {
+          "$ref": "#/$defs/SelectionTool"
+        },
+        "target_object_uris": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target Object Uris",
+          "type": "array"
+        },
+        "screen_path": {
+          "items": {
+            "$ref": "#/$defs/ScreenPoint"
+          },
+          "title": "Screen Path",
+          "type": "array"
+        },
+        "ray_hits": {
+          "items": {
+            "$ref": "#/$defs/RayHit"
+          },
+          "title": "Ray Hits",
+          "type": "array"
+        },
+        "world_aabb": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldAabb"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "camera": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CameraState"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_artifact_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Artifact Uri"
+        },
+        "projection_entity_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Projection Entity Ids",
+          "type": "array"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "project_id",
+        "project_revision",
+        "source_view",
+        "tool",
+        "target_object_uris",
+        "created_by"
+      ],
+      "title": "RegionSelection",
+      "type": "object"
+    },
+    "ScreenPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "ScreenPoint",
+      "type": "object"
+    },
+    "SelectionTool": {
+      "enum": [
+        "pointer",
+        "pencil",
+        "lasso",
+        "rectangle",
+        "brush"
+      ],
+      "title": "SelectionTool",
+      "type": "string"
+    },
+    "SourceView": {
+      "enum": [
+        "3d",
+        "2d",
+        "photo",
+        "pcb",
+        "schematic"
+      ],
+      "title": "SourceView",
+      "type": "string"
+    },
+    "WorldAabb": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum": {
+          "$ref": "#/$defs/WorldPoint"
+        },
+        "maximum": {
+          "$ref": "#/$defs/WorldPoint"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum"
+      ],
+      "title": "WorldAabb",
+      "type": "object"
+    },
+    "WorldPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "WorldPoint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Complete semantic payload sent to an LLM change planner.",
+  "properties": {
+    "schema_version": {
+      "const": "twinstudio.change-plan-request/v1",
+      "default": "twinstudio.change-plan-request/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "base_revision": {
+      "title": "Base Revision",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/NaturalLanguageSource"
+    },
+    "selection": {
+      "$ref": "#/$defs/RegionSelection"
+    },
+    "selected_context": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Selected Context",
+      "type": "array"
+    },
+    "allowed_operations": {
+      "items": {
+        "$ref": "#/$defs/ChangeOperationKind"
+      },
+      "title": "Allowed Operations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "base_revision",
+    "source",
+    "selection",
+    "selected_context",
+    "allowed_operations"
+  ],
+  "title": "ChangePlanLlmRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/change-plan-request.schema.json"
+}

@@ -1,0 +1,12 @@
+{
+  "plan_id": "model-must-not-mint-this",
+  "requires_approval": false,
+  "operations": [
+    {
+      "operation_id": "model-must-not-mint-this-either",
+      "kind": "set_parameter",
+      "target_uri": "poa://demo/demo-rpi5@main/part/base",
+      "arguments": {"parameter": "height", "value": 21.0, "unit": "mm"}
+    }
+  ]
+}

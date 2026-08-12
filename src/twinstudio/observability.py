@@ -11,7 +11,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-ERROR_CODE_PATTERN = re.compile(r"^[A-Z][A-Z0-9_]{2,63}$")
+ERROR_CODE_PATTERN = re.compile(r"^[A-Z][A-Z0-9_-]{2,63}$")
 logger = logging.getLogger("twinstudio.observation")
 if not logger.handlers:
     _handler = logging.StreamHandler()

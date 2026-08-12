@@ -1,0 +1,165 @@
+{
+  "$schema": "https://wellmanifest.dev/schemas/dsl-manifest/v1",
+  "schema": "wellmanifest.dsl/manifest/v1",
+  "id": "digitaltwin-run.twinstudio.change-plan",
+  "name": "TwinStudio scoped change-plan DSL",
+  "version": "0.5.0",
+  "status": "experimental",
+  "purpose": "Convert integrity-bound natural-language product edits into scoped, typed and reversible change proposals",
+  "domain": "product-digital-twin",
+  "owners": [
+    {
+      "kind": "repository",
+      "id": "github:digitaltwin-run/twinstudio",
+      "responsibilities": ["semantics", "validation", "compatibility", "runtime", "security"]
+    }
+  ],
+  "source": {
+    "repository": "https://github.com/digitaltwin-run/twinstudio",
+    "path": "schemas/change-plan.schema.json",
+    "declaredVersion": "0.5.0",
+    "canonical": "json-ast",
+    "mediaType": "application/schema+json",
+    "selectors": []
+  },
+  "ownedPaths": [
+    "dsl-manifest.json",
+    "schemas/change-plan.schema.json",
+    "schemas/change-plan-request.schema.json",
+    "schemas/change-plan-proposal.schema.json",
+    "schemas/change-authority.schema.json",
+    "schemas/invalid-llm-response.schema.json",
+    "schemas/index.json",
+    "src/twinstudio/domain.py",
+    "src/twinstudio/change_planner.py",
+    "src/twinstudio/bus.py",
+    "src/twinstudio/api.py",
+    "src/twinstudio/observability.py",
+    "scripts/generate_schemas.py",
+    "scripts/verify_dsl_conformance.py",
+    "tests/test_change_planner.py",
+    "tests/test_api_subprocess.py",
+    "examples/change-planner/**",
+    "docs/SET_PARAMETER.md",
+    "docs/ADD_FEATURE.md",
+    "docs/SUPPRESS_FEATURE.md",
+    "docs/TRANSFORM_FEATURE.md",
+    "docs/BOOLEAN_CUT.md",
+    "docs/BOOLEAN_ADD.md",
+    "docs/REPLACE_COMPONENT.md",
+    "docs/UPDATE_MANUFACTURING.md",
+    "docs/ATTACH_REQUIREMENT.md",
+    "docs/ADD_TEST.md",
+    "docs/ADD_ANNOTATION.md",
+    "docs/ERROR/LLM-INVALID-RESPONSE.md",
+    "error/LLM-INVALID-RESPONSE.md"
+  ],
+  "artifacts": [
+    {"path": "schemas/change-plan.schema.json", "role": "normative-source", "digest": "sha256:a5a3949c1c8d5bfe4b82332f25f2139607789dde39f7be5ea90492574ef73ff8"},
+    {"path": "schemas/change-plan-request.schema.json", "role": "schema", "digest": "sha256:ffd2d5d98685d0aa8ec09aa17730faa4a139cfc5470bf927dc74842ae3efdd95"},
+    {"path": "schemas/change-plan-proposal.schema.json", "role": "schema", "digest": "sha256:1a4176625ece2a37eaf5334934a19554284ba56e8afe51adb6b389344f63fc1f"},
+    {"path": "schemas/change-authority.schema.json", "role": "schema", "digest": "sha256:1ab5c4e49493a6e76d72b4b1ea0f77c28ccc831f86fb731e4bbba7148b0480f6"},
+    {"path": "schemas/invalid-llm-response.schema.json", "role": "schema", "digest": "sha256:86e19a8a8eaa560cd7ab960206f327d9293fb5c06c20751ae8a73cacfece6ecd"},
+    {"path": "schemas/index.json", "role": "serializer-contract", "digest": "sha256:09ec27c5816709d8fe4c4e12cd5866833b221cfabe35769e6362ce696482eb12"},
+    {"path": "src/twinstudio/domain.py", "role": "parser-contract", "digest": "sha256:f53ec83f3f491d8a7eb5859b8b9ca28f1e22fcc5ef47bbf7d83c446762ba25fe"},
+    {"path": "src/twinstudio/change_planner.py", "role": "parser-contract", "digest": "sha256:9c5a8d9851047c8f55d4fb007684840642b054945910ec095cdb19137500af21"},
+    {"path": "src/twinstudio/bus.py", "role": "parser-contract", "digest": "sha256:dd53fc64efab652763236a7ff497e1a56914866b2cbfe9ab816984f684873231"},
+    {"path": "src/twinstudio/api.py", "role": "parser-contract", "digest": "sha256:04180a4e7f4d740ace55ec906a763ff926778c364e3c8b18d21880c3b7619c83"},
+    {"path": "src/twinstudio/observability.py", "role": "parser-contract", "digest": "sha256:e40d49137ea39e449f37b6ed322bb34bd4aa8d54b6c09ea97fd8219df1ba7a27"},
+    {"path": "scripts/generate_schemas.py", "role": "serializer-contract", "digest": "sha256:52fb0647bacbb3f74ec7c64414d7728eaa2406b5c437073a67988b68024253f0"},
+    {"path": "scripts/verify_dsl_conformance.py", "role": "parser-contract", "digest": "sha256:bc033b3c8e3f8c434ca62539e0b245e797027dd8f58963a736f5f9ebc03b03e9"},
+    {"path": "tests/test_change_planner.py", "role": "parser-contract", "digest": "sha256:7b853eb8d710d5991e4e458fac3a3ba3de8ec2c9e06f4dbab79a1decef3ddae0"},
+    {"path": "tests/test_api_subprocess.py", "role": "parser-contract", "digest": "sha256:f8fce8d1c2cd8068e412c491d62180892634a7dbd4916e19a058246150cc2ce9"},
+    {"path": "examples/change-planner/valid-request.json", "role": "example", "digest": "sha256:6286593e4e2b4f507ea4c84bcfa31304479848b307efc94fc4ed25f803d1315c"},
+    {"path": "examples/change-planner/valid-proposal.json", "role": "example", "digest": "sha256:67467b8a1c51c83b06db17aee426ab8bae2f7559d214d719d98659ce7019da72"},
+    {"path": "examples/change-planner/invalid-request-bad-digest.json", "role": "example", "digest": "sha256:abb6425c4244538a2c93992e27e32c73b439c1c263d105c29335137173c1395d"},
+    {"path": "examples/change-planner/invalid-proposal-runtime-authority.json", "role": "example", "digest": "sha256:1ad985db72f99cf8589ba357ea34570869bae906c8873da0c8c4902ec2bd8cb6"},
+    {"path": "docs/SET_PARAMETER.md", "role": "documentation", "digest": "sha256:be93d2ca8b2d005c24b21620efb1db30c332a634d9b339412560def542487c7d"},
+    {"path": "docs/ADD_FEATURE.md", "role": "documentation", "digest": "sha256:a7a72a0e260756d467ea37c7c8bd21f9afaabce0f37df5cc218866f5ba812d34"},
+    {"path": "docs/SUPPRESS_FEATURE.md", "role": "documentation", "digest": "sha256:09a0975ef9b7b470bf88867ef48693cf09dd2c807f8ecfc2eb324b15f29f53e6"},
+    {"path": "docs/TRANSFORM_FEATURE.md", "role": "documentation", "digest": "sha256:e1dd507b4261fd1b75d10620be5b7f857e5ae7fe682aef7009658f746619c438"},
+    {"path": "docs/BOOLEAN_CUT.md", "role": "documentation", "digest": "sha256:b537984fc1f79cb67ae05c2ef89d8db071ba955b7110ffb724fd9aee51298074"},
+    {"path": "docs/BOOLEAN_ADD.md", "role": "documentation", "digest": "sha256:4a5f0a324fbfdc71f3424959bcc3de8b02da295c1bb3ebe46fd905403470e08d"},
+    {"path": "docs/REPLACE_COMPONENT.md", "role": "documentation", "digest": "sha256:5fd736fd387d26dd4611f4ee1bd34c760396efc4bae0b71bc12842eeb245d949"},
+    {"path": "docs/UPDATE_MANUFACTURING.md", "role": "documentation", "digest": "sha256:aa16271eea8ffef8b74f219820ee56feead1c3a4e4f786311f686a73f56c1802"},
+    {"path": "docs/ATTACH_REQUIREMENT.md", "role": "documentation", "digest": "sha256:c39c2e33da4faaddbcd90e19aa670583d24f10b821ff6147b4bf4a6d7002f50f"},
+    {"path": "docs/ADD_TEST.md", "role": "documentation", "digest": "sha256:81963171a776591cbf56d6ae3400c5927e963ea69e6632e630a25f5592067f50"},
+    {"path": "docs/ADD_ANNOTATION.md", "role": "documentation", "digest": "sha256:feb77661a50895f2b7789b0476519cf5e5cadc4e246843b83f07c5ed701b0541"},
+    {"path": "docs/ERROR/LLM-INVALID-RESPONSE.md", "role": "documentation", "digest": "sha256:a9e5d4a800a51966229a7ba5ba2568df3329ff6e678bfa688dd6798b3a95b20f"},
+    {"path": "error/LLM-INVALID-RESPONSE.md", "role": "documentation", "digest": "sha256:efcd93047a000e7212f22bc3c5c7adcb976bd4c25593fad36e06559f93491795"}
+  ],
+  "namespaces": [
+    {"prefix": "twinstudio", "uri": "https://github.com/digitaltwin-run/twinstudio/"},
+    {"prefix": "poa", "uri": "https://twinstudio.local/poa/"}
+  ],
+  "projections": [],
+  "lifecycle": {
+    "compatibility": "semver",
+    "stability": "experimental",
+    "breaking": "major",
+    "additive": "minor",
+    "fix": "patch"
+  },
+  "semantics": {
+    "effectModel": "controlled-effects",
+    "unknownPolicy": "preserve",
+    "authoritySchema": "https://twinstudio.local/schemas/change-authority.schema.json"
+  },
+  "llm": {
+    "mode": "bidirectional",
+    "requestSchemas": ["https://twinstudio.local/schemas/change-plan-request.schema.json"],
+    "responseSchemas": ["https://twinstudio.local/schemas/change-plan-proposal.schema.json"],
+    "naturalLanguage": "typed-source-only",
+    "sourceSchema": "twinstudio.nl-source/v1",
+    "modelAuthority": "propose-only",
+    "strict": true
+  },
+  "documentation": {
+    "commandRoot": "docs",
+    "errorRoot": "docs/ERROR",
+    "criticalRoot": "docs/CRITICAL",
+    "commands": [
+      "SET_PARAMETER",
+      "ADD_FEATURE",
+      "SUPPRESS_FEATURE",
+      "TRANSFORM_FEATURE",
+      "BOOLEAN_CUT",
+      "BOOLEAN_ADD",
+      "REPLACE_COMPONENT",
+      "UPDATE_MANUFACTURING",
+      "ATTACH_REQUIREMENT",
+      "ADD_TEST",
+      "ADD_ANNOTATION"
+    ],
+    "errorCodes": ["LLM-INVALID-RESPONSE"],
+    "criticalCodes": []
+  },
+  "findingPolicy": {
+    "schema": "wellmanifest.dsl/findings/v1",
+    "requiredProducers": ["twinstudio.dsl-conformance"],
+    "securityProducers": ["twinstudio.dsl-conformance"],
+    "blockingSeverities": ["error", "critical"],
+    "requireEvaluable": true,
+    "blockUnresolvedSecurity": true
+  },
+  "conformance": {
+    "levels": ["manifest", "contract", "runtime", "llm-boundary"],
+    "commands": ["PYTHONPATH=src python scripts/verify_dsl_conformance.py"],
+    "validExamples": [
+      "examples/change-planner/valid-request.json",
+      "examples/change-planner/valid-proposal.json"
+    ],
+    "invalidExamples": [
+      "examples/change-planner/invalid-request-bad-digest.json",
+      "examples/change-planner/invalid-proposal-runtime-authority.json"
+    ]
+  },
+  "mappings": [
+    {
+      "standard": "wellmanifest.dsl",
+      "version": "0.1.0-dev",
+      "relation": "implements",
+      "uri": "https://github.com/wellmanifest/dsl/tree/550e5f441c709e15f2679c1af151352d1eba2f1e"
+    }
+  ]
+}

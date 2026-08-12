@@ -14,6 +14,26 @@
       "id": "https://twinstudio.local/schemas/change-plan.schema.json"
     },
     {
+      "file": "change-plan-request.schema.json",
+      "model": "ChangePlanLlmRequest",
+      "id": "https://twinstudio.local/schemas/change-plan-request.schema.json"
+    },
+    {
+      "file": "change-plan-proposal.schema.json",
+      "model": "ChangePlanProposal",
+      "id": "https://twinstudio.local/schemas/change-plan-proposal.schema.json"
+    },
+    {
+      "file": "change-authority.schema.json",
+      "model": "ChangeExecutionAuthority",
+      "id": "https://twinstudio.local/schemas/change-authority.schema.json"
+    },
+    {
+      "file": "invalid-llm-response.schema.json",
+      "model": "InvalidLlmResponseArtifact",
+      "id": "https://twinstudio.local/schemas/invalid-llm-response.schema.json"
+    },
+    {
       "file": "design-fixation-review.schema.json",
       "model": "DesignFixationReview",
       "id": "https://twinstudio.local/schemas/design-fixation-review.schema.json"

@@ -202,6 +202,10 @@ with TestClient(app) as client:
     )
     assert applied.status_code == 200, applied.text
     assert applied.json()['result']['parameter_patches'][0]['previous_parameter']['value'] == 2
+    applied_event = next(event for event in applied.json()['events'] if event['event_type'] == 'ChangeApplied')
+    assert applied_event['data']['authority']['schema_version'] == 'twinstudio.change-authority/v1'
+    assert applied_event['data']['authority']['actor'] == 'creator@example.test'
+    assert applied_event['data']['authority']['permission'] == 'change.apply'
     changed_project = client.get('/api/v1/projects/demo-rpi5').json()['project']
     base_uri = 'poa://demo/demo-rpi5@main/part/base'
     assert changed_project['objects'][base_uri]['parameters']['wall_thickness']['value'] == 3

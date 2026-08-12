@@ -1,4 +1,4 @@
-.PHONY: help install start restart recreate stop kill status health logs logs-follow run foreground test lint compose-up compose-down compose-all seed schemas dsl-preview verify proto-lint package
+.PHONY: help install start restart recreate stop kill status health logs logs-follow run foreground test lint compose-up compose-down compose-all seed schemas dsl-preview dsl-conformance verify proto-lint package
 
 DEV_SERVER := ./scripts/dev_server.sh
 
@@ -13,6 +13,7 @@ help:
 	  '  make logs        print the latest local server log lines' \
 	  '  make logs-follow follow local server logs' \
 	  '  make run         replace the instance and run in the foreground' \
+	  '  make dsl-conformance validate NL/DSL boundary with wellmanifest/dsl' \
 	  '' \
 	  'Host and port come from TWINSTUDIO_HOST/TWINSTUDIO_PORT (.env.local first).'
 
@@ -66,6 +67,9 @@ schemas:
 
 dsl-preview:
 	twinstudio dsl-preview examples/evolution/rpi5-hinge-evolution.twin --project-id demo-rpi5
+
+dsl-conformance:
+	PYTHONPATH=src python scripts/verify_dsl_conformance.py
 
 verify:
 	PYTHONPATH=src python scripts/verify_project.py --run-tests --out docs/verification-report.json
