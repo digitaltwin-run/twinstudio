@@ -7,7 +7,7 @@ import re
 import shutil
 import zipfile
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -22,7 +22,6 @@ from .mesh_preview import export_obj_from_stl, export_preview_scenes
 from .models import ProjectConfig
 from .validation import collect_warnings, design_metrics
 from .version import __version__
-
 
 GENERATOR_VERSION = __version__
 
@@ -176,7 +175,7 @@ def _change_report_markdown(
 
 
 def _job_id(config: ProjectConfig) -> str:
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     digest = hashlib.sha256(config.model_dump_json().encode("utf-8")).hexdigest()[:8]
     return f"{stamp}-{digest}"
 
@@ -497,7 +496,7 @@ def generate_artifacts(
     bundle_name = "housing_project_bundle.zip" if config.artifacts.create_zip else None
     manifest: dict[str, Any] = {
         "job_id": identifier,
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
         "generator": {
             "name": "Housing Studio",
             "version": GENERATOR_VERSION,

@@ -37,6 +37,8 @@ print(settings.port)
 '''
     base = os.environ.copy()
     base["PYTHONPATH"] = str(root / "src")
+    # Keep the subprocess contract test independent from a developer's local .env.
+    base["PYTHON_DOTENV_DISABLED"] = "1"
     for key in ["TWINSTUDIO_DATA_DIR", "LPS_DATA_DIR", "TWINSTUDIO_PORT", "LPS_PORT"]:
         base.pop(key, None)
 

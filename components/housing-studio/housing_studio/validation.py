@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 
 from .models import BoardPosition, ProjectConfig
 
@@ -188,7 +188,6 @@ def collect_warnings(config: ProjectConfig) -> list[DesignWarning]:
 
     rise = d.lid_height - d.lid_vertical_lower_section
     front_angle = math.degrees(math.atan2(rise, max(d.lid_front_inset, 1e-9)))
-    rear_angle = math.degrees(math.atan2(rise, max(d.lid_rear_inset, 1e-9)))
     side_angle = math.degrees(math.atan2(rise, max(d.lid_side_inset, 1e-9)))
     if front_angle < 45.0 - 0.1:
         warnings.append(

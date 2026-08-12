@@ -1,2 +1,0 @@
-[console_scripts]
-lps = living_product_studio.cli:app

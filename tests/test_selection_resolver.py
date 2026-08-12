@@ -1,4 +1,3 @@
-from copy import deepcopy
 
 from twinstudio.domain import RegionSelection
 from twinstudio.selection_resolver import resolve_selection

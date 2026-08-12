@@ -7,10 +7,10 @@ from typing import Any, Callable
 from twinstudio.artifacts import export_project_bundle
 from twinstudio.bus import CommandBus, QueryService
 from twinstudio.change_planner import ChangePlanner
-from twinstudio.domain import Annotation, AuthPrincipal, ChangePlan, CommandEnvelope, RegionSelection
+from twinstudio.domain import Annotation, AuthPrincipal, CommandEnvelope, RegionSelection
 from twinstudio.dsl import canonical_dsl_schema, compile_dsl, make_execution_record, parse_dsl
 from twinstudio.evolution import ProjectEvolutionEngine
-from twinstudio.evolution_models import EvolutionRun, TwinDslDocument
+from twinstudio.evolution_models import EvolutionRun
 from twinstudio.feature_lenses import FeatureLensEngine
 from twinstudio.mcp_protocol import (
     LEGACY_PROTOCOL_VERSION,

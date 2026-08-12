@@ -4,7 +4,6 @@ from app.main import GENERATED_ROOT, app
 from housing_studio.artifacts import generate_artifacts
 from housing_studio.models import default_project_config
 
-
 client = TestClient(app)
 
 

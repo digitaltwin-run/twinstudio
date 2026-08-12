@@ -9,17 +9,17 @@ Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:
 - `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony do obrazu `cad-worker`;
 - rzeczywista aplikacja ASGI uruchamia się, seeduje projekt demonstracyjny i odpowiada przez HTTP.
 
-Stan nie jest jednak gotowy do oznaczenia jako w pełni zielony build/release. Logika domenowa i CAD przechodzą dostępne testy, ale pełna ścieżka CI ma niespójny kontrakt zależności, testy HTTP zawieszają się na aktualnie rozwiązywanym stosie `TestClient`, lint ma błędy, a część dokumentacji release opisuje wcześniejszy zestaw 38 testów zamiast bieżących 65.
+Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 65 testów przechodzi, Ruff i `buf lint` nie zgłaszają błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. CI instaluje teraz jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
 
 | Obszar | Ocena | Uzasadnienie |
 |---|---|---|
 | Migracja nazwy i zgodność wsteczna | zgodna z intencją | `twinstudio` jest źródłem kanonicznym, `lps` i `living_product_studio` pozostają aliasami migracyjnymi, `lps.v1` pozostaje namespace wire |
 | DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
-| Housing Studio / CAD | funkcjonalne, integracja nieuporządkowana | nowy komponent przechodzi testy, ale w repo nadal są równoległe starsze kopie |
-| REST/ASGI | działa | Uvicorn wystartował, `/health`, lista projektów i katalog ewolucji odpowiedziały poprawnie |
-| Pełny pytest/CI | niepotwierdzony jako zielony | 57 testów bez `TestClient` przeszło; testy HTTP zawieszają się na zgodności Starlette/httpx |
-| Jakość statyczna | niezielona | Ruff zgłasza 23 błędy |
-| Gotowość release | nie | wymagane jest domknięcie zależności, CI, duplikacji źródeł i aktualizacja dowodów release |
+| Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
+| REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
+| Pełny pytest/CI | lokalnie zielony | 65/65 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
+| Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
 ## 2. Zakres ocenianej zmiany
 
@@ -108,61 +108,28 @@ Interpretacja wyniku:
 - równoważność TwinScript/YAML/JSON i kompilacja przykładu ewolucji;
 - paczka demonstracyjna: 37 wpisów ZIP, poprawny manifest, rozmiary i SHA-256;
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
-- `docker compose config --quiet`: poprawny, z ostrzeżeniem o równoległych `compose.yaml` i `docker-compose.yml`;
+- `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- 57/57 testów niezależnych od FastAPI `TestClient`: passed w 17,18 s;
-- 20/20 analogicznych testów uruchomionych bezpośrednio z `components/housing-studio`: passed w 16,50 s;
-- smoke test prawdziwego Uvicorn: `/health` zwrócił `status=ok`, wersję `0.5.0` i 49 aktywnych soczewek; `/api/v1/projects` zwrócił `demo-rpi5`; katalog ewolucji zwrócił 34 wymiary, 17 operatorów i 3 lifecycle.
+- pełny pytest: **65/65 passed**, łącznie z testami API przez FastAPI `TestClient`;
+- `ruff check .`: passed;
+- `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
+- smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
+- `app`, `postgres`, `mqtt` i `mailpit` działają w Compose; aplikacja i PostgreSQL są healthy.
 
-### 5.2. Kontrole niezielone lub nieukończone
-
-#### Pełny pytest / TestClient
-
-Pełny zestaw zbiera obecnie 65 testów, ale zatrzymuje się na pierwszym żądaniu przez `fastapi.testclient.TestClient`. Problem odtworzono na minimalnej aplikacji FastAPI, niezależnej od kodu TwinStudio:
-
-```text
-fastapi 0.141.1
-starlette 1.6.0
-httpx 0.28.1
-StarletteDeprecationWarning: ... install httpx2 instead
-before-client
-before-get
-<timeout>
-```
-
-Rzeczywisty serwer Uvicorn i te same ścieżki HTTP działają. Jest to problem kontraktu zależności testowych, ale blokuje wiarygodny pełny wynik CI.
-
-#### Ruff
-
-`ruff check --no-cache ...` zgłasza 23 błędy:
-
-- 19 nieużywanych importów;
-- 2 nieużywane zmienne;
-- 1 przesłonięty import `field`;
-- 1 dodatkowy przypadek nieużywanej zmiennej w kopii vendorowej.
-
-#### Niewykonane w tym audycie
+### 5.2. Kontrole nadal niewykonane
 
 - pełny start wszystkich profili Docker Compose;
 - `buf lint`/generacja klientów Protobuf;
 - live MQTT, Open WebUI, MinIO, SMTP i zewnętrzny LiteLLM;
 - fizyczna walidacja CAD, druku, termiki, zasilania i użyteczności.
 
-## 6. Blokery i zalecana kolejność prac
+## 6. Pozostałe ryzyka i zalecana kolejność prac
 
-### P0 — przed uznaniem CI/release za zielone
-
-1. **Naprawić kontrakt zależności testowych.** Z CI usunięto instalację Housing Studio, ale główny `tests/` nadal importuje `cadquery`, `trimesh`, `ezdxf` i `housing_studio`. `.[dev]` tych zależności nie dostarcza. CI powinno instalować kanoniczny `components/housing-studio[dev]` albo projekt powinien mieć jawny agregujący extra testowy.
-2. **Ustabilizować FastAPI/Starlette/http client.** Dodać lock/constraints i wybrać obsługiwany klient testowy (`httpx2` dla aktualnego Starlette albo kompatybilnie przypięty stos). Każdy test subprocess powinien mieć timeout, aby CI nie wisiał bez końca.
-3. **Powtórzyć pełny pytest w czystym środowisku.** Dopiero kompletny wynik powinien nadpisać `docs/VERIFICATION.md`, `docs/verification-report.json` i `RELEASE_BUILD.json`.
-
-### P1 — spójność repozytorium
-
-4. **Wybrać jedno źródło Housing Studio.** Obraz CAD używa `components/housing-studio`; katalog główny i vendor nie powinny pozostać aktywnymi, rozbieżnymi kopiami.
-5. **Usunąć 23 błędy Ruff** i dodać lint do wymaganych kroków CI.
-6. **Rozstrzygnąć politykę artefaktów.** `.gitignore` przestał ignorować `*.egg-info` i wybrane ZIP-y, a do indeksu dodano metadane instalacji oraz duże artefakty generowane. Jeżeli mają być dowodem release, powinny mieć jawny manifest i proces odtworzenia; w przeciwnym razie nie powinny być źródłem.
-7. **Usunąć dwuznaczność Compose.** W katalogu głównym są `compose.yaml` platformy i `docker-compose.yml` Housing Studio; Docker Compose ostrzega i wybiera pierwszy z nich.
-8. **Zaktualizować dowody intencji.** Dodać kuratorowany task/ticket 0.5.0, powiązać wpisy changelogu z plikami/symbolami i wykluczyć wygenerowane artefakty z analizy `todo2code`.
+1. **Potwierdzić target produkcyjny.** Skrypt `scripts/deploy_compose.sh` obsługuje lokalny/single-host Compose, ale nie zastępuje konfiguracji konkretnego hosta, rejestru obrazów, TLS, backupów i sekretów.
+2. **Wybrać jedno źródło Housing Studio.** Obraz CAD i CI używają `components/housing-studio`; katalog główny i vendor nadal są rozbieżnymi kopiami wymagającymi konsolidacji.
+3. **Dodać lock/constraints zależności.** `httpx2` naprawia obecny TestClient, lecz otwarte zakresy wersji nadal mogą zmienić środowisko bez zmiany źródeł.
+4. **Rozstrzygnąć politykę dużych artefaktów.** Dowody release powinny mieć jawny manifest i proces odtworzenia; artefakty instalacyjne `*.egg-info` zostały usunięte ze źródeł i ponownie ignorowane.
+5. **Zaktualizować dowody intencji.** Dodać kuratorowany task/ticket 0.5.0, powiązać changelog z plikami/symbolami i wykluczyć wygenerowane artefakty z analizy `todo2code`.
 
 ## 7. Odtwarzalne uruchomienie
 
@@ -170,7 +137,7 @@ W czystym checkoutcie wymagane są zależności obu projektów:
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install -e ".[dev]" -e "components/housing-studio[dev]"
+.venv/bin/python -m pip install -e ".[dev]" -e "./components/housing-studio[dev]"
 ```
 
 Uruchomienie rdzenia z lokalnym SQLite:
@@ -193,4 +160,18 @@ PYTHONPATH=src \
 .venv/bin/python scripts/verify_project.py
 ```
 
-Nie należy obecnie interpretować historycznego wpisu „38 tests passed” jako dowodu dla bieżącego drzewa. Jest on dowodem wcześniejszego release build, podczas gdy aktualna kolekcja ma 65 testów i wymaga naprawy stosu klienta HTTP.
+Pełna kontrola lokalna:
+
+```bash
+ruff check .
+python scripts/verify_project.py --run-tests
+docker run --rm -v "$PWD:/workspace" -w /workspace bufbuild/buf:latest lint
+```
+
+Chroniony deployment aktualnego, wypchniętego commita po zielonym CI:
+
+```bash
+scripts/deploy_compose.sh
+```
+
+Skrypt odmawia pracy dla brudnego drzewa, commita różnego od `origin/main` albo czerwonego CI. Obraz zawiera etykietę rewizji, `/health` ją zwraca, a brak potwierdzenia po wdrożeniu uruchamia rollback do poprzedniego obrazu aplikacji.

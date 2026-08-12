@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 
 from .models import ProjectConfig
 
-
 load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
 

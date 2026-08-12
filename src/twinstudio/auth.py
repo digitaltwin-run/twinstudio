@@ -5,7 +5,6 @@ import smtplib
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from email.message import EmailMessage
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from fastapi import HTTPException, Request, status

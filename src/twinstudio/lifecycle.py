@@ -11,7 +11,6 @@ from twinstudio.evolution_models import (
     LifecycleTransition,
 )
 
-
 _STAGE_PURPOSE: dict[LifecycleStage, str] = {
     LifecycleStage.OPPORTUNITY: "Identify value, stakeholders and the opportunity worth pursuing.",
     LifecycleStage.DISCOVERY: "Observe context, users, interfaces and present evidence.",

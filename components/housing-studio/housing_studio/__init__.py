@@ -3,4 +3,4 @@
 from .models import ProjectConfig, default_project_config
 from .version import __version__
 
-__all__ = ["ProjectConfig", "default_project_config", "__version__"]
+__all__ = ["ProjectConfig", "__version__", "default_project_config"]

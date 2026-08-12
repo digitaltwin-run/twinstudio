@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import json
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from fastapi import Body, Depends, FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field
 
 from twinstudio import __version__
 from twinstudio.artifacts import export_project_bundle
@@ -34,9 +33,13 @@ from twinstudio.dsl import (
     safe_parameter_patches,
     write_evolution_artifacts,
 )
-from twinstudio.evolution import ProjectEvolutionEngine, graph_to_dot, graph_to_mermaid, load_evolution_catalog
+from twinstudio.event_store import ConcurrencyError, EventStore
+from twinstudio.evolution import (
+    ProjectEvolutionEngine,
+    graph_to_dot,
+    graph_to_mermaid,
+)
 from twinstudio.evolution_models import (
-    DslSeverity,
     EvolutionRun,
     LifecycleBlueprint,
     LifecycleHistoryEntry,
@@ -44,7 +47,6 @@ from twinstudio.evolution_models import (
     RealizationMode,
     TwinDslDocument,
 )
-from twinstudio.event_store import ConcurrencyError, EventStore
 from twinstudio.feature_lenses import FeatureLensEngine
 from twinstudio.mcp_gateway import McpGateway
 from twinstudio.mcp_protocol import (
@@ -66,7 +68,6 @@ from twinstudio.simulations import (
     simulate_thermal,
 )
 from twinstudio.specification import unified_specification
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 STATIC_ROOT = Path(__file__).resolve().parent / "static"
@@ -295,6 +296,7 @@ def health() -> dict[str, Any]:
     return {
         "status": "ok",
         "version": __version__,
+        "revision": settings.build_sha,
         "database": settings.database_url.split(":", 1)[0],
         "mqtt_enabled": settings.mqtt_enabled,
         "litellm_configured": bool(settings.litellm_model),

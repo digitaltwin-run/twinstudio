@@ -1,4 +1,9 @@
-from twinstudio.simulations import evaluate_human_scenario, mechanical_rule_checks, simulate_power, simulate_thermal
+from twinstudio.simulations import (
+    evaluate_human_scenario,
+    mechanical_rule_checks,
+    simulate_power,
+    simulate_thermal,
+)
 
 
 def test_power_and_thermal_models(project_snapshot) -> None:

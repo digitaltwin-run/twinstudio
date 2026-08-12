@@ -10,7 +10,6 @@ from twinstudio.domain import (
     ChangeOperationKind,
     ChangePlan,
     ImpactItem,
-    ObjectNode,
     ProjectSnapshot,
     RegionSelection,
 )
@@ -143,7 +142,6 @@ class ChangePlanner:
     ) -> ChangePlan:
         lowered = prompt.lower()
         target = selection.target_object_uris[0]
-        node = project.objects.get(target)
         semantic_faces = [hit.semantic_face_uri for hit in selection.ray_hits if hit.semantic_face_uri]
         operations: list[ChangeOperation] = []
         assumptions: list[str] = []

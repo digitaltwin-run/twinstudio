@@ -12,7 +12,6 @@ from fastapi.testclient import TestClient
 from app.main import app
 from housing_studio.version import __version__
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 HTML_PATH = PROJECT_ROOT / "app" / "templates" / "index.html"
 JS_PATH = PROJECT_ROOT / "app" / "static" / "app.js"

@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 from .config_diff import diff_as_dicts
 from .models import ProjectConfig
 
-
 load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
 
@@ -319,13 +318,13 @@ def fallback_interpret(prompt: str, current: ProjectConfig) -> InterpretationRes
         phrase in lower
         for phrase in ("zachowaj warstwy", "włącz warstwy", "wlacz warstwy", "keep layers", "enable layers")
     )
-    for field, aliases in drawing_layer_aliases.items():
+    for field_name, aliases in drawing_layer_aliases.items():
         if any(f"without {alias}" in lower or f"bez {alias}" in lower or f"wyłącz {alias}" in lower or f"wylacz {alias}" in lower for alias in aliases):
-            data["drawing"]["layers"][field]["enabled"] = False
-            changes.append(f"drawing layer {field}=off")
+            data["drawing"]["layers"][field_name]["enabled"] = False
+            changes.append(f"drawing layer {field_name}=off")
         elif keep_layer_context and any(alias in lower for alias in aliases):
-            data["drawing"]["layers"][field]["enabled"] = True
-            changes.append(f"drawing layer {field}=on")
+            data["drawing"]["layers"][field_name]["enabled"] = True
+            changes.append(f"drawing layer {field_name}=on")
 
     artifact_aliases = {
         "export_step": ["step"],
@@ -337,7 +336,7 @@ def fallback_interpret(prompt: str, current: ProjectConfig) -> InterpretationRes
         "export_pdf": ["pdf"],
         "create_zip": ["zip", "paczka zip"],
     }
-    for field, aliases in artifact_aliases.items():
+    for field_name, aliases in artifact_aliases.items():
         disable = any(
             phrase in lower
             for alias in aliases
@@ -373,11 +372,11 @@ def fallback_interpret(prompt: str, current: ProjectConfig) -> InterpretationRes
             )
         )
         if disable:
-            data["artifacts"][field] = False
-            changes.append(f"artifact {field}=off")
+            data["artifacts"][field_name] = False
+            changes.append(f"artifact {field_name}=off")
         elif enable:
-            data["artifacts"][field] = True
-            changes.append(f"artifact {field}=on")
+            data["artifacts"][field_name] = True
+            changes.append(f"artifact {field_name}=on")
 
     drawing_view_aliases = {
         "include_front": ["front view", "widok z przodu"],
@@ -388,15 +387,15 @@ def fallback_interpret(prompt: str, current: ProjectConfig) -> InterpretationRes
         phrase in lower
         for phrase in ("zachowaj widoki", "włącz widoki", "wlacz widoki", "keep views", "include views")
     )
-    for field, aliases in drawing_view_aliases.items():
+    for field_name, aliases in drawing_view_aliases.items():
         if any(f"without {a}" in lower or f"bez {a}" in lower for a in aliases):
-            data["drawing"][field] = False
-            changes.append(f"drawing {field}=off")
+            data["drawing"][field_name] = False
+            changes.append(f"drawing {field_name}=off")
         if any(f"include {a}" in lower or f"dodaj {a}" in lower for a in aliases) or (
             keep_views_context and any(a in lower for a in aliases)
         ):
-            data["drawing"][field] = True
-            changes.append(f"drawing {field}=on")
+            data["drawing"][field_name] = True
+            changes.append(f"drawing {field_name}=on")
 
     config = ProjectConfig.model_validate(data)
     if changes:

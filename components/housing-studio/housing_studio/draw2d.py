@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import html
 import math
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, Literal
+from typing import Literal
 
 import ezdxf
 from reportlab.lib.pagesizes import A3, A4, landscape
@@ -17,7 +18,6 @@ from .validation import (
     board_origin,
     hinge_segments,
 )
-
 
 LayerKey = Literal[
     "visible_edges",

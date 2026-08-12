@@ -8,7 +8,6 @@ from twinstudio.bus import QueryService
 from twinstudio.event_store import EventStore
 from twinstudio.settings import settings
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--project", required=True)
 parser.add_argument("--out", type=Path, required=True)

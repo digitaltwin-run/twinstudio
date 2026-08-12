@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from twinstudio.domain import Role
 
-
 ROLE_ORDER = {
     Role.READER: 10,
     Role.EDITOR: 20,

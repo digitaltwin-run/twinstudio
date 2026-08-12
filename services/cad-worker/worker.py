@@ -5,11 +5,10 @@ import os
 from pathlib import Path
 
 import paho.mqtt.client as mqtt
+from scoped_brep_adapter import apply_scoped_operation
 
 from housing_studio.artifacts import generate_artifacts
 from housing_studio.models import ProjectConfig, default_project_config
-from scoped_brep_adapter import apply_scoped_operation
-
 
 HOST = os.getenv("MQTT_HOST", "mqtt")
 PORT = int(os.getenv("MQTT_PORT", "1883"))

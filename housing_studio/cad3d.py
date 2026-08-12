@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
@@ -9,7 +9,6 @@ import cadquery as cq
 
 from .models import ConnectorOpening, ProjectConfig
 from .validation import board_hole_centers, hinge_segments
-
 
 EPS = 0.15
 

@@ -6,7 +6,7 @@ import re
 import shutil
 import zipfile
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -57,7 +57,7 @@ def _write_json(path: Path, data: Any) -> None:
 
 
 def _job_id(config: ProjectConfig) -> str:
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     digest = hashlib.sha256(config.model_dump_json().encode("utf-8")).hexdigest()[:8]
     return f"{stamp}-{digest}"
 
@@ -319,7 +319,7 @@ def generate_artifacts(
 
     manifest: dict[str, Any] = {
         "job_id": identifier,
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
         "project": config.metadata.model_dump(mode="json"),
         "warnings": warnings,
         "metrics": design_metrics(config),

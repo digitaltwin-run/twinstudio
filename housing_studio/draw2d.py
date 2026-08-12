@@ -18,7 +18,6 @@ from .validation import (
     hinge_segments,
 )
 
-
 LayerKey = Literal[
     "visible_edges",
     "hidden_edges",

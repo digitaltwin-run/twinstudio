@@ -21,14 +21,13 @@ from twinstudio.dsl import (
 )
 from twinstudio.event_store import EventStore
 from twinstudio.evolution import ProjectEvolutionEngine, graph_to_dot, graph_to_mermaid
-from twinstudio.evolution_models import EvolutionRun, RealizationMode, TwinDslDocument
+from twinstudio.evolution_models import EvolutionRun, RealizationMode
 from twinstudio.feature_lenses import FeatureLensEngine
 from twinstudio.gtin import complete_gtin, validate_gtin
 from twinstudio.mqtt_bus import publisher_from_settings
 from twinstudio.seed import seed_from_file
 from twinstudio.settings import settings
 from twinstudio.simulations import simulate_power
-
 
 app = typer.Typer(
     help=(

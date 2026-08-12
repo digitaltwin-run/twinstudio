@@ -4,13 +4,10 @@ import json
 from dataclasses import replace
 from pathlib import Path
 
-import yaml
-
-from twinstudio.dsl import compile_dsl, parse_dsl, write_evolution_artifacts, make_execution_record
+from twinstudio.dsl import compile_dsl, make_execution_record, parse_dsl, write_evolution_artifacts
 from twinstudio.evolution import ProjectEvolutionEngine, graph_to_dot, graph_to_mermaid
 from twinstudio.evolution_models import LifecycleStage, TwinDslDocument
 from twinstudio.settings import settings
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "examples" / "evolution" / "rpi5-hinge-evolution.twin"

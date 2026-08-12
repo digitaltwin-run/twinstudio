@@ -16,6 +16,7 @@ with TestClient(app) as client:
     health = client.get('/health')
     assert health.status_code == 200
     assert health.json()['version'] == '0.5.0'
+    assert health.json()['revision'] == 'test-revision'
     assert health.json()['feature_lens_count'] == 49
 
     catalog = client.get('/api/v1/feature-lenses')
@@ -143,6 +144,7 @@ with TestClient(app) as client:
             "PYTHONPATH": str(root / "src"),
             "DATABASE_URL": f"sqlite:///{tmp_path / 'api.db'}",
             "TWINSTUDIO_DATA_DIR": str(tmp_path / "data"),
+            "TWINSTUDIO_BUILD_SHA": "test-revision",
             "DEV_AUTH_BYPASS": "true",
             "MQTT_ENABLED": "false",
         }

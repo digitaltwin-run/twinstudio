@@ -23,7 +23,6 @@ from .models import ProjectConfig
 from .validation import collect_warnings, design_metrics
 from .version import __version__
 
-
 GENERATOR_VERSION = __version__
 
 

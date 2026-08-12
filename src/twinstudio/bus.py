@@ -6,26 +6,31 @@ from twinstudio.domain import (
     Annotation,
     ArtifactRecord,
     ChangePlan,
-    DesignFixationReview,
     CommandEnvelope,
+    DesignFixationReview,
     EcommerceOffer,
-    EvidenceClaim,
     EventEnvelope,
+    EvidenceClaim,
     FailureMode,
     HumanUseScenario,
     LifecycleStage,
     ObjectNode,
     PowerModel,
+    ProjectionMap,
     ProjectSnapshot,
     Requirement,
     Role,
-    ProjectionMap,
     SelectionMap,
     TestPlan,
     ThermalModel,
 )
-from twinstudio.evolution_models import DslExecutionRecord, EvolutionRun, LifecycleBlueprint, LifecycleHistoryEntry
 from twinstudio.event_store import EventStore
+from twinstudio.evolution_models import (
+    DslExecutionRecord,
+    EvolutionRun,
+    LifecycleBlueprint,
+    LifecycleHistoryEntry,
+)
 from twinstudio.mqtt_bus import EventPublisher
 from twinstudio.permissions import require_permission
 from twinstudio.projector import ProjectNotFound, object_tree, project_from_events

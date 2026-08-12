@@ -182,7 +182,7 @@ class EnclosureDimensions(StrictModel):
         return self.external_depth - 2.0 * self.wall_thickness
 
     @model_validator(mode="after")
-    def validate_geometry(self) -> "EnclosureDimensions":
+    def validate_geometry(self) -> EnclosureDimensions:
         if self.total_height <= self.base_height:
             raise ValueError("total_height must be greater than base_height")
         if self.top_width <= 5.0:
@@ -230,7 +230,7 @@ class HingeConfig(StrictModel):
         return self.pin_diameter + self.pin_bore_clearance
 
     @model_validator(mode="after")
-    def validate_hinge(self) -> "HingeConfig":
+    def validate_hinge(self) -> HingeConfig:
         if self.bore_diameter >= self.outer_diameter:
             raise ValueError("hinge pin bore diameter must be lower than hinge outer diameter")
         return self
@@ -242,7 +242,7 @@ class StandoffConfig(StrictModel):
     pilot_hole_diameter: float = Field(default=1.0, ge=0.2, le=10.0)
 
     @model_validator(mode="after")
-    def validate_standoff(self) -> "StandoffConfig":
+    def validate_standoff(self) -> StandoffConfig:
         if self.pilot_hole_diameter >= self.outer_diameter:
             raise ValueError("standoff pilot hole must be lower than outer diameter")
         return self
@@ -368,7 +368,7 @@ class ProjectConfig(StrictModel):
     artifacts: ArtifactConfig = Field(default_factory=ArtifactConfig)
 
     @model_validator(mode="after")
-    def validate_project(self) -> "ProjectConfig":
+    def validate_project(self) -> ProjectConfig:
         d = self.dimensions
         board = self.board
         if board.width > d.internal_width + 1e-6:

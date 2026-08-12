@@ -27,7 +27,6 @@ from sqlalchemy.exc import IntegrityError
 
 from twinstudio.domain import EventEnvelope, Role
 
-
 metadata = MetaData()
 
 events_table = Table(

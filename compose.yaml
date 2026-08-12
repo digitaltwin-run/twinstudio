@@ -4,13 +4,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TWINSTUDIO_BUILD_SHA: ${TWINSTUDIO_BUILD_SHA:-unknown}
+    image: ${TWINSTUDIO_APP_IMAGE:-twinstudio-app}:${TWINSTUDIO_APP_TAG:-latest}
     env_file: [.env]
     environment:
-      DATABASE_URL: postgresql+psycopg://twinstudio:twinstudio@postgres:5432/twinstudio
+      DATABASE_URL: ${TWINSTUDIO_COMPOSE_DATABASE_URL:-postgresql+psycopg://twinstudio:twinstudio@postgres:5432/twinstudio}
+      TWINSTUDIO_BUILD_SHA: ${TWINSTUDIO_BUILD_SHA:-unknown}
       TWINSTUDIO_DATA_DIR: /data
       MQTT_HOST: mqtt
       SMTP_HOST: mailpit
-    ports: ["${TWINSTUDIO_HOST_PORT:-8000}:8000"]
+    ports: ["${TWINSTUDIO_HOST_PORT:-${LPS_HOST_PORT:-8000}}:8000"]
     volumes:
       - twinstudio-data:/data
       - ./examples:/app/examples:ro
@@ -109,12 +113,11 @@ services:
     networks: [twinstudio]
 volumes:
   twinstudio-data:
+    name: ${TWINSTUDIO_DATA_VOLUME:-twinstudio_twinstudio-data}
+    external: ${TWINSTUDIO_DATA_VOLUME_EXTERNAL:-false}
   postgres-data:
   mqtt-data:
   minio-data:
   openwebui-data:
 networks:
   twinstudio:
-    ipam:
-      config:
-        - subnet: ${TWINSTUDIO_SUBNET:-172.31.50.0/24}

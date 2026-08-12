@@ -10,16 +10,16 @@ from twinstudio.domain import (
     ChangePlan,
     DesignFixationReview,
     EcommerceOffer,
-    EvidenceClaim,
     EventEnvelope,
+    EvidenceClaim,
     FailureMode,
     HumanUseScenario,
     LifecycleStage,
     ObjectNode,
     ParameterValue,
     PowerModel,
-    ProjectSnapshot,
     ProjectionMap,
+    ProjectSnapshot,
     Requirement,
     Role,
     SelectionMap,
@@ -27,7 +27,12 @@ from twinstudio.domain import (
     ThermalModel,
     utcnow,
 )
-from twinstudio.evolution_models import DslExecutionRecord, EvolutionRun, LifecycleBlueprint, LifecycleHistoryEntry
+from twinstudio.evolution_models import (
+    DslExecutionRecord,
+    EvolutionRun,
+    LifecycleBlueprint,
+    LifecycleHistoryEntry,
+)
 
 
 class ProjectNotFound(KeyError):

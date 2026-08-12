@@ -18,7 +18,6 @@ from twinstudio.domain import (
     ChangePlan,
     ImpactItem,
     LifecycleStage,
-    ObjectNode,
     ProjectSnapshot,
 )
 from twinstudio.evolution_models import (
@@ -52,7 +51,6 @@ from twinstudio.evolution_models import (
 )
 from twinstudio.feature_lenses import load_feature_lens_catalog
 from twinstudio.settings import Settings
-
 
 _POLISH_VERB_ALIASES = {
     "popraw": "improve",

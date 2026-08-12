@@ -324,12 +324,12 @@ def verify(root: Path, *, run_tests: bool = False) -> dict:
     if run_tests:
         pytest_check = _subprocess_check(
             "pytest",
-            [sys.executable, "-m", "pytest", "-q"],
+            [sys.executable, "-m", "pytest", "-p", "no:cacheprovider", "-q"],
             root=root,
             env=environment,
         )
         collected = subprocess.run(
-            [sys.executable, "-m", "pytest", "--collect-only"],
+            [sys.executable, "-m", "pytest", "-p", "no:cacheprovider", "--collect-only"],
             cwd=root,
             text=True,
             capture_output=True,

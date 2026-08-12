@@ -1,4 +1,6 @@
 FROM python:3.12-slim
+ARG TWINSTUDIO_BUILD_SHA=unknown
+LABEL org.opencontainers.image.revision=$TWINSTUDIO_BUILD_SHA
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \

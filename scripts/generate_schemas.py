@@ -7,8 +7,8 @@ from pathlib import Path
 from twinstudio.domain import (
     ChangePlan,
     DesignFixationReview,
-    ProjectSnapshot,
     ProjectionMap,
+    ProjectSnapshot,
     RegionSelection,
     SelectionMap,
     TestPlan,
@@ -20,7 +20,6 @@ from twinstudio.evolution_models import (
     LifecycleBlueprint,
     TwinDslDocument,
 )
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_ROOT = ROOT / "schemas"

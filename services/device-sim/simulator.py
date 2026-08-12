@@ -10,7 +10,6 @@ from pathlib import Path
 import paho.mqtt.client as mqtt
 from PIL import Image, ImageStat
 
-
 HOST = os.getenv("MQTT_HOST", "mqtt")
 PORT = int(os.getenv("MQTT_PORT", "1883"))
 PREFIX = os.getenv("MQTT_TOPIC_PREFIX", "twinstudio/v1").strip("/")

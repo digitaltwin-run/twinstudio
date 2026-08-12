@@ -19,7 +19,6 @@ from housing_studio.llm_config import interpret_with_litellm
 from housing_studio.models import ProjectConfig, default_project_config
 from housing_studio.validation import collect_warnings, design_metrics
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 GENERATED_ROOT = Path(
     os.getenv("HOUSING_GENERATED_DIR", str(PROJECT_ROOT / "generated"))
