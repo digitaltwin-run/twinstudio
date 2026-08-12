@@ -131,6 +131,15 @@ with TestClient(app) as client:
     assert resolved.status_code == 200 and resolved.json()['resolved_feature_uris']
     planned = client.post('/api/v1/projects/demo-rpi5/change-plans', json={'prompt': 'add a 45 degree chamfer here', 'selection': selection})
     assert planned.status_code == 200 and planned.json()['plan']['operations']
+    queue = client.get('/api/v1/projects/demo-rpi5/change-queue')
+    assert queue.status_code == 200, queue.text
+    queued_chamfer = next(
+        item for item in queue.json()['tasks']
+        if item['plan_id'] == planned.json()['plan']['plan_id']
+    )
+    assert queued_chamfer['status'] == 'waiting_cad'
+    assert queued_chamfer['target_uris'] == ['poa://demo/demo-rpi5@main/part/base']
+    assert queue.json()['active_count'] >= 1
 
     selection_2d = dict(selection)
     selection_2d.update({

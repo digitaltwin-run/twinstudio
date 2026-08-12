@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TwinStudio</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563eb'/%3E%3Cpath d='M7 9h18v4h-7v12h-4V13H7z' fill='white'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="/static/style.css?v=20260812-planner-status1" />
+  <link rel="stylesheet" href="/static/style.css?v=20260812-change-queue1" />
   <script type="importmap">
     {
       "imports": {
@@ -170,6 +170,11 @@
       <div id="selectionSummary" class="empty">Zaznacz obszar w 3D lub 2D.</div>
     </section>
     <section class="inspector-block">
+      <div class="history-heading"><h3>Kolejka wdrażania</h3><span id="changeQueueCount" class="badge">0</span></div>
+      <p class="hint">Aktywne zadania są oznaczone tym samym stanem przy obiektach w drzewie po lewej.</p>
+      <div id="changeQueue" class="change-queue empty">Brak aktywnych zadań.</div>
+    </section>
+    <section class="inspector-block">
       <h3>Uwaga do zaznaczenia</h3>
       <textarea id="annotationText" rows="4" placeholder="Np. widoczne niedoskonałości druku; ostatnie 2 mm ściany powinny być pionowe."></textarea>
       <button id="saveAnnotation" class="button full">Zapisz i wykonaj uwagę</button>
@@ -201,6 +206,6 @@
     <div id="banner" class="banner hidden"></div>
   </aside>
 </main>
-<script type="module" src="/static/app.js?v=20260812-planner-status1"></script>
+<script type="module" src="/static/app.js?v=20260812-change-queue1"></script>
 </body>
 </html>

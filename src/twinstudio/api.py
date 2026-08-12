@@ -776,6 +776,76 @@ def get_change_history(
     return result
 
 
+@app.get("/api/v1/projects/{project_id}/change-queue")
+def get_change_queue(
+    project_id: str,
+    include_completed: bool = False,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Project event-backed plans into the active implementation queue."""
+
+    authorize_project(project_id, user, "project.read")
+    snapshot = queries.project(project_id)
+    events, reverted = _change_history(project_id)
+    applications: dict[str, list[Any]] = {}
+    for event in events:
+        if event.event_type == "ChangeApplied" and event.data.get("plan_id"):
+            applications.setdefault(str(event.data["plan_id"]), []).append(event)
+    active_statuses = {"ready", "needs_detail", "waiting_cad"}
+    tasks: list[dict[str, Any]] = []
+    for plan in snapshot.change_plans.values():
+        plan_applications = applications.get(plan.plan_id, [])
+        active_application = next(
+            (event for event in reversed(plan_applications) if event.event_id not in reverted),
+            None,
+        )
+        operation_kinds = [str(getattr(operation.kind, "value", operation.kind)) for operation in plan.operations]
+        deferred_count = 0
+        if active_application is not None:
+            deferred_count = len(active_application.data.get("deferred_operations", []))
+            status = "waiting_cad" if deferred_count else "completed"
+            updated_at = active_application.occurred_at.isoformat()
+        elif plan_applications:
+            status = "undone"
+            updated_at = plan_applications[-1].occurred_at.isoformat()
+        elif plan.base_revision != snapshot.revision:
+            status = "stale"
+            updated_at = plan.created_at.isoformat()
+        elif plan.unresolved_questions:
+            status = "needs_detail"
+            updated_at = plan.created_at.isoformat()
+        elif operation_kinds and all(kind == "set_parameter" for kind in operation_kinds):
+            status = "ready"
+            updated_at = plan.created_at.isoformat()
+        else:
+            status = "waiting_cad"
+            deferred_count = len(plan.operations)
+            updated_at = plan.created_at.isoformat()
+        if not include_completed and status not in active_statuses:
+            continue
+        tasks.append(
+            {
+                "task_id": plan.plan_id,
+                "plan_id": plan.plan_id,
+                "prompt": plan.prompt,
+                "status": status,
+                "target_uris": plan.selected_scope_uris,
+                "selection_uri": plan.selection_uri,
+                "operation_kinds": operation_kinds,
+                "unresolved_questions": plan.unresolved_questions,
+                "deferred_count": deferred_count,
+                "created_at": plan.created_at.isoformat(),
+                "updated_at": updated_at,
+            }
+        )
+    tasks.sort(key=lambda task: (task["updated_at"], task["task_id"]), reverse=True)
+    return {
+        "project_id": project_id,
+        "active_count": sum(task["status"] in active_statuses for task in tasks),
+        "tasks": tasks,
+    }
+
+
 @app.get("/api/v1/projects/{project_id}/design-fixation/reviews")
 def get_design_fixation_reviews(
     project_id: str,

@@ -60,6 +60,8 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - UI odróżnia zapis parametru od odroczonej operacji CAD: plan bez `set_parameter` nie udostępnia mylącego przycisku zastosowania i jawnie informuje, że refresh nie przebuduje STL/SVG;
 - `Zapisz i wykonaj uwagę` od razu tworzy `ChangePlan`; bezpieczne `set_parameter` jest wykonywane automatycznie, a geometria bez stabilnego mappingu pozostaje otwarta i jawnie odroczona do CAD workera;
 - `GET /change-history` składa listę uwag, planów, zastosowań i cofnięć z append-only Event Store; cofnięcie bezpiecznego parametru emituje kompensujące `ChangeReverted` z pełnym poprzednim `ParameterValue`, zamiast usuwać audyt;
+- `GET /change-queue` projektuje z tego samego Event Store tylko aktywne zadania jako `ready`, `needs_detail` lub `waiting_cad`; zakończone, cofnięte i nieaktualne plany pozostają w historii, ale nie zaśmiecają kolejki;
+- UI łączy trwałą kolejkę z lokalnymi stanami `planning`, `applying` i `undoing`; obiekty POA objęte zadaniem mają w drzewie kolorową krawędź i znacznik `PLAN`, `ZAPIS`, `CAD`, `?`, `GOTOWE` albo `COFNIJ`, a karta kolejki pozwala ponownie otworzyć zapisany plan po odświeżeniu strony;
 - LLM może odczytać ostatni `UIContext` i playbook `error/<CODE>.md` przez REST lub dwa kontrolowane narzędzia MCP;
 - playbooki używają prostego, deklaratywnego `REPAIR 1.0`; nie dają LLM swobodnego wykonania powłoki ani ominięcia autoryzacji.
 
@@ -138,6 +140,7 @@ Interpretacja wyniku:
 - test Chromium potwierdził 11 kolejnych rekordów `args`, współrzędne i identyfikatory klikniętych elementów, zapis pełnej trasy diagnostycznej w `UIContext.route` oraz skopiowanie ponad 8 tys. znaków DSL z rekordami `UiAction` i `HTTP_REQUEST_COMPLETED`;
 - scenariusz `zmniejsz o 4mm` poprawnie kończy się lokalnym `add_annotation` z pytaniem o konkretny wymiar/operację; UI pokazuje, że plan nie zmieni bryły, blokuje pustą aplikację i nie sugeruje odświeżania strony;
 - test Chromium zapisał uwagę `ustaw grubość ścian na 2.25 mm`, automatycznie zmienił parametr z 2.0 na 2.25, pokazał zastosowanie na liście historii, a następnie cofnął je do 2.0 przez `ChangeReverted`; akcje `plan.apply.completed` i `change.undo.completed` znalazły się w URL/DSL;
+- test Chromium potwierdził również trwałe zadanie `needs_detail` dla `zmniejsz o 4mm`, kartę w kolejce, licznik aktywnych zadań oraz odpowiadający mu znacznik `?` i żółtą krawędź na `Lower base` w drzewie projektu;
 - lokalny lifecycle przez Makefile udostępnia `start`, `restart`/`recreate`, `stop`/`kill`, `status`, `health`, `logs`, `logs-follow` i `run`; `start` zastępuje istniejącą instancję TwinStudio z bieżącego workspace, ale odmawia zabicia obcego procesu na tym samym porcie;
 - zrzut kontrolny testu UI jest zapisywany domyślnie jako `/tmp/twinstudio-ui.png`; test jest odtwarzalny poleceniem `python scripts/verify_ui.py --url <adres>`.
 

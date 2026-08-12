@@ -235,6 +235,13 @@
       "automatic_parameter_before": 2.0,
       "automatic_parameter_after": 2.25,
       "change_history": true,
+      "change_queue_endpoint": true,
+      "change_queue_active_states": ["ready", "needs_detail", "waiting_cad"],
+      "change_queue_transient_states": ["planning", "applying", "undoing"],
+      "change_queue_tree_marker": true,
+      "change_queue_reopens_persisted_plan": true,
+      "change_queue_verified_status": "needs_detail",
+      "change_queue_verified_target": "poa://demo/demo-rpi5@main/part/base",
       "compensating_undo": "ChangeReverted",
       "undo_restored_parameter": 2.0,
       "pdf_pages": 3,
@@ -269,5 +276,5 @@
       "runtime_directory": ".run"
     }
   ],
-  "verified_at": "2026-08-12T15:21:55+02:00"
+  "verified_at": "2026-08-12T15:36:57+02:00"
 }

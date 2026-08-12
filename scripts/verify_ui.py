@@ -146,6 +146,8 @@ def main() -> int:
         plan_verified = False
         automatic_note_verified = False
         undo_verified = False
+        queue_tree_marker_verified = False
+        queue_screenshot = None
         previous_wall_thickness = None
         automatic_wall_thickness = None
         if args.verify_plan:
@@ -164,6 +166,21 @@ def main() -> int:
             assert page.locator("#applyButton").is_disabled()
             assert "Brak zmian" in page.locator("#applyButton").inner_text()
             assert "Brak zaznaczenia" not in page.locator("#banner").inner_text()
+            queued_ambiguous = page.locator(
+                '#changeQueue .queue-task[data-status="needs_detail"]'
+            ).filter(has_text="zmniejsz o 4mm")
+            queued_ambiguous.first.wait_for(timeout=args.timeout_ms)
+            assert queued_ambiguous.first.locator("[data-open-plan]").is_visible()
+            assert int(page.locator("#changeQueueCount").inner_text()) >= 1
+            selected_task_marker = page.locator(
+                '#objectTree .tree-row.selected .task-pill[data-status="needs_detail"]'
+            )
+            selected_task_marker.wait_for(timeout=args.timeout_ms)
+            queue_tree_marker_verified = True
+            queue_screenshot = args.screenshot.with_name(
+                f"{args.screenshot.stem}-queue{args.screenshot.suffix}"
+            )
+            page.screenshot(path=str(queue_screenshot), full_page=True)
             plan_verified = True
             project_before = page.request.get(
                 f"{args.url}/api/v1/projects/{project_id}"
@@ -211,6 +228,11 @@ def main() -> int:
                         .parameters.wall_thickness.value) === expected;
                 }""",
                 arg=previous_wall_thickness,
+                timeout=args.timeout_ms,
+            )
+            page.wait_for_function(
+                "[...new URL(location.href).searchParams.getAll('args')]"
+                ".some(item => item.includes('|change.undo.completed|'))",
                 timeout=args.timeout_ms,
             )
             undo_verified = True
@@ -290,6 +312,8 @@ def main() -> int:
             ),
             "automatic_note_execution": automatic_note_verified,
             "undo_from_change_history": undo_verified,
+            "change_queue_tree_marker": queue_tree_marker_verified,
+            "queue_screenshot": str(queue_screenshot) if queue_screenshot else None,
             "wall_thickness_before": previous_wall_thickness,
             "wall_thickness_automatic": automatic_wall_thickness,
             "url_action_args": len(action_args),
