@@ -11,6 +11,7 @@ services:
     environment:
       DATABASE_URL: ${TWINSTUDIO_COMPOSE_DATABASE_URL:-postgresql+psycopg://twinstudio:twinstudio@postgres:5432/twinstudio}
       TWINSTUDIO_BUILD_SHA: ${TWINSTUDIO_BUILD_SHA:-unknown}
+      TWINSTUDIO_PROJECT_ROOT: /app
       TWINSTUDIO_DATA_DIR: /data
       MQTT_HOST: mqtt
       SMTP_HOST: mailpit
@@ -28,12 +29,17 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: twinstudio
-      POSTGRES_USER: twinstudio
-      POSTGRES_PASSWORD: twinstudio
+      POSTGRES_DB: ${TWINSTUDIO_POSTGRES_DB:-twinstudio}
+      POSTGRES_USER: ${TWINSTUDIO_POSTGRES_USER:-twinstudio}
+      POSTGRES_PASSWORD: ${TWINSTUDIO_POSTGRES_PASSWORD:-twinstudio}
     volumes: ["postgres-data:/var/lib/postgresql/data"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U twinstudio -d twinstudio"]
+      test:
+        - CMD-SHELL
+        - >-
+          PGPASSWORD=$${POSTGRES_PASSWORD} psql -h 127.0.0.1
+          -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+          -tAc 'SELECT 1' | grep -qx 1
       interval: 5s
       timeout: 5s
       retries: 20

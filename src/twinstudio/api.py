@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from pathlib import Path
+from time import perf_counter
 from typing import Any
+from uuid import uuid4
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
@@ -56,6 +59,14 @@ from twinstudio.mcp_protocol import (
     validate_modern_http_request,
 )
 from twinstudio.mqtt_bus import publisher_from_settings
+from twinstudio.observability import (
+    UiContext,
+    UiContextStore,
+    emit_problem,
+    emit_request_observation,
+    load_error_playbook,
+    make_problem,
+)
 from twinstudio.permissions import PermissionDenied, require_permission
 from twinstudio.projector import ProjectNotFound
 from twinstudio.seed import seed_from_file
@@ -69,9 +80,10 @@ from twinstudio.simulations import (
 )
 from twinstudio.specification import unified_specification
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = settings.project_root
 STATIC_ROOT = Path(__file__).resolve().parent / "static"
 EXAMPLES_ROOT = PROJECT_ROOT / "examples"
+ERROR_ROOT = PROJECT_ROOT / "error"
 
 store = EventStore(settings.database_url)
 publisher = publisher_from_settings(settings)
@@ -81,8 +93,17 @@ planner = ChangePlanner(settings)
 feature_lenses = FeatureLensEngine(settings)
 evolution_engine = ProjectEvolutionEngine(settings)
 auth = AuthService(settings, store, queries, commands, publisher)
+ui_contexts = UiContextStore()
 mcp_gateway = McpGateway(
-    queries, commands, planner, feature_lenses, evolution_engine, settings.data_dir / "artifacts", PROJECT_ROOT
+    queries,
+    commands,
+    planner,
+    feature_lenses,
+    evolution_engine,
+    settings.data_dir / "artifacts",
+    PROJECT_ROOT,
+    ui_contexts,
+    ERROR_ROOT,
 )
 
 
@@ -106,6 +127,68 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory=STATIC_ROOT), name="static")
 if EXAMPLES_ROOT.exists():
     app.mount("/examples", StaticFiles(directory=EXAMPLES_ROOT), name="examples")
+
+
+def _correlation_id(request: Request) -> str:
+    value = getattr(request.state, "correlation_id", None)
+    return str(value or uuid4())
+
+
+def _request_project_id(request: Request) -> str | None:
+    value = request.path_params.get("project_id")
+    return str(value) if value else None
+
+
+def _problem_response(
+    request: Request,
+    *,
+    status_code: int,
+    code: str,
+    message: str,
+    retryable: bool = False,
+    details: dict[str, Any] | None = None,
+) -> JSONResponse:
+    project_id = _request_project_id(request)
+    context = ui_contexts.get(project_id) if project_id else None
+    problem = make_problem(
+        code=code,
+        message=message,
+        source="twinstudio.api",
+        operation=f"{request.method} {request.url.path}",
+        correlation_id=_correlation_id(request),
+        project_id=project_id,
+        status_code=status_code,
+        retryable=retryable,
+        ui_context=context,
+        artifacts=context.artifacts if context else [],
+        details=details,
+    )
+    emit_problem(problem)
+    payload = problem.model_dump(mode="json", exclude_none=True)
+    payload["dsl"] = problem.to_dsl()
+    return JSONResponse(
+        status_code=status_code,
+        content={"detail": message, "error": payload},
+        headers={"X-Correlation-ID": problem.correlation_id},
+    )
+
+
+@app.middleware("http")
+async def observe_http_request(request: Request, call_next):
+    candidate = request.headers.get("X-Correlation-ID", "").strip()
+    request.state.correlation_id = candidate[:128] if candidate else str(uuid4())
+    started = perf_counter()
+    response = await call_next(request)
+    response.headers["X-Correlation-ID"] = request.state.correlation_id
+    if request.url.path != "/health":
+        emit_request_observation(
+            correlation_id=request.state.correlation_id,
+            method=request.method,
+            path=request.url.path,
+            status_code=response.status_code,
+            duration_ms=(perf_counter() - started) * 1000,
+        )
+    return response
 
 
 class ApiModel(BaseModel):
@@ -256,23 +339,79 @@ def _transition_evidence_gaps(
 
 
 @app.exception_handler(ProjectNotFound)
-def project_not_found(_: Request, exc: ProjectNotFound) -> JSONResponse:
-    return JSONResponse(status_code=404, content={"detail": str(exc)})
+def project_not_found(request: Request, exc: ProjectNotFound) -> JSONResponse:
+    return _problem_response(
+        request, status_code=404, code="PROJECT_NOT_FOUND", message=str(exc)
+    )
 
 
 @app.exception_handler(PermissionDenied)
-def permission_denied(_: Request, exc: PermissionDenied) -> JSONResponse:
-    return JSONResponse(status_code=403, content={"detail": str(exc)})
+def permission_denied(request: Request, exc: PermissionDenied) -> JSONResponse:
+    return _problem_response(
+        request, status_code=403, code="PERMISSION_DENIED", message=str(exc)
+    )
 
 
 @app.exception_handler(ConcurrencyError)
-def concurrency_error(_: Request, exc: ConcurrencyError) -> JSONResponse:
-    return JSONResponse(status_code=409, content={"detail": str(exc)})
+def concurrency_error(request: Request, exc: ConcurrencyError) -> JSONResponse:
+    return _problem_response(
+        request,
+        status_code=409,
+        code="CONCURRENCY_CONFLICT",
+        message=str(exc),
+        retryable=True,
+    )
 
 
 @app.exception_handler(CommandRejected)
-def command_rejected(_: Request, exc: CommandRejected) -> JSONResponse:
-    return JSONResponse(status_code=422, content={"detail": str(exc)})
+def command_rejected(request: Request, exc: CommandRejected) -> JSONResponse:
+    return _problem_response(
+        request, status_code=422, code="COMMAND_REJECTED", message=str(exc)
+    )
+
+
+@app.exception_handler(RequestValidationError)
+def request_validation_failed(request: Request, exc: RequestValidationError) -> JSONResponse:
+    errors = [
+        {key: str(value) if key == "ctx" else value for key, value in item.items()}
+        for item in exc.errors()
+    ]
+    return _problem_response(
+        request,
+        status_code=422,
+        code="REQUEST_VALIDATION_FAILED",
+        message="Request validation failed",
+        details={"errors": errors},
+    )
+
+
+@app.exception_handler(HTTPException)
+def http_request_error(request: Request, exc: HTTPException) -> JSONResponse:
+    code = {
+        403: "PERMISSION_DENIED",
+        404: "RESOURCE_NOT_FOUND",
+        409: "CONCURRENCY_CONFLICT",
+        422: "REQUEST_VALIDATION_FAILED",
+    }.get(exc.status_code, "HTTP_REQUEST_ERROR")
+    message = exc.detail if isinstance(exc.detail, str) else str(exc.detail)
+    return _problem_response(
+        request,
+        status_code=exc.status_code,
+        code=code,
+        message=message,
+        retryable=exc.status_code in {408, 409, 429, 502, 503, 504},
+    )
+
+
+@app.exception_handler(Exception)
+def internal_error(request: Request, exc: Exception) -> JSONResponse:
+    return _problem_response(
+        request,
+        status_code=500,
+        code="INTERNAL_ERROR",
+        message="Internal server error",
+        details={"exception_type": type(exc).__name__},
+    )
 
 
 def principal(request: Request) -> AuthPrincipal:
@@ -306,7 +445,42 @@ def health() -> dict[str, Any]:
         "evolution_catalog": evolution_engine.catalog.catalog_version,
         "evolution_dimensions": len(evolution_engine.catalog.extension_dimensions),
         "dsl_api_version": "twinstudio.io/v1alpha1",
+        "observation_dsl_version": "TWINOBS 1.0",
     }
+
+
+@app.get("/api/v1/errors/{code}")
+def get_error_playbook(code: str) -> dict[str, str]:
+    try:
+        markdown = load_error_playbook(ERROR_ROOT, code)
+    except (FileNotFoundError, ValueError) as exc:
+        raise HTTPException(status_code=404, detail="Error playbook not found") from exc
+    return {"code": code, "registry_path": f"error/{code}.md", "markdown": markdown}
+
+
+@app.put("/api/v1/projects/{project_id}/ui-context")
+def put_ui_context(
+    project_id: str,
+    body: UiContext,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    authorize_project(project_id, user, "project.read")
+    if body.project_id != project_id:
+        raise HTTPException(status_code=422, detail="UI context project_id does not match API path")
+    return ui_contexts.put(body).model_dump(mode="json")
+
+
+@app.get("/api/v1/projects/{project_id}/ui-context")
+def get_ui_context(
+    project_id: str,
+    session_id: str | None = None,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    authorize_project(project_id, user, "project.read")
+    context = ui_contexts.get(project_id, session_id)
+    if context is None:
+        raise HTTPException(status_code=404, detail="UI context not found")
+    return context.model_dump(mode="json")
 
 
 @app.get("/api/v1/me")

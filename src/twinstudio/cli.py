@@ -95,7 +95,7 @@ def serve(host: str = settings.host, port: int = settings.port, reload: bool = F
     """Run the REST, web and MCP application."""
     import uvicorn
 
-    uvicorn.run("twinstudio.api:app", host=host, port=port, reload=reload)
+    uvicorn.run("twinstudio.api:app", host=host, port=port, reload=reload, access_log=False)
 
 
 @app.command()

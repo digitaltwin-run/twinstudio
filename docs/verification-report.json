@@ -183,5 +183,41 @@
       "reason": "The nested venv available in this container could not import setuptools.build_meta. Packaging was instead verified by building and importing the wheel with no network dependency."
     }
   ],
-  "verified_at": "2026-08-11T22:23:57.949960+00:00"
+  "follow_up_checks": [
+    {
+      "name": "pytest_current_workspace",
+      "status": "passed",
+      "collected_tests": 73
+    },
+    {
+      "name": "postgres_authenticated_healthcheck",
+      "status": "passed",
+      "database_user": "lps",
+      "database_name": "lps",
+      "query": "SELECT 1"
+    },
+    {
+      "name": "browser_project_and_3d",
+      "status": "passed",
+      "project_id": "demo-rpi5",
+      "tree_rows": 15,
+      "loaded_meshes": 2,
+      "expected_meshes": 2,
+      "rendered_triangles": 20096,
+      "visible_artifacts": [
+        "poa://demo/demo-rpi5@main/artifact/base-stl",
+        "poa://demo/demo-rpi5@main/artifact/lid-stl",
+        "poa://demo/demo-rpi5@main/artifact/assembly-front"
+      ]
+    },
+    {
+      "name": "llm_observability_contract",
+      "status": "passed",
+      "log_dsl": "TWINOBS 1.0",
+      "error_envelope": "ProblemEnvelope 1.0",
+      "ui_context": "UIContext 1.0",
+      "mcp_tool_count": 23
+    }
+  ],
+  "verified_at": "2026-08-12T10:58:28+00:00"
 }

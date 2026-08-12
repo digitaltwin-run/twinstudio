@@ -9,7 +9,7 @@ Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:
 - `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony do obrazu `cad-worker`;
 - rzeczywista aplikacja ASGI uruchamia się, seeduje projekt demonstracyjny i odpowiada przez HTTP.
 
-Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 66 testów przechodzi, Ruff i `buf lint` nie zgłaszają błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. CI instaluje teraz jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
+Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 73 testy przechodzą, Ruff i `buf lint` nie zgłaszają błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
 
 | Obszar | Ocena | Uzasadnienie |
 |---|---|---|
@@ -17,7 +17,7 @@ Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 66 testów
 | DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 66/66 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 73/73 testy przechodzą z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -48,6 +48,14 @@ Największe workstreamy:
 - symulacje zasilania, termiki, human-use i reguły mechaniczne;
 - eksport przenośnego `.twinstudio.zip` z manifestem SHA-256;
 - REST/FastAPI, CLI/Typer, MCP, MQTT i przeglądarkowy interfejs statyczny.
+
+Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
+
+- każde żądanie aplikacyjne emituje JSON/NDJSON z osadzonym DSL `TWINOBS 1.0` i `correlation_id`;
+- błędy REST zwracają kompatybilne pole `detail` oraz typowany `ProblemEnvelope` z kodem, kontekstem ekranu, artefaktami i adresem registry;
+- przeglądarka publikuje `UIContext`: aktywną kartę i narzędzie, zaznaczenie, stan renderera, liczbę siatek i trójkątów oraz listę użytych artefaktów;
+- LLM może odczytać ostatni `UIContext` i playbook `error/<CODE>.md` przez REST lub dwa kontrolowane narzędzia MCP;
+- playbooki używają prostego, deklaratywnego `REPAIR 1.0`; nie dają LLM swobodnego wykonania powłoki ani ominięcia autoryzacji.
 
 `src/living_product_studio` jest warstwą kompatybilności, która przekierowuje importy do `twinstudio` i emituje `DeprecationWarning`. Polecenie `lps` pozostaje aliasem `twinstudio`. Namespace Protobuf `lps.v1` jest zachowany celowo jako kontrakt wire.
 
@@ -110,11 +118,15 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **66/66 passed**, łącznie z testami API przez FastAPI `TestClient` i kolejnością `.env.local`/`.env`;
+- pełny pytest: **73/73 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext` i kolejnością `.env.local`/`.env`;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
 - `app`, `postgres`, `mqtt` i `mailpit` działają w Compose; aplikacja i PostgreSQL są healthy.
+- health-check PostgreSQL wykonuje uwierzytelnione `SELECT 1`; usunięto fałszywie dodatni `pg_isready -U twinstudio`, który przy odziedziczonym wolumenie generował `FATAL: role "twinstudio" does not exist` mimo statusu healthy;
+- artefakty 3D i 2D są pobierane przez autoryzowany registry endpoint, zamiast przez nieaudytowany bezpośredni mount ścieżki;
+- test Playwright na `http://127.0.0.1:8500` potwierdził projekt `demo-rpi5`, 15 wierszy drzewa, **2/2 załadowane siatki STL**, **20 096 trójkątów**, widoczny canvas WebGL oraz rysunek `assembly-front` bez błędów konsoli i sieci;
+- zrzut kontrolny testu UI jest zapisywany domyślnie jako `/tmp/twinstudio-ui.png`; test jest odtwarzalny poleceniem `python scripts/verify_ui.py --url <adres>`.
 
 ### 5.2. Kontrole nadal niewykonane
 
@@ -130,6 +142,8 @@ Interpretacja wyniku:
 3. **Dodać lock/constraints zależności.** `httpx2` naprawia obecny TestClient, lecz otwarte zakresy wersji nadal mogą zmienić środowisko bez zmiany źródeł.
 4. **Rozstrzygnąć politykę dużych artefaktów.** Dowody release powinny mieć jawny manifest i proces odtworzenia; artefakty instalacyjne `*.egg-info` zostały usunięte ze źródeł i ponownie ignorowane.
 5. **Zaktualizować dowody intencji.** Dodać kuratorowany task/ticket 0.5.0, powiązać changelog z plikami/symbolami i wykluczyć wygenerowane artefakty z analizy `todo2code`.
+6. **Usunąć runtime CDN dla Three.js.** Bieżący test potwierdza działanie, ale import map nadal pobiera Three.js z jsDelivr; dla instalacji odciętych od Internetu zależności przeglądarkowe powinny zostać przypięte i dostarczone z obrazem.
+7. **Wynieść `UIContext` do współdzielonego store dla wielu replik.** Aktualny magazyn jest świadomie procesowy i wystarcza dla wdrożenia single-host/single-worker; deployment wieloreplikowy powinien użyć Redis lub trwałego strumienia z TTL.
 
 ## 7. Odtwarzalne uruchomienie
 
@@ -170,6 +184,7 @@ Pełna kontrola lokalna:
 ruff check .
 python scripts/verify_project.py --run-tests
 docker run --rm -v "$PWD:/workspace" -w /workspace bufbuild/buf:latest lint
+.venv/bin/python scripts/verify_ui.py --url http://127.0.0.1:8500
 ```
 
 Chroniony deployment aktualnego, wypchniętego commita po zielonym CI:

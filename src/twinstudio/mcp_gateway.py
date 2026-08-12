@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Callable
 
 from twinstudio.artifacts import export_project_bundle
@@ -18,6 +19,7 @@ from twinstudio.mcp_protocol import (
     modern_result,
     server_discover_result,
 )
+from twinstudio.observability import UiContextStore, load_error_playbook
 from twinstudio.permissions import require_permission
 from twinstudio.selection_resolver import resolve_selection
 from twinstudio.simulations import (
@@ -51,6 +53,8 @@ class McpGateway:
         evolution_engine: ProjectEvolutionEngine,
         export_root,
         project_root,
+        ui_contexts: UiContextStore,
+        error_root: Path,
     ):
         self.queries = queries
         self.commands = commands
@@ -59,7 +63,11 @@ class McpGateway:
         self.evolution_engine = evolution_engine
         self.export_root = export_root
         self.project_root = project_root
+        self.ui_contexts = ui_contexts
+        self.error_root = error_root
         self._tool_handlers: dict[str, ToolHandler] = {
+            "get_error_playbook": self._get_error_playbook,
+            "get_ui_context": self._get_ui_context,
             "list_projects": self._list_projects,
             "list_feature_lenses": self._list_feature_lenses,
             "get_evolution_catalog": self._get_evolution_catalog,
@@ -161,6 +169,27 @@ class McpGateway:
 
     def tools(self) -> list[dict[str, Any]]:
         tools = [
+            _tool(
+                "get_error_playbook",
+                "Read a controlled repair playbook from error/<CODE>.md.",
+                {
+                    "type": "object",
+                    "required": ["code"],
+                    "properties": {"code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$"}},
+                },
+            ),
+            _tool(
+                "get_ui_context",
+                "Read what the latest browser session shows, including active artifacts and 3D mesh state.",
+                {
+                    "type": "object",
+                    "required": ["project_id"],
+                    "properties": {
+                        "project_id": {"type": "string"},
+                        "session_id": {"type": "string"},
+                    },
+                },
+            ),
             _tool("list_projects", "List accessible TwinStudio projects.", {"type": "object", "properties": {}}),
             _tool(
                 "list_feature_lenses",
@@ -346,6 +375,22 @@ class McpGateway:
             if role:
                 visible.append({**item, "role": role})
         return _content(visible)
+
+    def _get_error_playbook(self, args: dict[str, Any], _: AuthPrincipal) -> dict[str, Any]:
+        code = str(args.get("code", ""))
+        try:
+            markdown = load_error_playbook(self.error_root, code)
+        except (FileNotFoundError, ValueError) as exc:
+            raise McpProtocolError(-32602, "Error playbook not found") from exc
+        return _content({"code": code, "registry_path": f"error/{code}.md", "markdown": markdown})
+
+    def _get_ui_context(self, args: dict[str, Any], principal: AuthPrincipal) -> dict[str, Any]:
+        project_id, _ = self._project_context(args, principal, "project.read")
+        session_id = str(args.get("session_id", "")) or None
+        context = self.ui_contexts.get(project_id, session_id)
+        if context is None:
+            raise McpProtocolError(-32602, "UI context not found")
+        return _content(context.model_dump(mode="json"))
 
     def _list_feature_lenses(self, args: dict[str, Any], _: AuthPrincipal) -> dict[str, Any]:
         catalog = self.feature_lenses.catalog

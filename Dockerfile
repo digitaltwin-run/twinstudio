@@ -10,6 +10,7 @@ COPY examples ./examples
 COPY proto ./proto
 COPY schemas ./schemas
 COPY scripts ./scripts
+COPY error ./error
 RUN useradd --create-home --uid 10001 twinstudio && mkdir -p /data \
     && chown -R twinstudio:twinstudio /app /data
 ARG TWINSTUDIO_BUILD_SHA=unknown
@@ -18,4 +19,4 @@ USER twinstudio
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=5 \
   CMD curl -fsS http://127.0.0.1:8000/health || exit 1
-CMD ["uvicorn", "twinstudio.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "twinstudio.api:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]

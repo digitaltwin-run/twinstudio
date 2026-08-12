@@ -18,6 +18,7 @@ with TestClient(app) as client:
     assert health.json()['version'] == '0.5.0'
     assert health.json()['revision'] == 'test-revision'
     assert health.json()['feature_lens_count'] == 49
+    assert health.json()['observation_dsl_version'] == 'TWINOBS 1.0'
 
     catalog = client.get('/api/v1/feature-lenses')
     assert catalog.status_code == 200
@@ -43,8 +44,36 @@ with TestClient(app) as client:
     assert projects.status_code == 200 and projects.json()
     project = client.get('/api/v1/projects/demo-rpi5')
     assert project.status_code == 200
+    missing = client.get('/api/v1/projects/missing-project', headers={'X-Correlation-ID': 'test-correlation'})
+    assert missing.status_code == 404
+    assert missing.headers['X-Correlation-ID'] == 'test-correlation'
+    assert missing.json()['error']['code'] == 'PROJECT_NOT_FOUND'
+    assert missing.json()['error']['dsl'].startswith('TWINOBS 1.0')
+    playbook = client.get(missing.json()['error']['registry_uri'])
+    assert playbook.status_code == 200 and 'REPAIR 1.0' in playbook.json()['markdown']
     tree = client.get('/api/v1/projects/demo-rpi5/tree')
     assert tree.status_code == 200 and tree.json()['tree']
+    artifact = client.get('/api/v1/projects/demo-rpi5/artifacts/base-stl')
+    assert artifact.status_code == 200 and len(artifact.content) > 1000
+    ui_context = {
+        'session_id': 'pytest-browser-1234',
+        'project_id': 'demo-rpi5',
+        'active_tab': 'view3d',
+        'viewer_state': 'ready',
+        'loaded_mesh_count': 2,
+        'expected_mesh_count': 2,
+        'rendered_triangles': 100,
+        'visible_artifact_uris': ['poa://demo/demo-rpi5@main/artifact/base-stl'],
+        'artifacts': [{
+            'uri': 'poa://demo/demo-rpi5@main/artifact/base-stl',
+            'purpose': 'viewer3d:base',
+            'status': 'visible',
+        }],
+    }
+    reported = client.put('/api/v1/projects/demo-rpi5/ui-context', json=ui_context)
+    assert reported.status_code == 200, reported.text
+    current_ui = client.get('/api/v1/projects/demo-rpi5/ui-context')
+    assert current_ui.status_code == 200 and current_ui.json()['rendered_triangles'] == 100
     spec = client.get('/api/v1/projects/demo-rpi5/specification')
     assert spec.status_code == 200 and spec.json()['manufacturing_views']['print_job']
     power = client.post('/api/v1/projects/demo-rpi5/simulations/power')
@@ -122,9 +151,48 @@ with TestClient(app) as client:
         'list_feature_lenses', 'run_design_fixation_scan', 'get_design_fixation_reviews',
         'get_evolution_catalog', 'get_dsl_schema', 'preview_dsl',
         'list_evolution_runs', 'get_lifecycle_blueprints', 'candidate_to_change_plan',
+        'get_error_playbook', 'get_ui_context',
     } <= tool_names
-    assert len(tool_names) == 21
+    assert len(tool_names) == 23
     assert tools.json()['result']['cacheScope'] == 'private'
+    ui_tool = client.post(
+        '/mcp',
+        json={
+            'jsonrpc': '2.0', 'id': 5, 'method': 'tools/call',
+            'params': {
+                'name': 'get_ui_context',
+                'arguments': {'project_id': 'demo-rpi5'},
+                '_meta': meta,
+            },
+        },
+        headers={
+            'MCP-Protocol-Version': '2026-07-28',
+            'Mcp-Method': 'tools/call',
+            'Mcp-Name': 'get_ui_context',
+            'Accept': 'application/json, text/event-stream',
+        },
+    )
+    assert ui_tool.status_code == 200, ui_tool.text
+    assert ui_tool.json()['result']['structuredContent']['viewer_state'] == 'ready'
+    error_tool = client.post(
+        '/mcp',
+        json={
+            'jsonrpc': '2.0', 'id': 6, 'method': 'tools/call',
+            'params': {
+                'name': 'get_error_playbook',
+                'arguments': {'code': 'UI_ARTIFACT_LOAD_FAILED'},
+                '_meta': meta,
+            },
+        },
+        headers={
+            'MCP-Protocol-Version': '2026-07-28',
+            'Mcp-Method': 'tools/call',
+            'Mcp-Name': 'get_error_playbook',
+            'Accept': 'application/json, text/event-stream',
+        },
+    )
+    assert error_tool.status_code == 200, error_tool.text
+    assert 'REPAIR 1.0' in error_tool.json()['result']['structuredContent']['markdown']
     legacy = client.post('/mcp', json={'jsonrpc': '2.0', 'id': 3, 'method': 'initialize', 'params': {}})
     assert legacy.status_code == 200 and legacy.json()['result']['protocolVersion'] == '2025-11-25'
     bad_origin = client.post(

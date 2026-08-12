@@ -39,6 +39,7 @@ class Settings:
         "TWINSTUDIO_PUBLIC_URL", "LPS_PUBLIC_URL", "http://localhost:8000"
     ).rstrip("/")
     build_sha: str = _env("TWINSTUDIO_BUILD_SHA", default="unknown").strip() or "unknown"
+    project_root: Path = Path(_env("TWINSTUDIO_PROJECT_ROOT", default=".")).resolve()
     data_dir: Path = Path(_env("TWINSTUDIO_DATA_DIR", "LPS_DATA_DIR", "./data")).resolve()
     database_url: str = _env("DATABASE_URL", default="sqlite:///./data/twinstudio.db")
 

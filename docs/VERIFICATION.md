@@ -39,10 +39,19 @@ The automated tests cover, among other things:
 - allow-listed B-Rep edits;
 - feature-lens and design-fixation analysis;
 - TwinScript parsing, YAML/JSON equivalence, schema-backed compilation, evolution runs, lifecycle blueprints and generated artifacts;
-- REST and web application paths;
-- MCP discovery, 21-tool listing, modern/legacy protocol flows and Origin rejection;
+- REST and web application paths, structured `ProblemEnvelope` errors and browser `UIContext` state;
+- MCP discovery, 23-tool listing (including UI context and error playbooks), modern/legacy protocol flows and Origin rejection;
 - power, thermal, human-use and mechanical evaluations;
 - portable project export and manifest integrity.
+
+## Live browser and Compose verification (2026-08-12 follow-up)
+
+- The current full Python suite passes: **73 tests**.
+- PostgreSQL health now performs an authenticated `SELECT 1` with the credentials of the initialized volume. The previous false-positive `pg_isready` check and repeated missing-role log entries are gone.
+- A real headless Chromium session loaded `demo-rpi5`, 15 product-tree rows, both declared STL meshes and the front 2D drawing.
+- The 3D viewer reported **2/2 meshes** and **20,096 rendered triangles**; the browser had no relevant console, page or failed-request errors.
+- REST artifact downloads returned the full `base.stl` (406,084 bytes), and the latest UI state exposed all three visible artifact URIs to REST and MCP.
+- Application request logs are emitted as JSON records with an embedded `TWINOBS 1.0` DSL and correlation identifier. Errors link to guarded `error/<CODE>.md` repair playbooks.
 
 ## Source-archive and Python-package checks
 
