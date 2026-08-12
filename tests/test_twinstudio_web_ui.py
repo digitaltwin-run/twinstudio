@@ -91,10 +91,33 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "polygon-order-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
-    assert 'src="/static/app.js?v=20260812-selection2"' in HTML.read_text(encoding="utf-8")
+    assert 'src="/static/app.js?v=20260812-planner-status1"' in HTML.read_text(encoding="utf-8")
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
     assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
     assert "data-selection-bbox" in front_svg
+
+
+def test_planner_wait_and_non_geometry_outcome_are_explicit() -> None:
+    html = HTML.read_text(encoding="utf-8")
+    javascript = JAVASCRIPT.read_text(encoding="utf-8")
+    assert 'id="plannerRuntime"' in html
+    assert 'id="plannerProgress"' in html
+    assert 'id="applyStatus"' in html
+    assert 'id="changeHistory"' in html
+    assert 'id="refreshChangeHistory"' in html
+    assert "Zapisz i wykonaj uwagę" in html
+    assert "litellm_configured" in javascript
+    assert "function renderPlannerProgress" in javascript
+    assert "Możesz przeglądać inne karty" in javascript
+    assert "Odświeżenie strony nie jest potrzebne" in javascript
+    assert "Ten plan nie zmieni bryły" in javascript
+    assert "op.kind==='set_parameter'" in javascript
+    assert "plan.completed" in javascript
+    assert "plan.apply.completed" in javascript
+    assert "function loadChangeHistory" in javascript
+    assert "function undoChange" in javascript
+    assert "/change-history/" in javascript
+    assert "annotation.execution.deferred" in javascript
 
 
 def test_compose_database_healthcheck_executes_authenticated_query() -> None:

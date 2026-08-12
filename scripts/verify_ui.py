@@ -144,13 +144,76 @@ def main() -> int:
         assert "front.base.outer-wall" in selection_summary
         assert "Lower base" in page.locator("#objectTree .tree-row.selected").inner_text()
         plan_verified = False
+        automatic_note_verified = False
+        undo_verified = False
+        previous_wall_thickness = None
+        automatic_wall_thickness = None
         if args.verify_plan:
             page.locator("#changePrompt").fill("zmniejsz o 4mm")
             page.locator("#planButton").click()
             page.locator("#planContent .plan-op").first.wait_for(timeout=args.timeout_ms)
             assert "selection=resolved" in page.locator("#plannerMode").inner_text()
+            assert "Planner lokalny" in page.locator("#plannerRuntime").inner_text()
+            assert "Plan gotowy" in page.locator("#plannerProgress").inner_text()
+            assert "Odświeżenie strony nie jest potrzebne" in page.locator(
+                "#plannerProgress"
+            ).inner_text()
+            plan_content = page.locator("#planContent").inner_text().lower()
+            assert "ten plan nie zmieni bryły" in plan_content
+            assert "odświeżenie niczego nie zmieni" in plan_content
+            assert page.locator("#applyButton").is_disabled()
+            assert "Brak zmian" in page.locator("#applyButton").inner_text()
             assert "Brak zaznaczenia" not in page.locator("#banner").inner_text()
             plan_verified = True
+            project_before = page.request.get(
+                f"{args.url}/api/v1/projects/{project_id}"
+            ).json()["project"]
+            base_uri = "poa://demo/demo-rpi5@main/part/base"
+            previous_wall_thickness = float(
+                project_before["objects"][base_uri]["parameters"]["wall_thickness"]["value"]
+            )
+            automatic_wall_thickness = previous_wall_thickness + 0.25
+            page.locator("#annotationText").fill(
+                f"ustaw grubość ścian na {automatic_wall_thickness:.2f} mm"
+            )
+            page.locator("#saveAnnotation").click()
+            page.wait_for_function(
+                "document.querySelector('#applyStatus')?.textContent.includes('Uwaga wykonana automatycznie')",
+                timeout=args.timeout_ms,
+            )
+            page.locator("#changeHistory [data-undo-event]").first.wait_for(
+                timeout=args.timeout_ms
+            )
+            project_after_apply = page.request.get(
+                f"{args.url}/api/v1/projects/{project_id}"
+            ).json()["project"]
+            assert (
+                float(
+                    project_after_apply["objects"][base_uri]["parameters"][
+                        "wall_thickness"
+                    ]["value"]
+                )
+                == automatic_wall_thickness
+            )
+            automatic_note_verified = True
+            page.locator("#changeHistory [data-undo-event]").first.click()
+            page.wait_for_function(
+                "document.querySelector('#changeHistory')?.textContent.includes('Cofnięcie zmiany')",
+                timeout=args.timeout_ms,
+            )
+            page.wait_for_function(
+                """async expected => {
+                    const projectId = document.querySelector('#projectSelect').value;
+                    const response = await fetch(`/api/v1/projects/${projectId}`);
+                    if (!response.ok) return false;
+                    const project = (await response.json()).project;
+                    return Number(project.objects['poa://demo/demo-rpi5@main/part/base']
+                        .parameters.wall_thickness.value) === expected;
+                }""",
+                arg=previous_wall_thickness,
+                timeout=args.timeout_ms,
+            )
+            undo_verified = True
         page.wait_for_function(
             """async expected => {
                 const response = await fetch(`/api/v1/projects/${document.querySelector('#projectSelect').value}/ui-context`);
@@ -173,6 +236,11 @@ def main() -> int:
         assert not any("|click|" in item and "tree-row" in item for item in action_args), action_args
         assert any("|selection.created|" in item for item in action_args), action_args
         assert any("|object.inferred|" in item for item in action_args), action_args
+        if args.verify_plan:
+            assert any("|plan.requested|" in item for item in action_args), action_args
+            assert any("|plan.completed|" in item for item in action_args), action_args
+            assert any("|plan.apply.completed|" in item for item in action_args), action_args
+            assert any("|change.undo.completed|" in item for item in action_args), action_args
         projection_actions = [
             item for item in action_args if "|viewer2d.projection.ready|" in item
         ]
@@ -215,6 +283,15 @@ def main() -> int:
                 else "svg-metadata"
             ),
             "plan_from_inferred_selection": plan_verified,
+            "planner_runtime": page.locator("#plannerRuntime").inner_text(),
+            "plan_changes_geometry": False if plan_verified else None,
+            "plan_apply_available": (
+                not page.locator("#applyButton").is_disabled() if plan_verified else None
+            ),
+            "automatic_note_execution": automatic_note_verified,
+            "undo_from_change_history": undo_verified,
+            "wall_thickness_before": previous_wall_thickness,
+            "wall_thickness_automatic": automatic_wall_thickness,
             "url_action_args": len(action_args),
             "clipboard_dsl_characters": len(clipboard_dsl),
             "visible_artifact_uris": final_context["visible_artifact_uris"],

@@ -128,6 +128,18 @@ class CommandBus:
                 permission = "annotation.create"
                 annotation = Annotation.model_validate(payload["annotation"])
                 event_type, data = "AnnotationCreated", {"annotation": annotation.model_dump(mode="json")}
+            case "annotation.status":
+                permission = "annotation.create"
+                annotation = snapshot.annotations.get(payload["annotation_uri"])
+                if annotation is None:
+                    raise CommandRejected("Annotation not found")
+                status = str(payload["status"])
+                if status not in {"open", "resolved", "rejected"}:
+                    raise CommandRejected("Invalid annotation status")
+                event_type, data = "AnnotationStatusChanged", {
+                    "annotation_uri": annotation.uri,
+                    "status": status,
+                }
             case "change.plan.record":
                 permission = "change.plan"
                 plan = ChangePlan.model_validate(payload["plan"])
@@ -163,6 +175,9 @@ class CommandBus:
             case "change.apply":
                 permission = "change.apply"
                 event_type, data = "ChangeApplied", dict(payload)
+            case "change.revert":
+                permission = "change.apply"
+                event_type, data = "ChangeReverted", dict(payload)
             case "membership.grant":
                 permission = "membership.manage"
                 event_type, data = "MembershipGranted", {

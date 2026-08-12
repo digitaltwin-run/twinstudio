@@ -297,6 +297,7 @@ class ChangePlanner:
         for operation in plan.operations:
             if operation.kind == ChangeOperationKind.SET_PARAMETER:
                 object_uri = _owning_object_uri(operation.target_uri, project)
+                existing = project.objects[object_uri].parameters.get(operation.arguments["parameter"])
                 parameter_patches.append(
                     {
                         "object_uri": object_uri,
@@ -304,6 +305,9 @@ class ChangePlanner:
                         "value": operation.arguments["value"],
                         "unit": operation.arguments.get("unit"),
                         "operation_id": operation.operation_id,
+                        "previous_parameter": (
+                            existing.model_dump(mode="json") if existing is not None else None
+                        ),
                     }
                 )
             elif operation.kind == ChangeOperationKind.ADD_ANNOTATION:

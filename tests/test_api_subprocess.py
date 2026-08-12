@@ -131,6 +131,55 @@ with TestClient(app) as client:
     assert resolved.status_code == 200 and resolved.json()['resolved_feature_uris']
     planned = client.post('/api/v1/projects/demo-rpi5/change-plans', json={'prompt': 'add a 45 degree chamfer here', 'selection': selection})
     assert planned.status_code == 200 and planned.json()['plan']['operations']
+
+    selection_2d = dict(selection)
+    selection_2d.update({
+        'selection_id': 'history-undo-selection',
+        'uri': 'poa://demo/demo-rpi5@main/region/history-undo-selection',
+        'source_view': '2d',
+        'tool': 'rectangle',
+        'ray_hits': [],
+        'world_aabb': None,
+        'camera': None,
+        'projection_entity_ids': ['front.base.outer-wall'],
+    })
+    annotation = client.post(
+        '/api/v1/projects/demo-rpi5/annotations',
+        json={'text': 'ustaw grubość ścian na 3 mm', 'selection': selection_2d},
+    )
+    assert annotation.status_code == 200, annotation.text
+    reversible_plan = client.post(
+        '/api/v1/projects/demo-rpi5/change-plans',
+        json={'prompt': 'ustaw grubość ścian na 3 mm', 'selection': selection_2d},
+    )
+    assert reversible_plan.status_code == 200, reversible_plan.text
+    reversible_plan_id = reversible_plan.json()['plan']['plan_id']
+    applied = client.post(
+        f'/api/v1/projects/demo-rpi5/change-plans/{reversible_plan_id}/apply',
+        json={'annotation_uri': annotation.json()['uri']},
+    )
+    assert applied.status_code == 200, applied.text
+    assert applied.json()['result']['parameter_patches'][0]['previous_parameter']['value'] == 2
+    changed_project = client.get('/api/v1/projects/demo-rpi5').json()['project']
+    base_uri = 'poa://demo/demo-rpi5@main/part/base'
+    assert changed_project['objects'][base_uri]['parameters']['wall_thickness']['value'] == 3
+    assert changed_project['annotations'][annotation.json()['uri']]['status'] == 'resolved'
+    history = client.get('/api/v1/projects/demo-rpi5/change-history')
+    assert history.status_code == 200, history.text
+    applied_entry = next(item for item in history.json() if item['event_type'] == 'ChangeApplied')
+    assert applied_entry['undo_available'] is True
+    undone = client.post(
+        f"/api/v1/projects/demo-rpi5/change-history/{applied_entry['event_id']}/undo"
+    )
+    assert undone.status_code == 200, undone.text
+    reverted_project = client.get('/api/v1/projects/demo-rpi5').json()['project']
+    assert reverted_project['objects'][base_uri]['parameters']['wall_thickness']['value'] == 2
+    assert reverted_project['annotations'][annotation.json()['uri']]['status'] == 'open'
+    history_after_undo = client.get('/api/v1/projects/demo-rpi5/change-history').json()
+    assert any(item['event_type'] == 'ChangeReverted' for item in history_after_undo)
+    assert next(
+        item for item in history_after_undo if item['event_id'] == applied_entry['event_id']
+    )['reverted'] is True
     meta = {
         'io.modelcontextprotocol/protocolVersion': '2026-07-28',
         'io.modelcontextprotocol/clientInfo': {'name': 'pytest', 'version': '1'},

@@ -154,8 +154,16 @@ def _change_applied(snapshot: ProjectSnapshot, data: dict[str, Any]) -> None:
         if not target:
             continue
         parameter = patch["parameter"]
+        if patch.get("remove"):
+            target.parameters.pop(parameter, None)
+            continue
+        if patch.get("restore_parameter") is not None:
+            target.parameters[parameter] = ParameterValue.model_validate(patch["restore_parameter"])
+            continue
         if parameter in target.parameters:
             target.parameters[parameter].value = patch["value"]
+            if patch.get("unit") is not None:
+                target.parameters[parameter].unit = patch["unit"]
         else:
             target.parameters[parameter] = ParameterValue(
                 value=patch["value"], unit=patch.get("unit"), status="approved"
@@ -234,6 +242,7 @@ _EVENT_HANDLERS: dict[str, EventHandler] = {
     "DslExecutionRecorded": _dsl_execution_recorded,
     "DslProgramRecorded": _dsl_execution_recorded,
     "ChangeApplied": _change_applied,
+    "ChangeReverted": _change_applied,
     "RequirementUpserted": _requirement_upserted,
     "EvidenceClaimed": _evidence_claimed,
     "ProjectionMapUpserted": _projection_map_upserted,

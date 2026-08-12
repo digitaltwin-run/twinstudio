@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TwinStudio</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563eb'/%3E%3Cpath d='M7 9h18v4h-7v12h-4V13H7z' fill='white'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style.css?v=20260812-planner-status1" />
   <script type="importmap">
     {
       "imports": {
@@ -172,16 +172,24 @@
     <section class="inspector-block">
       <h3>Uwaga do zaznaczenia</h3>
       <textarea id="annotationText" rows="4" placeholder="Np. widoczne niedoskonałości druku; ostatnie 2 mm ściany powinny być pionowe."></textarea>
-      <button id="saveAnnotation" class="button full">Zapisz uwagę</button>
+      <button id="saveAnnotation" class="button full">Zapisz i wykonaj uwagę</button>
+      <p class="hint">Uwaga od razu tworzy plan. Bezpieczne parametry są zapisywane automatycznie; geometria wymagająca CAD workera pozostaje jawnie w kolejce.</p>
     </section>
     <section class="inspector-block">
       <h3>NL → 2D → 3D</h3>
       <textarea id="changePrompt" rows="7" placeholder="Np. Dodaj w zaznaczonym obszarze otwór Ø3 mm, tylko przez tę ścianę."></textarea>
+      <div id="plannerRuntime" class="planner-runtime" role="status">Sprawdzanie trybu planera…</div>
       <button id="planButton" class="button primary full">Utwórz plan zmiany</button>
+      <div id="plannerProgress" class="planner-progress hidden" role="status" aria-live="polite"></div>
       <div id="plannerMode" class="hint"></div>
       <div id="planContent" class="plan-content empty">Plan pojawi się tutaj.</div>
       <button id="applyButton" class="button success full" disabled>Zastosuj bezpieczną część planu</button>
+      <div id="applyStatus" class="apply-status hidden" role="status" aria-live="polite"></div>
       <p class="hint">Operacje geometrii lokalnej trafiają do CAD workera po rozwiązaniu stabilnego face/feature mapping. Rdzeń nie uruchamia kodu wygenerowanego przez LLM.</p>
+    </section>
+    <section class="inspector-block">
+      <div class="history-heading"><h3>Lista zmian i historia</h3><button id="refreshChangeHistory" class="icon-button" type="button">Odśwież</button></div>
+      <div id="changeHistory" class="change-history empty">Historia zostanie załadowana z dziennika zdarzeń.</div>
     </section>
     <section class="inspector-block">
       <h3>Współpraca</h3>
@@ -193,6 +201,6 @@
     <div id="banner" class="banner hidden"></div>
   </aside>
 </main>
-<script type="module" src="/static/app.js?v=20260812-selection2"></script>
+<script type="module" src="/static/app.js?v=20260812-planner-status1"></script>
 </body>
 </html>

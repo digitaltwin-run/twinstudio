@@ -42,3 +42,26 @@ def test_local_wall_request_on_face_is_deferred_geometry(project_snapshot, examp
     payload = planner.compile_apply_payload(plan, project_snapshot)
     assert payload["parameter_patches"] == []
     assert payload["deferred_operations"]
+
+
+def test_safe_parameter_patch_keeps_previous_value_for_undo(project_snapshot, example_selection) -> None:
+    selection_2d = example_selection.model_copy(
+        update={
+            "source_view": "2d",
+            "tool": "rectangle",
+            "ray_hits": [],
+            "world_aabb": None,
+            "camera": None,
+            "projection_entity_ids": ["front.base.outer-wall"],
+        }
+    )
+    planner = ChangePlanner(replace(settings, litellm_model=""))
+    plan = planner.plan(
+        "ustaw grubość ścian na 3 mm",
+        selection_2d,
+        project_snapshot,
+        "editor@example.test",
+    ).plan
+    payload = planner.compile_apply_payload(plan, project_snapshot)
+    assert payload["parameter_patches"][0]["value"] == 3
+    assert payload["parameter_patches"][0]["previous_parameter"]["value"] == 2

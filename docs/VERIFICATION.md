@@ -46,7 +46,7 @@ The automated tests cover, among other things:
 
 ## Live browser and Compose verification (2026-08-12 follow-up)
 
-- The current full Python suite passes: **80 tests**.
+- The current full Python suite passes: **82 tests**.
 - PostgreSQL health now performs an authenticated `SELECT 1` with the credentials of the initialized volume. The previous false-positive `pg_isready` check and repeated missing-role log entries are gone.
 - A real headless Chromium session loaded `demo-rpi5`, 15 product-tree rows, both declared STL meshes and all three ordered 2D drawings (Front, Top, Side) in one scrollable view.
 - The combined drawing download is a valid three-page vector A4 PDF; per-view 2D selection remains functional without the former view selector. A marked SVG projection region now infers `part/base` and `front.base.outer-wall` without a prior product-tree click, and the resulting selection successfully creates a scoped change plan. Projection metadata bypasses the browser cache, and a Playwright run with the metadata intentionally removed verified the ordered-polygon compatibility fallback.
@@ -55,6 +55,8 @@ The automated tests cover, among other things:
 - Application request logs are emitted as JSON records with an embedded `TWINOBS 1.0` DSL and correlation identifier. Errors link to guarded `error/<CODE>.md` repair playbooks.
 - Browser actions are retained in ordered, repeated URL `args` parameters with target and cursor coordinates. Text contents are excluded; only field lengths are recorded.
 - The authorized project `logs.dsl` endpoint and top-bar clipboard action combine recent server TWINOBS records with URL-derived `UiAction` DSL. Chromium verified the actual clipboard payload.
+- The planner panel reports whether requests use the deterministic local planner or LiteLLM, displays elapsed and typical wait time, and tells the user that other tabs and fields remain usable while the captured selection is processed. A non-executable `add_annotation` plan is explicitly marked as not changing geometry, keeps Apply disabled, and explains that refreshing cannot regenerate STL/SVG artifacts.
+- Saving an actionable annotation immediately creates a scoped plan and auto-applies allow-listed scalar parameter changes. The event-backed history lists annotations, plans, applications and compensating reverts; Chromium verified a `wall_thickness` change from 2.0 to 2.25 mm and an undo back to the complete previous `ParameterValue`. Deferred CAD geometry remains queued rather than being reported as executed.
 - Makefile lifecycle controls replace a stale TwinStudio process from the same workspace, persist PID/log state under ignored `.run/`, verify `/health`, and refuse to kill an unrelated process bound to the configured port.
 
 ## Source-archive and Python-package checks

@@ -213,6 +213,10 @@ class ChangePlanRequest(ApiModel):
     selection: RegionSelection
 
 
+class ApplyChangePlanRequest(ApiModel):
+    annotation_uri: str | None = Field(default=None, max_length=2000)
+
+
 class DesignFixationScanRequest(ApiModel):
     target_uri: str = Field(min_length=8, max_length=2000)
     challenge: str = Field(default="", max_length=30_000)
@@ -692,6 +696,86 @@ async def create_change_plan(
     return {"mode": result.mode, "message": result.message, "plan": result.plan.model_dump(mode="json")}
 
 
+def _change_history(project_id: str) -> tuple[list[Any], set[str]]:
+    events = queries.events(project_id)
+    reverted = {
+        str(event.data.get("reverts_event_id"))
+        for event in events
+        if event.event_type == "ChangeReverted" and event.data.get("reverts_event_id")
+    }
+    return events, reverted
+
+
+def _change_is_latest_for_parameters(target_event: Any, events: list[Any]) -> bool:
+    patches = target_event.data.get("parameter_patches", [])
+    keys = {(patch.get("object_uri"), patch.get("parameter")) for patch in patches}
+    if not keys:
+        return False
+    reverted = {
+        str(event.data.get("reverts_event_id"))
+        for event in events
+        if event.event_type == "ChangeReverted" and event.data.get("reverts_event_id")
+    }
+    for event in events:
+        if event.stream_version <= target_event.stream_version:
+            continue
+        if event.event_type != "ChangeApplied" or event.event_id in reverted:
+            continue
+        later_keys = {
+            (patch.get("object_uri"), patch.get("parameter"))
+            for patch in event.data.get("parameter_patches", [])
+        }
+        if keys & later_keys:
+            return False
+    return True
+
+
+@app.get("/api/v1/projects/{project_id}/change-history")
+def get_change_history(
+    project_id: str,
+    limit: int = Query(default=100, ge=1, le=500),
+    user: AuthPrincipal = Depends(principal),
+) -> list[dict[str, Any]]:
+    authorize_project(project_id, user, "project.read")
+    snapshot = queries.project(project_id)
+    events, reverted = _change_history(project_id)
+    relevant = {
+        "AnnotationCreated",
+        "AnnotationStatusChanged",
+        "ChangePlanCreated",
+        "ChangeApplied",
+        "ChangeReverted",
+    }
+    result: list[dict[str, Any]] = []
+    for event in reversed([item for item in events if item.event_type in relevant][-limit:]):
+        data = dict(event.data)
+        if event.event_type == "AnnotationCreated":
+            annotation = dict(data.get("annotation", {}))
+            current = snapshot.annotations.get(annotation.get("uri", ""))
+            if current is not None:
+                annotation["status"] = current.status
+            data["annotation"] = annotation
+        undo_available = (
+            event.event_type == "ChangeApplied"
+            and event.event_id not in reverted
+            and all("previous_parameter" in patch for patch in data.get("parameter_patches", []))
+            and _change_is_latest_for_parameters(event, events)
+        )
+        result.append(
+            {
+                "event_id": event.event_id,
+                "stream_version": event.stream_version,
+                "event_type": event.event_type,
+                "actor": event.actor,
+                "occurred_at": event.occurred_at.isoformat(),
+                "data": data,
+                "undo_available": undo_available,
+                "reverted": event.event_id in reverted,
+            }
+        )
+    return result
+
+
 @app.get("/api/v1/projects/{project_id}/design-fixation/reviews")
 def get_design_fixation_reviews(
     project_id: str,
@@ -1065,6 +1149,7 @@ async def transition_lifecycle(
 async def apply_change_plan(
     project_id: str,
     plan_id: str,
+    body: ApplyChangePlanRequest | None = None,
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     role = authorize_project(project_id, user, "change.apply")
@@ -1073,6 +1158,12 @@ async def apply_change_plan(
         raise HTTPException(status_code=404, detail="Change plan not found")
     plan = snapshot.change_plans[plan_id]
     payload = planner.compile_apply_payload(plan, snapshot)
+    annotation_uri = body.annotation_uri if body else None
+    if annotation_uri:
+        annotation = snapshot.annotations.get(annotation_uri)
+        if annotation is None or annotation.selection.uri != plan.selection_uri:
+            raise HTTPException(status_code=409, detail="Annotation does not match the change plan selection")
+        payload["annotation_uri"] = annotation_uri
     payload["approval_state"] = "approved" if role in {Role.ADMIN, Role.CREATOR} else "draft"
     stored = commands.execute(
         CommandEnvelope(
@@ -1083,6 +1174,97 @@ async def apply_change_plan(
             payload=payload,
         )
     )
+    if annotation_uri and payload["parameter_patches"]:
+        stored.extend(
+            commands.execute(
+                CommandEnvelope(
+                    command_type="annotation.status",
+                    project_id=project_id,
+                    expected_version=store.current_version(project_id),
+                    actor=user.email,
+                    payload={"annotation_uri": annotation_uri, "status": "resolved"},
+                )
+            )
+        )
+    await hub.broadcast(project_id, {"events": [item.model_dump(mode="json") for item in stored]})
+    return {"result": payload, "events": [item.model_dump(mode="json") for item in stored]}
+
+
+@app.post("/api/v1/projects/{project_id}/change-history/{event_id}/undo")
+async def undo_change(
+    project_id: str,
+    event_id: str,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    authorize_project(project_id, user, "change.apply")
+    snapshot = queries.project(project_id)
+    events, reverted = _change_history(project_id)
+    target = next((event for event in events if event.event_id == event_id), None)
+    if target is None or target.event_type != "ChangeApplied":
+        raise HTTPException(status_code=404, detail="Applied change not found")
+    if event_id in reverted:
+        raise HTTPException(status_code=409, detail="Change has already been undone")
+    if not _change_is_latest_for_parameters(target, events):
+        raise HTTPException(
+            status_code=409,
+            detail="A newer change touches the same parameter; undo the newer change first",
+        )
+    inverse: list[dict[str, Any]] = []
+    for patch in target.data.get("parameter_patches", []):
+        if "previous_parameter" not in patch:
+            raise HTTPException(status_code=409, detail="Legacy change has no reversible parameter snapshot")
+        inverse_patch: dict[str, Any] = {
+            "object_uri": patch["object_uri"],
+            "parameter": patch["parameter"],
+            "operation_id": f"undo:{patch.get('operation_id', event_id)}",
+        }
+        previous = patch["previous_parameter"]
+        if previous is None:
+            inverse_patch["remove"] = True
+        else:
+            inverse_patch.update(
+                {
+                    "value": previous["value"],
+                    "unit": previous.get("unit"),
+                    "restore_parameter": previous,
+                }
+            )
+        inverse.append(inverse_patch)
+    if not inverse:
+        raise HTTPException(status_code=409, detail="Change contains no parameter updates to undo")
+    payload = {
+        "plan_id": target.data.get("plan_id"),
+        "reverts_event_id": event_id,
+        "new_revision": f"rev-{snapshot.stream_version + 1}",
+        "parameter_patches": inverse,
+        "deferred_operations": [],
+        "scope_uris": target.data.get("scope_uris", []),
+        "approval_state": "approved",
+    }
+    if target.data.get("annotation_uri"):
+        payload["annotation_uri"] = target.data["annotation_uri"]
+    stored = commands.execute(
+        CommandEnvelope(
+            command_type="change.revert",
+            project_id=project_id,
+            expected_version=snapshot.stream_version,
+            actor=user.email,
+            payload=payload,
+        )
+    )
+    annotation_uri = payload.get("annotation_uri")
+    if annotation_uri:
+        stored.extend(
+            commands.execute(
+                CommandEnvelope(
+                    command_type="annotation.status",
+                    project_id=project_id,
+                    expected_version=store.current_version(project_id),
+                    actor=user.email,
+                    payload={"annotation_uri": annotation_uri, "status": "open"},
+                )
+            )
+        )
     await hub.broadcast(project_id, {"events": [item.model_dump(mode="json") for item in stored]})
     return {"result": payload, "events": [item.model_dump(mode="json") for item in stored]}
 
