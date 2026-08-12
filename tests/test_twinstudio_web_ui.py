@@ -79,6 +79,21 @@ def test_all_2d_drawings_replace_the_view_selector() -> None:
     assert "/drawings.pdf" in javascript
 
 
+def test_every_workspace_tab_can_be_downloaded_as_pdf() -> None:
+    html = HTML.read_text(encoding="utf-8")
+    javascript = JAVASCRIPT.read_text(encoding="utf-8")
+    assert 'id="downloadTabPdf"' in html
+    assert "Pobierz PDF: 3D" in html
+    assert "const TAB_PDF_LABELS=" in javascript
+    assert "function capture3dPng()" in javascript
+    assert "capture.toDataURL('image/png')" in javascript
+    assert "/tabs/${encodeURIComponent(tab)}.pdf" in javascript
+    assert "tab.pdf.requested" in javascript
+    assert "tab.pdf.downloaded" in javascript
+    for tab in ("view3d", "view2d", "spec", "lifecycle", "tests", "fixation", "evolution"):
+        assert f"{tab}:" in javascript
+
+
 def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> None:
     javascript = JAVASCRIPT.read_text(encoding="utf-8")
     front_svg = (
@@ -96,7 +111,7 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "polygon-order-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
-    assert 'src="/static/app.js?v=20260812-tree-highlight1"' in HTML.read_text(encoding="utf-8")
+    assert 'src="/static/app.js?v=20260812-tab-pdf1"' in HTML.read_text(encoding="utf-8")
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
     assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
     assert 'data-object-uri="poa://demo/demo-rpi5@main/part/base"' in front_svg

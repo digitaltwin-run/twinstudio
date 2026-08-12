@@ -60,6 +60,39 @@ with TestClient(app) as client:
     assert drawings_pdf.headers['content-type'] == 'application/pdf'
     assert 'demo-rpi5-main-drawings.pdf' in drawings_pdf.headers['content-disposition']
     assert drawings_pdf.content.startswith(b'%PDF-') and len(drawings_pdf.content) > 2_000
+    png_data_url = (
+        'data:image/png;base64,'
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='
+    )
+    tab_slugs = {
+        'view3d': '3d',
+        'view2d': '2d',
+        'spec': 'specification-xbom',
+        'lifecycle': 'lifecycle',
+        'tests': 'tests-simulations',
+        'fixation': 'feature-lenses',
+        'evolution': 'evolution-dsl',
+    }
+    for tab, slug in tab_slugs.items():
+        tab_pdf = client.post(
+            f'/api/v1/projects/demo-rpi5/tabs/{tab}.pdf',
+            json={
+                'content_text': f'Visible content for {tab}: Zażółć gęślą jaźń',
+                'screenshot_png_data_url': png_data_url if tab == 'view3d' else None,
+                'selected_object_uri': 'poa://demo/demo-rpi5@main/part/base',
+            },
+        )
+        assert tab_pdf.status_code == 200, (tab, tab_pdf.text)
+        assert tab_pdf.headers['content-type'] == 'application/pdf'
+        assert f'demo-rpi5-main-{slug}.pdf' in tab_pdf.headers['content-disposition']
+        assert tab_pdf.content.startswith(b'%PDF-') and len(tab_pdf.content) > 1_000
+    invalid_tab_pdf = client.post('/api/v1/projects/demo-rpi5/tabs/unknown.pdf', json={})
+    assert invalid_tab_pdf.status_code == 422
+    invalid_png_pdf = client.post(
+        '/api/v1/projects/demo-rpi5/tabs/view3d.pdf',
+        json={'screenshot_png_data_url': 'data:image/png;base64,bm90IGEgcG5n'},
+    )
+    assert invalid_png_pdf.status_code == 422
     ui_context = {
         'session_id': 'pytest-browser-1234',
         'project_id': 'demo-rpi5',

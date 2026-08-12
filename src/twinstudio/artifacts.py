@@ -3,18 +3,44 @@ from __future__ import annotations
 import hashlib
 import json
 import tempfile
+import textwrap
 import zipfile
 from io import BytesIO
 from pathlib import Path
 from typing import Iterable
 
+import reportlab
 from reportlab.graphics import renderPDF
 from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
 from svglib.svglib import svg2rlg
 
 from twinstudio.domain import EventEnvelope, ProjectSnapshot
 from twinstudio.specification import unified_specification
+
+TAB_PDF_TITLES = {
+    "view3d": "Widok 3D",
+    "view2d": "Rzuty 2D",
+    "spec": "Specyfikacja / xBOM",
+    "lifecycle": "Lifecycle",
+    "tests": "Testy i symulacje",
+    "fixation": "Feature lenses",
+    "evolution": "Evolution / DSL",
+}
+
+_PDF_FONT = "Helvetica"
+_PDF_FONT_BOLD = "Helvetica-Bold"
+try:
+    _reportlab_fonts = Path(reportlab.__file__).resolve().parent / "fonts"
+    pdfmetrics.registerFont(TTFont("TwinStudio", str(_reportlab_fonts / "Vera.ttf")))
+    pdfmetrics.registerFont(TTFont("TwinStudio-Bold", str(_reportlab_fonts / "VeraBd.ttf")))
+    _PDF_FONT = "TwinStudio"
+    _PDF_FONT_BOLD = "TwinStudio-Bold"
+except Exception:  # pragma: no cover - ReportLab packages normally include Vera
+    pass
 
 
 def sha256_file(path: Path) -> str:
@@ -116,6 +142,129 @@ def render_drawings_pdf(drawings: Iterable[tuple[str, Path]]) -> bytes:
         pdf.setFont("Helvetica", 8)
         pdf.drawRightString(page_width - margin, margin, f"TwinStudio | {index}/{len(items)}")
         pdf.showPage()
+    pdf.save()
+    return buffer.getvalue()
+
+
+def render_tab_pdf(
+    snapshot: ProjectSnapshot,
+    tab: str,
+    *,
+    content_text: str = "",
+    screenshot_png: bytes | None = None,
+    selected_object_uri: str | None = None,
+    drawings: Iterable[tuple[str, Path]] = (),
+) -> bytes:
+    """Render one UI tab as a deterministic downloadable PDF.
+
+    The 2D tab stays vector-native. The 3D tab may include a browser-captured PNG,
+    while data tabs use the current visible text supplied by the trusted UI.
+    """
+
+    if tab not in TAB_PDF_TITLES:
+        raise ValueError(f"Unsupported tab: {tab}")
+    if tab == "view2d":
+        return render_drawings_pdf(drawings)
+
+    page_size = landscape(A4) if tab == "view3d" else A4
+    page_width, page_height = page_size
+    margin = 38.0
+    footer_height = 24.0
+    buffer = BytesIO()
+    pdf = Canvas(buffer, pagesize=page_size, pageCompression=1)
+    title = TAB_PDF_TITLES[tab]
+    pdf.setTitle(f"TwinStudio - {title}")
+    pdf.setAuthor("TwinStudio")
+    page_number = 0
+    y = 0.0
+
+    def new_page() -> None:
+        nonlocal page_number, y
+        if page_number:
+            pdf.showPage()
+        page_number += 1
+        pdf.setFont(_PDF_FONT_BOLD, 16)
+        pdf.drawString(margin, page_height - margin, title)
+        pdf.setFont(_PDF_FONT, 8)
+        pdf.drawRightString(
+            page_width - margin,
+            page_height - margin + 2,
+            f"{snapshot.project_id} | {snapshot.revision}",
+        )
+        pdf.setStrokeColorRGB(0.35, 0.5, 0.75)
+        pdf.line(margin, page_height - margin - 9, page_width - margin, page_height - margin - 9)
+        pdf.setFillColorRGB(0.35, 0.35, 0.4)
+        pdf.setFont(_PDF_FONT, 8)
+        pdf.drawString(margin, margin - 12, "TwinStudio | eksport zakładki")
+        pdf.drawRightString(page_width - margin, margin - 12, f"strona {page_number}")
+        pdf.setFillColorRGB(0, 0, 0)
+        y = page_height - margin - 30
+
+    def draw_lines(lines: Iterable[str], *, font: str = _PDF_FONT, size: float = 9.0) -> None:
+        nonlocal y
+        pdf.setFont(font, size)
+        leading = size * 1.42
+        max_chars = 126 if page_width > page_height else 94
+        for raw in lines:
+            raw = raw.replace("\t", "    ")
+            wrapped = textwrap.wrap(
+                raw,
+                width=max_chars,
+                replace_whitespace=False,
+                drop_whitespace=False,
+                break_long_words=True,
+                break_on_hyphens=False,
+            ) or [""]
+            for line in wrapped:
+                if y < margin + footer_height:
+                    new_page()
+                    pdf.setFont(font, size)
+                pdf.drawString(margin, y, line.rstrip())
+                y -= leading
+
+    new_page()
+    if screenshot_png:
+        try:
+            image = ImageReader(BytesIO(screenshot_png))
+            image_width, image_height = image.getSize()
+            available_width = page_width - 2 * margin
+            available_height = page_height - 2 * margin - 90
+            scale = min(available_width / image_width, available_height / image_height)
+            draw_width = image_width * scale
+            draw_height = image_height * scale
+            x = (page_width - draw_width) / 2
+            image_y = y - draw_height
+            pdf.drawImage(
+                image,
+                x,
+                image_y,
+                width=draw_width,
+                height=draw_height,
+                preserveAspectRatio=True,
+                mask="auto",
+            )
+            y = image_y - 16
+        except Exception as exc:
+            draw_lines([f"Nie udało się osadzić kadru 3D: {exc}"])
+
+    if selected_object_uri:
+        selected = snapshot.objects.get(selected_object_uri)
+        draw_lines(
+            [
+                f"Wybrany obiekt: {selected.name if selected else selected_object_uri}",
+                f"URI: {selected_object_uri}",
+            ],
+            font=_PDF_FONT_BOLD,
+        )
+
+    normalized = content_text.replace("\r\n", "\n").replace("\r", "\n").strip()
+    if normalized:
+        if y < margin + footer_height + 30:
+            new_page()
+        draw_lines(normalized[:100_000].splitlines())
+    elif not screenshot_png and not selected_object_uri:
+        draw_lines(["Zakładka nie zawiera obecnie danych do wydruku."])
+
     pdf.save()
     return buffer.getvalue()
 

@@ -304,6 +304,47 @@ def main() -> int:
         )
         page.locator("#objectTree .tree-row").filter(has_text="Lower base").click()
         tree_highlight_verified = True
+        tab_pdf_bytes: dict[str, int] = {}
+        tab_pdf_files: dict[str, str] = {}
+        for tab in ("view3d", "view2d", "spec", "lifecycle", "tests", "fixation", "evolution"):
+            page.locator(f'.tab[data-tab="{tab}"]').click()
+            page.wait_for_function(
+                "expected => document.querySelector('#downloadTabPdf')?.textContent.includes(expected)",
+                arg={
+                    "view3d": "3D",
+                    "view2d": "2D",
+                    "spec": "Specyfikacja / xBOM",
+                    "lifecycle": "Lifecycle",
+                    "tests": "Testy i symulacje",
+                    "fixation": "Feature lenses",
+                    "evolution": "Evolution / DSL",
+                }[tab],
+                timeout=args.timeout_ms,
+            )
+            with page.expect_download(timeout=args.timeout_ms) as download_info:
+                page.locator("#downloadTabPdf").click()
+            download = download_info.value
+            destination = args.screenshot.with_name(
+                f"{args.screenshot.stem}-{tab}{Path(download.suggested_filename).suffix}"
+            )
+            download.save_as(destination)
+            content = destination.read_bytes()
+            assert content.startswith(b"%PDF-"), (tab, destination)
+            assert len(content) > 1_000, (tab, len(content))
+            tab_pdf_bytes[tab] = len(content)
+            tab_pdf_files[tab] = str(destination)
+        pdf_action_args = page.evaluate(
+            "[...new URL(location.href).searchParams.getAll('args')]"
+        )
+        for tab in tab_pdf_bytes:
+            assert any(
+                "|tab.pdf.requested|" in item and f"tab={tab}" in item
+                for item in pdf_action_args
+            ), (tab, pdf_action_args)
+            assert any(
+                "|tab.pdf.downloaded|" in item and f"tab={tab}" in item
+                for item in pdf_action_args
+            ), (tab, pdf_action_args)
         page.locator("#copyDslLogs").click()
         page.wait_for_function(
             "document.querySelector('#banner').textContent.includes('Skopiowano logi DSL')",
@@ -331,6 +372,7 @@ def main() -> int:
         assert 'KIND "UiAction"' in fallback_clipboard_dsl
         download_logs_href = page.locator("#downloadDslLogs").get_attribute("href")
         assert download_logs_href == f"/api/v1/projects/{project_id}/logs.dsl?limit=300"
+        page.locator('.tab[data-tab="view2d"]').click()
         drawings_screenshot = args.screenshot.with_name(
             f"{args.screenshot.stem}-2d{args.screenshot.suffix}"
         )
@@ -347,6 +389,8 @@ def main() -> int:
             "drawing_cards": drawing_cards,
             "drawing_labels": drawing_labels,
             "drawings_pdf_bytes": len(await_pdf),
+            "tab_pdf_bytes": tab_pdf_bytes,
+            "tab_pdf_files": tab_pdf_files,
             "drawing_selection": "ok",
             "drawing_selection_target": "part/base",
             "drawing_projection_entity": "front.base.outer-wall",

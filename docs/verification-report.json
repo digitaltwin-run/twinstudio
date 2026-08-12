@@ -187,7 +187,7 @@
     {
       "name": "pytest_current_workspace",
       "status": "passed",
-      "collected_tests": 82
+      "collected_tests": 90
     },
     {
       "name": "postgres_authenticated_healthcheck",
@@ -255,6 +255,25 @@
       "pdf_size_bytes": 4409
     },
     {
+      "name": "browser_all_tab_pdf_exports",
+      "status": "passed",
+      "tabs": ["view3d", "view2d", "spec", "lifecycle", "tests", "fixation", "evolution"],
+      "pdf_size_bytes": {
+        "view3d": 102630,
+        "view2d": 4409,
+        "spec": 44838,
+        "lifecycle": 43468,
+        "tests": 41995,
+        "fixation": 48314,
+        "evolution": 45349
+      },
+      "view3d_contains_webgl_frame": true,
+      "view3d_contains_selection_overlay": true,
+      "view2d_vector_pages": 3,
+      "unicode_font_verified": true,
+      "url_and_dsl_actions": ["tab.pdf.requested", "tab.pdf.downloaded", "tab.pdf.failed"]
+    },
+    {
       "name": "llm_observability_contract",
       "status": "passed",
       "log_dsl": "TWINOBS 1.0",
@@ -285,5 +304,5 @@
       "runtime_directory": ".run"
     }
   ],
-  "verified_at": "2026-08-12T16:25:06+02:00"
+  "verified_at": "2026-08-12T16:40:00+02:00"
 }

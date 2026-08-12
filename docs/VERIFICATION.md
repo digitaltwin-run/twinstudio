@@ -46,10 +46,11 @@ The automated tests cover, among other things:
 
 ## Live browser and Compose verification (2026-08-12 follow-up)
 
-- The current full Python suite passes: **82 tests**.
+- The current full Python suite passes: **90 tests**.
 - PostgreSQL health now performs an authenticated `SELECT 1` with the credentials of the initialized volume. The previous false-positive `pg_isready` check and repeated missing-role log entries are gone.
 - A real headless Chromium session loaded `demo-rpi5`, 15 product-tree rows, both declared STL meshes and all three ordered 2D drawings (Front, Top, Side) in one scrollable view.
 - The combined drawing download is a valid three-page vector A4 PDF; per-view 2D selection remains functional without the former view selector. A marked SVG projection region now infers `part/base` and `front.base.outer-wall` without a prior product-tree click, and the resulting selection successfully creates a scoped change plan. Projection metadata bypasses the browser cache, and a Playwright run with the metadata intentionally removed verified the ordered-polygon compatibility fallback.
+- Every workspace tab has an authorized PDF export. Playwright downloaded all seven files: 3D embeds the current WebGL frame, selection overlay and selected POA object; 2D remains a three-page vector document; Specification/xBOM, Lifecycle, Tests, Feature lenses and Evolution/DSL contain the currently visible text. The download lifecycle is also recorded as `tab.pdf.*` URL/TWINOBS actions.
 - The 3D viewer reported **2/2 meshes** and **20,096 rendered triangles**; the browser had no relevant console, page or failed-request errors.
 - REST artifact downloads returned the full `base.stl` (406,084 bytes), and serialized UI-context updates exposed all five visible artifact URIs (two STL and three SVG) to REST and MCP without request-order races.
 - Application request logs are emitted as JSON records with an embedded `TWINOBS 1.0` DSL and correlation identifier. Errors link to guarded `error/<CODE>.md` repair playbooks.

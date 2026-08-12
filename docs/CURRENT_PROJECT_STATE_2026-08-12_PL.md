@@ -9,7 +9,7 @@ Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:
 - `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony do obrazu `cad-worker`;
 - rzeczywista aplikacja ASGI uruchamia się, seeduje projekt demonstracyjny i odpowiada przez HTTP.
 
-Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 82 testy przechodzą, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
+Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 90 testów przechodzi, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio oraz uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
 
 | Obszar | Ocena | Uzasadnienie |
 |---|---|---|
@@ -17,7 +17,7 @@ Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 82 testy p
 | DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 82/82 testy przechodzą z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 90/90 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -61,6 +61,7 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - `Zapisz i wykonaj uwagę` od razu tworzy `ChangePlan`; bezpieczne `set_parameter` jest wykonywane automatycznie, a geometria bez stabilnego mappingu pozostaje otwarta i jawnie odroczona do CAD workera;
 - lokalny planner kompiluje jawne względne zmiany wymiarów, np. `zmniejsz wysokosc o 4mm`, względem aktualnego parametru zaznaczonego obiektu; wynik pozostaje deklaratywnym `set_parameter`, zapisuje poprzednią wartość i może zostać cofnięty;
 - wybór obiektu w drzewie produktu podświetla jego bryłę 3D oraz jawnie powiązane regiony na rzutach Front, Top i Side; zaznaczenie drzewa ma osobną warstwę wizualną i nie nadpisuje zgodnego prostokąta, lassa ani ołówka używanego do uwag, natomiast przy przejściu na niezależny obiekt czyści stare zaznaczenie, aby uwaga nie trafiła do poprzedniego celu;
+- stały przycisk w nagłówku pobiera PDF aktywnej zakładki przez autoryzowany `POST /api/v1/projects/{project_id}/tabs/{tab}.pdf`: 3D zawiera aktualny kadr WebGL, nakładkę zaznaczenia i obiekt POA, 2D zachowuje trzy wektorowe strony, a Specyfikacja, Lifecycle, Testy, Feature lenses i Evolution/DSL eksportują aktualnie widoczną treść; akcje `tab.pdf.requested`, `tab.pdf.downloaded` i `tab.pdf.failed` są widoczne w URL oraz TWINOBS;
 - `GET /change-history` składa listę uwag, planów, zastosowań i cofnięć z append-only Event Store; cofnięcie bezpiecznego parametru emituje kompensujące `ChangeReverted` z pełnym poprzednim `ParameterValue`, zamiast usuwać audyt;
 - `GET /change-queue` projektuje z tego samego Event Store tylko aktywne zadania jako `ready`, `needs_detail` lub `waiting_cad`; zakończone, cofnięte i nieaktualne plany pozostają w historii, ale nie zaśmiecają kolejki;
 - UI łączy trwałą kolejkę z lokalnymi stanami `planning`, `applying` i `undoing`; obiekty POA objęte zadaniem mają w drzewie kolorową krawędź i znaczniki `PLAN`, `ZAPIS`, `CAD`, `?`, `GOTOWE` albo `COFNIJ` (wszystkie aktywne typy stanu są widoczne, a kilka zadań tego samego typu jest agregowanych, np. `?×2`), a karta kolejki pozwala ponownie otworzyć zapisany plan po odświeżeniu strony;
@@ -128,7 +129,7 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **82/82 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
+- pełny pytest: **90/90 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
@@ -136,6 +137,7 @@ Interpretacja wyniku:
 - health-check PostgreSQL wykonuje uwierzytelnione `SELECT 1`; usunięto fałszywie dodatni `pg_isready -U twinstudio`, który przy odziedziczonym wolumenie generował `FATAL: role "twinstudio" does not exist` mimo statusu healthy;
 - artefakty 3D i 2D są pobierane przez autoryzowany registry endpoint, zamiast przez nieaudytowany bezpośredni mount ścieżki;
 - karta 2D pokazuje wszystkie rzuty z `default_2d_views` jako jedną przewijaną listę; każdy rzut zachowuje własną warstwę zaznaczeń i link SVG, a autoryzowany endpoint `/drawings.pdf` składa wszystkie SVG w jeden wektorowy, wielostronicowy PDF A4;
+- Playwright pobrał PDF każdej z siedmiu zakładek; plik 3D zawiera wyrenderowaną bryłę i wybrany `Lower base`, 2D ma trzy strony, a pięć zakładek danych zachowuje polskie znaki i bieżący tekst; każda odpowiedź ma typ `application/pdf`, osobną nazwę pliku i przechodzi walidację nagłówka `%PDF-`;
 - oznaczony region SVG z `data-projection-entity` jest automatycznie wiązany z encją `projection-map` i obiektem POA; prostokąt na dolnej części rzutu Front wybiera `part/base` / `front.base.outer-wall` bez wcześniejszego kliknięcia drzewa. Metadane projekcji są pobierane bez cache, starszy SVG ma kontrolowany fallback przez kolejność polygonów, a rzeczywisty brak mapowania czyści mylącą nakładkę i emituje `selection.rejected`;
 - test Playwright na wdrożeniu `http://127.0.0.1:8400` potwierdził projekt `demo-rpi5`, 15 wierszy drzewa, **2/2 załadowane siatki STL**, **20 096 trójkątów** oraz trzy kolejne rzuty Front/Top/Side bez błędów konsoli i sieci;
 - aktualizacje `UIContext` są sekwencjonowane, więc końcowy stan dla LLM zawiera komplet pięciu widocznych artefaktów (dwa STL i trzy SVG), niezależnie od kolejności zakończenia żądań przeglądarki;

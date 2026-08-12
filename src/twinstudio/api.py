@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from base64 import b64decode
+from binascii import Error as Base64Error
 from contextlib import asynccontextmanager
 from pathlib import Path
 from time import perf_counter
@@ -13,7 +15,12 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from twinstudio import __version__
-from twinstudio.artifacts import export_project_bundle, render_drawings_pdf
+from twinstudio.artifacts import (
+    TAB_PDF_TITLES,
+    export_project_bundle,
+    render_drawings_pdf,
+    render_tab_pdf,
+)
 from twinstudio.auth import AuthService
 from twinstudio.bus import CommandBus, CommandRejected, QueryService
 from twinstudio.change_planner import ChangePlanner
@@ -215,6 +222,12 @@ class ChangePlanRequest(ApiModel):
 
 class ApplyChangePlanRequest(ApiModel):
     annotation_uri: str | None = Field(default=None, max_length=2000)
+
+
+class TabPdfRequest(ApiModel):
+    content_text: str = Field(default="", max_length=100_000)
+    screenshot_png_data_url: str | None = Field(default=None, max_length=8_000_000)
+    selected_object_uri: str | None = Field(default=None, max_length=2000)
 
 
 class DesignFixationScanRequest(ApiModel):
@@ -1401,13 +1414,7 @@ def download_drawings_pdf(
 ) -> Response:
     authorize_project(project_id, user, "artifact.download")
     snapshot = queries.project(project_id)
-    view_map = snapshot.metadata.get("default_2d_views", {})
-    drawings: list[tuple[str, Path]] = []
-    for view, artifact_uri in view_map.items():
-        artifact = snapshot.artifacts.get(str(artifact_uri))
-        if artifact is None or artifact.media_type != "image/svg+xml":
-            continue
-        drawings.append((str(view), _resolved_artifact_path(artifact.path)))
+    drawings = _project_drawings(snapshot)
     if not drawings:
         raise HTTPException(status_code=404, detail="Project has no downloadable SVG drawing views")
     try:
@@ -1415,6 +1422,74 @@ def download_drawings_pdf(
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     filename = f"{project_id}-{snapshot.revision}-drawings.pdf"
+    return Response(
+        content=content,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+def _project_drawings(snapshot: Any) -> list[tuple[str, Path]]:
+    drawings: list[tuple[str, Path]] = []
+    for view, artifact_uri in snapshot.metadata.get("default_2d_views", {}).items():
+        artifact = snapshot.artifacts.get(str(artifact_uri))
+        if artifact is not None and artifact.media_type == "image/svg+xml":
+            drawings.append((str(view), _resolved_artifact_path(artifact.path)))
+    return drawings
+
+
+def _decode_tab_screenshot(value: str | None) -> bytes | None:
+    if value is None:
+        return None
+    prefix = "data:image/png;base64,"
+    if not value.startswith(prefix):
+        raise ValueError("screenshot_png_data_url must contain a base64 PNG data URL")
+    try:
+        content = b64decode(value[len(prefix) :], validate=True)
+    except (Base64Error, ValueError) as exc:
+        raise ValueError("screenshot_png_data_url is not valid base64") from exc
+    if len(content) > 5_000_000:
+        raise ValueError("Decoded PNG exceeds the 5 MB limit")
+    if not content.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("screenshot_png_data_url does not contain a PNG")
+    return content
+
+
+@app.post("/api/v1/projects/{project_id}/tabs/{tab}.pdf")
+def download_tab_pdf(
+    project_id: str,
+    tab: str,
+    body: TabPdfRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> Response:
+    authorize_project(project_id, user, "artifact.download")
+    if tab not in TAB_PDF_TITLES:
+        raise HTTPException(status_code=422, detail=f"Unsupported tab: {tab}")
+    snapshot = queries.project(project_id)
+    if body.selected_object_uri and body.selected_object_uri not in snapshot.objects:
+        raise HTTPException(status_code=422, detail="Selected object does not exist in this project")
+    try:
+        screenshot = _decode_tab_screenshot(body.screenshot_png_data_url)
+        content = render_tab_pdf(
+            snapshot,
+            tab,
+            content_text=body.content_text,
+            screenshot_png=screenshot,
+            selected_object_uri=body.selected_object_uri,
+            drawings=_project_drawings(snapshot),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    slug = {
+        "view3d": "3d",
+        "view2d": "2d",
+        "spec": "specification-xbom",
+        "lifecycle": "lifecycle",
+        "tests": "tests-simulations",
+        "fixation": "feature-lenses",
+        "evolution": "evolution-dsl",
+    }[tab]
+    filename = f"{project_id}-{snapshot.revision}-{slug}.pdf"
     return Response(
         content=content,
         media_type="application/pdf",
