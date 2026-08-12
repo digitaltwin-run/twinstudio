@@ -207,7 +207,9 @@
       "visible_artifacts": [
         "poa://demo/demo-rpi5@main/artifact/base-stl",
         "poa://demo/demo-rpi5@main/artifact/lid-stl",
-        "poa://demo/demo-rpi5@main/artifact/assembly-front"
+        "poa://demo/demo-rpi5@main/artifact/assembly-front",
+        "poa://demo/demo-rpi5@main/artifact/assembly-top",
+        "poa://demo/demo-rpi5@main/artifact/assembly-side"
       ]
     },
     {
@@ -225,8 +227,9 @@
       "log_dsl": "TWINOBS 1.0",
       "error_envelope": "ProblemEnvelope 1.0",
       "ui_context": "UIContext 1.0",
+      "ui_context_ordering": "serialized",
       "mcp_tool_count": 23
     }
   ],
-  "verified_at": "2026-08-12T10:58:28+00:00"
+  "verified_at": "2026-08-12T11:29:17+00:00"
 }

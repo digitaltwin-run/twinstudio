@@ -126,7 +126,8 @@ Interpretacja wyniku:
 - health-check PostgreSQL wykonuje uwierzytelnione `SELECT 1`; usunięto fałszywie dodatni `pg_isready -U twinstudio`, który przy odziedziczonym wolumenie generował `FATAL: role "twinstudio" does not exist` mimo statusu healthy;
 - artefakty 3D i 2D są pobierane przez autoryzowany registry endpoint, zamiast przez nieaudytowany bezpośredni mount ścieżki;
 - karta 2D pokazuje wszystkie rzuty z `default_2d_views` jako jedną przewijaną listę; każdy rzut zachowuje własną warstwę zaznaczeń i link SVG, a autoryzowany endpoint `/drawings.pdf` składa wszystkie SVG w jeden wektorowy, wielostronicowy PDF A4;
-- test Playwright na `http://127.0.0.1:8500` potwierdził projekt `demo-rpi5`, 15 wierszy drzewa, **2/2 załadowane siatki STL**, **20 096 trójkątów**, widoczny canvas WebGL oraz rysunek `assembly-front` bez błędów konsoli i sieci;
+- test Playwright na wdrożeniu `http://127.0.0.1:8400` potwierdził projekt `demo-rpi5`, 15 wierszy drzewa, **2/2 załadowane siatki STL**, **20 096 trójkątów** oraz trzy kolejne rzuty Front/Top/Side bez błędów konsoli i sieci;
+- aktualizacje `UIContext` są sekwencjonowane, więc końcowy stan dla LLM zawiera komplet pięciu widocznych artefaktów (dwa STL i trzy SVG), niezależnie od kolejności zakończenia żądań przeglądarki;
 - zrzut kontrolny testu UI jest zapisywany domyślnie jako `/tmp/twinstudio-ui.png`; test jest odtwarzalny poleceniem `python scripts/verify_ui.py --url <adres>`.
 
 ### 5.2. Kontrole nadal niewykonane

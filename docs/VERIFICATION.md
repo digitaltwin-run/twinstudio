@@ -51,7 +51,7 @@ The automated tests cover, among other things:
 - A real headless Chromium session loaded `demo-rpi5`, 15 product-tree rows, both declared STL meshes and all three ordered 2D drawings (Front, Top, Side) in one scrollable view.
 - The combined drawing download is a valid three-page vector A4 PDF; per-view 2D selection remains functional without the former view selector.
 - The 3D viewer reported **2/2 meshes** and **20,096 rendered triangles**; the browser had no relevant console, page or failed-request errors.
-- REST artifact downloads returned the full `base.stl` (406,084 bytes), and the latest UI state exposed all three visible artifact URIs to REST and MCP.
+- REST artifact downloads returned the full `base.stl` (406,084 bytes), and serialized UI-context updates exposed all five visible artifact URIs (two STL and three SVG) to REST and MCP without request-order races.
 - Application request logs are emitted as JSON records with an embedded `TWINOBS 1.0` DSL and correlation identifier. Errors link to guarded `error/<CODE>.md` repair playbooks.
 
 ## Source-archive and Python-package checks
