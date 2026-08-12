@@ -8,8 +8,8 @@ jobs:
   python:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: python -m pip install --upgrade pip
@@ -22,13 +22,20 @@ jobs:
   protobuf:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: bufbuild/buf-setup-action@v1
+      - uses: actions/checkout@v7
+      - name: Install Buf 1.72.0
+        run: |
+          curl --fail --location --silent --show-error \
+            https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-Linux-x86_64 \
+            --output "${RUNNER_TEMP}/buf"
+          echo "8720830e26a733da55bb89bcd3cb44849c0965fc0c44fb5d691cccdc64dca5af  ${RUNNER_TEMP}/buf" \
+            | sha256sum --check --strict
+          sudo install --mode 0755 "${RUNNER_TEMP}/buf" /usr/local/bin/buf
       - run: buf lint
   compose:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: cp .env.example .env
       - run: bash -n scripts/deploy_compose.sh
       - run: docker compose config --quiet
