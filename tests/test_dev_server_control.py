@@ -48,6 +48,9 @@ def test_makefile_exposes_local_lifecycle_controls() -> None:
     for target in ("start:", "restart recreate:", "stop kill:", "status:", "health:"):
         assert target in makefile
     assert "scripts/dev_server.sh" in makefile
+    script = SCRIPT.read_text(encoding="utf-8")
+    assert 'nohup setsid --fork "$cli_bin" serve' in script
+    assert "server_pid" in script
 
 
 def test_start_replaces_owned_instance_and_stop_cleans_it_up(tmp_path: Path) -> None:

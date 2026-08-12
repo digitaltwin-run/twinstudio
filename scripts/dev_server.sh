@@ -150,22 +150,32 @@ stop_instance() {
 }
 
 start_instance() {
-  local pid payload
+  local launcher_pid payload server_pid candidate
+  local -a listeners=()
   mkdir -p -- "$run_dir"
   stop_instance
   : >"$log_file"
-  nohup setsid "$cli_bin" serve >>"$log_file" 2>&1 </dev/null &
-  pid=$!
-  printf '%s\n' "$pid" >"$pid_file"
+  rm -f -- "$pid_file"
+  nohup setsid --fork "$cli_bin" serve >>"$log_file" 2>&1 </dev/null &
+  launcher_pid=$!
 
   for _ in $(seq 1 60); do
-    if ! kill -0 "$pid" 2>/dev/null; then
-      break
+    server_pid=""
+    mapfile -t listeners < <(port_pids)
+    for candidate in "${listeners[@]}"; do
+      if is_owned_twinstudio_pid "$candidate"; then
+        server_pid="$candidate"
+        break
+      fi
+    done
+    payload=""
+    if [[ -n "$server_pid" ]]; then
+      payload="$(curl --fail --silent --show-error --max-time 2 "$health_url" 2>/dev/null || true)"
     fi
-    payload="$(curl --fail --silent --show-error --max-time 2 "$health_url" 2>/dev/null || true)"
-    if [[ "$payload" == *'"status":"ok"'* ]]; then
+    if [[ -n "$server_pid" && "$payload" == *'"status":"ok"'* ]]; then
+      printf '%s\n' "$server_pid" >"$pid_file"
       printf 'TwinStudio started: PID=%s URL=http://%s:%s LOG=%s\n' \
-        "$pid" "$health_host" "$server_port" "$log_file"
+        "$server_pid" "$health_host" "$server_port" "$log_file"
       return 0
     fi
     sleep 0.25
@@ -173,7 +183,11 @@ start_instance() {
 
   printf 'TwinStudio failed to become healthy at %s\n' "$health_url" >&2
   tail -n 80 "$log_file" >&2 || true
-  is_owned_twinstudio_pid "$pid" && kill -TERM "$pid" 2>/dev/null || true
+  mapfile -t listeners < <(port_pids)
+  for candidate in "${listeners[@]}"; do
+    is_owned_twinstudio_pid "$candidate" && kill -TERM "$candidate" 2>/dev/null || true
+  done
+  kill -TERM "$launcher_pid" 2>/dev/null || true
   rm -f -- "$pid_file"
   return 1
 }

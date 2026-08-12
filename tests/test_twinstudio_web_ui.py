@@ -91,7 +91,7 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "polygon-order-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
-    assert 'src="/static/app.js?v=20260812-change-queue1"' in HTML.read_text(encoding="utf-8")
+    assert 'src="/static/app.js?v=20260812-change-queue2"' in HTML.read_text(encoding="utf-8")
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
     assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
     assert "data-selection-bbox" in front_svg
@@ -121,9 +121,10 @@ def test_planner_wait_and_non_geometry_outcome_are_explicit() -> None:
     assert "/change-history/" in javascript
     assert "annotation.execution.deferred" in javascript
     assert "function loadChangeQueue" in javascript
-    assert "function taskForObject" in javascript
+    assert "function tasksForObject" in javascript
     assert "/change-queue" in javascript
     assert "task-pill" in javascript
+    assert "taskGroups" in javascript
     assert "waiting_cad" in javascript
 
 

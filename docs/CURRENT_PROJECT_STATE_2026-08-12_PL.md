@@ -61,7 +61,7 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - `Zapisz i wykonaj uwagę` od razu tworzy `ChangePlan`; bezpieczne `set_parameter` jest wykonywane automatycznie, a geometria bez stabilnego mappingu pozostaje otwarta i jawnie odroczona do CAD workera;
 - `GET /change-history` składa listę uwag, planów, zastosowań i cofnięć z append-only Event Store; cofnięcie bezpiecznego parametru emituje kompensujące `ChangeReverted` z pełnym poprzednim `ParameterValue`, zamiast usuwać audyt;
 - `GET /change-queue` projektuje z tego samego Event Store tylko aktywne zadania jako `ready`, `needs_detail` lub `waiting_cad`; zakończone, cofnięte i nieaktualne plany pozostają w historii, ale nie zaśmiecają kolejki;
-- UI łączy trwałą kolejkę z lokalnymi stanami `planning`, `applying` i `undoing`; obiekty POA objęte zadaniem mają w drzewie kolorową krawędź i znacznik `PLAN`, `ZAPIS`, `CAD`, `?`, `GOTOWE` albo `COFNIJ`, a karta kolejki pozwala ponownie otworzyć zapisany plan po odświeżeniu strony;
+- UI łączy trwałą kolejkę z lokalnymi stanami `planning`, `applying` i `undoing`; obiekty POA objęte zadaniem mają w drzewie kolorową krawędź i znaczniki `PLAN`, `ZAPIS`, `CAD`, `?`, `GOTOWE` albo `COFNIJ` (wszystkie aktywne typy stanu są widoczne, a kilka zadań tego samego typu jest agregowanych, np. `?×2`), a karta kolejki pozwala ponownie otworzyć zapisany plan po odświeżeniu strony;
 - LLM może odczytać ostatni `UIContext` i playbook `error/<CODE>.md` przez REST lub dwa kontrolowane narzędzia MCP;
 - playbooki używają prostego, deklaratywnego `REPAIR 1.0`; nie dają LLM swobodnego wykonania powłoki ani ominięcia autoryzacji.
 
@@ -210,3 +210,5 @@ scripts/deploy_compose.sh
 ```
 
 Skrypt odmawia pracy dla brudnego drzewa, commita różnego od `origin/main` albo czerwonego CI. Obraz zawiera etykietę rewizji, `/health` ją zwraca, a brak potwierdzenia po wdrożeniu uruchamia rollback do poprzedniego obrazu aplikacji.
+
+Lokalny `make start` / `make restart` uruchamia CLI w odłączonej sesji i zapisuje faktyczny PID procesu nasłuchującego na skonfigurowanym porcie, a nie PID krótkotrwałego launchera. Dzięki temu kontrola zdrowia, zatrzymanie i rekreacja wskazują ten sam proces również wtedy, gdy komenda jest wywołana spod Make.
