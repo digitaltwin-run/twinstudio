@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from dataclasses import dataclass
 from typing import Any
 
@@ -148,7 +149,44 @@ class ChangePlanner:
         questions: list[str] = []
         impact: list[ImpactItem] = []
 
-        thickness = _number_near(lowered, ("wall thickness", "grubość ścian", "grubosc scian", "thickness"))
+        relative_parameter = _relative_parameter_change(lowered, target, project)
+        if relative_parameter is not None:
+            parameter, previous_value, new_value, delta, unit = relative_parameter
+            operations.append(
+                ChangeOperation(
+                    kind=ChangeOperationKind.SET_PARAMETER,
+                    target_uri=target,
+                    selector={
+                        "parameter": parameter,
+                        "scope": "selected_object",
+                        "adjustment": "relative",
+                    },
+                    arguments={"parameter": parameter, "value": new_value, "unit": unit},
+                    rationale=(
+                        f"Explicit relative change detected: {parameter} {previous_value:g} {unit} "
+                        f"{'+' if delta > 0 else '-'} {abs(delta):g} {unit} = {new_value:g} {unit}."
+                    ),
+                    confidence=0.96,
+                    validation_steps=[
+                        "Verify the resulting dimension remains positive and compatible with adjacent features.",
+                        "Regenerate 2D drawings and 3D geometry before manufacturing.",
+                    ],
+                )
+            )
+            impact.append(
+                ImpactItem(
+                    uri=target,
+                    impact="direct",
+                    summary=f"Parameter {parameter} changes from {previous_value:g} to {new_value:g} {unit}.",
+                )
+            )
+
+        thickness = None
+        if _relative_direction(lowered) is None:
+            thickness = _number_near(
+                lowered,
+                ("wall thickness", "grubość ścian", "grubosc scian", "thickness"),
+            )
         if thickness is not None:
             if semantic_faces:
                 operations.append(
@@ -343,6 +381,67 @@ def _owning_object_uri(target_uri: str, project: ProjectSnapshot) -> str:
 def _first_number(text: str) -> float | None:
     match = re.search(r"(?<![\w.])(\d+(?:[.,]\d+)?)", text)
     return float(match.group(1).replace(",", ".")) if match else None
+
+
+_PARAMETER_ALIASES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("wall_thickness", ("grubosc scian", "grubosc scianki", "wall thickness")),
+    ("floor_thickness", ("grubosc dna", "grubosc podlogi", "floor thickness")),
+    ("height", ("wysokosc", "height")),
+    ("width", ("szerokosc", "width")),
+    ("depth", ("glebokosc", "depth")),
+)
+
+
+def _normalized_text(text: str) -> str:
+    decomposed = unicodedata.normalize("NFKD", text.casefold())
+    return "".join(character for character in decomposed if not unicodedata.combining(character))
+
+
+def _relative_direction(text: str) -> int | None:
+    normalized = _normalized_text(text)
+    if re.search(r"\b(?:zmniejsz|zmniejszyc|obniz|skroc|reduce|decrease|lower)\b", normalized):
+        return -1
+    if re.search(r"\b(?:zwieksz|zwiekszyc|podnies|wydluz|increase|raise)\b", normalized):
+        return 1
+    return None
+
+
+def _relative_parameter_change(
+    text: str,
+    target_uri: str,
+    project: ProjectSnapshot,
+) -> tuple[str, float, float, float, str] | None:
+    direction = _relative_direction(text)
+    node = project.objects.get(target_uri)
+    if direction is None or node is None:
+        return None
+    normalized = _normalized_text(text)
+    parameter = next(
+        (
+            name
+            for name, aliases in _PARAMETER_ALIASES
+            if name in node.parameters and any(alias in normalized for alias in aliases)
+        ),
+        None,
+    )
+    amount_match = re.search(r"\b(?:o|by)\s*(\d+(?:[.,]\d+)?)\s*(mm|cm)\b", normalized)
+    if parameter is None or amount_match is None:
+        return None
+    existing = node.parameters[parameter]
+    if not isinstance(existing.value, (int, float)) or isinstance(existing.value, bool):
+        return None
+    existing_unit = existing.unit or "mm"
+    if existing_unit != "mm":
+        return None
+    amount = float(amount_match.group(1).replace(",", "."))
+    if amount_match.group(2) == "cm":
+        amount *= 10
+    delta = direction * amount
+    previous_value = float(existing.value)
+    new_value = round(previous_value + delta, 6)
+    if amount <= 0 or new_value <= 0:
+        return None
+    return parameter, previous_value, new_value, delta, existing_unit
 
 
 def _number_near(text: str, terms: tuple[str, ...]) -> float | None:

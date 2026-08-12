@@ -231,9 +231,10 @@
       "ambiguous_plan_apply_available": false,
       "refresh_required": false,
       "automatic_annotation_execution": true,
-      "automatic_parameter": "wall_thickness",
-      "automatic_parameter_before": 2.0,
-      "automatic_parameter_after": 2.25,
+      "automatic_parameter": "height",
+      "automatic_parameter_instruction": "zmniejsz wysokosc o 4mm",
+      "automatic_parameter_before": 25.0,
+      "automatic_parameter_after": 21.0,
       "change_history": true,
       "change_queue_endpoint": true,
       "change_queue_active_states": ["ready", "needs_detail", "waiting_cad"],
@@ -278,5 +279,5 @@
       "runtime_directory": ".run"
     }
   ],
-  "verified_at": "2026-08-12T15:59:28+02:00"
+  "verified_at": "2026-08-12T16:09:18+02:00"
 }

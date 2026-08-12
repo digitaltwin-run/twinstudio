@@ -148,8 +148,8 @@ def main() -> int:
         undo_verified = False
         queue_tree_marker_verified = False
         queue_screenshot = None
-        previous_wall_thickness = None
-        automatic_wall_thickness = None
+        previous_height = None
+        automatic_height = None
         if args.verify_plan:
             page.locator("#changePrompt").fill("zmniejsz o 4mm")
             page.locator("#planButton").click()
@@ -186,13 +186,11 @@ def main() -> int:
                 f"{args.url}/api/v1/projects/{project_id}"
             ).json()["project"]
             base_uri = "poa://demo/demo-rpi5@main/part/base"
-            previous_wall_thickness = float(
-                project_before["objects"][base_uri]["parameters"]["wall_thickness"]["value"]
+            previous_height = float(
+                project_before["objects"][base_uri]["parameters"]["height"]["value"]
             )
-            automatic_wall_thickness = previous_wall_thickness + 0.25
-            page.locator("#annotationText").fill(
-                f"ustaw grubość ścian na {automatic_wall_thickness:.2f} mm"
-            )
+            automatic_height = previous_height - 4
+            page.locator("#annotationText").fill("zmniejsz wysokosc o 4mm")
             page.locator("#saveAnnotation").click()
             page.wait_for_function(
                 "document.querySelector('#applyStatus')?.textContent.includes('Uwaga wykonana automatycznie')",
@@ -206,11 +204,11 @@ def main() -> int:
             ).json()["project"]
             assert (
                 float(
-                    project_after_apply["objects"][base_uri]["parameters"][
-                        "wall_thickness"
-                    ]["value"]
+                    project_after_apply["objects"][base_uri]["parameters"]["height"][
+                        "value"
+                    ]
                 )
-                == automatic_wall_thickness
+                == automatic_height
             )
             automatic_note_verified = True
             page.locator("#changeHistory [data-undo-event]").first.click()
@@ -225,9 +223,9 @@ def main() -> int:
                     if (!response.ok) return false;
                     const project = (await response.json()).project;
                     return Number(project.objects['poa://demo/demo-rpi5@main/part/base']
-                        .parameters.wall_thickness.value) === expected;
+                        .parameters.height.value) === expected;
                 }""",
-                arg=previous_wall_thickness,
+                arg=previous_height,
                 timeout=args.timeout_ms,
             )
             page.wait_for_function(
@@ -331,8 +329,8 @@ def main() -> int:
             "undo_from_change_history": undo_verified,
             "change_queue_tree_marker": queue_tree_marker_verified,
             "queue_screenshot": str(queue_screenshot) if queue_screenshot else None,
-            "wall_thickness_before": previous_wall_thickness,
-            "wall_thickness_automatic": automatic_wall_thickness,
+            "height_before": previous_height,
+            "height_automatic": automatic_height,
             "url_action_args": len(action_args),
             "clipboard_dsl_characters": len(clipboard_dsl),
             "clipboard_fallback_verified": True,

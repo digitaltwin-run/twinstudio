@@ -65,3 +65,48 @@ def test_safe_parameter_patch_keeps_previous_value_for_undo(project_snapshot, ex
     payload = planner.compile_apply_payload(plan, project_snapshot)
     assert payload["parameter_patches"][0]["value"] == 3
     assert payload["parameter_patches"][0]["previous_parameter"]["value"] == 2
+
+
+def test_relative_polish_height_change_compiles_to_safe_parameter_patch(
+    project_snapshot, example_selection
+) -> None:
+    selection_2d = example_selection.model_copy(
+        update={
+            "source_view": "2d",
+            "tool": "rectangle",
+            "ray_hits": [],
+            "world_aabb": None,
+            "camera": None,
+            "projection_entity_ids": ["front.base.outer-wall"],
+        }
+    )
+    planner = ChangePlanner(replace(settings, litellm_model=""))
+    plan = planner.plan(
+        "zmniejsz wysokosc o 4mm",
+        selection_2d,
+        project_snapshot,
+        "editor@example.test",
+    ).plan
+    assert plan.unresolved_questions == []
+    assert len(plan.operations) == 1
+    operation = plan.operations[0]
+    assert operation.kind == "set_parameter"
+    assert operation.arguments == {"parameter": "height", "value": 21.0, "unit": "mm"}
+    payload = planner.compile_apply_payload(plan, project_snapshot)
+    assert payload["parameter_patches"][0]["value"] == 21
+    assert payload["parameter_patches"][0]["previous_parameter"]["value"] == 25
+
+
+def test_relative_wall_thickness_is_not_misread_as_absolute_value(
+    project_snapshot, example_selection
+) -> None:
+    planner = ChangePlanner(replace(settings, litellm_model=""))
+    plan = planner.plan(
+        "zmniejsz grubość ścian o 0,5 mm",
+        example_selection,
+        project_snapshot,
+        "editor@example.test",
+    ).plan
+    assert len(plan.operations) == 1
+    assert plan.operations[0].arguments["parameter"] == "wall_thickness"
+    assert plan.operations[0].arguments["value"] == 1.5
