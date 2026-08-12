@@ -221,6 +221,12 @@
       "selection_without_tree_click": true,
       "inferred_target": "poa://demo/demo-rpi5@main/part/base",
       "projection_entity": "front.base.outer-wall",
+      "tree_selection_highlights_3d_and_2d": true,
+      "tree_selected_object": "poa://demo/demo-rpi5@main/part/base",
+      "tree_highlighted_meshes": 1,
+      "tree_highlighted_regions": {"front": 1, "top": 1, "side": 1},
+      "tree_highlight_preserves_compatible_edit_selection": true,
+      "tree_highlight_clears_unrelated_edit_selection": true,
       "projection_cache_policy": "no-store",
       "legacy_svg_fallback": "polygon-order-fallback",
       "plan_from_inferred_selection": true,
@@ -279,5 +285,5 @@
       "runtime_directory": ".run"
     }
   ],
-  "verified_at": "2026-08-12T16:09:18+02:00"
+  "verified_at": "2026-08-12T16:25:06+02:00"
 }

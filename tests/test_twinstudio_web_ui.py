@@ -96,10 +96,31 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "polygon-order-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
-    assert 'src="/static/app.js?v=20260812-change-queue3"' in HTML.read_text(encoding="utf-8")
+    assert 'src="/static/app.js?v=20260812-tree-highlight1"' in HTML.read_text(encoding="utf-8")
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
     assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
+    assert 'data-object-uri="poa://demo/demo-rpi5@main/part/base"' in front_svg
     assert "data-selection-bbox" in front_svg
+
+
+def test_tree_object_selection_highlights_3d_and_all_mapped_2d_views() -> None:
+    javascript = JAVASCRIPT.read_text(encoding="utf-8")
+    style = (ROOT / "src" / "twinstudio" / "static" / "style.css").read_text(encoding="utf-8")
+    assert "function objectBelongsToSelection" in javascript
+    assert "function renderObjectHighlight3d" in javascript
+    assert "function renderObjectHighlight2d" in javascript
+    assert "function renderObjectHighlights" in javascript
+    assert "highlightedMeshes" in javascript
+    assert "data-highlight-regions" in javascript
+    assert "object-highlight-overlay" in javascript
+    assert ".object-highlight-overlay" in style
+    for view in ("front", "top", "side"):
+        svg = (
+            ROOT / "examples" / "rpi5-camera3" / "artifacts" / "2d" / f"assembly_{view}.svg"
+        ).read_text(encoding="utf-8")
+        assert 'data-object-uri="poa://demo/demo-rpi5@main/part/base"' in svg
+        assert 'data-object-uri="poa://demo/demo-rpi5@main/part/lid"' in svg
+        assert svg.count("data-selection-bbox") >= 2
 
 
 def test_planner_wait_and_non_geometry_outcome_are_explicit() -> None:

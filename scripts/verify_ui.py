@@ -268,6 +268,42 @@ def main() -> int:
         if args.simulate_legacy_svg_cache:
             assert any("source=polygon-order-fallback" in item for item in projection_actions)
         assert "?args=" in final_context["route"], final_context["route"]
+        selected_tree_row = page.locator("#objectTree .tree-row.selected").first
+        selected_tree_row.click()
+        page.wait_for_function(
+            "document.querySelector('#viewer3d')?.dataset.highlightedMeshes === '1'",
+            timeout=args.timeout_ms,
+        )
+        page.wait_for_function(
+            """[...document.querySelectorAll('.object-highlight-overlay')].length === 3
+                && [...document.querySelectorAll('.object-highlight-overlay')]
+                    .every(canvas => Number(canvas.dataset.highlightRegions) === 1)""",
+            timeout=args.timeout_ms,
+        )
+        assert (page.locator("#viewer3d").get_attribute("data-highlighted-object") or "").endswith(
+            "/part/base"
+        )
+        assert page.locator('.drawing-card[data-object-highlight="mapped"]').count() == 3
+        tree_highlight_args = page.evaluate(
+            "[...new URL(location.href).searchParams.getAll('args')]"
+        )
+        assert any("|object.selected|" in item and "highlight3d=1" in item for item in tree_highlight_args)
+        page.locator("#objectTree .tree-row").filter(has_text="Upper lid").click()
+        page.wait_for_function(
+            "document.querySelector('#objectTree .tree-row.selected')?.textContent.includes('Upper lid')"
+            " && document.querySelector('#selectionSummary')?.textContent.includes('Wybór z drzewa')",
+            timeout=args.timeout_ms,
+        )
+        assert "front.base.outer-wall" not in page.locator("#selectionSummary").inner_text()
+        unrelated_switch_args = page.evaluate(
+            "[...new URL(location.href).searchParams.getAll('args')]"
+        )
+        assert any(
+            "|object.selected|" in item and "selection_reset=true" in item
+            for item in unrelated_switch_args
+        )
+        page.locator("#objectTree .tree-row").filter(has_text="Lower base").click()
+        tree_highlight_verified = True
         page.locator("#copyDslLogs").click()
         page.wait_for_function(
             "document.querySelector('#banner').textContent.includes('Skopiowano logi DSL')",
@@ -319,6 +355,7 @@ def main() -> int:
                 if args.simulate_legacy_svg_cache
                 else "svg-metadata"
             ),
+            "tree_selection_highlights_3d_and_2d": tree_highlight_verified,
             "plan_from_inferred_selection": plan_verified,
             "planner_runtime": page.locator("#plannerRuntime").inner_text(),
             "plan_changes_geometry": False if plan_verified else None,

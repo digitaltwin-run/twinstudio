@@ -2,8 +2,8 @@
 <rect width="100%" height="100%" fill="white"/>
 <title>Side</title>
 <g id="VISIBLE_EDGES" fill="none" stroke="black" stroke-width="0.500">
-<polygon points="16.000,56.000 111.000,56.000 111.000,31.000 16.000,31.000"/>
-<polygon points="16.000,31.000 16.000,29.000 29.000,16.000 109.000,16.000 111.000,29.000 111.000,31.000"/>
+<polygon data-object-uri="poa://demo/demo-rpi5@main/part/base" data-selection-bbox="16.000,31.000,111.000,56.000" points="16.000,56.000 111.000,56.000 111.000,31.000 16.000,31.000"/>
+<polygon data-object-uri="poa://demo/demo-rpi5@main/part/lid" data-selection-bbox="16.000,16.000,111.000,31.000" points="16.000,31.000 16.000,29.000 29.000,16.000 109.000,16.000 111.000,29.000 111.000,31.000"/>
 <circle cx="16.500" cy="30.000" r="4.000"/>
 </g>
 <g id="CENTERLINES" fill="none" stroke="black" stroke-width="0.180" stroke-dasharray="8,2,2,2">
