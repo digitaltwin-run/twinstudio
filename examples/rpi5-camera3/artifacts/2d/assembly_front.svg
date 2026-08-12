@@ -25,6 +25,14 @@
 <line x1="6.000" y1="16.000" x2="6.900" y2="17.800"/>
 <line x1="6.000" y1="16.000" x2="5.100" y2="17.800"/>
 <text x="8.000" y="36.000" font-size="2.500" text-anchor="start" fill="black" stroke="none">40.00</text>
+<line x1="95.000" y1="56.000" x2="105.000" y2="56.000"/>
+<line x1="95.000" y1="31.000" x2="105.000" y2="31.000"/>
+<line x1="105.000" y1="56.000" x2="105.000" y2="31.000"/>
+<line x1="105.000" y1="56.000" x2="105.900" y2="54.200"/>
+<line x1="105.000" y1="56.000" x2="104.100" y2="54.200"/>
+<line x1="105.000" y1="31.000" x2="105.900" y2="32.800"/>
+<line x1="105.000" y1="31.000" x2="104.100" y2="32.800"/>
+<text x="103.000" y="43.500" font-size="2.500" text-anchor="end" fill="black" stroke="none">25.00</text>
 </g>
 <g id="NOTES" fill="none" stroke="black" stroke-width="0.180">
 <text x="55.500" y="8.000" font-size="2.800" text-anchor="middle" fill="black" stroke="none">ASSEMBLY - FRONT</text>

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import ezdxf
 
-from housing_studio.draw2d import export_all_2d
+from housing_studio.draw2d import Dimension2D, build_drawing_sets, export_all_2d
 from housing_studio.models import default_project_config
 
 
@@ -49,3 +49,29 @@ def test_svg_keeps_disabled_layers_for_interactive_preview(tmp_path: Path) -> No
     assert 'data-selection-bbox=' in assembly_front
     assert 'data-default-enabled="false"' in source
     assert 'style="display:none"' in source
+
+
+def test_assembly_front_dimensions_current_base_height_separately(tmp_path: Path) -> None:
+    config = default_project_config()
+    config.dimensions = config.dimensions.model_copy(
+        update={"base_height": 21.0, "total_height": 33.0}
+    )
+    front = build_drawing_sets(config)["assembly"].views["front"]
+
+    vertical_dimensions = [
+        primitive
+        for primitive in front.primitives
+        if isinstance(primitive, Dimension2D) and primitive.orientation == "vertical"
+    ]
+    assert [(item.text, item.offset) for item in vertical_dimensions] == [
+        ("33.00", -10),
+        ("21.00", config.dimensions.external_width + 10),
+    ]
+
+    export_all_2d(config, tmp_path)
+    assembly_front = (tmp_path / "assembly" / "assembly_front.svg").read_text(
+        encoding="utf-8"
+    )
+    assert ">33.00</text>" in assembly_front
+    assert ">21.00</text>" in assembly_front
+    assert 'x="103.000" y="38.500" font-size="2.500" text-anchor="end"' in assembly_front

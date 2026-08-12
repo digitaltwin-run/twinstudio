@@ -117,6 +117,15 @@ with TestClient(app) as client:
     generated_config = json.loads(config_path.read_text())
     assert generated_config['dimensions']['base_height'] == 21
     assert generated_config['dimensions']['total_height'] == 36
+    height_front = (
+        Path(os.environ['TWINSTUDIO_DATA_DIR'])
+        / 'cad-jobs'
+        / height_job
+        / '2d/assembly/assembly_front.svg'
+    ).read_text()
+    assert '>36.00</text>' in height_front
+    assert '>21.00</text>' in height_front
+    assert 'text-anchor="end"' in height_front
 
     height_event = next(
         item for item in height_applied.json()['events'] if item['event_type'] == 'ChangeApplied'
@@ -203,6 +212,14 @@ with TestClient(app) as client:
     )
     lid_config = json.loads(lid_config_path.read_text())
     assert lid_config['auxiliary_lid_bosses']['top_z_from_base_mating_plane'] == 11
+    lid_front = (
+        Path(os.environ['TWINSTUDIO_DATA_DIR'])
+        / 'cad-jobs'
+        / lid_job
+        / '2d/assembly/assembly_front.svg'
+    ).read_text()
+    assert '>37.00</text>' in lid_front
+    assert '>25.00</text>' in lid_front
 
     lid_undo = client.post(
         f"/api/v1/projects/demo-rpi5/change-history/{lid_event['event_id']}/undo"

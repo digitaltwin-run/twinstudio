@@ -420,6 +420,13 @@ def _assembly_front_view(config: ProjectConfig) -> View2D:
     view.add(
         Dimension2D((0, 0), (d.external_width, 0), -10, f"{d.external_width:.2f}", "horizontal"),
         Dimension2D((0, 0), (0, d.total_height), -10, f"{d.total_height:.2f}", "vertical"),
+        Dimension2D(
+            (d.external_width, 0),
+            (d.external_width, d.base_height),
+            d.external_width + 10,
+            f"{d.base_height:.2f}",
+            "vertical",
+        ),
         Text2D((d.external_width / 2, d.total_height + 8), "ASSEMBLY - FRONT", align="center"),
     )
     return view
@@ -599,7 +606,14 @@ def _dimension_segments(dim: Dimension2D) -> tuple[list[Line2D], Text2D]:
                 Line2D((x, dim.p2[1]), (x - arrow / 2, dim.p2[1] - arrow), dim.layer),
             ]
         )
-        text = Text2D((x + 2.0, (dim.p1[1] + dim.p2[1]) / 2.0), dim.text, 2.5, dim.layer, "left")
+        right_of_geometry = x > max(dim.p1[0], dim.p2[0])
+        text = Text2D(
+            (x - 2.0 if right_of_geometry else x + 2.0, (dim.p1[1] + dim.p2[1]) / 2.0),
+            dim.text,
+            2.5,
+            dim.layer,
+            "right" if right_of_geometry else "left",
+        )
     return lines, text
 
 
