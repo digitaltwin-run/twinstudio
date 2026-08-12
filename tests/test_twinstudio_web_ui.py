@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 import shutil
 import subprocess
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -10,6 +13,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 HTML = ROOT / "src" / "twinstudio" / "static" / "index.html"
 JAVASCRIPT = ROOT / "src" / "twinstudio" / "static" / "app.js"
+VENDORED_THREE = ROOT / "src" / "twinstudio" / "static" / "vendor" / "three"
 
 
 def test_twinstudio_frontend_element_ids_are_synchronized() -> None:
@@ -31,6 +35,56 @@ def test_twinstudio_javascript_module_syntax() -> None:
         capture_output=True,
         text=True,
     )
+
+
+def test_three_viewer_dependencies_are_pinned_and_self_hosted() -> None:
+    html = HTML.read_text(encoding="utf-8")
+    import_map_match = re.search(
+        r'<script type="importmap">\s*(\{.*?\})\s*</script>',
+        html,
+        re.DOTALL,
+    )
+    assert import_map_match is not None
+    imports = json.loads(import_map_match.group(1))["imports"]
+    assert imports == {
+        "three": "/static/vendor/three/three.module.js?v=0.185.1",
+        "three/addons/controls/OrbitControls.js": (
+            "/static/vendor/three/OrbitControls.js?v=0.185.1"
+        ),
+        "three/addons/loaders/STLLoader.js": (
+            "/static/vendor/three/STLLoader.js?v=0.185.1"
+        ),
+    }
+    assert "cdn.jsdelivr.net" not in html
+
+    expected_hashes = {
+        "LICENSE.txt": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "OrbitControls.js": "faabb4e8dfd9235ee4a9fd7c9a3d75f90f1689dbd4944bd6fd32117dacec5f93",
+        "STLLoader.js": "023ed97f848b633d8bcd53d4db3b996d29d0c644088700691297c552257d480b",
+        "three.core.js": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759",
+        "three.module.js": "bbf5ed13fe4373f5bd38b14ea8e62e9f157327da5638edc6d3863e08b167c9c7",
+    }
+    for name, expected_hash in expected_hashes.items():
+        content = (VENDORED_THREE / name).read_bytes()
+        assert hashlib.sha256(content).hexdigest() == expected_hash
+    recorded_hashes = {
+        name: digest
+        for digest, name in (
+            line.split()
+            for line in (VENDORED_THREE / "SHA256SUMS").read_text(encoding="utf-8").splitlines()
+        )
+    }
+    assert recorded_hashes == expected_hashes
+    for module in VENDORED_THREE.glob("*.js"):
+        relative_imports = re.findall(
+            r"(?:from|import)\s*['\"]\./([^'\"]+)['\"]",
+            module.read_text(encoding="utf-8"),
+        )
+        assert all((VENDORED_THREE / dependency).is_file() for dependency in relative_imports)
+
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    package_data = project["tool"]["setuptools"]["package-data"]["twinstudio"]
+    assert "static/vendor/three/*" in package_data
 
 
 def test_viewer_and_llm_context_contract_is_explicit() -> None:

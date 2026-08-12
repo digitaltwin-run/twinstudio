@@ -52,6 +52,7 @@ The automated tests cover, among other things:
 - The combined drawing download is a valid three-page vector A4 PDF; per-view 2D selection remains functional without the former view selector. A marked SVG projection region now infers `part/base` and `front.base.outer-wall` without a prior product-tree click, and the resulting selection successfully creates a scoped change plan. Projection metadata bypasses the browser cache, and a Playwright run with the metadata intentionally removed verified the ordered-polygon compatibility fallback.
 - Every workspace tab has an authorized PDF export. Playwright downloaded all seven files: 3D embeds the current WebGL frame, selection overlay and selected POA object; 2D remains a three-page vector document; Specification/xBOM, Lifecycle, Tests, Feature lenses and Evolution/DSL contain the currently visible text. The download lifecycle is also recorded as `tab.pdf.*` URL/TWINOBS actions.
 - The 3D viewer reported **2/2 meshes** and **20,096 rendered triangles**; the browser had no relevant console, page or failed-request errors.
+- The main viewer's pinned `three@0.185.1`, `OrbitControls` and `STLLoader` modules are served by FastAPI from local static URLs. Their SHA-256 digests match the official npm package, the wheel includes the modules and MIT license, and the main UI import map has no public-CDN dependency.
 - REST artifact downloads returned the full `base.stl` (406,084 bytes), and serialized UI-context updates exposed all five visible artifact URIs (two STL and three SVG) to REST and MCP without request-order races.
 - Application request logs are emitted as JSON records with an embedded `TWINOBS 1.0` DSL and correlation identifier. Errors link to guarded `error/<CODE>.md` repair playbooks.
 - Browser actions are retained in ordered, repeated URL `args` parameters with target and cursor coordinates. Text contents are excluded; only field lengths are recorded.
@@ -69,7 +70,7 @@ The automated tests cover, among other things:
 - The archive excludes the runtime SQLite database, `.pytest_cache`, `__pycache__` and Python bytecode.
 - The complete **38-test** suite passed again from the extracted source archive.
 - The extracted source built successfully as `twinstudio-0.5.0-py3-none-any.whl`.
-- The wheel contains the browser assets, evolution and feature-lens catalogs, canonical DSL schema and EBNF grammar.
+- The wheel contains the browser assets (including the pinned Three.js modules and license), evolution and feature-lens catalogs, canonical DSL schema and EBNF grammar.
 - Importing from the unpacked wheel confirmed that the packaged schema/grammar fallback works without the repository-level `schemas/` directory.
 - A separate nested-venv editable-install attempt could not start because that container-created venv did not inherit `setuptools.build_meta`. This was treated as an environment limitation and replaced by the successful wheel build/import check; it is not claimed as an editable-install pass.
 

@@ -1,0 +1,2 @@
+# Preserve byte-identical third-party browser modules and verify them by SHA-256.
+src/twinstudio/static/vendor/three/*.js -whitespace linguist-vendored

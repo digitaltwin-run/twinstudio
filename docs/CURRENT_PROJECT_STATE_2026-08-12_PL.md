@@ -9,7 +9,7 @@ Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:
 - `components/housing-studio` jest działającym komponentem parametrycznego CAD 2D/3D i został podłączony zarówno do głównego obrazu aplikacji, jak i obrazu `cad-worker`;
 - rzeczywista aplikacja ASGI uruchamia się, seeduje projekt demonstracyjny i odpowiada przez HTTP.
 
-Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 113 testów przechodzi, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Testy API wykonują prawdziwą przebudowę CadQuery po zastosowaniu i cofnięciu parametru, a test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. CI instaluje jawnie zależności Housing Studio, waliduje granicę NL/DSL względem przypiętego `wellmanifest/dsl` i uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
+Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 114 testów przechodzi, Ruff nie zgłasza błędów, Compose jest jednoznaczny, a bieżący obraz działa z PostgreSQL i zachowaną bazą demonstracyjną. Testy API wykonują prawdziwą przebudowę CadQuery po zastosowaniu i cofnięciu parametru, a test Playwright potwierdza nie tylko odpowiedź API, lecz także załadowanie projektu, drzewa oraz obu brył STL w WebGL. Moduły Three.js używane przez główny viewer są przypięte, dostarczane w wheel i serwowane lokalnie, bez runtime zależności od publicznego CDN. CI instaluje jawnie zależności Housing Studio, waliduje granicę NL/DSL względem przypiętego `wellmanifest/dsl` i uruchamia lint. Gotowość produkcyjna nadal wymaga wskazania docelowego hosta, zarządzania sekretami i polityki migracji bazy, ale lokalna ścieżka single-host Docker Compose ma kontrolowany rollout, health-check rewizji i rollback obrazu.
 
 | Obszar | Ocena | Uzasadnienie |
 |---|---|---|
@@ -17,7 +17,7 @@ Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 113 testó
 | DSL i ewolucja projektu | zgodne z intencją i działające | manifest Wellmanifest, SHA-256, ownership, findings gate, walidator i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 113/113 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 114/114 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -54,6 +54,7 @@ Warstwa obserwowalności ma wspólny kontrakt dla człowieka i LLM:
 - każde żądanie aplikacyjne emituje JSON/NDJSON z osadzonym DSL `TWINOBS 1.0` i `correlation_id`;
 - błędy REST zwracają kompatybilne pole `detail` oraz typowany `ProblemEnvelope` z kodem, kontekstem ekranu, artefaktami i adresem registry;
 - przeglądarka publikuje `UIContext`: aktywną kartę i narzędzie, zaznaczenie, stan renderera, liczbę siatek i trójkątów oraz listę użytych artefaktów;
+- import map głównego UI wskazuje wyłącznie lokalne moduły `three@0.185.1`, `OrbitControls` i `STLLoader`; wheel zawiera niezmienione pliki z oficjalnego pakietu npm, licencję MIT i kontrolne sumy SHA-256;
 - ostatnie 40 akcji UI jest widoczne jako uporządkowane parametry `args` w URL; rekord zawiera sekwencję, czas, rodzaj akcji, kliknięty element, współrzędne kursora i zwięzły kontekst semantyczny, ale dla pól tekstowych ujawnia tylko długość;
 - autoryzowany `GET /api/v1/projects/{project_id}/logs.dsl` udostępnia ostatnie projektowe rekordy z ograniczonego bufora TWINOBS; `Kopiuj logi DSL` łączy je ze śladem `UiAction` z URL i po odrzuceniu nowoczesnego Clipboard API próbuje trybu zgodności, a niezależne `Pobierz logi DSL` działa bez uprawnienia do schowka;
 - panel planera odczytuje `/health`, rozróżnia tryb lokalny od LiteLLM, pokazuje czas bieżącego oczekiwania i typowy przedział odpowiedzi oraz zapisuje `plan.requested`, `plan.completed`/`plan.failed` i wynik zastosowania w śladzie URL/DSL;
@@ -138,7 +139,7 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **113/113 passed**, łącznie z testami API przez FastAPI `TestClient`, macierzą prostych i kontekstowych poleceń NL, atomowym obniżeniem pokrywy wraz z zależnym bossem i synchronizacją widoku cechy, preflightem niepełnej geometrii, ścisłą granicą propozycji LLM, odrzuceniem niezgodnej odpowiedzi jako jawnego `LLM-INVALID-RESPONSE`, kontrolą zakresu POA, runtime authority receipt, prawdziwą regeneracją i ponowną regeneracją po cofnięciu przez CadQuery, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów i kolejnością `.env.local`/`.env`;
+- pełny pytest: **114/114 passed**, łącznie z testami API przez FastAPI `TestClient`, macierzą prostych i kontekstowych poleceń NL, atomowym obniżeniem pokrywy wraz z zależnym bossem i synchronizacją widoku cechy, preflightem niepełnej geometrii, ścisłą granicą propozycji LLM, odrzuceniem niezgodnej odpowiedzi jako jawnego `LLM-INVALID-RESPONSE`, kontrolą zakresu POA, runtime authority receipt, prawdziwą regeneracją i ponowną regeneracją po cofnięciu przez CadQuery, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i PDF każdej zakładki, kontrolą procesu lokalnego, mapowaniem zaznaczenia SVG 2D, stanem oczekiwania planera, historią/cofaniem parametrów, lokalnym pakowaniem modułów Three.js i kolejnością `.env.local`/`.env`;
 - `make dsl-conformance`: **passed**; zewnętrzny checker Wellmanifest potwierdził manifest i digests, ownership zmian, revision-bound findings gate, 2 poprawne i 2 celowo błędne fixture'y, zgodność katalogu 11 operacji oraz siedem scenariuszy NL→DSL→runtime;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
@@ -150,6 +151,7 @@ Interpretacja wyniku:
 - Playwright pobrał PDF każdej z siedmiu zakładek; plik 3D zawiera wyrenderowaną bryłę i wybrany `Lower base`, 2D ma trzy strony, a pięć zakładek danych zachowuje polskie znaki i bieżący tekst; każda odpowiedź ma typ `application/pdf`, osobną nazwę pliku i przechodzi walidację nagłówka `%PDF-`;
 - oznaczony region SVG z `data-projection-entity` jest automatycznie wiązany z encją `projection-map` i obiektem POA; prostokąt na dolnej części rzutu Front wybiera `part/base` / `front.base.outer-wall` bez wcześniejszego kliknięcia drzewa. Metadane projekcji są pobierane bez cache, starszy SVG ma kontrolowany fallback przez kolejność polygonów, a rzeczywisty brak mapowania czyści mylącą nakładkę i emituje `selection.rejected`;
 - test Playwright na wdrożeniu `http://127.0.0.1:8400` potwierdził projekt `demo-rpi5`, 15 wierszy drzewa, **2/2 załadowane siatki STL**, **20 096 trójkątów** oraz trzy kolejne rzuty Front/Top/Side bez błędów konsoli i sieci;
+- przypięte moduły `three@0.185.1`, `OrbitControls` i `STLLoader` są serwowane przez FastAPI z lokalnych URL-i jako JavaScript, znajdują się w zbudowanym wheel i mają sprawdzane sumy SHA-256; import map głównego UI nie wskazuje już jsDelivr;
 - aktualizacje `UIContext` są sekwencjonowane, więc końcowy stan dla LLM zawiera komplet pięciu widocznych artefaktów (dwa STL i trzy SVG), niezależnie od kolejności zakończenia żądań przeglądarki;
 - test Chromium potwierdził 11 kolejnych rekordów `args`, współrzędne i identyfikatory klikniętych elementów, zapis pełnej trasy diagnostycznej w `UIContext.route` oraz skopiowanie ponad 8 tys. znaków DSL z rekordami `UiAction` i `HTTP_REQUEST_COMPLETED`;
 - scenariusz `zmniejsz o 4mm` poprawnie kończy się lokalnym `add_annotation` z pytaniem o konkretny wymiar/operację; UI pokazuje, że plan nie zmieni bryły, blokuje pustą aplikację i nie sugeruje odświeżania strony;
@@ -175,8 +177,7 @@ Interpretacja wyniku:
 3. **Dodać lock/constraints zależności.** `httpx2` naprawia obecny TestClient, lecz otwarte zakresy wersji nadal mogą zmienić środowisko bez zmiany źródeł.
 4. **Rozstrzygnąć politykę dużych artefaktów.** Dowody release powinny mieć jawny manifest i proces odtworzenia; artefakty instalacyjne `*.egg-info` zostały usunięte ze źródeł i ponownie ignorowane.
 5. **Zaktualizować dowody intencji.** Dodać kuratorowany task/ticket 0.5.0, powiązać changelog z plikami/symbolami i wykluczyć wygenerowane artefakty z analizy `todo2code`.
-6. **Usunąć runtime CDN dla Three.js.** Bieżący test potwierdza działanie, ale import map nadal pobiera Three.js z jsDelivr; dla instalacji odciętych od Internetu zależności przeglądarkowe powinny zostać przypięte i dostarczone z obrazem.
-7. **Wynieść `UIContext` i bufor TWINOBS do współdzielonego store dla wielu replik.** Aktualne magazyny są świadomie procesowe i ograniczone (bufor: 2000 rekordów), co wystarcza dla wdrożenia single-host/single-worker; deployment wieloreplikowy powinien użyć Redis lub trwałego strumienia z TTL.
+6. **Wynieść `UIContext` i bufor TWINOBS do współdzielonego store dla wielu replik.** Aktualne magazyny są świadomie procesowe i ograniczone (bufor: 2000 rekordów), co wystarcza dla wdrożenia single-host/single-worker; deployment wieloreplikowy powinien użyć Redis lub trwałego strumienia z TTL.
 
 ## 7. Odtwarzalne uruchomienie
 

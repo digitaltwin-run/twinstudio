@@ -40,7 +40,13 @@ where = ["src"]
 include = ["twinstudio*", "living_product_studio*"]
 
 [tool.setuptools.package-data]
-twinstudio = ["static/*", "data/*.yaml", "data/*.ebnf", "data/*.json"]
+twinstudio = [
+  "static/*",
+  "static/vendor/three/*",
+  "data/*.yaml",
+  "data/*.ebnf",
+  "data/*.json"
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
