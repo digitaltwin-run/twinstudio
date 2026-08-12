@@ -1,10 +1,47 @@
-.PHONY: install run test lint compose-up compose-down compose-all seed schemas dsl-preview verify proto-lint package
+.PHONY: help install start restart recreate stop kill status health logs logs-follow run foreground test lint compose-up compose-down compose-all seed schemas dsl-preview verify proto-lint package
+
+DEV_SERVER := ./scripts/dev_server.sh
+
+help:
+	@printf '%s\n' \
+	  'TwinStudio local controls:' \
+	  '  make start       replace any local TwinStudio instance and start in background' \
+	  '  make restart     stop and recreate the background instance' \
+	  '  make stop        stop the local instance' \
+	  '  make status      show PID, port and health' \
+	  '  make health      print the /health response' \
+	  '  make logs        print the latest local server log lines' \
+	  '  make logs-follow follow local server logs' \
+	  '  make run         replace the instance and run in the foreground' \
+	  '' \
+	  'Host and port come from TWINSTUDIO_HOST/TWINSTUDIO_PORT (.env.local first).'
 
 install:
 	python -m pip install -e ".[llm,dev]" -e "./components/housing-studio[dev]"
 
-run:
-	uvicorn twinstudio.api:app --reload --host 0.0.0.0 --port 8000
+start:
+	@$(DEV_SERVER) start
+
+restart recreate:
+	@$(DEV_SERVER) restart
+
+stop kill:
+	@$(DEV_SERVER) stop
+
+status:
+	@$(DEV_SERVER) status
+
+health:
+	@$(DEV_SERVER) health
+
+logs:
+	@$(DEV_SERVER) logs
+
+logs-follow:
+	@$(DEV_SERVER) logs-follow
+
+run foreground:
+	@$(DEV_SERVER) foreground
 
 test:
 	PYTHONPATH=src python -m pytest -q

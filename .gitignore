@@ -2,6 +2,7 @@
 .env.local
 .venv/
 .venv.backup*/
+.run/
 *.egg-info/
 __pycache__/
 *.py[cod]

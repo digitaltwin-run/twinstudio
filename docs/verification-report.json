@@ -187,7 +187,7 @@
     {
       "name": "pytest_current_workspace",
       "status": "passed",
-      "collected_tests": 76
+      "collected_tests": 79
     },
     {
       "name": "postgres_authenticated_healthcheck",
@@ -240,7 +240,15 @@
       "text_values_excluded": true,
       "clipboard_dsl_min_characters": 8000,
       "clipboard_kinds": ["UiAction", "TwinObservation"]
+    },
+    {
+      "name": "makefile_local_process_lifecycle",
+      "status": "passed",
+      "targets": ["start", "restart", "stop", "status", "health", "logs", "logs-follow", "run"],
+      "recreates_owned_instance": true,
+      "refuses_unrelated_port_owner": true,
+      "runtime_directory": ".run"
     }
   ],
-  "verified_at": "2026-08-12T11:42:59+00:00"
+  "verified_at": "2026-08-12T12:16:22+00:00"
 }

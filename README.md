@@ -69,13 +69,28 @@ python3.12 -m venv --clear .venv
 .venv/bin/python -m pip install -e ".[llm,dev]" -e "./components/housing-studio[dev]"
 test -f .env.local || cp .env.local.example .env.local
 .venv/bin/twinstudio seed
-.venv/bin/twinstudio serve
+make start
 ```
 
 `--clear` makes an existing `.venv` use the requested interpreter instead of retaining stale
 symlinks from Conda or another Python installation. `.env.local` overrides the Docker-oriented
 `.env` only for the Python process, so both launch methods can coexist in one checkout. Use
 `.venv/bin/...` directly to make the selected interpreter explicit.
+
+The Makefile owns the local server PID and log in the ignored `.run/` directory. `make start`
+always replaces an existing TwinStudio instance from this workspace, so a stale process cannot
+leave port 8500 occupied. It refuses to kill an unrelated application using the same port.
+
+```bash
+make start        # replace and start in the background
+make restart      # same controlled recreation, stated explicitly
+make status       # PID, URL and /health
+make health       # raw /health response
+make logs         # latest log lines (use LINES=250 make logs)
+make logs-follow  # follow the log
+make stop         # graceful stop, then SIGKILL only if the owned process hangs
+make run          # replace and serve in the foreground
+```
 
 LiteLLM is optional. When `LITELLM_MODEL` is empty, controlled local planners and evolution catalogs are used.
 

@@ -17,7 +17,7 @@ Po rundzie naprawczej z 2026-08-12 lokalny build jest zielony: pełne 74 testy p
 | DSL i ewolucja projektu | zgodne z intencją i działające | walidator, kompilacja trzech formatów i testy domenowe przeszły |
 | Housing Studio / CAD | funkcjonalne, integracja częściowo uporządkowana | kanoniczny komponent jest instalowany w CI i przechodzi testy; starsze kopie pozostają długiem konsolidacyjnym |
 | REST/ASGI | działa | `/health` potwierdza wersję i rewizję obrazu, lista projektów i katalog ewolucji odpowiadają poprawnie |
-| Pełny pytest/CI | lokalnie zielony | 76/76 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
+| Pełny pytest/CI | lokalnie zielony | 79/79 testów przechodzi z `httpx2`; workflow instaluje pełne zależności obu projektów |
 | Jakość statyczna | zielona | Ruff i `buf lint` przechodzą, lint jest wymaganym krokiem CI |
 | Gotowość release | warunkowa | gotowy lokalny rollout Compose; produkcja wymaga jawnego targetu, sekretów i procedury migracji danych |
 
@@ -120,7 +120,7 @@ Interpretacja wyniku:
 - `compileall`, składnia JavaScript, DOM contract i discovery CLI;
 - `docker compose config --quiet`: poprawny bez niejednoznacznego drugiego pliku Compose i bez ręcznie rezerwowanej podsieci;
 - `git diff --check`: passed;
-- pełny pytest: **76/76 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS i kolejnością `.env.local`/`.env`;
+- pełny pytest: **79/79 passed**, łącznie z testami API przez FastAPI `TestClient`, kontraktem `ProblemEnvelope`/`UIContext`, eksportem logów TWINOBS, kontrolą procesu lokalnego i kolejnością `.env.local`/`.env`;
 - `ruff check .`: passed;
 - `buf lint`: passed z zachowaniem kompatybilnego namespace `lps.v1`;
 - smoke test nowego obrazu: `/health` zwrócił `status=ok`, wersję `0.5.0`, rewizję obrazu i 49 aktywnych soczewek; `/api/v1/projects` zwrócił zachowany `demo-rpi5`;
@@ -131,6 +131,7 @@ Interpretacja wyniku:
 - test Playwright na wdrożeniu `http://127.0.0.1:8400` potwierdził projekt `demo-rpi5`, 15 wierszy drzewa, **2/2 załadowane siatki STL**, **20 096 trójkątów** oraz trzy kolejne rzuty Front/Top/Side bez błędów konsoli i sieci;
 - aktualizacje `UIContext` są sekwencjonowane, więc końcowy stan dla LLM zawiera komplet pięciu widocznych artefaktów (dwa STL i trzy SVG), niezależnie od kolejności zakończenia żądań przeglądarki;
 - test Chromium potwierdził 11 kolejnych rekordów `args`, współrzędne i identyfikatory klikniętych elementów, zapis pełnej trasy diagnostycznej w `UIContext.route` oraz skopiowanie ponad 8 tys. znaków DSL z rekordami `UiAction` i `HTTP_REQUEST_COMPLETED`;
+- lokalny lifecycle przez Makefile udostępnia `start`, `restart`/`recreate`, `stop`/`kill`, `status`, `health`, `logs`, `logs-follow` i `run`; `start` zastępuje istniejącą instancję TwinStudio z bieżącego workspace, ale odmawia zabicia obcego procesu na tym samym porcie;
 - zrzut kontrolny testu UI jest zapisywany domyślnie jako `/tmp/twinstudio-ui.png`; test jest odtwarzalny poleceniem `python scripts/verify_ui.py --url <adres>`.
 
 ### 5.2. Kontrole nadal niewykonane
