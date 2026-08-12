@@ -187,13 +187,13 @@
     {
       "name": "pytest_current_workspace",
       "status": "passed",
-      "collected_tests": 79
+      "collected_tests": 80
     },
     {
       "name": "postgres_authenticated_healthcheck",
       "status": "passed",
-      "database_user": "lps",
-      "database_name": "lps",
+      "database_user": "twinstudio",
+      "database_name": "twinstudio",
       "query": "SELECT 1"
     },
     {
@@ -218,6 +218,10 @@
       "drawing_views": ["front", "top", "side"],
       "drawing_cards": 3,
       "selection": "passed",
+      "selection_without_tree_click": true,
+      "inferred_target": "poa://demo/demo-rpi5@main/part/base",
+      "projection_entity": "front.base.outer-wall",
+      "plan_from_inferred_selection": true,
       "pdf_pages": 3,
       "pdf_size_bytes": 4409
     },
@@ -235,7 +239,7 @@
       "status": "passed",
       "url_parameter": "args",
       "retained_action_limit": 40,
-      "observed_action_args": 11,
+      "observed_action_args": 14,
       "records_target_and_cursor_position": true,
       "text_values_excluded": true,
       "clipboard_dsl_min_characters": 8000,
@@ -250,5 +254,5 @@
       "runtime_directory": ".run"
     }
   ],
-  "verified_at": "2026-08-12T12:16:22+00:00"
+  "verified_at": "2026-08-12T12:38:03+00:00"
 }

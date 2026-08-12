@@ -16,6 +16,7 @@ def main() -> int:
     parser.add_argument("--url", default="http://127.0.0.1:8000")
     parser.add_argument("--screenshot", type=Path, default=Path("/tmp/twinstudio-ui.png"))
     parser.add_argument("--timeout-ms", type=int, default=45_000)
+    parser.add_argument("--verify-plan", action="store_true")
     args = parser.parse_args()
 
     executable = next(
@@ -102,9 +103,38 @@ def main() -> int:
         assert page.locator("#drawingView").count() == 0
         assert pdf_response.ok and pdf_response.headers["content-type"] == "application/pdf"
         assert (await_pdf := pdf_response.body()).startswith(b"%PDF-") and len(await_pdf) > 2_000
-        page.locator("#objectTree").get_by_text("Lower base", exact=True).click()
-        page.locator(".drawing-canvas").first.click(position={"x": 80, "y": 80})
-        assert "2d" in page.locator("#selectionSummary").inner_text().lower()
+        page.locator('.tool2d[data-tool="rectangle"]').click()
+        drawing_canvas = page.locator(".drawing-canvas").first
+        drawing_box = drawing_canvas.bounding_box()
+        assert drawing_box, "Front drawing canvas has no layout box"
+        page.mouse.move(
+            drawing_box["x"] + drawing_box["width"] * 0.24,
+            drawing_box["y"] + drawing_box["height"] * 0.50,
+        )
+        page.mouse.down()
+        page.mouse.move(
+            drawing_box["x"] + drawing_box["width"] * 0.76,
+            drawing_box["y"] + drawing_box["height"] * 0.72,
+            steps=5,
+        )
+        page.mouse.up()
+        page.wait_for_function(
+            "document.querySelector('#selectionSummary')?.textContent.includes('front.base.outer-wall')",
+            timeout=args.timeout_ms,
+        )
+        selection_summary = page.locator("#selectionSummary").inner_text().lower()
+        assert "2d" in selection_summary
+        assert "part/base" in selection_summary
+        assert "front.base.outer-wall" in selection_summary
+        assert "Lower base" in page.locator("#objectTree .tree-row.selected").inner_text()
+        plan_verified = False
+        if args.verify_plan:
+            page.locator("#changePrompt").fill("zmniejsz o 4mm")
+            page.locator("#planButton").click()
+            page.locator("#planContent .plan-op").first.wait_for(timeout=args.timeout_ms)
+            assert "selection=resolved" in page.locator("#plannerMode").inner_text()
+            assert "Brak zaznaczenia" not in page.locator("#banner").inner_text()
+            plan_verified = True
         page.wait_for_function(
             """async expected => {
                 const response = await fetch(`/api/v1/projects/${document.querySelector('#projectSelect').value}/ui-context`);
@@ -124,8 +154,9 @@ def main() -> int:
         assert len(final_context["visible_artifact_uris"]) == loaded_meshes + drawing_cards
         action_args = page.evaluate("[...new URL(location.href).searchParams.getAll('args')]")
         assert len(action_args) >= 4, action_args
-        assert any("|click|" in item and "tree-row" in item for item in action_args), action_args
+        assert not any("|click|" in item and "tree-row" in item for item in action_args), action_args
         assert any("|selection.created|" in item for item in action_args), action_args
+        assert any("|object.inferred|" in item for item in action_args), action_args
         assert "?args=" in final_context["route"], final_context["route"]
         page.locator("#copyDslLogs").click()
         page.wait_for_function(
@@ -154,6 +185,9 @@ def main() -> int:
             "drawing_labels": drawing_labels,
             "drawings_pdf_bytes": len(await_pdf),
             "drawing_selection": "ok",
+            "drawing_selection_target": "part/base",
+            "drawing_projection_entity": "front.base.outer-wall",
+            "plan_from_inferred_selection": plan_verified,
             "url_action_args": len(action_args),
             "clipboard_dsl_characters": len(clipboard_dsl),
             "visible_artifact_uris": final_context["visible_artifact_uris"],

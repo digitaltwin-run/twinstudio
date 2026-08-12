@@ -74,6 +74,22 @@ def test_all_2d_drawings_replace_the_view_selector() -> None:
     assert "/drawings.pdf" in javascript
 
 
+def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> None:
+    javascript = JAVASCRIPT.read_text(encoding="utf-8")
+    front_svg = (
+        ROOT / "examples" / "rpi5-camera3" / "artifacts" / "2d" / "assembly_front.svg"
+    ).read_text(encoding="utf-8")
+    assert "drawingProjectionRegions:new Map()" in javascript
+    assert "drawingProjectionPromises:new Map()" in javascript
+    assert "async function loadDrawingProjectionRegions" in javascript
+    assert "function inferDrawingProjection" in javascript
+    assert "object.inferred" in javascript
+    assert "selection.rejected" in javascript
+    assert 'data-projection-entity="front.base.outer-wall"' in front_svg
+    assert 'data-projection-entity="front.lid.outer-slope"' in front_svg
+    assert "data-selection-bbox" in front_svg
+
+
 def test_compose_database_healthcheck_executes_authenticated_query() -> None:
     compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
     assert "PGPASSWORD=$${POSTGRES_PASSWORD} psql" in compose
