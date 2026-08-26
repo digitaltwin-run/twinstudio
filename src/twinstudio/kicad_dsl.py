@@ -1446,7 +1446,12 @@ def _requests_connectivity_edit(prompt: str) -> bool:
     )
 
 
-def nl_to_dsl(prompt: str, document: EdaDocument, settings: Any) -> tuple[EdaChangeDocument, str]:
+def nl_to_dsl(
+    prompt: str,
+    document: EdaDocument,
+    settings: Any,
+    context_sources: list[dict[str, Any]] | None = None,
+) -> tuple[EdaChangeDocument, str]:
     if _requests_connectivity_edit(prompt):
         candidate = local_nl_to_dsl(prompt, document)
         return _finalize_llm_candidate(candidate, document, "deterministic:connectivity")
@@ -1482,6 +1487,7 @@ def nl_to_dsl(prompt: str, document: EdaDocument, settings: Any) -> tuple[EdaCha
                         {
                             "prompt": prompt,
                             "document": document.model_dump(mode="json"),
+                            "project_context": context_sources or [],
                             "output_schema": schema,
                         },
                         ensure_ascii=False,

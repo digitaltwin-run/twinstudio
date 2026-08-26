@@ -303,6 +303,7 @@ _AUDIT_ONLY_EVENTS = {
     "EdaRevisionPromoted",
     "EdaChangeReverted",
     "EdaHistoryImported",
+    "ProjectUpdateRecorded",
 }
 
 

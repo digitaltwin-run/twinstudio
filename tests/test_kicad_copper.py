@@ -7,6 +7,7 @@ from twinstudio.kicad_copper import (
     Box,
     RoutingError,
     route_edge,
+    route_net,
     track_is_clear,
 )
 
@@ -42,3 +43,43 @@ def test_route_edge_fails_when_foreign_copper_blocks_bounds() -> None:
             width=0.2,
             clearance=0.2,
         )
+
+
+def _length(tracks) -> float:
+    return sum(abs(t.x1 - t.x0) + abs(t.y1 - t.y0) for t in tracks)
+
+
+def test_branch_taps_into_routed_copper_instead_of_returning_to_a_pad() -> None:
+    bounds = Bounds(-20.0, -20.0, 120.0, 130.0)
+    # The third pad sits beside the middle of the first leg: both existing pads
+    # are 70 mm away, the copper between them only 20 mm.
+    tracks = route_net(
+        [(0.0, 0.0), (0.0, 100.0), (20.0, 50.0)],
+        net=1,
+        obstacles=[],
+        bounds=bounds,
+        width=0.2,
+        clearance=0.2,
+    )
+
+    # Connecting every branch back to a pad costs 140 mm on this topology.
+    assert _length(tracks) == pytest.approx(120.0)
+    assert all(
+        track_is_clear(track, 1, [], 0.1, 0.2) for track in tracks
+    )
+
+
+def test_collinear_pads_are_unaffected_by_the_tap_in_rule() -> None:
+    bounds = Bounds(-20.0, -20.0, 260.0, 130.0)
+    # panel9's +5V net: a tap-in cannot beat the straight run, and must not
+    # make it worse either.
+    tracks = route_net(
+        [(101.59, 84.0), (229.2, 95.75), (229.2, 97.25)],
+        net=1,
+        obstacles=[],
+        bounds=bounds,
+        width=0.2,
+        clearance=0.2,
+    )
+
+    assert _length(tracks) == pytest.approx(140.86, abs=0.01)

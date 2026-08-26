@@ -256,6 +256,26 @@ def test_project_candidate_can_be_deleted_without_erasing_audit_history(
     ]
     assert history[-1]["data"]["candidate_sha256"] == created["candidate_sha256"]
 
+    update_body = {
+        "trigger": "automatic",
+        "category": "duplicate",
+        "summary": "Wykryto identyczne pliki",
+        "source_paths": [source.name, "copy.kicad_sch"],
+        "dedupe_key": "inventory:abc123",
+        "details": {"duplicate_groups": 1},
+    }
+    recorded = client.post(f"/api/v1/projects/{project_id}/updates", json=update_body)
+    repeated = client.post(f"/api/v1/projects/{project_id}/updates", json=update_body)
+    assert recorded.json()["status"] == "recorded"
+    assert recorded.json()["event"]["event_type"] == "ProjectUpdateRecorded"
+    assert repeated.json()["status"] == "already_recorded"
+    update_schema = json.loads(
+        (Path(__file__).resolve().parents[1] / "schemas" / "project-update.schema.json").read_text()
+    )
+    Draft202012Validator(update_schema).validate(recorded.json()["event"]["data"])
+    chronology = client.get(f"/api/v1/projects/{project_id}/updates").json()["events"]
+    assert chronology[-1]["data"]["dedupe_key"] == "inventory:abc123"
+
 
 def test_legacy_sidecars_migrate_without_changing_source(tmp_path: Path, monkeypatch) -> None:
     source_root = tmp_path / "project"

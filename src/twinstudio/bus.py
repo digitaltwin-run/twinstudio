@@ -191,6 +191,9 @@ class CommandBus:
             case "eda.pcb.analysis.record":
                 permission = "change.plan"
                 event_type, data = "EdaPcbAnalyzed", dict(payload)
+            case "eda.netlist.analysis.record":
+                permission = "change.plan"
+                event_type, data = "EdaNetlistAnalyzed", dict(payload)
             case "eda.candidate.record":
                 permission = "change.apply"
                 event_type, data = "EdaCandidateCreated", dict(payload)
@@ -212,6 +215,9 @@ class CommandBus:
             case "eda.history.import":
                 permission = "change.apply"
                 event_type, data = "EdaHistoryImported", dict(payload)
+            case "project.update.record":
+                permission = "change.plan"
+                event_type, data = "ProjectUpdateRecorded", dict(payload)
             case "membership.grant":
                 permission = "membership.manage"
                 event_type, data = "MembershipGranted", {

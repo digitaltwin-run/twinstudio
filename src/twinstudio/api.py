@@ -86,6 +86,7 @@ from twinstudio.evolution_models import (
     TwinDslDocument,
 )
 from twinstudio.feature_lenses import FeatureLensEngine
+from twinstudio.kicad_audit import netlist_state
 from twinstudio.kicad_dsl import (
     EdaChangeDocument,
     EdaDocument,
@@ -333,6 +334,8 @@ class EdaNlRequest(ApiModel):
     prompt: str = Field(min_length=1, max_length=30_000)
     project_id: str | None = Field(default=None, min_length=1, max_length=160)
     expected_version: int | None = Field(default=None, ge=0)
+    context_signature: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    context_sources: list[dict[str, Any]] = Field(default_factory=list, max_length=24)
 
 
 class EdaAnalysisRequest(ApiModel):
@@ -342,6 +345,11 @@ class EdaAnalysisRequest(ApiModel):
 
 class EdaPcbAnalysisRequest(EdaAnalysisRequest):
     drc: dict[str, Any] = Field(default_factory=dict)
+
+
+class EdaNetlistAnalysisRequest(EdaAnalysisRequest):
+    netlist: dict[str, Any] = Field(default_factory=dict)
+    pcb: dict[str, Any] | None = None
 
 
 class EdaApplyRequest(ApiModel):
@@ -369,6 +377,16 @@ class EdaRevertRequest(ApiModel):
 
 
 class EdaMigrationRequest(ApiModel):
+    expected_version: int | None = Field(default=None, ge=0)
+
+
+class ProjectUpdateRequest(ApiModel):
+    trigger: str = Field(pattern=r"^(automatic|user_prompt|validation|manual)$")
+    category: str = Field(pattern=r"^(change|error|recommendation|duplicate|source_truth_conflict|inventory)$")
+    summary: str = Field(min_length=1, max_length=4000)
+    source_paths: list[str] = Field(default_factory=list, max_length=200)
+    dedupe_key: str = Field(min_length=1, max_length=256)
+    details: dict[str, Any] = Field(default_factory=dict)
     expected_version: int | None = Field(default=None, ge=0)
 
 
@@ -991,6 +1009,43 @@ def record_eda_pcb_state(
     return {"analysis": analysis, "history_event": _eda_event_json(event)}
 
 
+def _netlist_state(path: str, netlist: dict[str, Any], pcb: dict[str, Any] | None) -> dict[str, Any]:
+    state = netlist_state(netlist, pcb)
+    state["source"] = {"path": path, "kind": "schematic"}
+    return state
+
+
+@app.post("/api/v1/eda/netlist-state")
+def eda_netlist_state(
+    body: EdaNetlistAnalysisRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Classify schematic connectivity facts without changing the audit history."""
+    return _netlist_state(body.path, body.netlist, body.pcb)
+
+
+@app.post("/api/v1/projects/{project_id}/eda/netlist-state")
+def record_eda_netlist_state(
+    project_id: str,
+    body: EdaNetlistAnalysisRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Record a user-requested connectivity audit in the EDA audit stream."""
+    analysis = _netlist_state(body.path, body.netlist, body.pcb)
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.netlist.analysis.record",
+        {
+            "schema_id": "twinstudio.eda-event/netlist-analyzed/v1",
+            "source": analysis["source"],
+            "analysis": analysis,
+        },
+        expected_version=body.expected_version,
+    )
+    return {"analysis": analysis, "history_event": _eda_event_json(event)}
+
+
 @app.get("/api/v1/eda/pcb2dsl")
 def pcb2dsl(
     path: str = Query(min_length=1, max_length=2000),
@@ -1010,7 +1065,7 @@ def eda_nl2dsl(
 def _plan_eda(body: EdaNlRequest, user: AuthPrincipal) -> dict[str, Any]:
     document = _eda_document(body.path)
     try:
-        change, mode = nl_to_dsl(body.prompt, document, settings)
+        change, mode = nl_to_dsl(body.prompt, document, settings, body.context_sources)
     except KicadDslError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json")}
@@ -1023,6 +1078,12 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal) -> dict[str, Any]:
                 "schema_id": "twinstudio.eda-event/change-planned/v1",
                 "source": change.source.model_dump(mode="json"),
                 "prompt": change.prompt,
+                "trigger": "user_prompt",
+                "context_signature": body.context_signature,
+                "context_sources": [
+                    {key: source.get(key) for key in ("path", "sha256", "role", "logical_key")}
+                    for source in body.context_sources
+                ],
                 "mode": mode,
                 "operations": [item.model_dump(mode="json") for item in change.operations],
             },
@@ -1221,6 +1282,55 @@ def _revision_events(project_id: str, revision: str) -> list[EventEnvelope]:
     ]
 
 
+@app.post("/api/v1/projects/{project_id}/updates")
+def record_project_update(
+    project_id: str,
+    body: ProjectUpdateRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    _ensure_eda_project(project_id, user)
+    previous = next(
+        (
+            event for event in reversed(queries.events(project_id))
+            if event.event_type == "ProjectUpdateRecorded"
+            and event.data.get("dedupe_key") == body.dedupe_key
+        ),
+        None,
+    )
+    if previous is not None:
+        return {"status": "already_recorded", "event": _eda_event_json(previous)}
+    event = _record_eda_event(
+        project_id,
+        user,
+        "project.update.record",
+        {
+            "schema_id": "twinstudio.project-update/v1",
+            "trigger": body.trigger,
+            "category": body.category,
+            "summary": body.summary,
+            "source_paths": body.source_paths,
+            "dedupe_key": body.dedupe_key,
+            "details": body.details,
+        },
+        expected_version=body.expected_version,
+    )
+    return {"status": "recorded", "event": _eda_event_json(event)}
+
+
+@app.get("/api/v1/projects/{project_id}/updates")
+def project_updates(
+    project_id: str,
+    limit: int = Query(default=200, ge=1, le=2000),
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    authorize_project(project_id, user, "project.read")
+    events = [event for event in queries.events(project_id) if event.event_type in EDA_EVENT_TYPES]
+    return {
+        "schema_id": "twinstudio.project-chronology/v1",
+        "events": [_eda_event_json(event) for event in events[-limit:]],
+    }
+
+
 @app.get("/api/v1/projects/{project_id}/eda/history")
 def project_eda_history(
     project_id: str,
@@ -1236,6 +1346,7 @@ def project_eda_history(
             for event in events
             if event.data.get("source", {}).get("path") == artifact_path
             or event.data.get("path") == artifact_path
+            or artifact_path in event.data.get("source_paths", [])
         ]
     stream_version = queries.project(project_id).stream_version
     descriptor = load_descriptor(settings.kicad_root, project_id).model_copy(

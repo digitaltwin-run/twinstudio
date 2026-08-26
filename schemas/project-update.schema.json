@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/project-update.schema.json",
+  "title": "TwinStudio project update",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_id", "trigger", "category", "summary", "source_paths", "dedupe_key", "details"],
+  "properties": {
+    "schema_id": {"const": "twinstudio.project-update/v1"},
+    "trigger": {"enum": ["automatic", "user_prompt", "validation", "manual"]},
+    "category": {"enum": ["change", "error", "recommendation", "duplicate", "source_truth_conflict", "inventory"]},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 4000},
+    "source_paths": {"type": "array", "maxItems": 200, "items": {"type": "string"}},
+    "dedupe_key": {"type": "string", "minLength": 1, "maxLength": 256},
+    "details": {"type": "object"}
+  }
+}

@@ -21,6 +21,7 @@
         "EdaChangePlanned",
         "EdaSchematicAnalyzed",
         "EdaPcbAnalyzed",
+        "EdaNetlistAnalyzed",
         "EdaValidationCompleted",
         "EdaCandidateCreated",
         "EdaCandidateDeleted",
@@ -28,7 +29,8 @@
         "EdaChangeRejected",
         "EdaRevisionPromoted",
         "EdaChangeReverted",
-        "EdaHistoryImported"
+        "EdaHistoryImported",
+        "ProjectUpdateRecorded"
       ],
       "title": "Event Type",
       "type": "string"

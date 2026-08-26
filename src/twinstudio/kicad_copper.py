@@ -288,19 +288,41 @@ def route_net(
     if len(terminals) < 2:
         return []
     field = Field(obstacles)
-    connected = [terminals[0]]
     pending = list(terminals[1:])
     tracks: list[Track] = []
+    # Every point of the copper already laid for this net is a legal place to
+    # tap in, not just its pads. Branching off the nearest point of the tree —
+    # a T-junction anywhere along a leg — keeps a multi-terminal net short
+    # instead of fanning each branch back to a pad it happens to share.
+    def attachments() -> list[tuple[float, float]]:
+        return [terminals[0]] + [
+            point for track in tracks
+            for point in ((track.x0, track.y0), (track.x1, track.y1))
+        ]
+
     while pending:
-        best = min(
-            ((abs(a[0] - b[0]) + abs(a[1] - b[1]), i, j)
-             for i, a in enumerate(connected) for j, b in enumerate(pending)),
-            key=lambda item: (item[0], item[1], item[2]),
-        )
-        _distance, source_index, target_index = best
-        target = pending.pop(target_index)
-        tracks += route_edge(
-            connected[source_index], target, net, field, bounds, width, clearance
-        )
-        connected.append(target)
+        best: tuple[float, int, tuple[float, float]] | None = None
+        for index, target in enumerate(pending):
+            for point in attachments():
+                cost = abs(point[0] - target[0]) + abs(point[1] - target[1])
+                if best is None or (cost, index) < (best[0], best[1]):
+                    best = (cost, index, point)
+            for track in tracks:
+                tap = _closest_point(track, target)
+                cost = abs(tap[0] - target[0]) + abs(tap[1] - target[1])
+                if best is None or (cost, index) < (best[0], best[1]):
+                    best = (cost, index, tap)
+        assert best is not None
+        _cost, index, source = best
+        target = pending.pop(index)
+        tracks += route_edge(source, target, net, field, bounds, width, clearance)
     return tracks
+
+
+def _closest_point(track: Track, point: tuple[float, float]) -> tuple[float, float]:
+    """Najbliższy punkt na odcinku — router prowadzi wyłącznie po osiach."""
+    if abs(track.y0 - track.y1) <= _EPS:
+        return (_clamp(point[0], min(track.x0, track.x1), max(track.x0, track.x1)), track.y0)
+    if abs(track.x0 - track.x1) <= _EPS:
+        return (track.x0, _clamp(point[1], min(track.y0, track.y1), max(track.y0, track.y1)))
+    return (track.x0, track.y0)

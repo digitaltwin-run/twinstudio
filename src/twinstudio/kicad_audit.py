@@ -1,0 +1,226 @@
+"""Audyt łączności: co miało być połączone, a nie jest.
+
+DRC odpowiada na pytanie „czy to, co narysowano, da się wyprodukować".
+Nie odpowiada na pytanie „czy czegoś nie zapomniano". Pad bez sieci jest
+dla DRC poprawny, a dwie szyny zasilania nazwane `5V` i `+5V` to dla
+niego dwie różne, całkowicie legalne sieci — mimo że układ zostaje bez
+zasilania. Te reguły czytają netlistę schematu i porównują ją z PCB.
+"""
+from __future__ import annotations
+
+import re
+from typing import Any
+
+# (kod, waga, opis, zalecenie)
+_RULES: dict[str, tuple[str, str, str, str]] = {
+    "rail_split": (
+        "EDA-NET-RAIL-SPLIT-001", "ERROR",
+        "Ta sama szyna zasilania występuje pod kilkoma nazwami, więc jej odcinki nie są ze sobą połączone.",
+        "Ujednolić nazwę etykiety na wszystkich odcinkach szyny albo połączyć je jawnie na schemacie.",
+    ),
+    "single_node": (
+        "EDA-NET-SINGLE-NODE-001", "ERROR",
+        "Sieć ma tylko jeden węzeł, czyli pin prowadzi donikąd.",
+        "Dociągnąć sieć do drugiego wyprowadzenia albo oznaczyć pin jako świadomie niepodłączony (no_connect).",
+    ),
+    "floating_pin": (
+        "EDA-NET-FLOATING-PIN-001", "ERROR",
+        "Pin nie należy do żadnej sieci.",
+        "Podłączyć pin albo dodać symbol no_connect, żeby decyzja była udokumentowana.",
+    ),
+    "no_power": (
+        "EDA-NET-NO-POWER-001", "ERROR",
+        "Wyprowadzenie zasilania układu nie ma połączenia z żadnym innym elementem.",
+        "Dociągnąć pin zasilania do właściwej szyny i sprawdzić nazwę etykiety.",
+    ),
+    "isolated_part": (
+        "EDA-NET-ISOLATED-PART-001", "ERROR",
+        "Element jest połączony wyłącznie sam ze sobą — nie łączy się z resztą układu.",
+        "Doprowadzić sygnał i masę do elementu albo usunąć go ze schematu.",
+    ),
+    "sch_pcb_drift": (
+        "EDA-NET-SCH-PCB-DRIFT-001", "ERROR",
+        "Schemat i PCB opisują różne układy: elementy lub sieci nie mają odpowiednika po drugiej stronie.",
+        "Zsynchronizować PCB ze schematem (update PCB from schematic) przed dalszymi zmianami.",
+    ),
+}
+
+# Pin zasilania rozpoznajemy po nazwie, bo typ `power_in` bywa w bibliotekach
+# lokalnych pomijany — tak jest w tym projekcie, gdzie wszystko jest `bidirectional`.
+_POWER_PIN = re.compile(r"^(v(cc|dd|ss|bat|in|out)|\+?\d+v\d*|gnd|agnd|dgnd|vref)$", re.IGNORECASE)
+_GROUND_PIN = re.compile(r"^(gnd|agnd|dgnd|vss)$", re.IGNORECASE)
+
+
+def _rail_key(name: str) -> str | None:
+    """Sprowadza nazwę szyny do postaci kanonicznej: `+3V3`, `3v3`, `P3V3` → `3V3`."""
+    cleaned = name.strip().upper().lstrip("+").replace("P", "", 1) if name.startswith("P") else name.strip().upper().lstrip("+")
+    if re.fullmatch(r"GND|AGND|DGND|VSS", cleaned):
+        return "GND"
+    match = re.fullmatch(r"(\d+)V(\d*)", cleaned)
+    if match:
+        return f"{match.group(1)}V{match.group(2) or ''}"
+    match = re.fullmatch(r"V(CC|DD)", cleaned)
+    if match:
+        return cleaned
+    return None
+
+
+def _finding(kind: str, detail: str, samples: list[str]) -> dict[str, Any]:
+    code, severity, message, remediation = _RULES[kind]
+    return {
+        "code": code,
+        "severity": severity,
+        "category": kind,
+        "count": len(samples),
+        "message": message,
+        "detail": detail,
+        "remediation": remediation,
+        "samples": samples[:8],
+    }
+
+
+def netlist_state(
+    netlist: dict[str, Any], pcb: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    """Zamienia netlistę na ustalenia z kodami — tak jak `pcb_state` robi to dla DRC."""
+    nets = netlist.get("nets") or []
+    components = netlist.get("components") or []
+    findings: list[dict[str, Any]] = []
+
+    nodes_by_net = {net.get("name", ""): net.get("nodes") or [] for net in nets}
+    seen: dict[str, list[dict[str, str]]] = {}
+    for reference in ((node.get("reference", ""), node) for nodes in nodes_by_net.values() for node in nodes):
+        seen.setdefault(reference[0], []).append(reference[1])
+
+    # 1. Szyna rozbita na kilka nazw.
+    rails: dict[str, list[str]] = {}
+    for name in nodes_by_net:
+        key = _rail_key(name)
+        if key:
+            rails.setdefault(key, []).append(name)
+    split = {key: sorted(names) for key, names in rails.items() if len(names) > 1}
+    if split:
+        findings.append(_finding(
+            "rail_split",
+            "Odcinki tej samej szyny nie są ze sobą połączone.",
+            [
+                f"{key}: {' | '.join(f'{name} ({len(nodes_by_net[name])} w.)' for name in names)}"
+                for key, names in sorted(split.items())
+            ],
+        ))
+
+    # 2. Sieci jednowęzłowe.
+    dangling = sorted(
+        f"{name} → {nodes[0]['reference']}.{nodes[0]['pin']}"
+        for name, nodes in nodes_by_net.items()
+        if len(nodes) == 1
+    )
+    if dangling:
+        findings.append(_finding("single_node", "Sieć kończy się na jednym pinie.", dangling))
+
+    # 3. Piny spoza jakiejkolwiek sieci.
+    floating: list[str] = []
+    for component in components:
+        reference = component.get("reference", "")
+        connected = {node["pin"] for node in seen.get(reference, [])}
+        for pin in component.get("pins") or []:
+            if pin.get("number") not in connected:
+                floating.append(f"{reference}.{pin.get('number')} [{pin.get('name')}]")
+    if floating:
+        findings.append(_finding("floating_pin", "Pin nie występuje w żadnej sieci.", sorted(floating)))
+
+    # 4. Zasilanie i masa układów scalonych.
+    starved: list[str] = []
+    for component in components:
+        reference = component.get("reference", "")
+        for pin in component.get("pins") or []:
+            label = pin.get("name") or pin.get("number") or ""
+            if not _POWER_PIN.fullmatch(label):
+                continue
+            net = next(
+                (name for name, nodes in nodes_by_net.items()
+                 if any(node["reference"] == reference and node["pin"] == pin.get("number") for node in nodes)),
+                None,
+            )
+            if net is None or len(nodes_by_net.get(net, [])) < 2:
+                kind = "masa" if _GROUND_PIN.fullmatch(label) else "zasilanie"
+                starved.append(f"{reference}.{pin.get('number')} [{label}] — {kind}, sieć {net or 'brak'}")
+    if starved:
+        findings.append(_finding(
+            "no_power", "Pin zasilania lub masy nie ma z czym się połączyć.", sorted(starved)
+        ))
+
+    # 5. Elementy zamknięte same w sobie.
+    isolated: list[str] = []
+    for component in components:
+        reference = component.get("reference", "")
+        own = [name for name, nodes in nodes_by_net.items()
+               if any(node["reference"] == reference for node in nodes)]
+        if not own:
+            continue
+        if all(
+            {node["reference"] for node in nodes_by_net[name]} == {reference}
+            for name in own
+        ):
+            isolated.append(f"{reference} (sieci: {', '.join(sorted(own))})")
+    if isolated:
+        findings.append(_finding(
+            "isolated_part", "Element nie ma połączenia z resztą układu.", sorted(isolated)
+        ))
+
+    # 6. Rozjazd schematu i PCB.
+    if pcb:
+        pads = pcb.get("pads") or []
+        pcb_refs = {pad["reference"] for pad in pads if pad.get("reference")}
+        sch_refs = {component.get("reference", "") for component in components}
+        drift = [f"tylko w schemacie: {ref}" for ref in sorted(sch_refs - pcb_refs)]
+        drift += [f"tylko w PCB: {ref}" for ref in sorted(pcb_refs - sch_refs)]
+        mismatched = sorted(
+            f"{pad['reference']}.{pad['pin']}: PCB {pad['net'] or 'brak'} ≠ schemat {expected}"
+            for pad in pads
+            for expected in [next(
+                (name for name, nodes in nodes_by_net.items()
+                 if any(node["reference"] == pad["reference"] and node["pin"] == pad["pin"] for node in nodes)),
+                None,
+            )]
+            if expected is not None and expected != (pad.get("net") or "")
+        )
+        if drift or mismatched:
+            findings.append(_finding(
+                "sch_pcb_drift",
+                f"Rozjazd elementów: {len(drift)}, rozjazd sieci na padach: {len(mismatched)}.",
+                drift + mismatched,
+            ))
+
+    codes = list(dict.fromkeys(item["code"] for item in findings))
+    blocking = any(item["severity"] == "ERROR" for item in findings)
+    steps = [f"{item['code']}: {item['remediation']}" for item in findings if item["severity"] == "ERROR"]
+    return {
+        "schema_id": "twinstudio.eda-netlist-state/v1",
+        "status": "blocked" if blocking else "ready",
+        "source": netlist.get("source", ""),
+        "summary": {
+            "components": len(components),
+            "nets": len(nets),
+            "nodes": sum(len(net.get("nodes") or []) for net in nets),
+            "findings": len(findings),
+        },
+        "codes": codes,
+        "findings": findings,
+        "draft": {
+            "schema_id": "twinstudio.eda-repair-draft/v1",
+            "status": "draft",
+            "requires_approval": True,
+            # Łączność wynika z intencji projektanta, nie z geometrii — automat
+            # nie zgadnie, do której szyny miał trafić pin. Draft opisuje, co
+            # naprawić; zmianę zatwierdza człowiek.
+            "requires_manual_routing": blocking,
+            "message": (
+                "To jest plan diagnostyczny netlisty, niezmieniający projektu. "
+                "Braki łączności wynikają z intencji projektanta, więc każdą "
+                "poprawkę trzeba zatwierdzić przed wygenerowaniem kandydata."
+            ),
+            "repair_steps": steps or ["Netlista nie zgłasza braków łączności."],
+            "prompt": "Przygotuj wyłącznie kandydat naprawy łączności: " + " ".join(steps),
+        },
+    }

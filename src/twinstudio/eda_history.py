@@ -53,6 +53,7 @@ class EdaHistoryEntry(HistoryModel):
         "EdaChangePlanned",
         "EdaSchematicAnalyzed",
         "EdaPcbAnalyzed",
+        "EdaNetlistAnalyzed",
         "EdaValidationCompleted",
         "EdaCandidateCreated",
         "EdaCandidateDeleted",
@@ -61,6 +62,7 @@ class EdaHistoryEntry(HistoryModel):
         "EdaRevisionPromoted",
         "EdaChangeReverted",
         "EdaHistoryImported",
+        "ProjectUpdateRecorded",
     ]
     actor: str
     occurred_at: datetime
@@ -73,6 +75,7 @@ EDA_EVENT_TYPES = {
     "EdaChangePlanned",
     "EdaSchematicAnalyzed",
     "EdaPcbAnalyzed",
+    "EdaNetlistAnalyzed",
     "EdaValidationCompleted",
     "EdaCandidateCreated",
     "EdaCandidateDeleted",
@@ -81,6 +84,7 @@ EDA_EVENT_TYPES = {
     "EdaRevisionPromoted",
     "EdaChangeReverted",
     "EdaHistoryImported",
+    "ProjectUpdateRecorded",
 }
 
 
@@ -231,6 +235,11 @@ def _event_code(data: dict[str, Any]) -> str | None:
 
 
 def _logs_outcome(event_type: str, data: dict[str, Any]) -> tuple[str, str, str]:
+    if event_type == "ProjectUpdateRecorded":
+        severity = "WARNING" if data.get("category") in {
+            "error", "recommendation", "duplicate", "source_truth_conflict"
+        } else "INFO"
+        return "OBSERVED", str(data.get("category", "update")), severity
     if event_type == "EdaCandidateDeleted":
         return "SUCCEEDED", "deleted", "WARNING"
     if event_type == "EdaChangeRejected":
@@ -241,7 +250,7 @@ def _logs_outcome(event_type: str, data: dict[str, Any]) -> tuple[str, str, str]
         return "SUCCEEDED", "reverted", "WARNING"
     if event_type == "EdaCandidateCreated":
         return "SUCCEEDED", "candidate", "INFO"
-    if event_type in {"EdaSchematicAnalyzed", "EdaPcbAnalyzed"}:
+    if event_type in {"EdaSchematicAnalyzed", "EdaPcbAnalyzed", "EdaNetlistAnalyzed"}:
         analysis = data.get("analysis") if isinstance(data.get("analysis"), dict) else {}
         status = str(analysis.get("status", "ready"))
         return "OBSERVED", status, "WARNING" if _event_code(data) else "INFO"
