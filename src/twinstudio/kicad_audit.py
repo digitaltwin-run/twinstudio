@@ -18,8 +18,11 @@ _RULES: dict[str, tuple[str, str, str, str]] = {
         "Ta sama szyna zasilania występuje pod kilkoma nazwami, więc jej odcinki nie są ze sobą połączone.",
         "Ujednolić nazwę etykiety na wszystkich odcinkach szyny albo połączyć je jawnie na schemacie.",
     ),
+    # Zapasowe wyprowadzenie płytki deweloperskiej też daje sieć jednowęzłową.
+    # Nazywanie tego błędem uczy ignorowania audytu, a realny przypadek —
+    # niepodłączone zasilanie — łapie osobna reguła `no_power` z wagą ERROR.
     "single_node": (
-        "EDA-NET-SINGLE-NODE-001", "ERROR",
+        "EDA-NET-SINGLE-NODE-001", "WARNING",
         "Sieć ma tylko jeden węzeł, czyli pin prowadzi donikąd.",
         "Dociągnąć sieć do drugiego wyprowadzenia albo oznaczyć pin jako świadomie niepodłączony (no_connect).",
     ),

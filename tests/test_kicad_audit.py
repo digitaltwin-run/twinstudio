@@ -108,3 +108,28 @@ def test_pcb_pads_are_compared_against_the_schematic_net() -> None:
     assert "tylko w schemacie: C1" in drift["samples"]
     assert "tylko w PCB: R9" in drift["samples"]
     assert "U1.2: PCB VBUS ≠ schemat +3V3" in drift["samples"]
+
+
+def test_spare_pins_are_a_warning_not_an_error() -> None:
+    # A dev board's unused GPIO is a note, not a defect; only a starved power
+    # pin blocks. Otherwise the audit teaches people to ignore it.
+    spare = _netlist(
+        components=[{"reference": "U1", "part": "local:MCU", "pins": [
+            {"number": "1", "name": "GND", "type": "power_in"},
+            {"number": "2", "name": "VDD", "type": "power_in"},
+            {"number": "3", "name": "GP9", "type": "bidirectional"},
+        ]}],
+        nets=[
+            {"name": "GND", "nodes": [
+                {"reference": "U1", "pin": "1"}, {"reference": "C1", "pin": "2"}]},
+            {"name": "+3V3", "nodes": [
+                {"reference": "U1", "pin": "2"}, {"reference": "C1", "pin": "1"}]},
+            {"name": "GP9", "nodes": [{"reference": "U1", "pin": "3"}]},
+        ],
+    )
+
+    state = netlist_state(spare)
+    single = next(f for f in state["findings"] if f["code"] == "EDA-NET-SINGLE-NODE-001")
+
+    assert single["severity"] == "WARNING"
+    assert state["status"] == "ready"
