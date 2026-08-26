@@ -65,7 +65,7 @@ class RoutingError(RuntimeError):
     """Nie udało się poprowadzić ścieżki w zadanym budżecie."""
 
 
-_EPS = 1e-9
+_EPS = 1e-6
 
 
 def _clamp(value: float, low: float, high: float) -> float:
@@ -170,7 +170,10 @@ class Field:
                 gap = _segment_box_distance(
                     track.x0, track.y0, track.x1, track.y1, obstacle
                 ) - half_width
-            if gap < clearance:
+            # Odstęp równy wymaganemu jest dopuszczalny — tak liczy DRC. Bez
+            # tolerancji siatka kandydatów budowana z krawędzi przeszkód
+            # odrzucała samą siebie: 60.3 - 60 daje 0.29999999999999716.
+            if gap < clearance - _EPS:
                 return False
         return True
 

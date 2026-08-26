@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -630,3 +631,53 @@ def test_naming_an_allowed_operation_defeats_the_routing_guard() -> None:
     assert kicad_dsl._requests_routing_edit(
         "poprowadź ścieżkę GP4 dookoła SW6"
     )
+
+
+PCB_BLOCKED = PCB_RJ45.replace(
+    '  (segment (start 140.000 85.000)',
+    '''  (footprint "local:SW_TACT_5.2x5.2" (layer "B.Cu")
+    (tstamp 11111111-2222-3333-4444-555555555555)
+    (at 165.000 84.000)
+    (fp_text reference "SW1" (at 0 -6) (layer "B.SilkS"))
+    (fp_line (start -30.00 -8.00) (end 30.00 -8.00) (layer "B.SilkS"))
+    (fp_line (start 30.00 8.00) (end -30.00 8.00) (layer "B.SilkS"))
+    (pad "1" smd rect (at -2 0) (size 1 1) (layers "B.Cu") (net 1 "GND"))
+  )
+  (segment (start 140.000 85.000)''')
+
+
+def test_a_shielded_part_becomes_a_keepout_for_a_net_it_does_not_carry() -> None:
+    from twinstudio.kicad_dsl import _footprint_keepouts, _pad_sites, _parse
+
+    root = _parse(PCB_BLOCKED)
+    sites = _pad_sites(root)
+    for site in sites:  # stan po zmianie: +5V trafia na J1.7/8 i U1.5V
+        if (site.reference, site.number) in {("J1", "7"), ("J1", "8"), ("U1", "5V")}:
+            site.net_after = 5
+
+    keepouts = _footprint_keepouts(root, "B.Cu", 5, sites)
+
+    # SW1 carries GND only, so transit copper under it is the defect
+    # EDA-PCB-TRACE-UNDER-PART-001 reports; J1 owns +5V pads and must stay
+    # reachable, or the repair could never finish the net it just created.
+    assert [(b.x0, b.y0, b.x1, b.y1) for b in keepouts] == [(135.0, 76.0, 195.0, 92.0)]
+    assert all(b.net == -1 for b in keepouts), "a keepout must block every net"
+
+
+def test_a_keepout_diverts_the_router() -> None:
+    from twinstudio.kicad_copper import Bounds, Box, route_net
+
+    wall = Box(net=-1, x0=40.0, y0=-5.0, x1=60.0, y1=5.0)
+    bounds = Bounds(0.0, -40.0, 100.0, 40.0)
+
+    tracks = route_net([(0.0, 0.0), (100.0, 0.0)], net=1, obstacles=[wall],
+                       bounds=bounds, width=0.2, clearance=0.2)
+
+    assert tracks, "a detour exists, so the net must still be routed"
+    assert not any(
+        min(t.x0, t.x1) <= wall.x1 and max(t.x0, t.x1) >= wall.x0
+        and min(t.y0, t.y1) <= wall.y1 and max(t.y0, t.y1) >= wall.y0
+        for t in tracks
+    ), "the route still crosses the keepout"
+
+

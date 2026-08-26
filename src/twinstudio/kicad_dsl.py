@@ -740,8 +740,60 @@ def _track_width(segments: list[_SegmentSite], layer: str) -> float:
     return widths.most_common(1)[0][0] if widths else _DEFAULT_TRACK_WIDTH
 
 
+# Elementy, pod którymi miedź jest ryzykiem zwarcia przy montażu, a nie
+# wyborem projektanta. Ta sama lista, na której stoi kontrola
+# EDA-PCB-TRACE-UNDER-PART-001 — kontrola i naprawa muszą widzieć to samo.
+_SHIELDED_PART = re.compile(r"SW|TACT|BUTTON|RJ45|SHIELD|USB|JACK", re.IGNORECASE)
+# Sieć, której nie ma żadna ścieżka, więc zakaz obowiązuje zawsze.
+_KEEPOUT_NET = -1
+
+
+def _footprint_keepouts(
+    root: _Node, layer: str, net: int, sites: list[_PadSite]
+) -> list[Obstacle]:
+    """Obrysy elementów, pod którymi router nie ma prawa przejść tranzytem.
+
+    Ścieżka dochodząca do własnego pada musi wejść pod obudowę, więc element
+    niosący trasowaną sieć nie jest przeszkodą. Blokujemy wyłącznie przejazd
+    pod obcym elementem — dokładnie to, co zgłasza kontrola.
+    """
+    # Nety brane ze stanu PO zmianie: naprawa właśnie nadaje sieć padom, więc
+    # czytanie oryginału zrobiłoby zakaz z elementu, do którego trasujemy.
+    owned: dict[int, set[int]] = {}
+    for site in sites:
+        owned.setdefault(site.footprint_index, set()).add(site.net_after)
+    keepouts: list[Obstacle] = []
+    for index, footprint in enumerate(_root_child_entities(root, "footprint")):
+        if not _SHIELDED_PART.search(_text(footprint, 1)):
+            continue
+        if net in owned.get(index, set()):
+            continue
+        at = _child(footprint, "at")
+        if at is None:
+            continue
+        origin_x, origin_y = _number(at, 1), _number(at, 2)
+        spans = [
+            (abs(_number(line, 1)), abs(_number(line, 2)))
+            for node in footprint.values
+            if isinstance(node, _Node) and _head(node) in {"fp_line", "fp_rect"}
+            for line in [_child(node, "start")]
+            if line is not None
+        ]
+        if not spans:
+            continue
+        half_x = max(x for x, _ in spans)
+        half_y = max(y for _, y in spans)
+        keepouts.append(Box(
+            net=_KEEPOUT_NET,
+            x0=origin_x - half_x, y0=origin_y - half_y,
+            x1=origin_x + half_x, y1=origin_y + half_y,
+        ))
+    return keepouts
+
+
 def _obstacles(
-    root: _Node, sites: list[_PadSite], segments: list[_SegmentSite], layer: str
+    root: _Node, sites: list[_PadSite], segments: list[_SegmentSite], layer: str,
+    net: int | None = None,
 ) -> list[Obstacle]:
     obstacles: list[Obstacle] = _via_obstacles(root, layer)
     obstacles += [
@@ -756,6 +808,8 @@ def _obstacles(
         for site in sites
         if layer in site.layers
     ]
+    if net is not None:
+        obstacles += _footprint_keepouts(root, layer, net, sites)
     return obstacles
 
 
@@ -896,7 +950,7 @@ def _copper_repair(
         if bounds is None:
             bounds = _board_bounds(root)
         width = _track_width(segments, layer)
-        obstacles = _obstacles(root, sites, segments, layer)
+        obstacles = _obstacles(root, sites, segments, layer, net=code)
         try:
             tracks = route_net(
                 [(site.x, site.y) for site in terminals],
