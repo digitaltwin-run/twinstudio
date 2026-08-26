@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 from base64 import b64decode
 from binascii import Error as Base64Error
 from contextlib import asynccontextmanager
@@ -65,6 +66,15 @@ from twinstudio.evolution_models import (
     TwinDslDocument,
 )
 from twinstudio.feature_lenses import FeatureLensEngine
+from twinstudio.kicad_dsl import (
+    EdaChangeDocument,
+    KicadDslError,
+    apply_changes,
+    inspect_file,
+    nl_to_dsl,
+    resolve_source,
+    write_candidate,
+)
 from twinstudio.mcp_gateway import McpGateway
 from twinstudio.mcp_protocol import (
     McpHttpError,
@@ -291,6 +301,16 @@ class AccessRequest(ApiModel):
     requested_role: Role = Role.READER
     decision_email: str | None = None
     message: str = ""
+
+
+class EdaNlRequest(ApiModel):
+    path: str = Field(min_length=1, max_length=2000)
+    prompt: str = Field(min_length=1, max_length=30_000)
+
+
+class EdaApplyRequest(ApiModel):
+    document: EdaChangeDocument
+    dry_run: bool = True
 
 
 class WsHub:
@@ -685,6 +705,8 @@ def health() -> dict[str, Any]:
         "cad_regeneration_enabled": settings.cad_regeneration_enabled,
         "cad_regeneration_in_flight": len(_cad_tasks),
         "litellm_configured": bool(settings.litellm_model),
+        "eda_dsl_version": "twinstudio.eda/v1",
+        "kicad_root": str(settings.kicad_root),
         "dev_auth_bypass": settings.dev_auth_bypass,
         "feature_lens_catalog": feature_lenses.catalog.catalog_version,
         "feature_lens_count": feature_lenses.catalog.active_lens_count,
@@ -693,6 +715,119 @@ def health() -> dict[str, Any]:
         "dsl_api_version": "twinstudio.io/v1alpha1",
         "observation_dsl_version": "TWINOBS 1.0",
     }
+
+
+def _eda_document(path: str, expected_kind: str | None = None):
+    try:
+        document = inspect_file(settings.kicad_root, path)
+    except KicadDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if expected_kind and document.source.kind != expected_kind:
+        raise HTTPException(status_code=422, detail=f"expected a {expected_kind} KiCad document")
+    return document
+
+
+@app.get("/api/v1/eda/documents")
+def eda_document(
+    path: str = Query(min_length=1, max_length=2000),
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Convert an allow-listed native KiCad document to the shared EDA IR."""
+    return _eda_document(path).model_dump(mode="json")
+
+
+@app.get("/api/v1/eda/sch2dsl")
+def sch2dsl(
+    path: str = Query(min_length=1, max_length=2000),
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    return _eda_document(path, "schematic").model_dump(mode="json")
+
+
+@app.get("/api/v1/eda/pcb2dsl")
+def pcb2dsl(
+    path: str = Query(min_length=1, max_length=2000),
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    return _eda_document(path, "pcb").model_dump(mode="json")
+
+
+@app.post("/api/v1/eda/nl2dsl")
+def eda_nl2dsl(
+    body: EdaNlRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    document = _eda_document(body.path)
+    try:
+        change, mode = nl_to_dsl(body.prompt, document, settings)
+    except KicadDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {"mode": mode, "document": change.model_dump(mode="json")}
+
+
+def _apply_eda(body: EdaApplyRequest, expected_kind: str | None = None) -> dict[str, Any]:
+    if expected_kind and body.document.source.kind != expected_kind:
+        raise HTTPException(status_code=422, detail=f"expected a {expected_kind} change document")
+    try:
+        source_path = resolve_source(settings.kicad_root, body.document.source.path)
+        source = source_path.read_text(encoding="utf-8")
+        candidate = apply_changes(source, body.document)
+        candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
+        if body.dry_run:
+            return {
+                "valid": True,
+                "dry_run": True,
+                "source_sha256": body.document.source.sha256,
+                "candidate_sha256": candidate_sha256,
+                "changed": source != candidate,
+                "operations": len(body.document.operations),
+            }
+        output_root = settings.data_dir / "artifacts" / "kicad-edits"
+        manifest = write_candidate(settings.kicad_root, output_root, body.document)
+    except (KicadDslError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {
+        "valid": True,
+        "dry_run": False,
+        **manifest,
+        "candidate_url": f"/api/v1/eda/candidates/{manifest['candidate_path']}",
+    }
+
+
+@app.post("/api/v1/eda/apply")
+def apply_eda(
+    body: EdaApplyRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    return _apply_eda(body)
+
+
+@app.post("/api/v1/eda/dsl2sch")
+def dsl2sch(
+    body: EdaApplyRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    return _apply_eda(body, "schematic")
+
+
+@app.post("/api/v1/eda/dsl2pcb")
+def dsl2pcb(
+    body: EdaApplyRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    return _apply_eda(body, "pcb")
+
+
+@app.get("/api/v1/eda/candidates/{relative:path}")
+def eda_candidate(
+    relative: str,
+    _user: AuthPrincipal = Depends(principal),
+) -> FileResponse:
+    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    path = (root / relative).resolve()
+    if not path.is_relative_to(root) or not path.is_file() or path.is_symlink():
+        raise HTTPException(status_code=404, detail="candidate not found")
+    return FileResponse(path, media_type="text/plain; charset=utf-8", filename=None)
 
 
 @app.get("/api/v1/errors/{code}")

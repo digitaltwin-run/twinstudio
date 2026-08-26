@@ -41,7 +41,7 @@ Dokument mapuje wymagania produktu na elementy paczki, status realizacji i kryte
 | EVID-001 | Fotografie, PDF, wymiary, wycinki jako evidence | Artifact/evidence/claim model z hashami i provenance | Implemented | Każda teza może wskazać źródło, confidence i rewizję |
 | EVID-002 | „Żywy projekt” aktualizowany przez LLM | Event-sourced snapshot + plan/apply/review | Implemented for scoped changes | LLM nie wykonuje kodu bezpośrednio; generuje walidowany plan |
 | PCB-001 | PCB/SCH jako elementy projektu | Schema, object kinds i KiCad adapter boundary | Implemented in schema | PCB/SCH uczestniczą w xBOM, requirements i artifact graph |
-| PCB-002 | Edycja natywna PCB/SCH | KiCad CLI check/export scaffold | Roadmap | Potrzebny parser/AST, reguły DRC/ERC, diff semantyczny, footprint identity i bezpieczny writer |
+| PCB-002 | Edycja natywna PCB/SCH | `twinstudio.kicad_dsl`, REST EDA, testy round-trip | Partial | Działa UUID/reference IR, kontrolowany writer właściwości symbolu i pozycji footprintu oraz kopie z hashem; nadal potrzebne automatyczne DRC/ERC, diff semantyczny i promocja zatwierdzonego źródła |
 | PCB-003 | Autorouting/synteza schematu | Brak ukrytej implementacji | Roadmap | Osobny silnik ze ścisłymi ograniczeniami i walidacją elektryczną |
 | SW-001 | Oprogramowanie jako część urządzenia | Software object, container source, release route | Implemented | Software ma wersję, obraz, konfigurację, testy i powiązanie z hardware |
 | SW-002 | Symulacja uruchomienia RPi w Docker | Kontener aplikacji i sample replay | Implemented as software/data-flow simulation | Nie emuluje CPU, kernela ani timingów fizycznego RPi |

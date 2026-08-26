@@ -41,6 +41,9 @@ class Settings:
     build_sha: str = _env("TWINSTUDIO_BUILD_SHA", default="unknown").strip() or "unknown"
     project_root: Path = Path(_env("TWINSTUDIO_PROJECT_ROOT", default=".")).resolve()
     data_dir: Path = Path(_env("TWINSTUDIO_DATA_DIR", "LPS_DATA_DIR", "./data")).resolve()
+    kicad_root: Path = Path(
+        _env("TWINSTUDIO_KICAD_ROOT", default=str(project_root))
+    ).resolve()
     database_url: str = _env("DATABASE_URL", default="sqlite:///./data/twinstudio.db")
 
     dev_auth_bypass: bool = _bool("DEV_AUTH_BYPASS", True)

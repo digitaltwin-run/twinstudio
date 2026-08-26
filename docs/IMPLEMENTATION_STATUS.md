@@ -54,7 +54,7 @@ Legend: **Implemented**, **Working scaffold**, **Roadmap**.
 | Human task/checklist evaluation | Implemented | Logic/rule review, not biomechanical simulation |
 | FMEA and lifecycle evidence | Implemented as data/views | Automated evidence ingestion can be expanded |
 | Mechanical rules | Working scaffold | Simple thresholds, not FEA |
-| PCB/SCH product objects | Implemented in schema | Native project editing is not implemented |
+| PCB/SCH product objects | Partial vertical slice | Native UUID/reference import, typed EDA DSL, safe symbol-property and footprint-position candidate edits; connectivity and source promotion remain out of scope |
 | KiCad CLI check/export adapter | Working scaffold | Requires `kicad-cli` and real source files |
 | PCB synthesis/autorouting | Roadmap | Not claimed |
 | GTIN check digit | Implemented | Does not allocate an authorized GS1 identifier |
