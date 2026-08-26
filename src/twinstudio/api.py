@@ -90,7 +90,7 @@ from twinstudio.kicad_dsl import (
     EdaChangeDocument,
     EdaDocument,
     KicadDslError,
-    apply_changes,
+    apply_changes_with_repair,
     change_validation,
     eda_llm_status,
     inspect_file,
@@ -1033,9 +1033,9 @@ def _apply_eda(
     try:
         source_path = resolve_source(settings.kicad_root, body.document.source.path)
         source = source_path.read_text(encoding="utf-8")
-        candidate = apply_changes(source, body.document)
+        candidate, repair = apply_changes_with_repair(source, body.document)
         candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
-        validation = change_validation(body.document)
+        validation = change_validation(body.document, repair)
         validation_event: EventEnvelope | None = None
         if body.project_id:
             validation_event = _record_eda_event(
