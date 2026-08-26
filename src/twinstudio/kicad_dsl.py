@@ -270,7 +270,21 @@ def pcb_state(document: EdaDocument, drc: dict[str, Any]) -> dict[str, Any]:
         "summary": {"footprints": len(document.items), "pads": sum(len(item.pads) for item in document.items), "nets": len(document.nets), "drc_violations": violations, "unconnected_pads": unconnected},
         "codes": list(dict.fromkeys(codes)),
         "findings": findings,
-        "draft": {"schema_id": "twinstudio.eda-repair-draft/v1", "status": "draft", "requires_approval": True, "message": "To jest plan diagnostyczny, niezmieniający PCB. Dopiero wygenerowany kandydat może zostać porównany, zaakceptowany albo odrzucony.", "repair_steps": repair_steps, "prompt": "Przygotuj wyłącznie kandydat naprawy PCB: " + " ".join(repair_steps)},
+        "draft": {
+            "schema_id": "twinstudio.eda-repair-draft/v1",
+            "status": "draft",
+            "requires_approval": True,
+            "requires_manual_routing": blocking,
+            "message": (
+                "To jest plan diagnostyczny, niezmieniający PCB. Błędy elektryczne wymagają "
+                "ręcznego routingu w KiCad: DSL v1 nie tworzy ścieżek ani stref miedzi. "
+                "Dopiero poprawiona kopia PCB może być kandydatem do porównania, akceptacji lub odrzucenia."
+                if blocking
+                else "To jest plan diagnostyczny, niezmieniający PCB. Dopiero wygenerowany kandydat może być porównany, zaakceptowany albo odrzucony."
+            ),
+            "repair_steps": repair_steps,
+            "prompt": "Przygotuj wyłącznie kandydat naprawy PCB: " + " ".join(repair_steps),
+        },
     }
 
 
