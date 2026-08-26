@@ -194,6 +194,9 @@ class CommandBus:
             case "eda.netlist.analysis.record":
                 permission = "change.plan"
                 event_type, data = "EdaNetlistAnalyzed", dict(payload)
+            case "eda.simulation.analysis.record":
+                permission = "change.plan"
+                event_type, data = "EdaSimulationAnalyzed", dict(payload)
             case "eda.candidate.record":
                 permission = "change.apply"
                 event_type, data = "EdaCandidateCreated", dict(payload)

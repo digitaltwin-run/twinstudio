@@ -41,6 +41,16 @@ _RULES: dict[str, tuple[str, str, str, str]] = {
         "Element jest połączony wyłącznie sam ze sobą — nie łączy się z resztą układu.",
         "Doprowadzić sygnał i masę do elementu albo usunąć go ze schematu.",
     ),
+    "undefined_level": (
+        "EDA-SIM-UNDEFINED-LEVEL-001", "ERROR",
+        "Węzeł stoi w paśmie nieokreślonym wejścia cyfrowego — ani zero, ani jedynka.",
+        "Dobrać dzielnik tak, by stan spoczynkowy trafiał poniżej progu niskiego albo powyżej wysokiego; sam pull-up bez pull-downu zwykle wystarcza.",
+    ),
+    "unmodelled_part": (
+        "EDA-SIM-NO-MODEL-001", "WARNING",
+        "Element nie ma modelu SPICE, więc symulacja go pomija.",
+        "Dodać właściwości modelu do symbolu albo świadomie przyjąć, że wynik opisuje tylko resztę układu.",
+    ),
     "sch_pcb_drift": (
         "EDA-NET-SCH-PCB-DRIFT-001", "ERROR",
         "Schemat i PCB opisują różne układy: elementy lub sieci nie mają odpowiednika po drugiej stronie.",
@@ -79,6 +89,63 @@ def _finding(kind: str, detail: str, samples: list[str]) -> dict[str, Any]:
         "detail": detail,
         "remediation": remediation,
         "samples": samples[:8],
+    }
+
+
+def simulation_state(
+    result: dict[str, Any], source: str = ""
+) -> dict[str, Any]:
+    """Zamienia punkt pracy DC na ustalenia z kodami.
+
+    Napięcie w paśmie nieokreślonym jest błędem doboru elementów, nie
+    topologii — dlatego ani DRC, ani audyt łączności go nie widzą, a mimo
+    to wejście czyta wtedy przypadkowo.
+    """
+    findings: list[dict[str, Any]] = []
+    thresholds = result.get("thresholds") or {}
+    stray = result.get("undefined_logic") or []
+    if stray:
+        findings.append(_finding(
+            "undefined_level",
+            f"Próg niski {thresholds.get('low')} V, wysoki {thresholds.get('high')} V.",
+            [f"{item.get('node')} = {item.get('volts')} V" for item in stray],
+        ))
+    skipped = result.get("skipped_devices") or []
+    if skipped:
+        findings.append(_finding(
+            "unmodelled_part",
+            "Symulacja opisuje układ bez tych elementów.",
+            list(skipped),
+        ))
+    blocking = any(item["severity"] == "ERROR" for item in findings)
+    steps = [f"{item['code']}: {item['remediation']}" for item in findings if item["severity"] == "ERROR"]
+    return {
+        "schema_id": "twinstudio.eda-simulation-state/v1",
+        "status": "blocked" if blocking else "ready",
+        "source": {"path": source or result.get("source", ""), "kind": "schematic"},
+        "summary": {
+            "nodes": len(result.get("voltages") or {}),
+            "undefined": len(stray),
+            "skipped": len(skipped),
+            "driven_rails": list(result.get("driven_rails") or []),
+        },
+        "codes": list(dict.fromkeys(item["code"] for item in findings)),
+        "findings": findings,
+        "draft": {
+            "schema_id": "twinstudio.eda-repair-draft/v1",
+            "status": "draft",
+            "requires_approval": True,
+            # Poziom w paśmie nieokreślonym to dobór wartości elementów.
+            # Automat nie wie, czy usunąć pull-down, czy zmienić rezystory.
+            "requires_manual_routing": blocking,
+            "message": (
+                "To jest wynik symulacji, niezmieniający projektu. Poziom w "
+                "paśmie nieokreślonym wynika z doboru wartości, więc poprawkę "
+                "trzeba zatwierdzić przed wygenerowaniem kandydata."
+            ),
+            "repair_steps": steps or ["Symulacja nie zgłasza problemów z poziomami."],
+            "prompt": "Przygotuj wyłącznie kandydat naprawy poziomów: " + " ".join(steps),
+        },
     }
 
 

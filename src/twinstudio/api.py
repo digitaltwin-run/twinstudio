@@ -86,7 +86,7 @@ from twinstudio.evolution_models import (
     TwinDslDocument,
 )
 from twinstudio.feature_lenses import FeatureLensEngine
-from twinstudio.kicad_audit import netlist_state
+from twinstudio.kicad_audit import netlist_state, simulation_state
 from twinstudio.kicad_dsl import (
     EdaChangeDocument,
     EdaDocument,
@@ -350,6 +350,10 @@ class EdaPcbAnalysisRequest(EdaAnalysisRequest):
 class EdaNetlistAnalysisRequest(EdaAnalysisRequest):
     netlist: dict[str, Any] = Field(default_factory=dict)
     pcb: dict[str, Any] | None = None
+
+
+class EdaSimulationAnalysisRequest(EdaAnalysisRequest):
+    simulation: dict[str, Any] = Field(default_factory=dict)
 
 
 class EdaApplyRequest(ApiModel):
@@ -1038,6 +1042,37 @@ def record_eda_netlist_state(
         "eda.netlist.analysis.record",
         {
             "schema_id": "twinstudio.eda-event/netlist-analyzed/v1",
+            "source": analysis["source"],
+            "analysis": analysis,
+        },
+        expected_version=body.expected_version,
+    )
+    return {"analysis": analysis, "history_event": _eda_event_json(event)}
+
+
+@app.post("/api/v1/eda/simulation-state")
+def eda_simulation_state(
+    body: EdaSimulationAnalysisRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Classify ngspice operating-point facts without changing the audit history."""
+    return simulation_state(body.simulation, body.path)
+
+
+@app.post("/api/v1/projects/{project_id}/eda/simulation-state")
+def record_eda_simulation_state(
+    project_id: str,
+    body: EdaSimulationAnalysisRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Record a user-requested DC operating point in the EDA audit stream."""
+    analysis = simulation_state(body.simulation, body.path)
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.simulation.analysis.record",
+        {
+            "schema_id": "twinstudio.eda-event/simulation-analyzed/v1",
             "source": analysis["source"],
             "analysis": analysis,
         },

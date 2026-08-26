@@ -133,3 +133,39 @@ def test_spare_pins_are_a_warning_not_an_error() -> None:
 
     assert single["severity"] == "WARNING"
     assert state["status"] == "ready"
+
+
+def test_a_node_between_the_logic_thresholds_is_an_error() -> None:
+    from twinstudio.kicad_audit import simulation_state
+
+    state = simulation_state({
+        "voltages": {"gp10": 0.9851, "+3v3": 3.3},
+        "undefined_logic": [{"node": "gp10", "volts": 0.9851}],
+        "thresholds": {"low": 0.8, "high": 2.0},
+        "skipped_devices": ["U1"],
+        "driven_rails": ["+3V3=3.3V"],
+    }, "panel.kicad_sch")
+
+    assert state["status"] == "blocked"
+    assert state["codes"] == ["EDA-SIM-UNDEFINED-LEVEL-001", "EDA-SIM-NO-MODEL-001"]
+    level = state["findings"][0]
+    assert level["samples"] == ["gp10 = 0.9851 V"]
+    # A modelless part limits the result but does not invalidate it.
+    assert state["findings"][1]["severity"] == "WARNING"
+    # The fix is a component-value decision, so it stays with a human.
+    assert state["draft"]["requires_approval"] is True
+
+
+def test_clean_levels_leave_the_simulation_ready() -> None:
+    from twinstudio.kicad_audit import simulation_state
+
+    state = simulation_state({
+        "voltages": {"gp10": 3.3},
+        "undefined_logic": [],
+        "thresholds": {"low": 0.8, "high": 2.0},
+        "skipped_devices": [],
+        "driven_rails": ["+3V3=3.3V"],
+    })
+
+    assert state["status"] == "ready"
+    assert state["findings"] == []

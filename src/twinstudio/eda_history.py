@@ -54,6 +54,7 @@ class EdaHistoryEntry(HistoryModel):
         "EdaSchematicAnalyzed",
         "EdaPcbAnalyzed",
         "EdaNetlistAnalyzed",
+        "EdaSimulationAnalyzed",
         "EdaValidationCompleted",
         "EdaCandidateCreated",
         "EdaCandidateDeleted",
@@ -76,6 +77,7 @@ EDA_EVENT_TYPES = {
     "EdaSchematicAnalyzed",
     "EdaPcbAnalyzed",
     "EdaNetlistAnalyzed",
+    "EdaSimulationAnalyzed",
     "EdaValidationCompleted",
     "EdaCandidateCreated",
     "EdaCandidateDeleted",
@@ -250,7 +252,7 @@ def _logs_outcome(event_type: str, data: dict[str, Any]) -> tuple[str, str, str]
         return "SUCCEEDED", "reverted", "WARNING"
     if event_type == "EdaCandidateCreated":
         return "SUCCEEDED", "candidate", "INFO"
-    if event_type in {"EdaSchematicAnalyzed", "EdaPcbAnalyzed", "EdaNetlistAnalyzed"}:
+    if event_type in {"EdaSchematicAnalyzed", "EdaPcbAnalyzed", "EdaNetlistAnalyzed", "EdaSimulationAnalyzed"}:
         analysis = data.get("analysis") if isinstance(data.get("analysis"), dict) else {}
         status = str(analysis.get("status", "ready"))
         return "OBSERVED", status, "WARNING" if _event_code(data) else "INFO"
