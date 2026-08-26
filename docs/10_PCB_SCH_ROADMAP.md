@@ -56,9 +56,14 @@ the adapter.
 - `POST /api/v1/eda/nl2dsl`
 - `POST /api/v1/eda/dsl2sch` and `POST /api/v1/eda/dsl2pcb`
 
-`nl2dsl` uses the existing strict LiteLLM JSON-Schema path when
-`LITELLM_MODEL` is configured. Otherwise it uses the deterministic local
-compiler with the identical output schema. The source root is allow-listed by
+`nl2dsl` resolves the central SubLLM route `twinstudio/eda-nl2dsl`. The current
+route prefers direct Z.AI GLM 5.3 and falls back only to the allow-listed
+OpenRouter GLM 5.2 transport. Providers with native JSON Schema support receive
+the schema as `response_format`; Z.AI receives it in the request document.
+Every response is still validated locally with the full Pydantic schema,
+immutable source identity and UUID/reference scope. If SubLLM or its provider
+is unavailable, the deterministic local compiler produces the identical DSL
+and reports an explicit `local-fallback` mode. The source root is allow-listed by
 `TWINSTUDIO_KICAD_ROOT`; candidates are stored below
 `TWINSTUDIO_DATA_DIR/artifacts/kicad-edits`.
 

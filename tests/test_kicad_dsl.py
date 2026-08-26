@@ -1,4 +1,7 @@
+import json
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -9,9 +12,11 @@ from twinstudio.kicad_dsl import (
     MoveOperation,
     SetPropertyOperation,
     apply_changes,
+    eda_llm_status,
     inspect_file,
     inspect_source,
     local_nl_to_dsl,
+    nl_to_dsl,
     resolve_source,
     write_candidate,
 )
@@ -124,3 +129,46 @@ def test_file_boundary_and_candidate_copy(tmp_path: Path) -> None:
     assert (output / result["candidate_path"]).with_name("change.json").is_file()
     with pytest.raises(KicadDslError):
         resolve_source(root, "../outside.kicad_sch")
+
+
+def test_subllm_route_drives_strict_eda_compilation(monkeypatch: pytest.MonkeyPatch) -> None:
+    document = inspect_source(SCH, "panel.kicad_sch")
+    expected = local_nl_to_dsl("ustaw wartość R1 na 10k", document)
+    captured = {}
+
+    class Route:
+        application = "twinstudio"
+        function = "eda-nl2dsl"
+        provider = "zai"
+        model = "glm-5.3"
+        transport = "openai-compatible"
+
+        @staticmethod
+        def litellm_kwargs():
+            return {"model": "zai/glm-5.3", "api_key": "test-secret", "api_base": "https://example.test"}
+
+    def completion(**kwargs):
+        captured.update(kwargs)
+        message = SimpleNamespace(content=expected.model_dump_json())
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+    monkeypatch.setitem(sys.modules, "subllm", SimpleNamespace(resolve=lambda *_args: Route()))
+    monkeypatch.setitem(sys.modules, "litellm", SimpleNamespace(completion=completion))
+    settings = SimpleNamespace(
+        subllm_enabled=True,
+        subllm_application="twinstudio",
+        subllm_function="eda-nl2dsl",
+        litellm_model="",
+        litellm_api_base="",
+        litellm_api_key="",
+    )
+
+    result, mode = nl_to_dsl("ustaw wartość R1 na 10k", document, settings)
+
+    assert mode == "subllm:zai/glm-5.3"
+    assert result == expected
+    assert captured["model"] == "zai/glm-5.3"
+    assert "response_format" not in captured
+    request_payload = json.loads(captured["messages"][1]["content"])
+    assert request_payload["output_schema"]["title"] == "EdaChangeDocument"
+    assert eda_llm_status(settings)["available"] is True

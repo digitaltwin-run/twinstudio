@@ -72,6 +72,10 @@ class Settings:
     litellm_api_base: str = _env("LITELLM_API_BASE").strip()
     litellm_api_key: str = _env("LITELLM_API_KEY").strip()
 
+    subllm_enabled: bool = _bool("TWINSTUDIO_SUBLLM_ENABLED", True)
+    subllm_application: str = _env("TWINSTUDIO_SUBLLM_APPLICATION", default="twinstudio").strip()
+    subllm_function: str = _env("TWINSTUDIO_SUBLLM_FUNCTION", default="eda-nl2dsl").strip()
+
     mcp_allowed_origins: tuple[str, ...] = _csv(
         "MCP_ALLOWED_ORIGINS",
         "http://localhost:8000,http://127.0.0.1:8000,http://localhost:3000,http://127.0.0.1:3000",

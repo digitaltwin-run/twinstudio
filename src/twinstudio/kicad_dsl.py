@@ -440,7 +440,7 @@ def local_nl_to_dsl(prompt: str, document: EdaDocument) -> EdaChangeDocument:
     if value_match and item.entity == "symbol":
         operations.append(
             SetPropertyOperation(
-                op="set_property", target=target, property="Value", value=value_match.group(1)
+                op="set_property", target=target, property="Value", value=value_match.group(1).rstrip(".")
             )
         )
     if footprint_match and item.entity == "symbol":
@@ -468,45 +468,106 @@ def local_nl_to_dsl(prompt: str, document: EdaDocument) -> EdaChangeDocument:
     return EdaChangeDocument(source=document.source, prompt=prompt, operations=operations)
 
 
-def nl_to_dsl(prompt: str, document: EdaDocument, settings: Any) -> tuple[EdaChangeDocument, str]:
-    if not settings.litellm_model:
-        return local_nl_to_dsl(prompt, document), "local"
-    try:
-        from litellm import completion
-
-        schema = EdaChangeDocument.model_json_schema()
-        kwargs: dict[str, Any] = {
-            "model": settings.litellm_model,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": (
-                        "Compile the request to the supplied strict EDA change DSL. Return JSON only. "
-                        "Use only listed component UUID/reference pairs and allow-listed operations. "
-                        "Never emit code, never add connectivity, and never change unselected components."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": json.dumps(
-                        {"prompt": prompt, "document": document.model_dump(mode="json")},
-                        ensure_ascii=False,
-                    ),
-                },
-            ],
-            "response_format": {
-                "type": "json_schema",
-                "json_schema": {"name": "eda_change", "strict": True, "schema": schema},
-            },
+def eda_llm_status(settings: Any) -> dict[str, Any]:
+    if not getattr(settings, "subllm_enabled", False):
+        return {
+            "enabled": False,
+            "mode": "litellm" if settings.litellm_model else "local",
         }
+    try:
+        from subllm import resolve
+
+        route = resolve(settings.subllm_application, settings.subllm_function)
+        if route.transport != "openai-compatible":
+            raise KicadDslError(f"unsupported SubLLM transport: {route.transport}")
+        return {
+            "enabled": True,
+            "available": True,
+            "application": route.application,
+            "function": route.function,
+            "provider": route.provider,
+            "model": route.model,
+            "transport": route.transport,
+        }
+    except Exception as exc:
+        return {
+            "enabled": True,
+            "available": False,
+            "application": settings.subllm_application,
+            "function": settings.subllm_function,
+            "error_type": type(exc).__name__,
+        }
+
+
+def _eda_litellm_route(settings: Any) -> tuple[dict[str, Any], str, bool] | None:
+    if getattr(settings, "subllm_enabled", False):
+        from subllm import resolve
+
+        route = resolve(settings.subllm_application, settings.subllm_function)
+        if route.transport != "openai-compatible":
+            raise KicadDslError(f"unsupported SubLLM transport: {route.transport}")
+        return (
+            route.litellm_kwargs(),
+            f"subllm:{route.provider}/{route.model}",
+            route.provider != "zai",
+        )
+    if settings.litellm_model:
+        kwargs: dict[str, Any] = {"model": settings.litellm_model}
         if settings.litellm_api_base:
             kwargs["api_base"] = settings.litellm_api_base
         if settings.litellm_api_key:
             kwargs["api_key"] = settings.litellm_api_key
+        return kwargs, f"litellm:{settings.litellm_model}", True
+    return None
+
+
+def nl_to_dsl(prompt: str, document: EdaDocument, settings: Any) -> tuple[EdaChangeDocument, str]:
+    try:
+        resolved = _eda_litellm_route(settings)
+    except Exception as exc:
+        return local_nl_to_dsl(prompt, document), f"local-fallback:subllm:{type(exc).__name__}"
+    if resolved is None:
+        return local_nl_to_dsl(prompt, document), "local"
+    route_kwargs, route_mode, supports_response_schema = resolved
+    try:
+        from litellm import completion
+
+        schema = EdaChangeDocument.model_json_schema()
+        system = (
+            "Compile the request to the supplied strict EDA change DSL. Return one JSON object only. "
+            "Use only listed component UUID/reference pairs and allow-listed operations. "
+            "Never emit code, never add connectivity, and never change unselected components. "
+            "Copy source identity exactly from the input."
+        )
+        kwargs: dict[str, Any] = {
+            **route_kwargs,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system,
+                },
+                {
+                    "role": "user",
+                    "content": json.dumps(
+                        {
+                            "prompt": prompt,
+                            "document": document.model_dump(mode="json"),
+                            "output_schema": schema,
+                        },
+                        ensure_ascii=False,
+                    ),
+                },
+            ],
+        }
+        if supports_response_schema:
+            kwargs["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {"name": "eda_change", "strict": True, "schema": schema},
+            }
         response = completion(**kwargs)
     except Exception as exc:
         candidate = local_nl_to_dsl(prompt, document)
-        return candidate, f"local-fallback:{type(exc).__name__}"
+        return candidate, f"local-fallback:{route_mode}:{type(exc).__name__}"
     content = response.choices[0].message.content
     if isinstance(content, list):
         content = "".join(part.get("text", "") if isinstance(part, dict) else str(part) for part in content)
@@ -520,4 +581,4 @@ def nl_to_dsl(prompt: str, document: EdaDocument, settings: Any) -> tuple[EdaCha
     for operation in candidate.operations:
         if (operation.target.uuid, operation.target.reference, operation.entity) not in valid:
             raise KicadDslError("LLM selected a component outside the supplied document")
-    return candidate, f"litellm:{settings.litellm_model}"
+    return candidate, route_mode
