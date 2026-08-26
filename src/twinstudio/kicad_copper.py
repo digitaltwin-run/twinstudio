@@ -126,43 +126,73 @@ def _segment_box_distance(
     )
 
 
+class Field:
+    """Miedź warstwy z indeksem prostokątów otaczających.
+
+    Dokładny test odległości odcinek-odcinek jest drogi, a router sprawdza
+    dziesiątki tysięcy odcinków. Odrzucenie po prostokącie otaczającym
+    eliminuje niemal wszystkie przeszkody czterema porównaniami.
+    """
+
+    __slots__ = ("items",)
+
+    def __init__(self, obstacles: Iterable[Obstacle]) -> None:
+        self.items: list[tuple[float, float, float, float, Obstacle]] = []
+        for obstacle in obstacles:
+            if isinstance(obstacle, Capsule):
+                box = (
+                    min(obstacle.ax, obstacle.bx) - obstacle.radius,
+                    min(obstacle.ay, obstacle.by) - obstacle.radius,
+                    max(obstacle.ax, obstacle.bx) + obstacle.radius,
+                    max(obstacle.ay, obstacle.by) + obstacle.radius,
+                )
+            else:
+                box = (obstacle.x0, obstacle.y0, obstacle.x1, obstacle.y1)
+            self.items.append((*box, obstacle))
+
+    def is_clear(self, track: Track, net: int, half_width: float, clearance: float) -> bool:
+        reach = half_width + clearance
+        low_x = min(track.x0, track.x1) - reach
+        high_x = max(track.x0, track.x1) + reach
+        low_y = min(track.y0, track.y1) - reach
+        high_y = max(track.y0, track.y1) + reach
+        for box_x0, box_y0, box_x1, box_y1, obstacle in self.items:
+            if box_x1 < low_x or box_x0 > high_x or box_y1 < low_y or box_y0 > high_y:
+                continue
+            if obstacle.net == net:
+                continue
+            if isinstance(obstacle, Capsule):
+                gap = _segment_distance(
+                    track.x0, track.y0, track.x1, track.y1,
+                    obstacle.ax, obstacle.ay, obstacle.bx, obstacle.by,
+                ) - half_width - obstacle.radius
+            else:
+                gap = _segment_box_distance(
+                    track.x0, track.y0, track.x1, track.y1, obstacle
+                ) - half_width
+            if gap < clearance:
+                return False
+        return True
+
+
 def track_is_clear(
     track: Track,
     net: int,
-    obstacles: Iterable[Obstacle],
+    obstacles: Iterable[Obstacle] | Field,
     half_width: float,
     clearance: float,
 ) -> bool:
     """Czy odcinek zachowuje `clearance` od każdej miedzi o innym necie."""
-    for obstacle in obstacles:
-        if obstacle.net == net:
-            continue
-        if isinstance(obstacle, Capsule):
-            gap = _segment_distance(
-                track.x0, track.y0, track.x1, track.y1,
-                obstacle.ax, obstacle.ay, obstacle.bx, obstacle.by,
-            ) - half_width - obstacle.radius
-        else:
-            gap = _segment_box_distance(
-                track.x0, track.y0, track.x1, track.y1, obstacle
-            ) - half_width
-        if gap < clearance:
-            return False
-    return True
+    field = obstacles if isinstance(obstacles, Field) else Field(obstacles)
+    return field.is_clear(track, net, half_width, clearance)
 
 
-def _obstacle_edges(obstacles: Iterable[Obstacle]) -> tuple[list[float], list[float]]:
+def _obstacle_edges(field: Field) -> tuple[list[float], list[float]]:
     xs: list[float] = []
     ys: list[float] = []
-    for obstacle in obstacles:
-        if isinstance(obstacle, Capsule):
-            xs += [min(obstacle.ax, obstacle.bx) - obstacle.radius,
-                   max(obstacle.ax, obstacle.bx) + obstacle.radius]
-            ys += [min(obstacle.ay, obstacle.by) - obstacle.radius,
-                   max(obstacle.ay, obstacle.by) + obstacle.radius]
-        else:
-            xs += [obstacle.x0, obstacle.x1]
-            ys += [obstacle.y0, obstacle.y1]
+    for box_x0, box_y0, box_x1, box_y1, _obstacle in field.items:
+        xs += [box_x0, box_x1]
+        ys += [box_y0, box_y1]
     return xs, ys
 
 
@@ -189,7 +219,7 @@ def route_edge(
     start: tuple[float, float],
     end: tuple[float, float],
     net: int,
-    obstacles: list[Obstacle],
+    obstacles: list[Obstacle] | Field,
     bounds: Bounds,
     width: float,
     clearance: float,
@@ -204,14 +234,33 @@ def route_edge(
     """
     px, py = start
     qx, qy = end
+    field = obstacles if isinstance(obstacles, Field) else Field(obstacles)
     half_width = width / 2.0
     offset = half_width + clearance
     margin = half_width
-    xs, ys = _obstacle_edges(obstacles)
+    xs, ys = _obstacle_edges(field)
     x_values = _candidates(xs, (px, qx), bounds.x0 + margin, bounds.x1 - margin, offset, 260)
     y_values = _candidates(ys, (py, qy), bounds.y0 + margin, bounds.y1 - margin, offset, 260)
 
-    def legs(x: float, y: float) -> list[Track]:
+    def clear(x0: float, y0: float, x1: float, y1: float) -> bool:
+        if abs(x0 - x1) <= _EPS and abs(y0 - y1) <= _EPS:
+            return True
+        return field.is_clear(Track(x0, y0, x1, y1), net, half_width, clearance)
+
+    # The first and last legs depend on a single variable, so reject the
+    # hopeless halves of the grid before pairing anything up.
+    y_values = [y for y in y_values if clear(px, py, px, y)]
+    x_values = [x for x in x_values if clear(x, qy, qx, qy)]
+    pairs = sorted(
+        ((abs(y - py) + abs(qy - y) + abs(x - px) + abs(qx - x), y, x)
+         for y in y_values for x in x_values),
+        key=lambda item: item[0],
+    )
+    for index, (_cost, y, x) in enumerate(pairs):
+        if index >= budget:
+            break
+        if not (clear(px, y, x, y) and clear(x, y, x, qy)):
+            continue
         raw = [
             Track(px, py, px, y),
             Track(px, y, x, y),
@@ -222,18 +271,6 @@ def route_edge(
             leg for leg in raw
             if abs(leg.x0 - leg.x1) > _EPS or abs(leg.y0 - leg.y1) > _EPS
         ]
-
-    pairs = sorted(
-        ((abs(y - py) + abs(qy - y) + abs(x - px) + abs(qx - x), y, x)
-         for y in y_values for x in x_values),
-        key=lambda item: item[0],
-    )
-    for index, (_cost, y, x) in enumerate(pairs):
-        if index >= budget:
-            break
-        path = legs(x, y)
-        if all(track_is_clear(leg, net, obstacles, half_width, clearance) for leg in path):
-            return path
     raise RoutingError(
         f"no clear rectilinear path from {start} to {end} on net {net}"
     )
@@ -250,6 +287,7 @@ def route_net(
     """Łączy wszystkie pady netu drzewem rozpinającym (Prim, metryka Manhattan)."""
     if len(terminals) < 2:
         return []
+    field = Field(obstacles)
     connected = [terminals[0]]
     pending = list(terminals[1:])
     tracks: list[Track] = []
@@ -262,7 +300,7 @@ def route_net(
         _distance, source_index, target_index = best
         target = pending.pop(target_index)
         tracks += route_edge(
-            connected[source_index], target, net, obstacles, bounds, width, clearance
+            connected[source_index], target, net, field, bounds, width, clearance
         )
         connected.append(target)
     return tracks

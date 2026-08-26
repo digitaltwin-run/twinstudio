@@ -12,6 +12,7 @@ from twinstudio.kicad_dsl import (
     MoveOperation,
     SetPropertyOperation,
     apply_changes,
+    apply_changes_with_repair,
     change_validation,
     eda_llm_status,
     inspect_file,
@@ -71,6 +72,19 @@ PCB_RJ45 = """(kicad_pcb (version 20221018) (generator pcbnew)
     (fp_text value "RP2040-Zero" (at 0 2) (layer "B.SilkS"))
     (pad "5V" smd rect (at -10.16 -8) (size 1.2 2) (layers "B.Cu"))
   )
+  (gr_line (start 100.00 60.00) (end 248.00 60.00) (layer "Edge.Cuts"))
+  (gr_line (start 248.00 60.00) (end 248.00 124.00) (layer "Edge.Cuts"))
+  (gr_line (start 248.00 124.00) (end 100.00 124.00) (layer "Edge.Cuts"))
+  (gr_line (start 100.00 124.00) (end 100.00 60.00) (layer "Edge.Cuts"))
+  (segment (start 140.000 85.000) (end 216.000 85.000) (width 0.35) (layer "B.Cu") (net 4))
+  (segment (start 216.000 85.000) (end 216.000 86.750) (width 0.35) (layer "B.Cu") (net 4))
+  (segment (start 216.000 86.750) (end 229.200 86.750) (width 0.35) (layer "B.Cu") (net 4))
+  (segment (start 122.500 92.000) (end 218.000 92.000) (width 0.35) (layer "B.Cu") (net 3))
+  (segment (start 218.000 92.000) (end 218.000 89.750) (width 0.35) (layer "B.Cu") (net 3))
+  (segment (start 218.000 89.750) (end 229.200 89.750) (width 0.35) (layer "B.Cu") (net 3))
+  (segment (start 140.000 99.000) (end 220.000 99.000) (width 0.35) (layer "B.Cu") (net 2))
+  (segment (start 220.000 99.000) (end 220.000 92.750) (width 0.35) (layer "B.Cu") (net 2))
+  (segment (start 220.000 92.750) (end 229.200 92.750) (width 0.35) (layer "B.Cu") (net 2))
 )\n"""
 
 
@@ -377,26 +391,73 @@ def test_nl_to_dsl_compiles_and_applies_rj45_connectivity_without_llm() -> None:
     prompt = "złącze RJ45 ma mase na pinach 1,3,5 a sygnaly na 2,4,6 i plus zaislania na 7 i 8"
 
     change, mode = nl_to_dsl(prompt, document, SimpleNamespace())
-    candidate = apply_changes(PCB_RJ45, change)
+    candidate, repair = apply_changes_with_repair(PCB_RJ45, change)
     updated = inspect_source(candidate, "panel.kicad_pcb")
     pads = {pad.number: pad.net for pad in updated.items[0].pads}
 
     assert mode == "deterministic:connectivity"
     assert len(change.operations) == 9
+    # Signals follow the copper already routed to pads 1/3/5, so repinning is a
+    # parallel 1.5 mm slide instead of three crossing tracks.
     assert pads == {
         "1": "GND",
-        "2": "ENC_A",
+        "2": "ENC_SW",
         "3": "GND",
         "4": "ENC_B",
         "5": "GND",
-        "6": "ENC_SW",
+        "6": "ENC_A",
         "7": "+5V",
         "8": "+5V",
     }
     u1 = next(item for item in updated.items if item.reference == "U1")
     assert {pad.number: pad.net for pad in u1.pads}["5V"] == "+5V"
     assert [(net.code, net.name) for net in updated.nets][-1] == (5, "+5V")
+    assert change_validation(change, repair)["codes"] == ["EDA_DRC_NOT_RUN"]
     assert change_validation(change)["codes"] == ["EDA_ROUTING_REQUIRED", "EDA_DRC_NOT_RUN"]
+
+
+def test_repinning_slides_the_stub_and_leaves_the_feeder_alone() -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    prompt = "złącze RJ45 ma mase na pinach 1,3,5 a sygnaly na 2,4,6 i plus zaislania na 7 i 8"
+
+    change, _mode = nl_to_dsl(prompt, document, SimpleNamespace())
+    candidate, repair = apply_changes_with_repair(PCB_RJ45, change)
+
+    assert [entry["to_pad"] for entry in repair["retargeted"]] == ["J1.2", "J1.4", "J1.6"]
+    # The stub ends on the new pad and its corner moved with it...
+    assert "(start 216 88.25) (end 229.2 88.25)" in candidate
+    assert "(start 216 85) (end 216 88.25)" in candidate
+    # ...while the long feeder that runs parallel to the shift stays put.
+    assert "(start 140.000 85.000) (end 216.000 85.000)" in candidate
+    assert "86.750" not in candidate
+
+
+def test_a_new_power_net_is_routed_between_its_pads() -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    prompt = "złącze RJ45 ma mase na pinach 1,3,5 a sygnaly na 2,4,6 i plus zaislania na 7 i 8"
+
+    change, _mode = nl_to_dsl(prompt, document, SimpleNamespace())
+    candidate, repair = apply_changes_with_repair(PCB_RJ45, change)
+    routed = repair["routed"][0]
+
+    assert routed["net"] == "+5V"
+    assert routed["layer"] == "B.Cu"
+    assert sorted(routed["pads"]) == ["J1.7", "J1.8", "U1.5V"]
+    # A rectilinear tree over three pads never needs more than five segments.
+    assert 0 < routed["segments"] <= 5
+    assert candidate.count('(layer "B.Cu") (net 5)') == routed["segments"]
+
+
+def test_routing_a_new_net_needs_a_board_outline() -> None:
+    without_outline = "\n".join(
+        line for line in PCB_RJ45.splitlines() if "Edge.Cuts" not in line
+    ) + "\n"
+    document = inspect_source(without_outline, "panel.kicad_pcb")
+    prompt = "złącze RJ45 ma mase na pinach 1,3,5 a sygnaly na 2,4,6 i plus zaislania na 7 i 8"
+
+    change, _mode = nl_to_dsl(prompt, document, SimpleNamespace())
+    with pytest.raises(KicadDslError, match="Edge.Cuts"):
+        apply_changes(without_outline, change)
 
 
 def test_subllm_rejects_an_unknown_component_identity(
