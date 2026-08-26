@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from twinstudio import kicad_dsl
 from twinstudio.kicad_dsl import (
     EdaChangeDocument,
     EdaTarget,
@@ -509,3 +510,40 @@ def test_subllm_rejects_an_unknown_component_identity(
 
     with pytest.raises(KicadDslError, match="outside the supplied document"):
         nl_to_dsl("przesuń R1 do x=120 y=75", document, settings)
+
+
+def test_a_rejected_llm_answer_keeps_what_was_rejected(
+    monkeypatch: pytest.MonkeyPatch
+) -> None:
+    document = inspect_source(SCH, "panel.kicad_sch")
+    monkeypatch.setattr(
+        kicad_dsl, "eda_litellm_route",
+        lambda settings: ({"model": "zai/glm-5.3"}, "zai/glm-5.3", False),
+    )
+    monkeypatch.setitem(sys.modules, "litellm", SimpleNamespace(
+        completion=lambda **kwargs: SimpleNamespace(choices=[SimpleNamespace(
+            message=SimpleNamespace(content='{"operations": "nie lista"}'))]),
+    ))
+
+    rejection: dict[str, object] = {}
+    _change, mode = kicad_dsl.nl_to_dsl(
+        "ustaw wartość R1 na 10k", document, SimpleNamespace(), diagnostics=rejection
+    )
+
+    # "ValidationError" alone says nothing about what to fix in the prompt.
+    assert mode.startswith("local-fallback:")
+    assert rejection["stage"] == "schema"
+    assert rejection["response"] == '{"operations": "nie lista"}'
+    assert "operations" in rejection["error"]
+
+
+def test_callers_that_do_not_ask_for_diagnostics_are_unaffected(
+    monkeypatch: pytest.MonkeyPatch
+) -> None:
+    document = inspect_source(SCH, "panel.kicad_sch")
+    monkeypatch.setattr(kicad_dsl, "eda_litellm_route", lambda settings: None)
+
+    change, mode = kicad_dsl.nl_to_dsl("ustaw wartość R1 na 10k", document, SimpleNamespace())
+
+    assert mode == "local"
+    assert change.operations

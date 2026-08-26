@@ -1187,8 +1187,11 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict
             "nie twórz planu.\n\n"
             f"Zadanie użytkownika: {body.prompt}"
         )
+    rejection: dict[str, Any] = {}
     try:
-        change, mode = nl_to_dsl(prompt, document, settings, body.context_sources)
+        change, mode = nl_to_dsl(
+            prompt, document, settings, body.context_sources, diagnostics=rejection
+        )
     except KicadDslError as exc:
         if body.project_id:
             _record_eda_event(
@@ -1226,6 +1229,9 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict
     if body.atomic and len(change.operations) != 1:
         raise HTTPException(status_code=422, detail="atomic EDA plan requires exactly one DSL operation")
     result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json")}
+    if rejection:
+        # Bez tego edytor wie tylko, że coś odrzucono, i nie ma czego poprawić.
+        result["rejected_response"] = rejection
     if body.project_id:
         event = _record_eda_event(
             body.project_id,

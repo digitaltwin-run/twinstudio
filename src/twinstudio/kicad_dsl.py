@@ -1472,7 +1472,16 @@ def nl_to_dsl(
     document: EdaDocument,
     settings: Any,
     context_sources: list[dict[str, Any]] | None = None,
+    diagnostics: dict[str, Any] | None = None,
 ) -> tuple[EdaChangeDocument, str]:
+    """Kompiluje prompt do DSL; `diagnostics` zbiera powód odrzucenia.
+
+    Gdy odpowiedź modelu nie przechodzi schematu, zostawała po niej sama
+    nazwa wyjątku — `local-fallback:…:ValidationError`. Nie dało się z tego
+    wywnioskować, czy model pomylił pole, czy odpowiedział prozą, więc
+    poprawianie promptu było zgadywaniem. Kto chce znać szczegół, podaje
+    słownik; reszta wywołań nic nie zmienia.
+    """
     if _requests_connectivity_edit(prompt):
         candidate = local_nl_to_dsl(prompt, document)
         return _finalize_llm_candidate(candidate, document, "deterministic:connectivity")
@@ -1523,6 +1532,10 @@ def nl_to_dsl(
             }
         response = completion(**kwargs)
     except Exception as exc:
+        if diagnostics is not None:
+            diagnostics.update({
+                "stage": "request", "route": route_mode, "error": str(exc)[:2000],
+            })
         candidate = local_nl_to_dsl(prompt, document)
         return candidate, f"local-fallback:{route_mode}:{type(exc).__name__}"
     content = response.choices[0].message.content
@@ -1531,6 +1544,13 @@ def nl_to_dsl(
     try:
         candidate = EdaChangeDocument.model_validate_json(str(content))
     except Exception as exc:
+        if diagnostics is not None:
+            diagnostics.update({
+                "stage": "schema",
+                "route": route_mode,
+                "error": str(exc)[:2000],
+                "response": str(content)[:4000],
+            })
         # ZAI's OpenAI-compatible endpoint cannot use response_format.  When it
         # nevertheless returns prose or an incomplete object, retain a useful
         # plan only if the deterministic, allow-listed compiler understands the
