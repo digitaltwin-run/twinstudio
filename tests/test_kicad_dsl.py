@@ -8,6 +8,7 @@ import pytest
 
 from twinstudio import kicad_dsl
 from twinstudio.kicad_dsl import (
+    AssignPadNetOperation,
     EdaChangeDocument,
     EdaTarget,
     KicadDslError,
@@ -73,6 +74,7 @@ PCB_RJ45 = """(kicad_pcb (version 20221018) (generator pcbnew)
     (fp_text reference "U1" (at 0 0) (layer "B.SilkS"))
     (fp_text value "RP2040-Zero" (at 0 2) (layer "B.SilkS"))
     (pad "5V" smd rect (at -10.16 -8) (size 1.2 2) (layers "B.Cu"))
+    (pad "GP11" smd rect (at 10.75 0) (size 2 1.2) (layers "B.Cu") (net 3 "ENC_B"))
   )
   (gr_line (start 100.00 60.00) (end 248.00 60.00) (layer "Edge.Cuts"))
   (gr_line (start 248.00 60.00) (end 248.00 124.00) (layer "Edge.Cuts"))
@@ -681,3 +683,125 @@ def test_a_keepout_diverts_the_router() -> None:
     ), "the route still crosses the keepout"
 
 
+
+
+def test_moving_a_signal_takes_a_clear_and_a_set_and_drags_the_copper() -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    change = EdaChangeDocument(
+        source=document.source,
+        prompt="przenieś ENC_SW z pada 1 na pad 2",
+        operations=[
+            AssignPadNetOperation(
+                op="assign_pad_net", target=EdaTarget(reference="J1"), pad="1", net="",
+            ),
+            AssignPadNetOperation(
+                op="assign_pad_net", target=EdaTarget(reference="J1"), pad="2", net="ENC_SW",
+            ),
+        ],
+    )
+
+    candidate, repair = apply_changes_with_repair(PCB_RJ45, change)
+    pads = {pad.number: pad.net for pad in inspect_source(candidate, "panel.kicad_pcb").items[0].pads}
+
+    # Adding a pad to a net was possible; taking one off was not, so a move
+    # doubled the net instead of relocating it and broke connectivity.
+    assert pads["1"] == ""
+    assert pads["2"] == "ENC_SW"
+    # The stub that ended on pad 1 has to follow the signal to pad 2.
+    assert [entry["to_pad"] for entry in repair["retargeted"]] == ["J1.2"]
+    assert "(start 216 88.25) (end 229.2 88.25)" in candidate
+
+
+def test_clearing_a_net_does_not_invent_one() -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    change = EdaChangeDocument(
+        source=document.source,
+        prompt="zdejmij sieć z pada 3",
+        operations=[AssignPadNetOperation(
+            op="assign_pad_net", target=EdaTarget(reference="J1"), pad="3", net="",
+        )],
+    )
+
+    candidate, _repair = apply_changes_with_repair(PCB_RJ45, change)
+
+    # An empty net must not be looked up, created, or written as a name.
+    assert candidate.count("(net ") < PCB_RJ45.count("(net ")
+
+
+PCB_REROUTE = """(kicad_pcb (version 20221018) (generator pcbnew)
+  (net 0 "")
+  (net 1 "SIG")
+  (footprint "local:HDR" (layer "B.Cu") (tstamp 22222222-3333-4444-5555-666666666666)
+    (at 120.000 100.000)
+    (fp_text reference "J9" (at 0 -6) (layer "B.SilkS"))
+    (fp_line (start -3.00 -3.00) (end 3.00 3.00) (layer "B.SilkS"))
+    (pad "1" smd rect (at 0 -2) (size 1 1) (layers "B.Cu") (net 1 "SIG"))
+    (pad "2" smd rect (at 0 2) (size 1 1) (layers "B.Cu"))
+  )
+  (footprint "local:HDR" (layer "B.Cu") (tstamp 33333333-4444-5555-6666-777777777777)
+    (at 180.000 100.000)
+    (fp_text reference "J8" (at 0 -6) (layer "B.SilkS"))
+    (fp_line (start -3.00 -3.00) (end 3.00 3.00) (layer "B.SilkS"))
+    (pad "1" smd rect (at 0 -2) (size 1 1) (layers "B.Cu") (net 1 "SIG"))
+    (pad "2" smd rect (at 0 2) (size 1 1) (layers "B.Cu"))
+  )
+  (gr_line (start 100.00 80.00) (end 200.00 80.00) (layer "Edge.Cuts"))
+  (gr_line (start 200.00 80.00) (end 200.00 130.00) (layer "Edge.Cuts"))
+  (gr_line (start 200.00 130.00) (end 100.00 130.00) (layer "Edge.Cuts"))
+  (gr_line (start 100.00 130.00) (end 100.00 80.00) (layer "Edge.Cuts"))
+  (segment (start 120.000 98.000) (end 180.000 98.000) (width 0.35) (layer "B.Cu") (net 1))
+)
+"""
+
+
+def test_a_move_too_far_to_slide_is_rerouted_not_refused() -> None:
+    document = inspect_source(PCB_REROUTE, "panel.kicad_pcb")
+    change = EdaChangeDocument(
+        source=document.source,
+        prompt="przenieś SIG z pada 1 na pad 2 w J8",
+        operations=[
+            AssignPadNetOperation(
+                op="assign_pad_net", target=EdaTarget(reference="J8"), pad="1", net="",
+            ),
+            AssignPadNetOperation(
+                op="assign_pad_net", target=EdaTarget(reference="J8"), pad="2", net="SIG",
+            ),
+        ],
+    )
+
+    candidate, repair = apply_changes_with_repair(PCB_REROUTE, change)
+
+    # Sliding the whole run down by 4 mm would drag it across J8's other pad.
+    # Refusing left a well-formed request with no way to carry it out, so the
+    # old copper is dropped and the net is laid again.
+    assert repair["rerouted"], "expected the net to be re-routed"
+    entry = repair["rerouted"][0]
+    assert entry["net"] == "SIG" and entry["removed_segments"] == 1
+    assert entry["segments"] > 0 and entry["length_mm"] > 0
+    assert "(start 120.000 98.000) (end 180.000 98.000)" not in candidate
+    pads = {
+        item.reference: {pad.number: pad.net for pad in item.pads}
+        for item in inspect_source(candidate, "panel.kicad_pcb").items
+    }
+    assert pads["J8"] == {"1": "", "2": "SIG"}
+
+
+def test_re_routing_that_has_no_solution_still_refuses() -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    change = EdaChangeDocument(
+        source=document.source,
+        prompt="przenieś ENC_B z pada 3 na pad 7",
+        operations=[
+            AssignPadNetOperation(
+                op="assign_pad_net", target=EdaTarget(reference="J1"), pad="3", net="",
+            ),
+            AssignPadNetOperation(
+                op="assign_pad_net", target=EdaTarget(reference="J1"), pad="7", net="ENC_B",
+            ),
+        ],
+    )
+
+    # J1's pad column blocks transit at that height, so there is genuinely no
+    # path. Saying so beats emitting copper that DRC would reject.
+    with pytest.raises(KicadDslError, match="cannot re-route"):
+        apply_changes_with_repair(PCB_RJ45, change)

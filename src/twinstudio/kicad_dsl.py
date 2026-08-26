@@ -117,7 +117,11 @@ class AssignPadNetOperation(DslModel):
     entity: Literal["footprint"] = "footprint"
     target: EdaTarget
     pad: str = Field(min_length=1, max_length=100)
-    net: str = Field(min_length=1, max_length=200)
+    # Pusty net czyści przypisanie. Bez tego pad dawało się do sieci dodać,
+    # ale nigdy z niej usunąć, więc przeniesienie sygnału na inne
+    # wyprowadzenie było niewyrażalne — a próba „przeniesienia" dokładała
+    # drugi pad do tej samej sieci i psuła łączność.
+    net: str = Field(default="", max_length=200)
     create_if_missing: bool = False
 
 
@@ -981,15 +985,9 @@ def _copper_repair(
             for track in tracks
         ]
 
-    if insertion:
-        anchors = [
-            value for value in root.values
-            if isinstance(value, _Node) and _head(value) in {"segment", "via"}
-        ]
-        position = anchors[-1].end if anchors else root.end - 1
-        replacements.append((position, position, insertion))
-
     # A repaired candidate must not be worse than what a human would draw.
+    rerouted: list[dict[str, Any]] = []
+    unsafe: set[tuple[int, str]] = set()
     moved_tracks = [item for item in segments if item.moved]
     if moved_tracks:
         for layer in {item.layer for item in moved_tracks}:
@@ -1002,11 +1000,64 @@ def _copper_repair(
                 if not track_is_clear(
                     track, item.net, obstacles, item.width / 2.0, _COPPER_CLEARANCE
                 ):
-                    raise KicadDslError(
-                        f"repinned track on net {net_names.get(item.net, item.net)!r} "
-                        f"would violate clearance on {layer}; route this net manually"
-                    )
-    return replacements, {"retargeted": retargeted, "routed": routed}
+                    unsafe.add((item.net, layer))
+
+    # Przesunięcie kikuta wystarcza, gdy pad przenosi się o kawałek w tym
+    # samym rzędzie. Gdy nowe wyprowadzenie leży gdzie indziej, translacja
+    # zwiera ścieżkę o sąsiadów — wtedy trzeba zdjąć starą miedź i poprowadzić
+    # sieć od nowa, zamiast odmawiać.
+    for net_code, layer in sorted(unsafe):
+        terminals = [
+            (site.x, site.y) for site in sites
+            if site.net_after == net_code and layer in site.layers
+        ]
+        if len(terminals) < 2:
+            raise KicadDslError(
+                f"repinned track on net {net_names.get(net_code, net_code)!r} "
+                f"would violate clearance on {layer}; route this net manually"
+            )
+        stale = [item for item in segments if item.net == net_code and item.layer == layer]
+        for item in stale:
+            if item.node is None:
+                continue
+            # Kikut mógł już dostać poprawki współrzędnych; usunięcie całego
+            # węzła je pochłania, więc muszą zniknąć, zanim nałożą się na
+            # siebie i zostaną odrzucone jako nakładające się operacje.
+            replacements = [
+                span for span in replacements
+                if not (span[0] >= item.node.start and span[1] <= item.node.end)
+            ]
+            replacements.append((item.node.start, item.node.end, ""))
+        segments = [item for item in segments if item not in stale]
+        width = _track_width(segments, layer) or _DEFAULT_TRACK_WIDTH
+        try:
+            tracks = route_net(
+                terminals, net_code, _obstacles(root, sites, segments, layer, net=net_code),
+                _board_bounds(root), width, _COPPER_CLEARANCE + _COPPER_MARGIN,
+            )
+        except RoutingError as exc:
+            raise KicadDslError(
+                f"cannot re-route net {net_names.get(net_code, net_code)!r} "
+                f"on {layer} after repinning: {exc}"
+            ) from exc
+        insertion += "".join(_new_track_text(track, net_code, layer, width) for track in tracks)
+        rerouted.append({
+            "net": net_names.get(net_code, str(net_code)),
+            "layer": layer,
+            "removed_segments": len(stale),
+            "segments": len(tracks),
+            "length_mm": round(
+                sum(math.hypot(item.x1 - item.x0, item.y1 - item.y0) for item in tracks), 3
+            ),
+        })
+    if insertion:
+        anchors = [
+            value for value in root.values
+            if isinstance(value, _Node) and _head(value) in {"segment", "via"}
+        ]
+        position = anchors[-1].end if anchors else root.end - 1
+        replacements.append((position, position, insertion))
+    return replacements, {"retargeted": retargeted, "routed": routed, "rerouted": rerouted}
 
 
 def apply_changes(source: str, document: EdaChangeDocument) -> str:
@@ -1033,7 +1084,9 @@ def apply_changes_with_repair(
         {
             operation.net
             for operation in document.operations
-            if isinstance(operation, AssignPadNetOperation) and operation.net not in net_codes
+            if isinstance(operation, AssignPadNetOperation)
+            and operation.net
+            and operation.net not in net_codes
         }
     )
     for net_name in missing_nets:
@@ -1101,9 +1154,15 @@ def apply_changes_with_repair(
                     f"target pad {operation.pad!r} matched {len(pads)} objects in the footprint"
                 )
             pad = pads[0]
+            current_net = _child(pad, "net")
+            if not operation.net:
+                # Czyszczenie: usuwamy węzeł sieci, pad zostaje bez przypisania.
+                pad_targets.append((pad, 0))
+                if current_net is not None:
+                    replacements.append((current_net.start, current_net.end, ""))
+                continue
             pad_targets.append((pad, net_codes[operation.net]))
             replacement = f"(net {net_codes[operation.net]} {json.dumps(operation.net)})"
-            current_net = _child(pad, "net")
             if current_net is None:
                 replacements.append((pad.end - 1, pad.end - 1, f" {replacement}"))
             else:
@@ -1671,7 +1730,13 @@ def nl_to_dsl(
         try:
             candidate = local_nl_to_dsl(prompt, document)
         except KicadDslError:
-            raise KicadDslError("LLM response does not conform to the strict EDA change schema") from exc
+            # Ta ścieżka gubiła diagnostykę: gdy kompilator lokalny też nie
+            # rozumiał zadania, zostawał komunikat bez śladu, co model zwrócił.
+            detail = str(exc).splitlines()[0][:200] if str(exc) else ""
+            raise KicadDslError(
+                "LLM response does not conform to the strict EDA change schema"
+                + (f" ({detail})" if detail else "")
+            ) from exc
         return _finalize_llm_candidate(
             candidate, document, f"local-fallback:{route_mode}:{type(exc).__name__}"
         )

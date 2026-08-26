@@ -1227,6 +1227,9 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict
                 "code": exc.code,
                 "message": str(exc),
                 "details": {"operation": "eda.nl2dsl", "retryable": False},
+                # Bez tego odmowa mówi tylko, że schemat czegoś nie przyjął,
+                # a nie czego — i poprawianie promptu znów jest zgadywaniem.
+                **({"rejected_response": rejection} if rejection else {}),
             },
         ) from exc
     if body.atomic and len(change.operations) != 1:
