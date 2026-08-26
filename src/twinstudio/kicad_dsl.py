@@ -242,11 +242,16 @@ _PCB_DRC_RULES: dict[str, tuple[str, str, str, str]] = {
     "via_dangling": ("EDA-PCB-VIA-001", "WARNING", "Przelotka nie ma potwierdzonego połączenia na obu warstwach.", "Połącz przelotkę z miedzią na wymaganych warstwach albo usuń ją, jeśli nie jest potrzebna."),
     "silk_over_copper": ("EDA-PCB-SILK-001", "WARNING", "Opis na warstwie silk nachodzi na obszar miedzi lub maski.", "Przesuń lub skróć opis silk poza pady i otwory maski."),
     "silk_edge_clearance": ("EDA-PCB-SILK-EDGE-001", "WARNING", "Opis silk jest zbyt blisko krawędzi płytki.", "Przesuń opis do środka obrysu Edge.Cuts zgodnie z wymaganiem produkcyjnym."),
+    "trace_under_part": ("EDA-PCB-TRACE-UNDER-PART-001", "ERROR", "Obca ścieżka przechodzi tranzytem pod obudową elementu wrażliwego na zwarcie.", "Poprowadź ścieżkę dookoła elementu albo przenieś sygnał na wyprowadzenie po tej samej stronie; miedź pod kopułką przycisku zwiera się przy montażu."),
     "lib_footprint_issues": ("EDA-PCB-FOOTPRINT-LIB-001", "WARNING", "Projekt odwołuje się do footprintów z biblioteki niedostępnej w bieżącej konfiguracji.", "Dodaj bibliotekę do tabeli footprintów albo zapisz footprinty lokalnie w projekcie."),
 }
 
 
-def pcb_state(document: EdaDocument, drc: dict[str, Any]) -> dict[str, Any]:
+def pcb_state(
+    document: EdaDocument,
+    drc: dict[str, Any],
+    geometry: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Explain KiCad DRC data and return a non-executable, approval-required repair draft."""
     if document.source.kind != "pcb":
         raise KicadDslError("pcb state requires a .kicad_pcb document")
@@ -276,6 +281,17 @@ def pcb_state(document: EdaDocument, drc: dict[str, Any]) -> dict[str, Any]:
             finding(category, count)
     if unconnected and "unconnected_items" not in categories:
         finding("unconnected_items", unconnected)
+    # Kontrola geometryczna liczona po stronie Viewera: DRC sprawdza odstępy
+    # i łączność, ale nigdy nie pyta, pod czym biegnie ścieżka.
+    under = (geometry or {}).get("traces_under_parts") or []
+    if under:
+        grouped: dict[str, set[str]] = {}
+        for item in under:
+            grouped.setdefault(str(item.get("reference", "?")), set()).add(str(item.get("net", "?")))
+        finding("trace_under_part", len(under))
+        findings[-1]["samples"] = [
+            f"{reference}: {', '.join(sorted(nets))}" for reference, nets in sorted(grouped.items())
+        ]
     blocking = any(item["severity"] == "ERROR" for item in findings)
     repair_steps = [f"{item['code']}: {item['remediation']}" for item in findings if item["severity"] == "ERROR"]
     if not repair_steps:
@@ -1502,8 +1518,16 @@ def nl_to_dsl(
     słownik; reszta wywołań nic nie zmienia.
     """
     if _requests_connectivity_edit(prompt):
-        candidate = local_nl_to_dsl(prompt, document)
-        return _finalize_llm_candidate(candidate, document, "deterministic:connectivity")
+        # Klasyfikator łapie każdą wzmiankę o padzie, pinie czy sieci, ale
+        # kompilator deterministyczny rozumie jeden kształt zdania. Gdy go nie
+        # rozpozna, prompt ma trafić do modelu — wcześniej kończył się błędem
+        # o R1 i SW1, a model nie był w ogóle pytany.
+        try:
+            candidate = local_nl_to_dsl(prompt, document)
+        except KicadDslError:
+            pass
+        else:
+            return _finalize_llm_candidate(candidate, document, "deterministic:connectivity")
     if _requests_routing_edit(prompt):
         raise KicadDslError(
             "Prowadzenie ścieżek nie należy do DSL v1 — dopuszcza on tylko "

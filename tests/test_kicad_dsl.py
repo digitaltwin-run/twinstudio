@@ -579,3 +579,41 @@ def test_a_pad_net_request_is_not_mistaken_for_routing(
     # Repinning does move copper, but through the deterministic repair - the
     # guard must not swallow it.
     assert mode == "deterministic:connectivity"
+
+
+def test_a_pad_prompt_the_compiler_cannot_read_reaches_the_model(
+    monkeypatch: pytest.MonkeyPatch
+) -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    asked: list[str] = []
+
+    def route(settings):
+        asked.append("route")
+        return None
+
+    monkeypatch.setattr(kicad_dsl, "eda_litellm_route", route)
+
+    # Mentions a pad, so the classifier claims it, but it is not the
+    # three-group sentence the deterministic compiler knows. It used to die
+    # with an error naming R1 and SW1 without the model ever being asked.
+    with pytest.raises(KicadDslError):
+        kicad_dsl.nl_to_dsl("przenieś sygnał z pada 1 na inne wyprowadzenie", document, SimpleNamespace())
+
+    assert asked == ["route"]
+
+
+def test_the_sentence_the_compiler_knows_still_never_costs_a_call(
+    monkeypatch: pytest.MonkeyPatch
+) -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    monkeypatch.setattr(
+        kicad_dsl, "eda_litellm_route",
+        lambda settings: pytest.fail("the deterministic path must answer this one"),
+    )
+
+    _change, mode = kicad_dsl.nl_to_dsl(
+        "złącze RJ45 ma mase na pinach 1,3,5 a sygnaly na 2,4,6 i plus zaislania na 7 i 8",
+        document, SimpleNamespace(),
+    )
+
+    assert mode == "deterministic:connectivity"

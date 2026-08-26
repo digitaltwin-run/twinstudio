@@ -373,6 +373,7 @@ class EdaAnalysisRequest(ApiModel):
 
 class EdaPcbAnalysisRequest(EdaAnalysisRequest):
     drc: dict[str, Any] = Field(default_factory=dict)
+    geometry: dict[str, Any] | None = None
 
 
 class EdaNetlistAnalysisRequest(EdaAnalysisRequest):
@@ -899,8 +900,10 @@ def _schematic_state(path: str) -> dict[str, Any]:
     return schematic_state(document, paired_board)
 
 
-def _pcb_state(path: str, drc: dict[str, Any]) -> dict[str, Any]:
-    return pcb_state(_eda_document(path, "pcb"), drc)
+def _pcb_state(
+    path: str, drc: dict[str, Any], geometry: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    return pcb_state(_eda_document(path, "pcb"), drc, geometry)
 
 
 def _ensure_eda_project(project_id: str, user: AuthPrincipal) -> None:
@@ -1067,7 +1070,7 @@ def eda_pcb_state(
     _user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     """Classify KiCad DRC facts without changing the audit history."""
-    return _pcb_state(body.path, body.drc)
+    return _pcb_state(body.path, body.drc, body.geometry)
 
 
 @app.post("/api/v1/projects/{project_id}/eda/pcb-state")
@@ -1077,7 +1080,7 @@ def record_eda_pcb_state(
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     """Record a user-requested PCB DRC analysis in the EDA audit stream."""
-    analysis = _pcb_state(body.path, body.drc)
+    analysis = _pcb_state(body.path, body.drc, body.geometry)
     event = _record_eda_event(
         project_id,
         user,
