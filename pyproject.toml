@@ -24,7 +24,8 @@ dependencies = [
   "httpx>=0.28,<1",
   "python-dotenv>=1.1,<2",
   "reportlab>=4,<5",
-  "svglib>=1.5,<1.6"
+  "svglib>=1.5,<1.6",
+  "CairoSVG>=2.7,<3"
 ]
 
 [project.optional-dependencies]

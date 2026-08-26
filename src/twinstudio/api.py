@@ -121,6 +121,16 @@ from twinstudio.observability import (
 )
 from twinstudio.permissions import PermissionDenied, require_permission
 from twinstudio.projector import ProjectNotFound
+from twinstudio.scad_dsl import (
+    ScadChangeDocument,
+    ScadDslError,
+    apply_scad_changes,
+    inspect_scad_file,
+    nl_to_scad_dsl,
+    resolve_scad_source,
+    validate_scad,
+    write_scad_candidate,
+)
 from twinstudio.seed import seed_from_file
 from twinstudio.selection_resolver import resolve_selection
 from twinstudio.settings import settings
@@ -131,6 +141,16 @@ from twinstudio.simulations import (
     simulate_thermal,
 )
 from twinstudio.specification import unified_specification
+from twinstudio.svg_dsl import (
+    SvgChangeDocument,
+    SvgDslError,
+    analyze_svg_with_llm,
+    apply_svg_changes,
+    inspect_svg_file,
+    nl_to_svg_dsl,
+    resolve_svg_source,
+    write_svg_candidate,
+)
 
 PROJECT_ROOT = settings.project_root
 STATIC_ROOT = Path(__file__).resolve().parent / "static"
@@ -336,6 +356,7 @@ class EdaNlRequest(ApiModel):
     expected_version: int | None = Field(default=None, ge=0)
     context_signature: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     context_sources: list[dict[str, Any]] = Field(default_factory=list, max_length=24)
+    atomic: bool = False
 
 
 class EdaAnalysisRequest(ApiModel):
@@ -358,6 +379,43 @@ class EdaSimulationAnalysisRequest(EdaAnalysisRequest):
 
 class EdaApplyRequest(ApiModel):
     document: EdaChangeDocument
+    dry_run: bool = True
+    project_id: str | None = Field(default=None, min_length=1, max_length=160)
+    expected_version: int | None = Field(default=None, ge=0)
+    correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
+    atomic: bool = False
+
+
+class SvgNlRequest(ApiModel):
+    path: str = Field(min_length=1, max_length=2000)
+    prompt: str = Field(min_length=1, max_length=30_000)
+    project_id: str | None = Field(default=None, min_length=1, max_length=160)
+    expected_version: int | None = Field(default=None, ge=0)
+
+
+class SvgApplyRequest(ApiModel):
+    document: SvgChangeDocument
+    dry_run: bool = True
+    project_id: str | None = Field(default=None, min_length=1, max_length=160)
+    expected_version: int | None = Field(default=None, ge=0)
+    correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
+
+
+class SvgAnalysisRequest(ApiModel):
+    path: str = Field(min_length=1, max_length=2000)
+    use_llm: bool = False
+    expected_version: int | None = Field(default=None, ge=0)
+
+
+class ScadNlRequest(ApiModel):
+    path: str = Field(min_length=1, max_length=2000)
+    prompt: str = Field(min_length=1, max_length=30_000)
+    project_id: str | None = Field(default=None, min_length=1, max_length=160)
+    expected_version: int | None = Field(default=None, ge=0)
+
+
+class ScadApplyRequest(ApiModel):
+    document: ScadChangeDocument
     dry_run: bool = True
     project_id: str | None = Field(default=None, min_length=1, max_length=160)
     expected_version: int | None = Field(default=None, ge=0)
@@ -1099,10 +1157,20 @@ def eda_nl2dsl(
 
 def _plan_eda(body: EdaNlRequest, user: AuthPrincipal) -> dict[str, Any]:
     document = _eda_document(body.path)
+    prompt = body.prompt
+    if body.atomic:
+        prompt = (
+            "Wykonaj dokładnie jedną atomową operację EDA. Nie łącz zmian i nie "
+            "zmieniaj niezwiązanych elementów. Jeśli zadanie wymaga wielu operacji, "
+            "nie twórz planu.\n\n"
+            f"Zadanie użytkownika: {body.prompt}"
+        )
     try:
-        change, mode = nl_to_dsl(body.prompt, document, settings, body.context_sources)
+        change, mode = nl_to_dsl(prompt, document, settings, body.context_sources)
     except KicadDslError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if body.atomic and len(change.operations) != 1:
+        raise HTTPException(status_code=422, detail="atomic EDA plan requires exactly one DSL operation")
     result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json")}
     if body.project_id:
         event = _record_eda_event(
@@ -1144,6 +1212,8 @@ def _apply_eda(
 ) -> dict[str, Any]:
     if expected_kind and body.document.source.kind != expected_kind:
         raise HTTPException(status_code=422, detail=f"expected a {expected_kind} change document")
+    if body.atomic and len(body.document.operations) != 1:
+        raise HTTPException(status_code=422, detail="atomic EDA apply requires exactly one DSL operation")
     try:
         source_path = resolve_source(settings.kicad_root, body.document.source.path)
         source = source_path.read_text(encoding="utf-8")
@@ -1274,6 +1344,247 @@ def project_apply_eda(
     return _apply_eda(body.model_copy(update={"project_id": project_id}), user)
 
 
+@app.get("/api/v1/svg2dsl")
+def svg2dsl(
+    path: str = Query(min_length=1, max_length=2000),
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Expose an allow-listed SVG document as typed, stable-target vector DSL."""
+    try:
+        return inspect_svg_file(settings.kicad_root, path).model_dump(mode="json")
+    except SvgDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+def _plan_svg(body: SvgNlRequest, user: AuthPrincipal) -> dict[str, Any]:
+    try:
+        document = inspect_svg_file(settings.kicad_root, body.path)
+        change, mode = nl_to_svg_dsl(body.prompt, document, settings)
+    except SvgDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json"), "atomic": True}
+    if body.project_id:
+        event = _record_eda_event(
+            body.project_id,
+            user,
+            "eda.change.plan",
+            {
+                "schema_id": "twinstudio.svg-event/change-planned/v1",
+                "source": change.source.model_dump(mode="json"),
+                "prompt": change.prompt,
+                "trigger": "user_prompt",
+                "mode": mode,
+                "operations": [item.model_dump(mode="json") for item in change.operations],
+            },
+            expected_version=body.expected_version,
+        )
+        result["history_event"] = _eda_event_json(event)
+    return result
+
+
+@app.post("/api/v1/svg/nl2dsl")
+def svg_nl2dsl(body: SvgNlRequest, user: AuthPrincipal = Depends(principal)) -> dict[str, Any]:
+    return _plan_svg(body, user)
+
+
+@app.post("/api/v1/projects/{project_id}/svg/nl2dsl")
+def project_svg_nl2dsl(
+    project_id: str, body: SvgNlRequest, user: AuthPrincipal = Depends(principal)
+) -> dict[str, Any]:
+    return _plan_svg(body.model_copy(update={"project_id": project_id}), user)
+
+
+def _analyze_svg(body: SvgAnalysisRequest) -> dict[str, Any]:
+    try:
+        source = resolve_svg_source(settings.kicad_root, body.path).read_text(encoding="utf-8")
+        return analyze_svg_with_llm(source, body.path, settings, use_llm=body.use_llm).model_dump(mode="json")
+    except (SvgDslError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/svg/analyze")
+def svg_analyze(body: SvgAnalysisRequest, _user: AuthPrincipal = Depends(principal)) -> dict[str, Any]:
+    """Visual/structural SVG audit. It is observation-only and never mutates SVG."""
+    return _analyze_svg(body)
+
+
+@app.post("/api/v1/projects/{project_id}/svg/analyze")
+def project_svg_analyze(
+    project_id: str, body: SvgAnalysisRequest, user: AuthPrincipal = Depends(principal)
+) -> dict[str, Any]:
+    analysis = _analyze_svg(body)
+    event = _record_eda_event(
+        project_id, user, "svg.analysis.record",
+        {"schema_id": "twinstudio.svg-event/analyzed/v1", "source": analysis["source"], "analysis": analysis},
+        expected_version=body.expected_version,
+    )
+    return {"analysis": analysis, "history_event": _eda_event_json(event)}
+
+
+def _apply_svg(body: SvgApplyRequest, user: AuthPrincipal) -> dict[str, Any]:
+    try:
+        source_path = resolve_svg_source(settings.kicad_root, body.document.source.path)
+        source = source_path.read_text(encoding="utf-8")
+        candidate = apply_svg_changes(source, body.document)
+    except (SvgDslError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
+    validation = {"status": "structurally_valid", "codes": [], "requires_routing": False, "svg_xml": "valid"}
+    if body.dry_run:
+        return {
+            "valid": True, "dry_run": True, "source_sha256": body.document.source.sha256,
+            "candidate_sha256": candidate_sha256, "changed": source != candidate,
+            "operations": len(body.document.operations), "validation": validation,
+        }
+    try:
+        output_root = settings.data_dir / "artifacts" / "kicad-edits"
+        manifest = write_svg_candidate(settings.kicad_root, output_root, body.document)
+    except (SvgDslError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    result: dict[str, Any] = {"valid": True, "dry_run": False, **manifest, "candidate_url": f"/api/v1/eda/candidates/{manifest['candidate_path']}"}
+    if body.project_id:
+        candidate_path = output_root / manifest["candidate_path"]
+        object_ref, _ = store_object(settings.data_dir, candidate_path)
+        revision = eda_revision_id(manifest["candidate_path"], manifest["candidate_sha256"])
+        identity = eda_artifact_id(body.project_id, body.document.source.path)
+        manifest.update({"project_id": body.project_id, "artifact_id": identity, "revision_id": revision, "object_ref": object_ref})
+        candidate_path.with_name("change.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        event = _record_eda_event(
+            body.project_id, user, "eda.candidate.record",
+            {
+                "schema_id": "twinstudio.svg-event/candidate-created/v1", "project_id": body.project_id,
+                "artifact_id": identity, "revision_id": revision, "source": body.document.source.model_dump(mode="json"),
+                "candidate_path": manifest["candidate_path"], "candidate_sha256": manifest["candidate_sha256"],
+                "object_ref": object_ref, "operations": manifest["operations"], "validation": manifest["validation"],
+            }, expected_version=body.expected_version, correlation_id=body.correlation_id,
+        )
+        source_ref, _ = store_object(settings.data_dir, source_path)
+        update_descriptor(settings.kicad_root, body.project_id, event.stream_version,
+                          source_path=body.document.source.path, source_sha256=body.document.source.sha256,
+                          revision=revision, object_ref=source_ref)
+        result.update(manifest)
+        result["history_event"] = _eda_event_json(event)
+    return result
+
+
+@app.post("/api/v1/svg/apply")
+def apply_svg(body: SvgApplyRequest, user: AuthPrincipal = Depends(principal)) -> dict[str, Any]:
+    return _apply_svg(body, user)
+
+
+@app.post("/api/v1/projects/{project_id}/svg/apply")
+def project_apply_svg(
+    project_id: str, body: SvgApplyRequest, user: AuthPrincipal = Depends(principal)
+) -> dict[str, Any]:
+    return _apply_svg(body.model_copy(update={"project_id": project_id}), user)
+
+
+@app.get("/api/v1/scad2dsl")
+def scad2dsl(
+    path: str = Query(min_length=1, max_length=2000),
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Expose only editable, top-level numeric OpenSCAD parameters."""
+    try:
+        return inspect_scad_file(settings.kicad_root, path).model_dump(mode="json")
+    except ScadDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+def _plan_scad(body: ScadNlRequest, user: AuthPrincipal) -> dict[str, Any]:
+    try:
+        document = inspect_scad_file(settings.kicad_root, body.path)
+        change, mode = nl_to_scad_dsl(body.prompt, document, settings)
+    except ScadDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json"), "atomic": True}
+    if body.project_id:
+        event = _record_eda_event(
+            body.project_id, user, "eda.change.plan",
+            {
+                "schema_id": "twinstudio.scad-event/change-planned/v1",
+                "source": change.source.model_dump(mode="json"), "prompt": change.prompt,
+                "trigger": "user_prompt", "mode": mode,
+                "operations": [item.model_dump(mode="json") for item in change.operations],
+            }, expected_version=body.expected_version,
+        )
+        result["history_event"] = _eda_event_json(event)
+    return result
+
+
+@app.post("/api/v1/scad/nl2dsl")
+def scad_nl2dsl(body: ScadNlRequest, user: AuthPrincipal = Depends(principal)) -> dict[str, Any]:
+    return _plan_scad(body, user)
+
+
+@app.post("/api/v1/projects/{project_id}/scad/nl2dsl")
+def project_scad_nl2dsl(
+    project_id: str, body: ScadNlRequest, user: AuthPrincipal = Depends(principal)
+) -> dict[str, Any]:
+    return _plan_scad(body.model_copy(update={"project_id": project_id}), user)
+
+
+def _apply_scad(body: ScadApplyRequest, user: AuthPrincipal) -> dict[str, Any]:
+    try:
+        source_path = resolve_scad_source(settings.kicad_root, body.document.source.path)
+        source = source_path.read_text(encoding="utf-8")
+        candidate = apply_scad_changes(source, body.document)
+        validation = validate_scad(candidate)
+    except (ScadDslError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
+    if body.dry_run:
+        return {
+            "valid": True, "dry_run": True, "source_sha256": body.document.source.sha256,
+            "candidate_sha256": candidate_sha256, "changed": source != candidate,
+            "operations": len(body.document.operations), "validation": validation,
+        }
+    try:
+        output_root = settings.data_dir / "artifacts" / "kicad-edits"
+        manifest = write_scad_candidate(settings.kicad_root, output_root, body.document)
+    except (ScadDslError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    result: dict[str, Any] = {
+        "valid": True, "dry_run": False, **manifest,
+        "candidate_url": f"/api/v1/eda/candidates/{manifest['candidate_path']}",
+    }
+    if body.project_id:
+        candidate_path = output_root / manifest["candidate_path"]
+        object_ref, _ = store_object(settings.data_dir, candidate_path)
+        revision = eda_revision_id(manifest["candidate_path"], manifest["candidate_sha256"])
+        identity = eda_artifact_id(body.project_id, body.document.source.path)
+        manifest.update({"project_id": body.project_id, "artifact_id": identity, "revision_id": revision, "object_ref": object_ref})
+        candidate_path.with_name("change.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        event = _record_eda_event(
+            body.project_id, user, "eda.candidate.record",
+            {
+                "schema_id": "twinstudio.scad-event/candidate-created/v1", "project_id": body.project_id,
+                "artifact_id": identity, "revision_id": revision, "source": body.document.source.model_dump(mode="json"),
+                "candidate_path": manifest["candidate_path"], "candidate_sha256": manifest["candidate_sha256"],
+                "object_ref": object_ref, "operations": manifest["operations"], "validation": manifest["validation"],
+            }, expected_version=body.expected_version, correlation_id=body.correlation_id,
+        )
+        source_ref, _ = store_object(settings.data_dir, source_path)
+        update_descriptor(settings.kicad_root, body.project_id, event.stream_version,
+                          source_path=body.document.source.path, source_sha256=body.document.source.sha256,
+                          revision=revision, object_ref=source_ref)
+        result.update(manifest)
+        result["history_event"] = _eda_event_json(event)
+    return result
+
+
+@app.post("/api/v1/scad/apply")
+def apply_scad(body: ScadApplyRequest, user: AuthPrincipal = Depends(principal)) -> dict[str, Any]:
+    return _apply_scad(body, user)
+
+
+@app.post("/api/v1/projects/{project_id}/scad/apply")
+def project_apply_scad(
+    project_id: str, body: ScadApplyRequest, user: AuthPrincipal = Depends(principal)
+) -> dict[str, Any]:
+    return _apply_scad(body.model_copy(update={"project_id": project_id}), user)
+
+
 @app.get("/api/v1/eda/candidates/{relative:path}")
 def eda_candidate(
     relative: str,
@@ -1295,7 +1606,11 @@ def _validated_candidate_decision(
         raise HTTPException(status_code=422, detail="candidate source is invalid")
     if manifest.get("project_id") not in {None, project_id}:
         raise HTTPException(status_code=422, detail="candidate belongs to another project")
-    source = resolve_source(settings.kicad_root, source_data["path"])
+    source_kind = source_data.get("kind")
+    try:
+        source = _resolve_editable_source(str(source_kind), source_data["path"])
+    except (KicadDslError, SvgDslError, ScadDslError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     source_hash = _hash_file(source)
     candidate_hash = _hash_file(candidate)
     if source_hash != body.source_sha256 or source_data.get("sha256") != body.source_sha256:
@@ -1307,6 +1622,14 @@ def _validated_candidate_decision(
     )
     identity = str(manifest.get("artifact_id") or eda_artifact_id(project_id, source_data["path"]))
     return candidate, source, manifest, revision, identity
+
+
+def _resolve_editable_source(kind: str, path: str) -> Path:
+    if kind == "svg":
+        return resolve_svg_source(settings.kicad_root, path)
+    if kind == "scad":
+        return resolve_scad_source(settings.kicad_root, path)
+    return resolve_source(settings.kicad_root, path)
 
 
 def _revision_events(project_id: str, revision: str) -> list[EventEnvelope]:
@@ -1503,7 +1826,7 @@ def promote_project_eda_candidate(
     body: EdaDecisionRequest,
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    candidate, source, _manifest, revision, identity = _validated_candidate_decision(project_id, body)
+    candidate, source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
     revision_events = _revision_events(project_id, revision)
     latest_decision = next(
         (event for event in reversed(revision_events) if event.event_type in {"EdaChangeAccepted", "EdaChangeRejected"}),
@@ -1535,6 +1858,7 @@ def promote_project_eda_candidate(
             "artifact_id": identity,
             "revision_id": revision,
             "path": source.relative_to(settings.kicad_root).as_posix(),
+            "source_kind": manifest.get("source", {}).get("kind"),
             "previous_sha256": body.source_sha256,
             "previous_object_ref": previous_ref,
             "promoted_sha256": body.candidate_sha256,
@@ -1568,7 +1892,12 @@ def revert_project_eda_revision(
     )
     if promotion is None:
         raise HTTPException(status_code=404, detail="promotion event not found")
-    source = resolve_source(settings.kicad_root, str(promotion.data["path"]))
+    try:
+        source = _resolve_editable_source(
+            str(promotion.data.get("source_kind") or ""), str(promotion.data["path"])
+        )
+    except (KicadDslError, SvgDslError, ScadDslError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     if _hash_file(source) != body.expected_current_sha256:
         raise HTTPException(status_code=409, detail="current artifact no longer matches the promoted revision")
     previous_ref = str(promotion.data["previous_object_ref"])
