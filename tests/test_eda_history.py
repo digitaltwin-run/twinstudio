@@ -203,6 +203,60 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     assert validate_hash_chain(log_entries) == []
 
 
+def test_project_candidate_can_be_deleted_without_erasing_audit_history(
+    tmp_path: Path, monkeypatch
+) -> None:
+    source_root = tmp_path / "project"
+    source_root.mkdir()
+    source = source_root / "panel.kicad_sch"
+    source.write_text(SCH, encoding="utf-8")
+    data_dir = tmp_path / "data"
+    local_store = EventStore(f"sqlite:///{tmp_path / 'events.db'}")
+    monkeypatch.setattr(api_module, "store", local_store)
+    monkeypatch.setattr(api_module, "queries", QueryService(local_store))
+    monkeypatch.setattr(api_module, "commands", CommandBus(local_store, NullPublisher()))
+    monkeypatch.setattr(
+        api_module,
+        "settings",
+        SimpleNamespace(kicad_root=source_root, data_dir=data_dir, litellm_model=""),
+    )
+    client = TestClient(api_module.app)
+    project_id = "delete-test"
+    planned = client.post(
+        f"/api/v1/projects/{project_id}/eda/nl2dsl",
+        json={"path": source.name, "prompt": "ustaw wartość R1 na 10k"},
+    )
+    created = client.post(
+        f"/api/v1/projects/{project_id}/eda/apply",
+        json={"document": planned.json()["document"], "dry_run": False},
+    ).json()
+    candidate = data_dir / "artifacts" / "kicad-edits" / created["candidate_path"]
+    preview = source_root / ".twinstudio" / "previews" / f"{created['candidate_sha256']}.png"
+    preview.parent.mkdir(parents=True)
+    preview.write_bytes(b"png")
+
+    deleted = client.post(
+        f"/api/v1/projects/{project_id}/eda/candidates/delete",
+        json={
+            "candidate_path": created["candidate_path"],
+            "source_sha256": sha(SCH),
+            "candidate_sha256": created["candidate_sha256"],
+            "reason": "cleanup",
+        },
+    )
+
+    assert deleted.status_code == 200, deleted.text
+    assert deleted.json()["event"]["event_type"] == "EdaCandidateDeleted"
+    assert not candidate.exists()
+    assert not preview.exists()
+    history = client.get(f"/api/v1/projects/{project_id}/eda/history").json()["events"]
+    assert [event["event_type"] for event in history][-2:] == [
+        "EdaCandidateCreated",
+        "EdaCandidateDeleted",
+    ]
+    assert history[-1]["data"]["candidate_sha256"] == created["candidate_sha256"]
+
+
 def test_legacy_sidecars_migrate_without_changing_source(tmp_path: Path, monkeypatch) -> None:
     source_root = tmp_path / "project"
     source_root.mkdir()

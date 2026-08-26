@@ -894,6 +894,24 @@ def _hash_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _candidate_hash_in_use(root: Path, candidate_sha256: str) -> bool:
+    for manifest_path in root.rglob("change.json"):
+        if any(part.startswith(".deleted-") for part in manifest_path.relative_to(root).parts):
+            continue
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            relative = manifest.get("candidate_path")
+        except (OSError, json.JSONDecodeError):
+            continue
+        if (
+            manifest.get("candidate_sha256") == candidate_sha256
+            and isinstance(relative, str)
+            and (root / relative).is_file()
+        ):
+            return True
+    return False
+
+
 @app.get("/api/v1/eda/documents")
 def eda_document(
     path: str = Query(min_length=1, max_length=2000),
@@ -1288,6 +1306,49 @@ def reject_project_eda_candidate(
         expected_version=body.expected_version,
     )
     return {"status": "rejected", "event": _eda_event_json(event)}
+
+
+@app.post("/api/v1/projects/{project_id}/eda/candidates/delete")
+def delete_project_eda_candidate(
+    project_id: str,
+    body: EdaDecisionRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
+    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    relative = candidate.relative_to(root)
+    revision_root = (root / relative.parts[0]).resolve()
+    if revision_root.parent != root or not revision_root.is_dir() or revision_root.is_symlink():
+        raise HTTPException(status_code=422, detail="candidate revision directory is invalid")
+    staged = root / f".deleted-{relative.parts[0]}-{uuid4().hex}"
+    os.replace(revision_root, staged)
+    try:
+        event = _record_eda_event(
+            project_id,
+            user,
+            "eda.candidate.delete",
+            {
+                "schema_id": "twinstudio.eda-event/candidate-deleted/v1",
+                "project_id": project_id,
+                "artifact_id": identity,
+                "revision_id": revision,
+                "candidate_path": body.candidate_path,
+                "path": manifest["source"]["path"],
+                "source_sha256": body.source_sha256,
+                "candidate_sha256": body.candidate_sha256,
+                "render_sha256": body.render_sha256,
+                "reason": body.reason,
+            },
+            expected_version=body.expected_version,
+        )
+    except Exception:
+        os.replace(staged, revision_root)
+        raise
+    shutil.rmtree(staged)
+    preview = settings.kicad_root / ".twinstudio" / "previews" / f"{body.candidate_sha256}.png"
+    if not _candidate_hash_in_use(root, body.candidate_sha256):
+        preview.unlink(missing_ok=True)
+    return {"status": "deleted", "event": _eda_event_json(event)}
 
 
 @app.post("/api/v1/projects/{project_id}/eda/candidates/promote")

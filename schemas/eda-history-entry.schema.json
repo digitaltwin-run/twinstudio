@@ -23,6 +23,7 @@
         "EdaPcbAnalyzed",
         "EdaValidationCompleted",
         "EdaCandidateCreated",
+        "EdaCandidateDeleted",
         "EdaChangeAccepted",
         "EdaChangeRejected",
         "EdaRevisionPromoted",

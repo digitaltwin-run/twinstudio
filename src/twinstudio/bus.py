@@ -194,6 +194,9 @@ class CommandBus:
             case "eda.candidate.record":
                 permission = "change.apply"
                 event_type, data = "EdaCandidateCreated", dict(payload)
+            case "eda.candidate.delete":
+                permission = "change.apply"
+                event_type, data = "EdaCandidateDeleted", dict(payload)
             case "eda.candidate.accept":
                 permission = "approval.grant"
                 event_type, data = "EdaChangeAccepted", dict(payload)

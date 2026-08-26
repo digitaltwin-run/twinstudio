@@ -55,6 +55,7 @@ class EdaHistoryEntry(HistoryModel):
         "EdaPcbAnalyzed",
         "EdaValidationCompleted",
         "EdaCandidateCreated",
+        "EdaCandidateDeleted",
         "EdaChangeAccepted",
         "EdaChangeRejected",
         "EdaRevisionPromoted",
@@ -74,6 +75,7 @@ EDA_EVENT_TYPES = {
     "EdaPcbAnalyzed",
     "EdaValidationCompleted",
     "EdaCandidateCreated",
+    "EdaCandidateDeleted",
     "EdaChangeAccepted",
     "EdaChangeRejected",
     "EdaRevisionPromoted",
@@ -229,6 +231,8 @@ def _event_code(data: dict[str, Any]) -> str | None:
 
 
 def _logs_outcome(event_type: str, data: dict[str, Any]) -> tuple[str, str, str]:
+    if event_type == "EdaCandidateDeleted":
+        return "SUCCEEDED", "deleted", "WARNING"
     if event_type == "EdaChangeRejected":
         return "REJECTED", "rejected", "WARNING"
     if event_type in {"EdaChangeAccepted", "EdaRevisionPromoted"}:
