@@ -218,6 +218,7 @@ def schematic_state(
 
 
 _PCB_DRC_RULES: dict[str, tuple[str, str, str, str]] = {
+    "drc_unavailable": ("EDA-PCB-DRC-001", "ERROR", "Nie uzyskano wiarygodnego raportu DRC z KiCad.", "Napraw środowisko KiCad/DRC i uruchom analizę ponownie przed utworzeniem kandydata."),
     "clearance": ("EDA-PCB-CLEARANCE-001", "ERROR", "Ścieżka lub pad różnych sieci nie zachowuje wymaganej przerwy izolacyjnej.", "Nie zmieniaj automatycznie netów. Przeprowadź ścieżkę ponownie, zachowaj regułę clearance i uruchom DRC."),
     "solder_mask_bridge": ("EDA-PCB-MASK-BRIDGE-001", "ERROR", "Otwory w masce lutowniczej różnych sieci łączą się.", "Zwiększ odstęp ścieżki od pada albo ustaw świadomie regułę maski; po zmianie uruchom DRC."),
     "unconnected_items": ("EDA-PCB-UNCONNECTED-001", "ERROR", "KiCad wykrył niepołączone elementy tej samej sieci.", "Porównaj PCB z netlistą SCH, poprowadź brakujące połączenia i zweryfikuj wynik przez DRC."),
