@@ -132,6 +132,34 @@ twinstudio dsl-preview examples/evolution/rpi5-hinge-evolution.twin --project-id
 twinstudio dsl-apply examples/evolution/rpi5-hinge-evolution.twin --project-id demo-rpi5 --execute
 ```
 
+### KiCad EDA shell and firmware audit
+
+The EDA commands use the same SubLLM policy as Viewer. `plan` produces a
+typed, approval-required change document; `check` validates it, and `apply`
+creates a candidate rather than changing the original KiCad file.
+
+```bash
+# Interactive SCH/PCB editor: write a prompt, then use :check and :apply.
+twinstudio eda shell pcb/panel9.kicad_sch
+
+# Non-interactive plan with the active SubLLM route (Z.AI GLM 5.3 first).
+twinstudio eda plan pcb/panel9.kicad_sch \
+  'Zmień wartość rezystora R1 na 68k. Nie zmieniaj innych elementów.' \
+  --out /tmp/r1-68k.json
+twinstudio eda check /tmp/r1-68k.json
+twinstudio eda apply /tmp/r1-68k.json
+
+# Deterministic GPIO facts + GLM-5.3 review. The schematic path is relative
+# to --kicad-root; firmware paths are explicit local files.
+twinstudio eda audit-firmware pcb/panel9.kicad_sch \
+  --firmware /home/tom/github/maskservice/rp2040-keyboard/rp2040_keyboard/firmware/code.py \
+  --firmware /home/tom/github/maskservice/rp2040-keyboard/rp2040_keyboard/firmware/generator.py
+```
+
+The firmware audit compares only explicit `GP/GPIO` labels. It reports missing
+or extra labels but cannot prove unlabeled wire continuity; run ERC or compare
+a KiCad netlist before treating it as an electrical sign-off.
+
 ### REST
 
 ```text

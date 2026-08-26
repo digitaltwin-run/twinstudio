@@ -67,6 +67,14 @@ and reports an explicit `local-fallback` mode. The source root is allow-listed b
 `TWINSTUDIO_KICAD_ROOT`; candidates are stored below
 `TWINSTUDIO_DATA_DIR/artifacts/kicad-edits`.
 
+The `twinstudio eda` CLI exposes the same adapter without an HTTP server:
+`inspect`, `plan`, `check`, `apply`, and an interactive `shell`. `apply` always
+writes a versioned candidate. `audit-firmware` uses the separately pinned
+SubLLM route `twinstudio/eda-firmware-audit` (Z.AI GLM 5.3) to review a
+deterministic comparison of `board.GP<n>` firmware use with explicit `GP/GPIO`
+schematic labels. It never claims that unlabeled wires are verified; use ERC or
+a KiCad netlist for that electrical proof.
+
 Artifact Viewer owns the editing UI and KiCad preview/export only. Maskservice
 Wiki owns discovery and links to Viewer. Neither service writes the source.
 

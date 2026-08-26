@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 from pathlib import Path
 from typing import Any
 
@@ -19,11 +20,21 @@ from twinstudio.dsl import (
     safe_parameter_patches,
     write_evolution_artifacts,
 )
+from twinstudio.eda_firmware_audit import audit_firmware
 from twinstudio.event_store import EventStore
 from twinstudio.evolution import ProjectEvolutionEngine, graph_to_dot, graph_to_mermaid
 from twinstudio.evolution_models import EvolutionRun, RealizationMode
 from twinstudio.feature_lenses import FeatureLensEngine
 from twinstudio.gtin import complete_gtin, validate_gtin
+from twinstudio.kicad_dsl import (
+    EdaChangeDocument,
+    KicadDslError,
+    apply_changes,
+    inspect_file,
+    nl_to_dsl,
+    resolve_source,
+    write_candidate,
+)
 from twinstudio.mqtt_bus import publisher_from_settings
 from twinstudio.seed import seed_from_file
 from twinstudio.settings import settings
@@ -35,6 +46,8 @@ app = typer.Typer(
         "The legacy executable name 'lps' remains a compatibility alias in version 0.5.0."
     )
 )
+eda_app = typer.Typer(help="Safe KiCad SCH/PCB inspection, LLM planning and firmware audit.")
+app.add_typer(eda_app, name="eda")
 
 
 def services() -> tuple[
@@ -88,6 +101,177 @@ def _record_command(
             payload=payload,
         )
     )
+
+
+def _eda_root(kicad_root: Path | None) -> Path:
+    root = (kicad_root or settings.kicad_root).expanduser().resolve()
+    if not root.is_dir():
+        raise typer.BadParameter(f"KiCad root does not exist: {root}")
+    return root
+
+
+def _eda_document(kicad_root: Path, source: str):
+    try:
+        path = resolve_source(kicad_root, source)
+        return inspect_file(kicad_root, source), path
+    except KicadDslError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+
+def _load_eda_change(source: Path) -> EdaChangeDocument:
+    try:
+        return EdaChangeDocument.model_validate_json(source.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise typer.BadParameter(f"Invalid EDA change document: {exc}") from exc
+
+
+@eda_app.command("inspect")
+def eda_inspect_cmd(
+    source: str = typer.Argument(..., help="Relative .kicad_sch or .kicad_pcb path."),
+    kicad_root: Path | None = typer.Option(None, "--kicad-root", file_okay=False),
+    out: Path | None = typer.Option(None, "--out"),
+) -> None:
+    """Inspect KiCad symbols or footprints as typed EDA DSL."""
+    document, _ = _eda_document(_eda_root(kicad_root), source)
+    _emit_json(document.model_dump(mode="json"), out)
+
+
+@eda_app.command("plan")
+def eda_plan_cmd(
+    source: str = typer.Argument(..., help="Relative .kicad_sch or .kicad_pcb path."),
+    prompt: str = typer.Argument(..., help="Natural-language, scoped change request."),
+    kicad_root: Path | None = typer.Option(None, "--kicad-root", file_okay=False),
+    out: Path | None = typer.Option(None, "--out", help="Write the typed change JSON."),
+) -> None:
+    """Compile an LLM-backed, approval-required KiCad change plan."""
+    document, _ = _eda_document(_eda_root(kicad_root), source)
+    try:
+        change, mode = nl_to_dsl(prompt, document, settings)
+    except KicadDslError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    _emit_json({"mode": mode, "document": change.model_dump(mode="json")}, out)
+
+
+@eda_app.command("check")
+def eda_check_cmd(
+    change: Path = typer.Argument(..., exists=True, dir_okay=False, readable=True),
+    kicad_root: Path | None = typer.Option(None, "--kicad-root", file_okay=False),
+) -> None:
+    """Validate a change JSON against the current source without writing files."""
+    root = _eda_root(kicad_root)
+    document = _load_eda_change(change)
+    try:
+        source = resolve_source(root, document.source.path)
+        apply_changes(source.read_text(encoding="utf-8"), document)
+    except (KicadDslError, OSError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    _emit_json({"valid": True, "source": document.source.model_dump(mode="json"), "operations": len(document.operations)})
+
+
+@eda_app.command("apply")
+def eda_apply_cmd(
+    change: Path = typer.Argument(..., exists=True, dir_okay=False, readable=True),
+    kicad_root: Path | None = typer.Option(None, "--kicad-root", file_okay=False),
+    artifact_dir: Path | None = typer.Option(None, "--artifact-dir"),
+) -> None:
+    """Write a versioned candidate from a validated change; never overwrite the source."""
+    root = _eda_root(kicad_root)
+    document = _load_eda_change(change)
+    output = artifact_dir or settings.data_dir / "artifacts" / "kicad-edits"
+    try:
+        result = write_candidate(root, output, document)
+    except (KicadDslError, OSError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    _emit_json(result)
+
+
+@eda_app.command("audit-firmware")
+def eda_audit_firmware_cmd(
+    source: str = typer.Argument(..., help="Relative .kicad_sch path."),
+    firmware: list[Path] = typer.Option(..., "--firmware", exists=True, dir_okay=False, readable=True),
+    prompt: str = typer.Option(
+        "Sprawdź zgodność GPIO firmware z jawnymi etykietami schematu; wskaż luki i ograniczenia.",
+        "--prompt",
+    ),
+    kicad_root: Path | None = typer.Option(None, "--kicad-root", file_okay=False),
+    no_llm: bool = typer.Option(False, "--no-llm", help="Only deterministic static audit."),
+    out: Path | None = typer.Option(None, "--out"),
+) -> None:
+    """Audit firmware GPIO against explicit KiCad schematic labels using SubLLM GLM-5.3."""
+    root = _eda_root(kicad_root)
+    document, source_path = _eda_document(root, source)
+    if document.source.kind != "schematic":
+        raise typer.BadParameter("firmware audit requires a .kicad_sch source")
+    report = audit_firmware(
+        document,
+        source_path.read_text(encoding="utf-8"),
+        firmware,
+        prompt,
+        settings,
+        review_with_llm=not no_llm,
+    )
+    _emit_json(report.model_dump(mode="json"), out)
+
+
+@eda_app.command("shell")
+def eda_shell_cmd(
+    source: str = typer.Argument(..., help="Relative .kicad_sch or .kicad_pcb path."),
+    kicad_root: Path | None = typer.Option(None, "--kicad-root", file_okay=False),
+    artifact_dir: Path | None = typer.Option(None, "--artifact-dir"),
+) -> None:
+    """Interactive LLM editor. Type a prompt, then use :check or :apply."""
+    root = _eda_root(kicad_root)
+    document, source_path = _eda_document(root, source)
+    candidate_dir = artifact_dir or settings.data_dir / "artifacts" / "kicad-edits"
+    change: EdaChangeDocument | None = None
+    typer.echo("EDA shell: prompt → typed plan; :check, :show, :apply, :inspect, :audit <firmware.py...>, :quit")
+    while True:
+        try:
+            line = input(f"twinstudio eda:{source}> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            typer.echo()
+            break
+        if not line:
+            continue
+        if line in {":quit", ":exit", "quit", "exit"}:
+            break
+        try:
+            if line == ":help":
+                typer.echo("Write a natural-language change. Commands: :inspect, :show, :check, :apply, :audit <firmware.py...>, :quit")
+            elif line == ":inspect":
+                _emit_json(document.model_dump(mode="json"))
+            elif line == ":show":
+                _emit_json(change.model_dump(mode="json") if change else {"plan": None})
+            elif line == ":check":
+                if not change:
+                    raise KicadDslError("create a plan first")
+                apply_changes(source_path.read_text(encoding="utf-8"), change)
+                typer.echo("OK: plan matches the current source; no file was written.")
+            elif line == ":apply":
+                if not change:
+                    raise KicadDslError("create a plan first")
+                _emit_json(write_candidate(root, candidate_dir, change))
+            elif line.startswith(":audit"):
+                if document.source.kind != "schematic":
+                    raise KicadDslError("firmware audit requires a schematic")
+                firmware_paths = [Path(item).expanduser().resolve() for item in shlex.split(line.removeprefix(":audit").strip())]
+                if not firmware_paths or any(not item.is_file() for item in firmware_paths):
+                    raise KicadDslError("usage: :audit /absolute/path/code.py [/absolute/path/generator.py]")
+                report = audit_firmware(
+                    document,
+                    source_path.read_text(encoding="utf-8"),
+                    firmware_paths,
+                    "Sprawdź zgodność GPIO firmware z jawnymi etykietami schematu.",
+                    settings,
+                )
+                _emit_json(report.model_dump(mode="json"))
+            elif line.startswith(":"):
+                raise KicadDslError("unknown EDA shell command; use :help")
+            else:
+                change, mode = nl_to_dsl(line, document, settings)
+                _emit_json({"mode": mode, "document": change.model_dump(mode="json")})
+        except (KicadDslError, OSError, ValueError) as exc:
+            typer.echo(f"Error: {exc}")
 
 
 @app.command()

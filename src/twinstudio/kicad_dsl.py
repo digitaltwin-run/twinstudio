@@ -499,11 +499,13 @@ def eda_llm_status(settings: Any) -> dict[str, Any]:
         }
 
 
-def _eda_litellm_route(settings: Any) -> tuple[dict[str, Any], str, bool] | None:
+def eda_litellm_route(
+    settings: Any, function: str | None = None
+) -> tuple[dict[str, Any], str, bool] | None:
     if getattr(settings, "subllm_enabled", False):
         from subllm import resolve
 
-        route = resolve(settings.subllm_application, settings.subllm_function)
+        route = resolve(settings.subllm_application, function or settings.subllm_function)
         if route.transport != "openai-compatible":
             raise KicadDslError(f"unsupported SubLLM transport: {route.transport}")
         return (
@@ -523,7 +525,7 @@ def _eda_litellm_route(settings: Any) -> tuple[dict[str, Any], str, bool] | None
 
 def nl_to_dsl(prompt: str, document: EdaDocument, settings: Any) -> tuple[EdaChangeDocument, str]:
     try:
-        resolved = _eda_litellm_route(settings)
+        resolved = eda_litellm_route(settings)
     except Exception as exc:
         return local_nl_to_dsl(prompt, document), f"local-fallback:subllm:{type(exc).__name__}"
     if resolved is None:

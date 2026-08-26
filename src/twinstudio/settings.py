@@ -75,6 +75,9 @@ class Settings:
     subllm_enabled: bool = _bool("TWINSTUDIO_SUBLLM_ENABLED", True)
     subllm_application: str = _env("TWINSTUDIO_SUBLLM_APPLICATION", default="twinstudio").strip()
     subllm_function: str = _env("TWINSTUDIO_SUBLLM_FUNCTION", default="eda-nl2dsl").strip()
+    subllm_audit_function: str = _env(
+        "TWINSTUDIO_SUBLLM_AUDIT_FUNCTION", default="eda-firmware-audit"
+    ).strip()
 
     mcp_allowed_origins: tuple[str, ...] = _csv(
         "MCP_ALLOWED_ORIGINS",
