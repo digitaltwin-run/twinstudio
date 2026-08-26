@@ -210,6 +210,14 @@ def _event_code(data: dict[str, Any]) -> str | None:
     for container in (data.get("analysis"), data.get("validation")):
         if not isinstance(container, dict):
             continue
+        findings = container.get("findings")
+        if isinstance(findings, list):
+            for finding in findings:
+                if not isinstance(finding, dict) or finding.get("severity") != "ERROR":
+                    continue
+                value = finding.get("code")
+                if isinstance(value, str):
+                    return LOG_CODE_ALIASES.get(value, value)
         codes = container.get("codes")
         if not isinstance(codes, list):
             continue
