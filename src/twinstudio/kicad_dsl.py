@@ -2,15 +2,19 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import shutil
+import uuid
 from collections import Counter
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Iterable, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from .kicad_copper import Bounds, Box, Capsule, Obstacle, RoutingError, Track, route_net, track_is_clear
 
 
 class KicadDslError(ValueError):
@@ -32,6 +36,10 @@ class EdaPad(DslModel):
     uuid: str = ""
     net: str = ""
     net_code: int = Field(default=0, ge=0)
+    # Offset within the footprint; the connectivity planner needs it to keep
+    # a repinned connector's net order aligned with the copper already routed.
+    x: float = 0.0
+    y: float = 0.0
 
 
 class EdaNet(DslModel):
@@ -429,11 +437,14 @@ def _fp_text(node: _Node, kind: str) -> str:
 def _pcb_pad(node: _Node) -> EdaPad:
     stamp = _child(node, "uuid") or _child(node, "tstamp")
     net = _child(node, "net")
+    at = _child(node, "at")
     return EdaPad(
         number=_text(node, 1),
         uuid=_text(stamp, 1) if stamp else "",
         net=_text(net, 2) if net else "",
         net_code=int(_text(net, 1, "0") or "0") if net else 0,
+        x=_number(at, 1) if at else 0.0,
+        y=_number(at, 2) if at else 0.0,
     )
 
 
@@ -537,7 +548,395 @@ def _format_number(value: float) -> str:
     return f"{value:.6f}".rstrip("0").rstrip(".") or "0"
 
 
+# KiCad's default netclass clearance; the router adds a margin on top so a
+# candidate never lands exactly on the limit that DRC then rounds against us.
+_COPPER_CLEARANCE = 0.2
+_COPPER_MARGIN = 0.05
+_DEFAULT_TRACK_WIDTH = 0.25
+_POINT_TOLERANCE = 1e-4
+_SLIDE_LIMIT = 16
+
+
+@dataclass(slots=True)
+class _PadSite:
+    node: _Node
+    number: str
+    reference: str
+    x: float
+    y: float
+    half_x: float
+    half_y: float
+    layers: tuple[str, ...]
+    footprint_index: int
+    net_before: int
+    net_after: int
+
+
+@dataclass(slots=True)
+class _SegmentSite:
+    node: _Node | None
+    layer: str
+    net: int
+    width: float
+    x0: float
+    y0: float
+    x1: float
+    y1: float
+    moved: bool = False
+
+
+def _rotate_offset(x: float, y: float, degrees: float) -> tuple[float, float]:
+    """KiCad rotates footprint children counter-clockwise on a y-down canvas."""
+    if not degrees:
+        return x, y
+    radians = math.radians(degrees)
+    cos, sin = math.cos(radians), math.sin(radians)
+    return x * cos + y * sin, -x * sin + y * cos
+
+
+def _node_layers(node: _Node) -> tuple[str, ...]:
+    layers = _child(node, "layers")
+    if layers is not None:
+        return tuple(
+            value.value for value in layers.values[1:] if isinstance(value, _Token)
+        )
+    single = _child(node, "layer")
+    return (_text(single, 1),) if single is not None else ()
+
+
+def _copper_layers(layers: Iterable[str]) -> set[str]:
+    return {layer for layer in layers if layer.endswith(".Cu")}
+
+
+def _same_point(ax: float, ay: float, bx: float, by: float) -> bool:
+    return abs(ax - bx) <= _POINT_TOLERANCE and abs(ay - by) <= _POINT_TOLERANCE
+
+
+def _pad_sites(root: _Node) -> list[_PadSite]:
+    sites: list[_PadSite] = []
+    for index, footprint in enumerate(_root_child_entities(root, "footprint")):
+        at = _child(footprint, "at")
+        origin_x, origin_y = (_number(at, 1), _number(at, 2)) if at else (0.0, 0.0)
+        rotation = _number(at, 3) if at else 0.0
+        reference = _fp_text(footprint, "reference")
+        for pad in (
+            value for value in footprint.values
+            if isinstance(value, _Node) and _head(value) == "pad"
+        ):
+            pad_at = _child(pad, "at")
+            local_x, local_y = (_number(pad_at, 1), _number(pad_at, 2)) if pad_at else (0.0, 0.0)
+            offset_x, offset_y = _rotate_offset(local_x, local_y, rotation)
+            size = _child(pad, "size")
+            width = _number(size, 1) if size else 0.0
+            height = _number(size, 2) if size else 0.0
+            spin = math.radians(rotation + (_number(pad_at, 3) if pad_at else 0.0))
+            net = _child(pad, "net")
+            code = int(_text(net, 1, "0") or "0") if net else 0
+            sites.append(
+                _PadSite(
+                    node=pad,
+                    number=_text(pad, 1),
+                    reference=reference,
+                    x=origin_x + offset_x,
+                    y=origin_y + offset_y,
+                    # Bounding box of the rotated pad: never smaller than the pad.
+                    half_x=(abs(width * math.cos(spin)) + abs(height * math.sin(spin))) / 2.0,
+                    half_y=(abs(width * math.sin(spin)) + abs(height * math.cos(spin))) / 2.0,
+                    layers=_node_layers(pad),
+                    footprint_index=index,
+                    net_before=code,
+                    net_after=code,
+                )
+            )
+    return sites
+
+
+def _segment_sites(root: _Node) -> list[_SegmentSite]:
+    sites: list[_SegmentSite] = []
+    for node in (value for value in root.values if isinstance(value, _Node)):
+        if _head(node) != "segment":
+            continue
+        start, end = _child(node, "start"), _child(node, "end")
+        layer, net, width = _child(node, "layer"), _child(node, "net"), _child(node, "width")
+        if start is None or end is None or layer is None:
+            continue
+        sites.append(
+            _SegmentSite(
+                node=node,
+                layer=_text(layer, 1),
+                net=int(_text(net, 1, "0") or "0") if net else 0,
+                width=_number(width, 1, _DEFAULT_TRACK_WIDTH) if width else _DEFAULT_TRACK_WIDTH,
+                x0=_number(start, 1),
+                y0=_number(start, 2),
+                x1=_number(end, 1),
+                y1=_number(end, 2),
+            )
+        )
+    return sites
+
+
+def _via_obstacles(root: _Node, layer: str) -> list[Obstacle]:
+    obstacles: list[Obstacle] = []
+    for node in (value for value in root.values if isinstance(value, _Node)):
+        if _head(node) != "via" or layer not in _node_layers(node):
+            continue
+        at, size, net = _child(node, "at"), _child(node, "size"), _child(node, "net")
+        if at is None:
+            continue
+        x, y = _number(at, 1), _number(at, 2)
+        radius = (_number(size, 1, 0.8) if size else 0.8) / 2.0
+        obstacles.append(
+            Capsule(
+                net=int(_text(net, 1, "0") or "0") if net else 0,
+                ax=x, ay=y, bx=x, by=y, radius=radius,
+            )
+        )
+    return obstacles
+
+
+def _board_bounds(root: _Node) -> Bounds:
+    xs: list[float] = []
+    ys: list[float] = []
+    for node in (value for value in root.values if isinstance(value, _Node)):
+        if _head(node) not in {"gr_line", "gr_rect"} or "Edge.Cuts" not in _node_layers(node):
+            continue
+        for corner in ("start", "end"):
+            point = _child(node, corner)
+            if point is not None:
+                xs.append(_number(point, 1))
+                ys.append(_number(point, 2))
+    if not xs or not ys:
+        raise KicadDslError("PCB has no Edge.Cuts outline; cannot bound the router")
+    return Bounds(x0=min(xs), y0=min(ys), x1=max(xs), y1=max(ys))
+
+
+def _track_width(segments: list[_SegmentSite], layer: str) -> float:
+    widths = Counter(item.width for item in segments if item.layer == layer)
+    return widths.most_common(1)[0][0] if widths else _DEFAULT_TRACK_WIDTH
+
+
+def _obstacles(
+    root: _Node, sites: list[_PadSite], segments: list[_SegmentSite], layer: str
+) -> list[Obstacle]:
+    obstacles: list[Obstacle] = _via_obstacles(root, layer)
+    obstacles += [
+        Capsule(net=item.net, ax=item.x0, ay=item.y0, bx=item.x1, by=item.y1,
+                radius=item.width / 2.0)
+        for item in segments
+        if item.layer == layer
+    ]
+    obstacles += [
+        Box(net=site.net_after, x0=site.x - site.half_x, y0=site.y - site.half_y,
+            x1=site.x + site.half_x, y1=site.y + site.half_y)
+        for site in sites
+        if layer in site.layers
+    ]
+    return obstacles
+
+
+def _slide_stub(
+    site: _PadSite, home: _PadSite, segments: list[_SegmentSite], layer: str
+) -> int:
+    """Przesuwa kikut ścieżki z opuszczonego pada na jego nowy pad.
+
+    Sam koniec ścieżki przeniósłby ją na skos; dlatego wraz z nim jedzie
+    każdy sąsiedni wierzchołek, dla którego przesunięcie złamałoby oś
+    odcinka. Bieg zatrzymuje się na pierwszym odcinku równoległym do
+    przesunięcia, więc długi feeder zostaje na miejscu.
+    """
+    delta_x, delta_y = home.x - site.x, home.y - site.y
+    vertices: list[tuple[float, float]] = [(site.x, site.y)]
+    candidates = [item for item in segments if item.net == site.net_before and item.layer == layer]
+    changed = True
+    while changed:
+        changed = False
+        for item in candidates:
+            head = any(_same_point(item.x0, item.y0, x, y) for x, y in vertices)
+            tail = any(_same_point(item.x1, item.y1, x, y) for x, y in vertices)
+            if head == tail:
+                continue
+            horizontal = abs(item.y0 - item.y1) <= _POINT_TOLERANCE
+            vertical = abs(item.x0 - item.x1) <= _POINT_TOLERANCE
+            parallel = (
+                (horizontal and abs(delta_y) <= _POINT_TOLERANCE)
+                or (vertical and abs(delta_x) <= _POINT_TOLERANCE)
+            )
+            if parallel or not (horizontal or vertical):
+                continue
+            far = (item.x1, item.y1) if head else (item.x0, item.y0)
+            if any(_same_point(far[0], far[1], x, y) for x, y in vertices):
+                continue
+            if len(vertices) >= _SLIDE_LIMIT:
+                raise KicadDslError(
+                    f"repinning {site.reference}.{site.number} would drag more than "
+                    f"{_SLIDE_LIMIT} track vertices; route this net manually"
+                )
+            vertices.append(far)
+            changed = True
+    touched = 0
+    for item in candidates:
+        for attribute_x, attribute_y in (("x0", "y0"), ("x1", "y1")):
+            x, y = getattr(item, attribute_x), getattr(item, attribute_y)
+            if any(_same_point(x, y, vx, vy) for vx, vy in vertices):
+                setattr(item, attribute_x, x + delta_x)
+                setattr(item, attribute_y, y + delta_y)
+                item.moved = True
+                touched += 1
+    return touched
+
+
+def _new_track_text(track: Track, net: int, layer: str, width: float) -> str:
+    identity = uuid.uuid5(
+        uuid.NAMESPACE_URL,
+        f"twinstudio:track:{net}:{layer}:{track.x0},{track.y0},{track.x1},{track.y1}",
+    )
+    return (
+        f"\n  (segment (start {_format_number(track.x0)} {_format_number(track.y0)})"
+        f" (end {_format_number(track.x1)} {_format_number(track.y1)})"
+        f" (width {_format_number(width)}) (layer {json.dumps(layer)})"
+        f" (net {net}) (tstamp {identity}))"
+    )
+
+
+def _copper_repair(
+    root: _Node,
+    pad_targets: list[tuple[_Node, int]],
+    created_nets: dict[int, str],
+    net_names: dict[int, str],
+) -> tuple[list[tuple[int, int, str]], dict[str, Any]]:
+    """Doprowadza miedź do zgodności z nowym przypisaniem netów na padach."""
+    sites = _pad_sites(root)
+    by_node = {id(site.node): site for site in sites}
+    for node, code in pad_targets:
+        site = by_node.get(id(node))
+        if site is not None:
+            site.net_after = code
+    segments = _segment_sites(root)
+    retargeted: list[dict[str, Any]] = []
+
+    for site in sites:
+        if site.net_after == site.net_before or not site.net_before:
+            continue
+        homes = [
+            other for other in sites
+            if other.footprint_index == site.footprint_index
+            and other.net_after == site.net_before
+            and other.net_before != site.net_before
+        ]
+        if len(homes) != 1:
+            continue
+        home = homes[0]
+        for layer in _copper_layers(site.layers) & _copper_layers(home.layers):
+            stubs = [
+                item for item in segments
+                if item.net == site.net_before and item.layer == layer
+                and (_same_point(item.x0, item.y0, site.x, site.y)
+                     or _same_point(item.x1, item.y1, site.x, site.y))
+            ]
+            if not stubs:
+                continue
+            touched = _slide_stub(site, home, segments, layer)
+            retargeted.append({
+                "net": net_names.get(site.net_before, str(site.net_before)),
+                "from_pad": f"{site.reference}.{site.number}",
+                "to_pad": f"{home.reference}.{home.number}",
+                "layer": layer,
+                "vertices": touched,
+            })
+
+    replacements: list[tuple[int, int, str]] = []
+    for item in segments:
+        if not item.moved:
+            continue
+        start, end = _child(item.node, "start"), _child(item.node, "end")
+        replacements.append((start.start, start.end,
+                             f"(start {_format_number(item.x0)} {_format_number(item.y0)})"))
+        replacements.append((end.start, end.end,
+                             f"(end {_format_number(item.x1)} {_format_number(item.y1)})"))
+
+    routed: list[dict[str, Any]] = []
+    insertion = ""
+    bounds: Bounds | None = None
+    for code, name in sorted(created_nets.items()):
+        terminals = [site for site in sites if site.net_after == code]
+        if len(terminals) < 2:
+            continue
+        layers = set.intersection(*(_copper_layers(site.layers) for site in terminals))
+        if len(layers) != 1:
+            raise KicadDslError(
+                f"net {name!r} spans {len(layers)} shared copper layers; "
+                "a via plan is outside the deterministic router"
+            )
+        layer = layers.pop()
+        if bounds is None:
+            bounds = _board_bounds(root)
+        width = _track_width(segments, layer)
+        obstacles = _obstacles(root, sites, segments, layer)
+        try:
+            tracks = route_net(
+                [(site.x, site.y) for site in terminals],
+                code,
+                obstacles,
+                bounds,
+                width,
+                _COPPER_CLEARANCE + _COPPER_MARGIN,
+            )
+        except RoutingError as exc:
+            raise KicadDslError(
+                f"cannot auto-route new net {name!r} on {layer}: {exc}"
+            ) from exc
+        for track in tracks:
+            insertion += _new_track_text(track, code, layer, width)
+        routed.append({
+            "net": name,
+            "layer": layer,
+            "pads": [f"{site.reference}.{site.number}" for site in terminals],
+            "segments": len(tracks),
+            "length_mm": round(
+                sum(math.hypot(item.x1 - item.x0, item.y1 - item.y0) for item in tracks), 3
+            ),
+        })
+        segments += [
+            _SegmentSite(node=None, layer=layer, net=code, width=width,
+                         x0=track.x0, y0=track.y0, x1=track.x1, y1=track.y1)
+            for track in tracks
+        ]
+
+    if insertion:
+        anchors = [
+            value for value in root.values
+            if isinstance(value, _Node) and _head(value) in {"segment", "via"}
+        ]
+        position = anchors[-1].end if anchors else root.end - 1
+        replacements.append((position, position, insertion))
+
+    # A repaired candidate must not be worse than what a human would draw.
+    moved_tracks = [item for item in segments if item.moved]
+    if moved_tracks:
+        for layer in {item.layer for item in moved_tracks}:
+            obstacles = _obstacles(root, sites, segments, layer)
+            width = _track_width(segments, layer)
+            for item in moved_tracks:
+                if item.layer != layer:
+                    continue
+                track = Track(item.x0, item.y0, item.x1, item.y1)
+                if not track_is_clear(
+                    track, item.net, obstacles, item.width / 2.0, _COPPER_CLEARANCE
+                ):
+                    raise KicadDslError(
+                        f"repinned track on net {net_names.get(item.net, item.net)!r} "
+                        f"would violate clearance on {layer}; route this net manually"
+                    )
+    return replacements, {"retargeted": retargeted, "routed": routed}
+
+
 def apply_changes(source: str, document: EdaChangeDocument) -> str:
+    return apply_changes_with_repair(source, document)[0]
+
+
+def apply_changes_with_repair(
+    source: str, document: EdaChangeDocument
+) -> tuple[str, dict[str, Any]]:
     if _sha256(source) != document.source.sha256:
         raise KicadDslError("source hash changed; refresh sch2dsl/pcb2dsl before applying")
     parsed = inspect_source(source, document.source.path)
@@ -545,6 +944,8 @@ def apply_changes(source: str, document: EdaChangeDocument) -> str:
         raise KicadDslError("DSL source kind does not match the KiCad file")
     root = _parse(source)
     replacements: list[tuple[int, int, str]] = []
+    pad_targets: list[tuple[_Node, int]] = []
+    created_nets: dict[int, str] = {}
     net_nodes = [
         value for value in root.values if isinstance(value, _Node) and _head(value) == "net"
     ]
@@ -571,6 +972,7 @@ def apply_changes(source: str, document: EdaChangeDocument) -> str:
         insertion = ""
         for net_name in missing_nets:
             net_codes[net_name] = next_code
+            created_nets[next_code] = net_name
             insertion += f"\n  (net {next_code} {json.dumps(net_name)})"
             next_code += 1
         replacements.append((net_nodes[-1].end, net_nodes[-1].end, insertion))
@@ -620,18 +1022,28 @@ def apply_changes(source: str, document: EdaChangeDocument) -> str:
                     f"target pad {operation.pad!r} matched {len(pads)} objects in the footprint"
                 )
             pad = pads[0]
+            pad_targets.append((pad, net_codes[operation.net]))
             replacement = f"(net {net_codes[operation.net]} {json.dumps(operation.net)})"
             current_net = _child(pad, "net")
             if current_net is None:
                 replacements.append((pad.end - 1, pad.end - 1, f" {replacement}"))
             else:
                 replacements.append((current_net.start, current_net.end, replacement))
+    repair: dict[str, Any] = {"retargeted": [], "routed": []}
+    if parsed.source.kind == "pcb" and pad_targets:
+        extra, repair = _copper_repair(
+            root,
+            pad_targets,
+            created_nets,
+            {code: name for name, code in net_codes.items()},
+        )
+        replacements += extra
     spans = sorted(replacements, reverse=True)
     for index, (start, end, replacement) in enumerate(spans):
         if index and end > spans[index - 1][0]:
             raise KicadDslError("overlapping operations are not allowed")
         source = source[:start] + replacement + source[end:]
-    return source
+    return source, repair
 
 
 def resolve_source(root: Path, relative: str) -> Path:
@@ -651,16 +1063,21 @@ def inspect_file(root: Path, relative: str) -> EdaDocument:
     return inspect_source(path.read_text(encoding="utf-8"), relative)
 
 
-def change_validation(document: EdaChangeDocument) -> dict[str, Any]:
+def change_validation(
+    document: EdaChangeDocument, repair: dict[str, Any] | None = None
+) -> dict[str, Any]:
     connectivity_changed = any(
         isinstance(operation, AssignPadNetOperation) for operation in document.operations
     )
     if connectivity_changed:
+        repaired = bool(repair and (repair.get("retargeted") or repair.get("routed")))
         return {
             "status": "requires_follow_up",
-            "codes": ["EDA_ROUTING_REQUIRED", "EDA_DRC_NOT_RUN"],
-            "requires_routing": True,
+            "codes": ["EDA_DRC_NOT_RUN"] if repaired else
+                     ["EDA_ROUTING_REQUIRED", "EDA_DRC_NOT_RUN"],
+            "requires_routing": not repaired,
             "drc": "not_run",
+            "copper_repair": repair or {"retargeted": [], "routed": []},
         }
     return {
         "status": "structurally_valid",
@@ -673,7 +1090,7 @@ def change_validation(document: EdaChangeDocument) -> dict[str, Any]:
 def write_candidate(root: Path, output_root: Path, document: EdaChangeDocument) -> dict[str, Any]:
     path = resolve_source(root, document.source.path)
     original = path.read_text(encoding="utf-8")
-    candidate = apply_changes(original, document)
+    candidate, repair = apply_changes_with_repair(original, document)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     digest = _sha256(candidate)[:12]
     relative = Path(document.source.path)
@@ -691,7 +1108,8 @@ def write_candidate(root: Path, output_root: Path, document: EdaChangeDocument) 
         "candidate_sha256": _sha256(candidate),
         "candidate_path": target.relative_to(output_root).as_posix(),
         "operations": [item.model_dump(mode="json") for item in document.operations],
-        "validation": change_validation(document),
+        "validation": change_validation(document, repair),
+        "copper_repair": repair,
         "created_at": datetime.now(UTC).isoformat(),
     }
     (target_dir / "change.json").write_text(
@@ -729,6 +1147,36 @@ def _pin_group(prompt: str, label_pattern: str) -> list[str]:
     return re.findall(r"\d+", match.group(1)) if match else []
 
 
+def _order_signal_nets(
+    nets: list[str], pads: list[str], item: EdaItem
+) -> list[str]:
+    """Układa sieci sygnałowe zgodnie z geometrią już poprowadzonej miedzi.
+
+    Kolejność deklaracji ("ENC_A, ENC_B, ENC_SW") jest przypadkowa wobec
+    płytki. Jeśli każdą z tych sieci widać dziś na dokładnie jednym padzie
+    złącza, przypisujemy je do nowych pinów w tej samej kolejności wzdłuż
+    rzędu padów — wtedy przepięcie jest równoległym przesunięciem kikutów
+    zamiast krzyżowania ścieżek.
+    """
+    pad_by_number = {pad.number: pad for pad in item.pads}
+    origins: dict[str, EdaPad] = {}
+    for net in nets:
+        carriers = [pad for pad in item.pads if pad.net == net]
+        if len(carriers) != 1:
+            return nets
+        origins[net] = carriers[0]
+    involved = [origins[net] for net in nets] + [pad_by_number[number] for number in pads]
+    spread_x = max(pad.x for pad in involved) - min(pad.x for pad in involved)
+    spread_y = max(pad.y for pad in involved) - min(pad.y for pad in involved)
+    axis = (lambda pad: pad.x) if spread_x >= spread_y else (lambda pad: pad.y)
+    pad_order = sorted(range(len(pads)), key=lambda index: axis(pad_by_number[pads[index]]))
+    by_position = sorted(nets, key=lambda net: axis(origins[net]))
+    ordered = list(nets)
+    for rank, index in enumerate(pad_order):
+        ordered[index] = by_position[rank]
+    return ordered
+
+
 def _connectivity_operations(
     prompt: str, document: EdaDocument, item: EdaItem, target: EdaTarget
 ) -> list[EdaOperation]:
@@ -758,6 +1206,7 @@ def _connectivity_operations(
         raise KicadDslError(
             "signal pin count must match the existing ENC_A, ENC_B and ENC_SW nets"
         )
+    signal_nets = _order_signal_nets(signal_nets, signal_pads, item)
     assignments = (
         [(pad, "GND", False) for pad in ground_pads]
         + [(pad, net, False) for pad, net in zip(signal_pads, signal_nets, strict=True)]
