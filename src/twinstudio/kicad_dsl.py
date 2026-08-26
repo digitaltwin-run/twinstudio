@@ -1467,6 +1467,25 @@ def _requests_connectivity_edit(prompt: str) -> bool:
     )
 
 
+# Prośby o poprowadzenie miedzi. DSL v1 zna tylko `set_property`, `move`
+# i `assign_pad_net` — ścieżki tworzy deterministyczna naprawa, nie model.
+# Bez tego rozpoznania model mieli takie zadanie minutami i kończy timeoutem
+# albo odpowiedzią, której schemat nie przyjmuje.
+_ROUTING_INTENT = re.compile(
+    r"\b(przeprowad\w*|poprowad\w*|przetrasu\w*|trasu\w*|routing\w*|reroute\w*|"
+    r"ście\w*k\w*|ścieżk\w*|sciezk\w*|linie|linii|przelotk\w*|via)\b",
+    re.IGNORECASE,
+)
+_ROUTING_PLACE = re.compile(
+    r"\b(pod|obok|dooko\w*|na oko\w*|omi\w*|z dala|inn\w+ (?:pin|gpio)|warstw\w*)\b",
+    re.IGNORECASE,
+)
+
+
+def _requests_routing_edit(prompt: str) -> bool:
+    return bool(_ROUTING_INTENT.search(prompt) and _ROUTING_PLACE.search(prompt))
+
+
 def nl_to_dsl(
     prompt: str,
     document: EdaDocument,
@@ -1485,6 +1504,14 @@ def nl_to_dsl(
     if _requests_connectivity_edit(prompt):
         candidate = local_nl_to_dsl(prompt, document)
         return _finalize_llm_candidate(candidate, document, "deterministic:connectivity")
+    if _requests_routing_edit(prompt):
+        raise KicadDslError(
+            "Prowadzenie ścieżek nie należy do DSL v1 — dopuszcza on tylko "
+            "set_property, move i assign_pad_net. Miedź układa deterministyczna "
+            "naprawa, nie model. Zmień przypisanie sieci na padach (np. przenieś "
+            "sygnał na inny pin GPIO), a trasowanie wykona się samo i przejdzie "
+            "przez DRC; albo poprowadź ścieżkę ręcznie w KiCad."
+        )
     try:
         resolved = eda_litellm_route(settings)
     except Exception as exc:

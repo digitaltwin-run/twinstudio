@@ -547,3 +547,35 @@ def test_callers_that_do_not_ask_for_diagnostics_are_unaffected(
 
     assert mode == "local"
     assert change.operations
+
+
+def test_a_routing_request_is_refused_before_the_model_is_asked(
+    monkeypatch: pytest.MonkeyPatch
+) -> None:
+    document = inspect_source(PCB, "panel.kicad_pcb")
+    monkeypatch.setattr(
+        kicad_dsl, "eda_litellm_route",
+        lambda settings: pytest.fail("routing is not expressible in DSL v1; do not spend a call"),
+    )
+
+    with pytest.raises(KicadDslError, match="DSL v1"):
+        kicad_dsl.nl_to_dsl(
+            "nie przeprowadzaj niebieskich linii pod switchami tylko na około",
+            document, SimpleNamespace(),
+        )
+
+
+def test_a_pad_net_request_is_not_mistaken_for_routing(
+    monkeypatch: pytest.MonkeyPatch
+) -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    monkeypatch.setattr(kicad_dsl, "eda_litellm_route", lambda settings: None)
+
+    _change, mode = kicad_dsl.nl_to_dsl(
+        "złącze RJ45 ma mase na pinach 1,3,5 a sygnaly na 2,4,6 i plus zaislania na 7 i 8",
+        document, SimpleNamespace(),
+    )
+
+    # Repinning does move copper, but through the deterministic repair - the
+    # guard must not swallow it.
+    assert mode == "deterministic:connectivity"
