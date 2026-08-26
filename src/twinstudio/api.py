@@ -21,6 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from twinstudio import __version__
+from twinstudio.artifact_group_review import ArtifactGroupReview, review_artifact_group
 from twinstudio.artifacts import (
     TAB_PDF_TITLES,
     export_project_bundle,
@@ -359,6 +360,12 @@ class EdaNlRequest(ApiModel):
     atomic: bool = False
 
 
+class ArtifactGroupPromptRequest(ApiModel):
+    group: str = Field(min_length=1, max_length=2_000)
+    paths: list[str] = Field(min_length=1, max_length=40)
+    prompt: str = Field(min_length=1, max_length=30_000)
+
+
 class EdaAnalysisRequest(ApiModel):
     path: str = Field(min_length=1, max_length=2000)
     expected_version: int | None = Field(default=None, ge=0)
@@ -420,6 +427,12 @@ class ScadApplyRequest(ApiModel):
     project_id: str | None = Field(default=None, min_length=1, max_length=160)
     expected_version: int | None = Field(default=None, ge=0)
     correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
+
+
+class ScadValidationRequest(ApiModel):
+    """SCAD content supplied by a trusted Viewer candidate review."""
+
+    source: str = Field(min_length=1, max_length=2_000_000)
 
 
 class EdaDecisionRequest(ApiModel):
@@ -790,19 +803,27 @@ def request_validation_failed(request: Request, exc: RequestValidationError) -> 
 
 @app.exception_handler(HTTPException)
 def http_request_error(request: Request, exc: HTTPException) -> JSONResponse:
-    code = {
+    detail = exc.detail
+    supplied_code = detail.get("code") if isinstance(detail, dict) else None
+    code = supplied_code if isinstance(supplied_code, str) else {
         403: "PERMISSION_DENIED",
         404: "RESOURCE_NOT_FOUND",
         409: "CONCURRENCY_CONFLICT",
         422: "REQUEST_VALIDATION_FAILED",
     }.get(exc.status_code, "HTTP_REQUEST_ERROR")
-    message = exc.detail if isinstance(exc.detail, str) else str(exc.detail)
+    message = (
+        str(detail.get("message", detail.get("detail", code)))
+        if isinstance(detail, dict)
+        else str(detail)
+    )
+    details = detail.get("details") if isinstance(detail, dict) and isinstance(detail.get("details"), dict) else None
     return _problem_response(
         request,
         status_code=exc.status_code,
         code=code,
         message=message,
         retryable=exc.status_code in {408, 409, 429, 502, 503, 504},
+        details=details,
     )
 
 
@@ -1150,12 +1171,13 @@ def pcb2dsl(
 @app.post("/api/v1/eda/nl2dsl")
 def eda_nl2dsl(
     body: EdaNlRequest,
+    request: Request,
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    return _plan_eda(body, user)
+    return _plan_eda(body, user, request)
 
 
-def _plan_eda(body: EdaNlRequest, user: AuthPrincipal) -> dict[str, Any]:
+def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict[str, Any]:
     document = _eda_document(body.path)
     prompt = body.prompt
     if body.atomic:
@@ -1168,7 +1190,39 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal) -> dict[str, Any]:
     try:
         change, mode = nl_to_dsl(prompt, document, settings, body.context_sources)
     except KicadDslError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
+        if body.project_id:
+            _record_eda_event(
+                body.project_id,
+                user,
+                "eda.change.plan.failed",
+                {
+                    "schema_id": "twinstudio.eda-event/change-plan-failed/v1",
+                    "source": document.source.model_dump(mode="json"),
+                    "prompt": body.prompt,
+                    "trigger": "user_prompt",
+                    "context_signature": body.context_signature,
+                    "context_sources": [
+                        {key: source.get(key) for key in ("path", "sha256", "role", "logical_key")}
+                        for source in body.context_sources
+                    ],
+                    "error": {
+                        "code": exc.code,
+                        "message": str(exc),
+                        "operation": "eda.nl2dsl",
+                        "retryable": False,
+                    },
+                },
+                expected_version=body.expected_version,
+                correlation_id=_correlation_id(request),
+            )
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": exc.code,
+                "message": str(exc),
+                "details": {"operation": "eda.nl2dsl", "retryable": False},
+            },
+        ) from exc
     if body.atomic and len(change.operations) != 1:
         raise HTTPException(status_code=422, detail="atomic EDA plan requires exactly one DSL operation")
     result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json")}
@@ -1200,9 +1254,26 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal) -> dict[str, Any]:
 def project_eda_nl2dsl(
     project_id: str,
     body: EdaNlRequest,
+    request: Request,
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    return _plan_eda(body.model_copy(update={"project_id": project_id}), user)
+    return _plan_eda(body.model_copy(update={"project_id": project_id}), user, request)
+
+
+@app.post("/api/v1/projects/{project_id}/artifact-groups/prompt")
+def project_artifact_group_prompt(
+    project_id: str,
+    body: ArtifactGroupPromptRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Run a bounded, read-only LLM review over files chosen by one Viewer group."""
+    try:
+        review: ArtifactGroupReview = review_artifact_group(
+            settings.kicad_root, body.group, body.paths, body.prompt, settings
+        )
+    except KicadDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return review.model_dump(mode="json")
 
 
 def _apply_eda(
@@ -1583,6 +1654,17 @@ def project_apply_scad(
     project_id: str, body: ScadApplyRequest, user: AuthPrincipal = Depends(principal)
 ) -> dict[str, Any]:
     return _apply_scad(body.model_copy(update={"project_id": project_id}), user)
+
+
+@app.post("/api/v1/scad/validate")
+def validate_scad_source(
+    body: ScadValidationRequest, _user: AuthPrincipal = Depends(principal)
+) -> dict[str, Any]:
+    """Recheck an existing SCAD candidate without creating another revision."""
+    try:
+        return validate_scad(body.source)
+    except ScadDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @app.get("/api/v1/eda/candidates/{relative:path}")

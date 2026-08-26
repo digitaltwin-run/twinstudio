@@ -414,6 +414,10 @@ def test_nl_to_dsl_compiles_and_applies_rj45_connectivity_without_llm() -> None:
     assert [(net.code, net.name) for net in updated.nets][-1] == (5, "+5V")
     assert change_validation(change, repair)["codes"] == ["EDA_DRC_NOT_RUN"]
     assert change_validation(change)["codes"] == ["EDA_ROUTING_REQUIRED", "EDA_DRC_NOT_RUN"]
+    schematic_change = change.model_copy(
+        update={"source": change.source.model_copy(update={"kind": "schematic"})}
+    )
+    assert change_validation(schematic_change)["codes"] == ["EDA_CONNECTIVITY_NOT_RUN"]
 
 
 def test_repinning_slides_the_stub_and_leaves_the_feeder_alone() -> None:

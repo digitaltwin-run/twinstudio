@@ -51,10 +51,25 @@ _RULES: dict[str, tuple[str, str, str, str]] = {
         "Element nie ma modelu SPICE, więc symulacja go pomija.",
         "Dodać właściwości modelu do symbolu albo świadomie przyjąć, że wynik opisuje tylko resztę układu.",
     ),
-    "sch_pcb_drift": (
-        "EDA-NET-SCH-PCB-DRIFT-001", "ERROR",
-        "Schemat i PCB opisują różne układy: elementy lub sieci nie mają odpowiednika po drugiej stronie.",
-        "Zsynchronizować PCB ze schematem (update PCB from schematic) przed dalszymi zmianami.",
+    "drift_missing_part": (
+        "EDA-NET-DRIFT-PART-001", "ERROR",
+        "Element istnieje tylko po jednej stronie projektu.",
+        "Dodać brakujący element albo usunąć zbędny; dopiero potem synchronizować sieci.",
+    ),
+    "drift_pin_swap": (
+        "EDA-NET-DRIFT-PINOUT-001", "WARNING",
+        "Ten sam element trafia w schemacie i w PCB na inne wyprowadzenie mikrokontrolera.",
+        "Wybrać stronę wiodącą: przypisanie z PCB zwykle wynika z długości ścieżek, a firmware musi znać właśnie je.",
+    ),
+    "drift_net_name": (
+        "EDA-NET-DRIFT-NAME-001", "WARNING",
+        "Ta sama linia nazywa się inaczej w schemacie i w PCB.",
+        "Ujednolicić nazewnictwo sieci, żeby porównanie obu stron przestało zgłaszać fałszywe różnice.",
+    ),
+    "drift_unset_pad": (
+        "EDA-NET-DRIFT-UNSET-001", "WARNING",
+        "Pad w PCB nie ma sieci, choć schemat ją dla tego pinu przewiduje.",
+        "Przypisać sieć na padzie albo potwierdzić, że wyprowadzenie zostaje wolne.",
     ),
 }
 
@@ -76,6 +91,23 @@ def _rail_key(name: str) -> str | None:
     if match:
         return cleaned
     return None
+
+
+def _same_family(entry: str) -> str | None:
+    """Czy obie nazwy należą do tej samej rodziny sygnałów (np. GP7 vs GP2).
+
+    Wtedy różnica to wybór wyprowadzenia, a nie inna nazwa tej samej linii —
+    router mógł przypisać inne GPIO, żeby skrócić ścieżki, i firmware musi
+    znać właśnie tę wersję.
+    """
+    match = re.search(r"PCB (\S+) ≠ schemat (\S+)", entry)
+    if not match:
+        return None
+    left, right = match.group(1), match.group(2)
+    prefixes = [re.match(r"^([A-Za-z_+]+)", name) for name in (left, right)]
+    if not all(prefixes):
+        return None
+    return prefixes[0].group(1) if prefixes[0].group(1) == prefixes[1].group(1) else None
 
 
 def _finding(kind: str, detail: str, samples: list[str]) -> dict[str, Any]:
@@ -255,12 +287,26 @@ def netlist_state(
             )]
             if expected is not None and expected != (pad.get("net") or "")
         )
-        if drift or mismatched:
+        if drift:
             findings.append(_finding(
-                "sch_pcb_drift",
-                f"Rozjazd elementów: {len(drift)}, rozjazd sieci na padach: {len(mismatched)}.",
-                drift + mismatched,
+                "drift_missing_part", "Element bez odpowiednika po drugiej stronie.", drift
             ))
+        # Jeden worek „rozjazd" nie mówi, co robić. Ta sama linia pod inną
+        # nazwą, ten sam przycisk na innym GPIO i pad bez sieci to trzy różne
+        # decyzje, więc rozdzielamy je na trzy ustalenia.
+        unset = [item for item in mismatched if ": PCB brak ≠" in item]
+        swaps = [
+            item for item in mismatched
+            if item not in unset and _same_family(item)
+        ]
+        renames = [item for item in mismatched if item not in unset and item not in swaps]
+        for kind, samples, detail in (
+            ("drift_pin_swap", swaps, "Ten sam element, inne wyprowadzenie."),
+            ("drift_net_name", renames, "Ta sama linia, inna nazwa."),
+            ("drift_unset_pad", unset, "Pad w PCB bez sieci."),
+        ):
+            if samples:
+                findings.append(_finding(kind, detail, samples))
 
     codes = list(dict.fromkeys(item["code"] for item in findings))
     blocking = any(item["severity"] == "ERROR" for item in findings)

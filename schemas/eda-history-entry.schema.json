@@ -19,6 +19,7 @@
     "event_type": {
       "enum": [
         "EdaChangePlanned",
+        "EdaChangePlanFailed",
         "EdaSchematicAnalyzed",
         "EdaPcbAnalyzed",
         "EdaNetlistAnalyzed",

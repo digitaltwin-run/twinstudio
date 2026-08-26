@@ -182,6 +182,9 @@ class CommandBus:
             case "eda.change.plan":
                 permission = "change.plan"
                 event_type, data = "EdaChangePlanned", dict(payload)
+            case "eda.change.plan.failed":
+                permission = "change.plan"
+                event_type, data = "EdaChangePlanFailed", dict(payload)
             case "eda.validation.record":
                 permission = "change.plan"
                 event_type, data = "EdaValidationCompleted", dict(payload)

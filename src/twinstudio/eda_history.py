@@ -51,6 +51,7 @@ class EdaHistoryEntry(HistoryModel):
     stream_version: int = Field(ge=1)
     event_type: Literal[
         "EdaChangePlanned",
+        "EdaChangePlanFailed",
         "EdaSchematicAnalyzed",
         "EdaPcbAnalyzed",
         "EdaNetlistAnalyzed",
@@ -75,6 +76,7 @@ class EdaHistoryEntry(HistoryModel):
 
 EDA_EVENT_TYPES = {
     "EdaChangePlanned",
+    "EdaChangePlanFailed",
     "EdaSchematicAnalyzed",
     "EdaPcbAnalyzed",
     "EdaNetlistAnalyzed",
@@ -212,11 +214,17 @@ def write_event_stream(project_root: Path, events: list[EventEnvelope]) -> Path:
 LOG_CODE_ALIASES = {
     "EDA_ROUTING_REQUIRED": "EDA-PCB-ROUTING-001",
     "EDA_DRC_NOT_RUN": "EDA-PCB-DRC-001",
+    "EDA_CONNECTIVITY_NOT_RUN": "EDA-SCH-NET-001",
 }
 
 
 def _event_code(data: dict[str, Any]) -> str | None:
     """Map internal validation labels to documented wellmanifest error codes."""
+    error = data.get("error")
+    if isinstance(error, dict) and isinstance(error.get("code"), str):
+        return LOG_CODE_ALIASES.get(error["code"], error["code"])
+    if isinstance(data.get("code"), str):
+        return LOG_CODE_ALIASES.get(data["code"], data["code"])
     for container in (data.get("analysis"), data.get("validation")):
         if not isinstance(container, dict):
             continue
@@ -239,6 +247,8 @@ def _event_code(data: dict[str, Any]) -> str | None:
 
 
 def _logs_outcome(event_type: str, data: dict[str, Any]) -> tuple[str, str, str]:
+    if event_type == "EdaChangePlanFailed":
+        return "FAILED", "validation_failed", "WARNING"
     if event_type == "ProjectUpdateRecorded":
         severity = "WARNING" if data.get("category") in {
             "error", "recommendation", "duplicate", "source_truth_conflict"
@@ -277,7 +287,7 @@ def wellmanifest_projection(project_id: str, events: list[EventEnvelope]) -> lis
             "sequence": sequence,
             "eventType": "eda." + _snake(source_event.event_type.removeprefix("Eda")),
             "severity": severity,
-            "mode": "PLAN" if source_event.event_type == "EdaChangePlanned" else "APPLY",
+            "mode": "PLAN" if source_event.event_type in {"EdaChangePlanned", "EdaChangePlanFailed"} else "APPLY",
             "occurredAt": occurred_at,
             "correlationId": source_event.correlation_id or source_event.event_id,
             "causationId": source_event.causation_id,

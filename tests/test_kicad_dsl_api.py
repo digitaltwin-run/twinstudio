@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from fastapi.testclient import TestClient
 
 import twinstudio.api as api_module
+import twinstudio.scad_dsl as scad_dsl
 
 SCH = """(kicad_sch (version 20211123) (generator eeschema)
   (symbol (lib_id "local:R") (at 10 20 0) (unit 1)
@@ -61,6 +62,33 @@ def test_eda_rest_vertical_slice(tmp_path: Path, monkeypatch) -> None:
     candidate = tmp_path / "data" / "artifacts" / "kicad-edits" / result["candidate_path"]
     assert '(property "Value" "10k"' in candidate.read_text(encoding="utf-8")
     assert json.loads(candidate.with_name("change.json").read_text())["schema_id"] == "twinstudio.eda-result/v1"
+
+
+def test_eda_plan_target_error_uses_stable_problem_code(tmp_path: Path, monkeypatch) -> None:
+    source_root = tmp_path / "sources"
+    source_root.mkdir()
+    (source_root / "panel.kicad_sch").write_text(SCH, encoding="utf-8")
+    monkeypatch.setattr(
+        api_module,
+        "settings",
+        SimpleNamespace(
+            kicad_root=source_root,
+            data_dir=tmp_path / "data",
+            litellm_model="",
+            litellm_api_base="",
+            litellm_api_key="",
+        ),
+    )
+    response = TestClient(api_module.app).post(
+        "/api/v1/eda/nl2dsl",
+        json={"path": "panel.kicad_sch", "prompt": "popraw szyny zasilania"},
+    )
+
+    assert response.status_code == 422
+    payload = response.json()
+    assert payload["detail"] == "Prompt musi wskazać dokładnie jeden element, np. R1, SW3 lub RJ45."
+    assert payload["error"]["code"] == "EDA-DSL-TARGET-REQUIRED-001"
+    assert payload["error"]["operation"] == "POST /api/v1/eda/nl2dsl"
 
 
 def test_svg_rest_vertical_slice(tmp_path: Path, monkeypatch) -> None:
@@ -145,6 +173,10 @@ def test_scad_rest_vertical_slice(tmp_path: Path, monkeypatch) -> None:
     assert checked.status_code == 200
     assert checked.json()["valid"] is True
 
+    rechecked = client.post("/api/v1/scad/validate", json={"source": SCAD})
+    assert rechecked.status_code == 200
+    assert "status" in rechecked.json()
+
     applied = client.post("/api/v1/scad/apply", json={"document": document, "dry_run": False})
     assert applied.status_code == 200
     result = applied.json()
@@ -156,3 +188,28 @@ def test_scad_rest_vertical_slice(tmp_path: Path, monkeypatch) -> None:
     unsafe["operations"] = [{"op": "set_variable", "target": "scad:variable:unknown", "value": 5}]
     rejected = client.post("/api/v1/scad/apply", json={"document": unsafe, "dry_run": True})
     assert rejected.status_code == 422
+
+
+def test_scad_validation_streams_source_to_configured_cad_runner(monkeypatch) -> None:
+    captured = {}
+
+    class Completed:
+        returncode = 0
+        stdout = "cube(size = [1, 1, 1], center = false);\n"
+        stderr = ""
+
+    monkeypatch.setenv("TWINSTUDIO_OPENSCAD_COMMAND", "cad-runner --isolated")
+    monkeypatch.setattr(scad_dsl.shutil, "which", lambda executable: "/usr/bin/cad-runner")
+
+    def fake_run(command, **kwargs):
+        captured["command"] = command
+        captured.update(kwargs)
+        return Completed()
+
+    monkeypatch.setattr(scad_dsl.subprocess, "run", fake_run)
+
+    validation = scad_dsl.validate_scad("cube(1);\n")
+
+    assert validation["status"] == "validated"
+    assert captured["command"] == ["cad-runner", "--isolated", "--export-format", "csg", "-o", "-", "-"]
+    assert captured["input"] == "cube(1);\n"

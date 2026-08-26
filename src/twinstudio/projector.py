@@ -295,6 +295,7 @@ _AUDIT_ONLY_EVENTS = {
     "GenerationRequested",
     "GenerationFailed",
     "EdaChangePlanned",
+    "EdaChangePlanFailed",
     "EdaValidationCompleted",
     "EdaCandidateCreated",
     "EdaCandidateDeleted",

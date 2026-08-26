@@ -81,6 +81,47 @@ def test_project_contract_and_wellmanifest_hash_chain(tmp_path: Path) -> None:
     )
 
 
+def test_failed_eda_plan_is_projected_to_wellmanifest_logs(tmp_path: Path, monkeypatch) -> None:
+    source_root = tmp_path / "project"
+    source_root.mkdir()
+    (source_root / "panel.kicad_sch").write_text(SCH, encoding="utf-8")
+    local_store = EventStore(f"sqlite:///{tmp_path / 'events.db'}")
+    monkeypatch.setattr(api_module, "store", local_store)
+    monkeypatch.setattr(api_module, "queries", QueryService(local_store))
+    monkeypatch.setattr(api_module, "commands", CommandBus(local_store, NullPublisher()))
+    monkeypatch.setattr(
+        api_module,
+        "settings",
+        SimpleNamespace(
+            kicad_root=source_root,
+            data_dir=tmp_path / "data",
+            litellm_model="",
+            litellm_api_base="",
+            litellm_api_key="",
+        ),
+    )
+    client = TestClient(api_module.app)
+
+    response = client.post(
+        "/api/v1/projects/eda-failure/eda/nl2dsl",
+        json={"path": "panel.kicad_sch", "prompt": "popraw szyny zasilania"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "EDA-DSL-TARGET-REQUIRED-001"
+    history = client.get("/api/v1/projects/eda-failure/eda/history")
+    assert history.status_code == 200
+    assert history.json()["events"][-1]["event_type"] == "EdaChangePlanFailed"
+    log_entries = [
+        json.loads(line)
+        for line in (source_root / ".twinstudio" / "logs" / "eda.jsonl").read_text().splitlines()
+    ]
+    assert log_entries[-1]["code"] == "EDA-DSL-TARGET-REQUIRED-001"
+    assert log_entries[-1]["outcome"] == "FAILED"
+    assert log_entries[-1]["mode"] == "PLAN"
+    assert validate_hash_chain(log_entries) == []
+
+
 def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypatch) -> None:
     source_root = tmp_path / "project"
     source_root.mkdir()

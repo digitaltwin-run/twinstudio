@@ -10,10 +10,11 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import re
+import shlex
 import shutil
 import subprocess
-import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -156,34 +157,40 @@ def apply_scad_changes(source: str, document: ScadChangeDocument) -> str:
 
 
 def validate_scad(source: str) -> dict[str, Any]:
-    """Run an OpenSCAD parse/evaluation check without persisting any geometry."""
-    executable = shutil.which("openscad")
-    if executable is None:
+    """Run OpenSCAD without persisting geometry or exposing a host file path.
+
+    ``TWINSTUDIO_OPENSCAD_COMMAND`` may name a local binary (the default) or a
+    command prefix for an isolated CAD runtime.  The SCAD source is always sent
+    over stdin and the resulting CSG is read from stdout, so a local TwinStudio
+    server can safely use the Viewer container without mounting its temp files.
+    """
+    raw_command = os.getenv("TWINSTUDIO_OPENSCAD_COMMAND", "openscad").strip()
+    try:
+        command = shlex.split(raw_command)
+    except ValueError as exc:
+        raise ScadDslError("TWINSTUDIO_OPENSCAD_COMMAND has invalid quoting") from exc
+    if not command or shutil.which(command[0]) is None:
         return {
             "status": "structurally_valid",
             "codes": ["SCAD-OPENSCAD-UNAVAILABLE"],
             "requires_openscad_verification": True,
             "openscad": "unavailable",
         }
-    with tempfile.TemporaryDirectory(prefix="twinstudio-scad-") as temp_dir:
-        source_path = Path(temp_dir) / "candidate.scad"
-        output_path = Path(temp_dir) / "candidate.csg"
-        source_path.write_text(source, encoding="utf-8")
-        try:
-            process = subprocess.run(
-                [executable, "-o", str(output_path), str(source_path)],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                timeout=45, check=False,
-            )
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            return {
-                "status": "structurally_valid",
-                "codes": ["SCAD-OPENSCAD-UNAVAILABLE"],
-                "requires_openscad_verification": True,
-                "openscad": type(exc).__name__,
-            }
-        valid = process.returncode == 0 and output_path.is_file() and output_path.stat().st_size > 0
-        detail = (process.stderr or process.stdout).strip()[-1200:]
+    try:
+        process = subprocess.run(
+            [*command, "--export-format", "csg", "-o", "-", "-"],
+            input=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            timeout=45, check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {
+            "status": "structurally_valid",
+            "codes": ["SCAD-OPENSCAD-UNAVAILABLE"],
+            "requires_openscad_verification": True,
+            "openscad": type(exc).__name__,
+        }
+    valid = process.returncode == 0 and bool(process.stdout.strip())
+    detail = (process.stderr or process.stdout).strip()[-1200:]
     if not valid:
         raise ScadDslError(f"OpenSCAD validation failed: {detail or process.returncode}")
     return {

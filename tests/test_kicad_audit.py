@@ -103,11 +103,32 @@ def test_pcb_pads_are_compared_against_the_schematic_net() -> None:
     ]}
 
     state = netlist_state(HEALTHY, pcb)
-    drift = next(f for f in state["findings"] if f["code"] == "EDA-NET-SCH-PCB-DRIFT-001")
+    by_code = {f["code"]: f for f in state["findings"]}
 
-    assert "tylko w schemacie: C1" in drift["samples"]
-    assert "tylko w PCB: R9" in drift["samples"]
-    assert "U1.2: PCB VBUS ≠ schemat +3V3" in drift["samples"]
+    parts = by_code["EDA-NET-DRIFT-PART-001"]
+    assert "tylko w schemacie: C1" in parts["samples"]
+    assert "tylko w PCB: R9" in parts["samples"]
+    # A net under a different name is a naming decision, not a missing part.
+    assert by_code["EDA-NET-DRIFT-NAME-001"]["samples"] == ["U1.2: PCB VBUS ≠ schemat +3V3"]
+
+
+def test_a_different_pin_of_the_same_family_is_not_a_rename() -> None:
+    # GP7 against GP2 means the router picked another GPIO for shorter traces.
+    # Calling that a naming problem would send the reader to fix the wrong thing.
+    netlist = _netlist(
+        components=[{"reference": "SW1", "part": "local:SW", "pins": [
+            {"number": "1", "name": "A", "type": "passive"}]}],
+        nets=[{"name": "GP2", "nodes": [{"reference": "SW1", "pin": "1"}]}],
+    )
+    pcb = {"pads": [{"reference": "SW1", "pin": "1", "net": "GP7"}]}
+
+    state = netlist_state(netlist, pcb)
+    by_code = {f["code"]: f for f in state["findings"]}
+
+    assert by_code["EDA-NET-DRIFT-PINOUT-001"]["samples"] == ["SW1.1: PCB GP7 ≠ schemat GP2"]
+    assert "EDA-NET-DRIFT-NAME-001" not in by_code
+    # A layout choice is a warning, not a blocker.
+    assert by_code["EDA-NET-DRIFT-PINOUT-001"]["severity"] == "WARNING"
 
 
 def test_spare_pins_are_a_warning_not_an_error() -> None:

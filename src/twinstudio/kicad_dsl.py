@@ -18,7 +18,16 @@ from .kicad_copper import Bounds, Box, Capsule, Obstacle, RoutingError, Track, r
 
 
 class KicadDslError(ValueError):
-    pass
+    """Błąd walidacji granicy prompt → bezpieczny DSL EDA.
+
+    Kod jest częścią publicznego kontraktu obserwowalności.  Tekst komunikatu
+    może być pokazany użytkownikowi, a kod pozostaje stabilny dla Viewer,
+    wellmanifest/logs i klientów MCP/A2A.
+    """
+
+    def __init__(self, message: str, *, code: str = "EDA-DSL-VALIDATION-001") -> None:
+        super().__init__(message)
+        self.code = code
 
 
 class DslModel(BaseModel):
@@ -1070,6 +1079,15 @@ def change_validation(
         isinstance(operation, AssignPadNetOperation) for operation in document.operations
     )
     if connectivity_changed:
+        if document.source.kind == "schematic":
+            # PCB DRC has no meaning for a schematic candidate.  The caller
+            # must run the schematic/netlist connectivity check instead.
+            return {
+                "status": "requires_follow_up",
+                "codes": ["EDA_CONNECTIVITY_NOT_RUN"],
+                "requires_routing": False,
+                "connectivity": "not_run",
+            }
         repaired = bool(repair and (repair.get("retargeted") or repair.get("routed")))
         return {
             "status": "requires_follow_up",
@@ -1133,7 +1151,10 @@ def _prompt_item(prompt: str, document: EdaDocument) -> EdaItem:
         ]
         if len(matches) == 1:
             return matches[0]
-    raise KicadDslError("prompt must identify one component, for example R1, SW3 or RJ45")
+    raise KicadDslError(
+        "Prompt musi wskazać dokładnie jeden element, np. R1, SW3 lub RJ45.",
+        code="EDA-DSL-TARGET-REQUIRED-001",
+    )
 
 
 def _pin_group(prompt: str, label_pattern: str) -> list[str]:
