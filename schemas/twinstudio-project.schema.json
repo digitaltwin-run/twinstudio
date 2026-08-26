@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "ArtifactHead": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^artifact:[a-z0-9][a-z0-9._:-]{2,159}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "head_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Head Sha256",
+          "type": "string"
+        },
+        "revision_id": {
+          "title": "Revision Id",
+          "type": "string"
+        },
+        "object_ref": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Object Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "path",
+        "media_type",
+        "head_sha256",
+        "revision_id",
+        "object_ref"
+      ],
+      "title": "ArtifactHead",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_id": {
+      "const": "twinstudio.project/v1",
+      "default": "twinstudio.project/v1",
+      "title": "Schema Id",
+      "type": "string"
+    },
+    "project_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "stream_id": {
+      "maxLength": 255,
+      "minLength": 1,
+      "title": "Stream Id",
+      "type": "string"
+    },
+    "stream_version": {
+      "minimum": 0,
+      "title": "Stream Version",
+      "type": "integer"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "artifacts": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ArtifactHead"
+      },
+      "title": "Artifacts",
+      "type": "object"
+    }
+  },
+  "required": [
+    "project_id",
+    "stream_id",
+    "stream_version",
+    "updated_at"
+  ],
+  "title": "TwinStudioProject",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/twinstudio-project.schema.json"
+}

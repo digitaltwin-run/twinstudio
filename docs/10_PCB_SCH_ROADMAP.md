@@ -73,18 +73,33 @@ writes a versioned candidate. `audit-firmware` uses the separately pinned
 SubLLM route `twinstudio/eda-firmware-audit` (Z.AI GLM 5.3) to review a
 deterministic comparison of `board.GP<n>` firmware use with explicit `GP/GPIO`
 schematic labels. It never claims that unlabeled wires are verified; use ERC or
-a KiCad netlist for that electrical proof.
+a KiCad netlist for that electrical proof. The PCB writer also supports a
+bounded `assign_pad_net` operation: it resolves one footprint and one pad,
+reuses an existing named net or explicitly creates a requested one, and always
+writes a versioned candidate. It does not route copper, so DRC and routing remain
+required after a connectivity change.
 
-Artifact Viewer owns the editing UI and KiCad preview/export only. Maskservice
-Wiki owns discovery and links to Viewer. Neither service writes the source.
+TwinStudio owns the canonical EDA event stream and content-addressed revisions.
+Artifact Viewer owns editing, rendered comparison and explicit decisions. Wiki
+only reads the TwinStudio timeline and links to revisions. Promotion is the only
+operation that replaces the current source; it is hash-bound, requires an
+accepted candidate and preserves both versions by SHA-256. Revert has the same
+optimistic hash guard. Migration imports legacy sidecars without changing KiCad
+sources.
+
+Project routes use `/api/v1/projects/{project_id}/eda/...` for plan, apply,
+history, accept, reject, promote, revert and migration. Portable project state
+is written as `project.twinstudio.json`, `.twinstudio/event-stream.ndjson` and
+`.twinstudio/logs/eda.jsonl`; `change.json` remains a transferable candidate
+manifest, not an approval store.
 
 ## Roadmap
 
-1. Extend the IR with pins, pads, nets and connectivity graph.
+1. Extend the pad/net IR into a full schematic pin and connectivity graph.
 2. Map KiCanvas selections to UUIDs and POA URIs.
-3. Add automatic ERC/DRC and semantic before/after diff gates.
-4. Promote an approved candidate through CQRS/event history into a chosen
-   source branch.
+3. Extend the implemented DRC and semantic before/after gates with ERC.
+4. Integrate promotion with chosen Git branches in addition to the implemented
+   local atomic source promotion.
 5. Add interface contracts between PCB, enclosure and purchased components.
 6. Add electrical simulation and test-point plans.
 7. Add fabrication/assembly quotation and lifecycle approval.

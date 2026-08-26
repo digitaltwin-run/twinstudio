@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import json
+import os
+import shutil
+import tempfile
 from base64 import b64decode
 from binascii import Error as Base64Error
 from contextlib import asynccontextmanager
@@ -38,6 +42,7 @@ from twinstudio.domain import (
     AuthPrincipal,
     ChangePlan,
     CommandEnvelope,
+    EventEnvelope,
     InvitationRequest,
     RegionSelection,
     Role,
@@ -50,6 +55,21 @@ from twinstudio.dsl import (
     parse_dsl,
     safe_parameter_patches,
     write_evolution_artifacts,
+)
+from twinstudio.eda_history import (
+    EDA_EVENT_TYPES,
+    EdaHistoryEntry,
+    load_descriptor,
+    store_object,
+    update_descriptor,
+    write_event_stream,
+    write_wellmanifest_projection,
+)
+from twinstudio.eda_history import (
+    artifact_id as eda_artifact_id,
+)
+from twinstudio.eda_history import (
+    revision_id as eda_revision_id,
 )
 from twinstudio.event_store import ConcurrencyError, EventStore
 from twinstudio.evolution import (
@@ -68,12 +88,16 @@ from twinstudio.evolution_models import (
 from twinstudio.feature_lenses import FeatureLensEngine
 from twinstudio.kicad_dsl import (
     EdaChangeDocument,
+    EdaDocument,
     KicadDslError,
     apply_changes,
+    change_validation,
     eda_llm_status,
     inspect_file,
     nl_to_dsl,
+    pcb_state,
     resolve_source,
+    schematic_state,
     write_candidate,
 )
 from twinstudio.mcp_gateway import McpGateway
@@ -307,11 +331,45 @@ class AccessRequest(ApiModel):
 class EdaNlRequest(ApiModel):
     path: str = Field(min_length=1, max_length=2000)
     prompt: str = Field(min_length=1, max_length=30_000)
+    project_id: str | None = Field(default=None, min_length=1, max_length=160)
+    expected_version: int | None = Field(default=None, ge=0)
+
+
+class EdaAnalysisRequest(ApiModel):
+    path: str = Field(min_length=1, max_length=2000)
+    expected_version: int | None = Field(default=None, ge=0)
+
+
+class EdaPcbAnalysisRequest(EdaAnalysisRequest):
+    drc: dict[str, Any] = Field(default_factory=dict)
 
 
 class EdaApplyRequest(ApiModel):
     document: EdaChangeDocument
     dry_run: bool = True
+    project_id: str | None = Field(default=None, min_length=1, max_length=160)
+    expected_version: int | None = Field(default=None, ge=0)
+    correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
+
+
+class EdaDecisionRequest(ApiModel):
+    candidate_path: str = Field(min_length=1, max_length=2000)
+    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    candidate_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    expected_version: int | None = Field(default=None, ge=0)
+    reason: str = Field(default="", max_length=2000)
+    render_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+
+
+class EdaRevertRequest(ApiModel):
+    promotion_event_id: str = Field(min_length=1, max_length=128)
+    expected_current_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    expected_version: int | None = Field(default=None, ge=0)
+    reason: str = Field(default="", max_length=2000)
+
+
+class EdaMigrationRequest(ApiModel):
+    expected_version: int | None = Field(default=None, ge=0)
 
 
 class WsHub:
@@ -729,6 +787,113 @@ def _eda_document(path: str, expected_kind: str | None = None):
     return document
 
 
+def _schematic_state(path: str) -> dict[str, Any]:
+    document = _eda_document(path, "schematic")
+    paired_board: EdaDocument | None = None
+    board_relative = Path(path).with_suffix(".kicad_pcb").as_posix()
+    try:
+        paired_board = inspect_file(settings.kicad_root, board_relative)
+    except KicadDslError:
+        paired_board = None
+    return schematic_state(document, paired_board)
+
+
+def _pcb_state(path: str, drc: dict[str, Any]) -> dict[str, Any]:
+    return pcb_state(_eda_document(path, "pcb"), drc)
+
+
+def _ensure_eda_project(project_id: str, user: AuthPrincipal) -> None:
+    try:
+        queries.project(project_id)
+    except ProjectNotFound:
+        try:
+            commands.execute(
+                CommandEnvelope(
+                    command_type="project.create",
+                    project_id=project_id,
+                    expected_version=0,
+                    actor=user.email,
+                    payload={
+                        "tenant": "local",
+                        "name": project_id,
+                        "description": "Project history created by the TwinStudio EDA adapter",
+                    },
+                )
+            )
+        except (CommandRejected, ConcurrencyError):
+            queries.project(project_id)
+
+
+def _sync_eda_project_files(project_id: str) -> int:
+    events = queries.events(project_id)
+    version = events[-1].stream_version if events else 0
+    update_descriptor(settings.kicad_root, project_id, version)
+    write_event_stream(settings.kicad_root, events)
+    write_wellmanifest_projection(settings.kicad_root, project_id, events)
+    return version
+
+
+def _record_eda_event(
+    project_id: str,
+    user: AuthPrincipal,
+    command_type: str,
+    payload: dict[str, Any],
+    *,
+    expected_version: int | None = None,
+    correlation_id: str | None = None,
+) -> EventEnvelope:
+    _ensure_eda_project(project_id, user)
+    snapshot = queries.project(project_id)
+    stored = commands.execute(
+        CommandEnvelope(
+            command_type=command_type,
+            project_id=project_id,
+            expected_version=snapshot.stream_version if expected_version is None else expected_version,
+            actor=user.email,
+            correlation_id=correlation_id,
+            payload=payload,
+        )
+    )
+    _sync_eda_project_files(project_id)
+    return stored[-1]
+
+
+def _eda_event_json(event: EventEnvelope) -> dict[str, Any]:
+    return EdaHistoryEntry(
+        event_id=event.event_id,
+        stream_version=event.stream_version,
+        event_type=event.event_type,
+        actor=event.actor,
+        occurred_at=event.occurred_at,
+        correlation_id=event.correlation_id,
+        causation_id=event.causation_id,
+        data=event.data,
+    ).model_dump(mode="json")
+
+
+def _candidate_file(relative: str) -> tuple[Path, dict[str, Any]]:
+    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    candidate = (root / relative).resolve()
+    if not candidate.is_relative_to(root) or not candidate.is_file() or candidate.is_symlink():
+        raise HTTPException(status_code=404, detail="candidate not found")
+    manifest_path = candidate.with_name("change.json")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=422, detail="candidate manifest is invalid") from exc
+    if manifest.get("candidate_path") != candidate.relative_to(root).as_posix():
+        raise HTTPException(status_code=422, detail="candidate manifest path mismatch")
+    return candidate, manifest
+
+
+def _hash_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 @app.get("/api/v1/eda/documents")
 def eda_document(
     path: str = Query(min_length=1, max_length=2000),
@@ -746,6 +911,68 @@ def sch2dsl(
     return _eda_document(path, "schematic").model_dump(mode="json")
 
 
+@app.get("/api/v1/eda/schematic-state")
+def eda_schematic_state(
+    path: str = Query(min_length=1, max_length=2000),
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Read the current deterministic state of a schematic without mutating history."""
+    return _schematic_state(path)
+
+
+@app.post("/api/v1/projects/{project_id}/eda/schematic-state")
+def record_eda_schematic_state(
+    project_id: str,
+    body: EdaAnalysisRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Record a user-requested schematic analysis in the project EDA audit stream."""
+    analysis = _schematic_state(body.path)
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.schematic.analysis.record",
+        {
+            "schema_id": "twinstudio.eda-event/schematic-analyzed/v1",
+            "source": analysis["source"],
+            "analysis": analysis,
+        },
+        expected_version=body.expected_version,
+    )
+    return {"analysis": analysis, "history_event": _eda_event_json(event)}
+
+
+@app.post("/api/v1/eda/pcb-state")
+def eda_pcb_state(
+    body: EdaPcbAnalysisRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Classify KiCad DRC facts without changing the audit history."""
+    return _pcb_state(body.path, body.drc)
+
+
+@app.post("/api/v1/projects/{project_id}/eda/pcb-state")
+def record_eda_pcb_state(
+    project_id: str,
+    body: EdaPcbAnalysisRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Record a user-requested PCB DRC analysis in the EDA audit stream."""
+    analysis = _pcb_state(body.path, body.drc)
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.pcb.analysis.record",
+        {
+            "schema_id": "twinstudio.eda-event/pcb-analyzed/v1",
+            "source": analysis["source"],
+            "analysis": analysis,
+        },
+        expected_version=body.expected_version,
+    )
+    return {"analysis": analysis, "history_event": _eda_event_json(event)}
+
+
 @app.get("/api/v1/eda/pcb2dsl")
 def pcb2dsl(
     path: str = Query(min_length=1, max_length=2000),
@@ -757,17 +984,50 @@ def pcb2dsl(
 @app.post("/api/v1/eda/nl2dsl")
 def eda_nl2dsl(
     body: EdaNlRequest,
-    _user: AuthPrincipal = Depends(principal),
+    user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
+    return _plan_eda(body, user)
+
+
+def _plan_eda(body: EdaNlRequest, user: AuthPrincipal) -> dict[str, Any]:
     document = _eda_document(body.path)
     try:
         change, mode = nl_to_dsl(body.prompt, document, settings)
     except KicadDslError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    return {"mode": mode, "document": change.model_dump(mode="json")}
+    result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json")}
+    if body.project_id:
+        event = _record_eda_event(
+            body.project_id,
+            user,
+            "eda.change.plan",
+            {
+                "schema_id": "twinstudio.eda-event/change-planned/v1",
+                "source": change.source.model_dump(mode="json"),
+                "prompt": change.prompt,
+                "mode": mode,
+                "operations": [item.model_dump(mode="json") for item in change.operations],
+            },
+            expected_version=body.expected_version,
+        )
+        result["history_event"] = _eda_event_json(event)
+    return result
 
 
-def _apply_eda(body: EdaApplyRequest, expected_kind: str | None = None) -> dict[str, Any]:
+@app.post("/api/v1/projects/{project_id}/eda/nl2dsl")
+def project_eda_nl2dsl(
+    project_id: str,
+    body: EdaNlRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    return _plan_eda(body.model_copy(update={"project_id": project_id}), user)
+
+
+def _apply_eda(
+    body: EdaApplyRequest,
+    user: AuthPrincipal,
+    expected_kind: str | None = None,
+) -> dict[str, Any]:
     if expected_kind and body.document.source.kind != expected_kind:
         raise HTTPException(status_code=422, detail=f"expected a {expected_kind} change document")
     try:
@@ -775,49 +1035,129 @@ def _apply_eda(body: EdaApplyRequest, expected_kind: str | None = None) -> dict[
         source = source_path.read_text(encoding="utf-8")
         candidate = apply_changes(source, body.document)
         candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
+        validation = change_validation(body.document)
+        validation_event: EventEnvelope | None = None
+        if body.project_id:
+            validation_event = _record_eda_event(
+                body.project_id,
+                user,
+                "eda.validation.record",
+                {
+                    "schema_id": "twinstudio.eda-event/validation-completed/v1",
+                    "source": body.document.source.model_dump(mode="json"),
+                    "candidate_sha256": candidate_sha256,
+                    "operations": len(body.document.operations),
+                    "validation": validation,
+                },
+                expected_version=body.expected_version,
+                correlation_id=body.correlation_id,
+            )
         if body.dry_run:
-            return {
+            result: dict[str, Any] = {
                 "valid": True,
                 "dry_run": True,
                 "source_sha256": body.document.source.sha256,
                 "candidate_sha256": candidate_sha256,
                 "changed": source != candidate,
                 "operations": len(body.document.operations),
+                "validation": validation,
             }
+            if validation_event is not None:
+                result["history_event"] = _eda_event_json(validation_event)
+            return result
         output_root = settings.data_dir / "artifacts" / "kicad-edits"
         manifest = write_candidate(settings.kicad_root, output_root, body.document)
     except (KicadDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    return {
+    result = {
         "valid": True,
         "dry_run": False,
         **manifest,
         "candidate_url": f"/api/v1/eda/candidates/{manifest['candidate_path']}",
     }
+    if body.project_id:
+        candidate_path = output_root / manifest["candidate_path"]
+        object_ref, _object_path = store_object(settings.data_dir, candidate_path)
+        revision = eda_revision_id(manifest["candidate_path"], manifest["candidate_sha256"])
+        identity = eda_artifact_id(body.project_id, body.document.source.path)
+        manifest.update(
+            {
+                "project_id": body.project_id,
+                "artifact_id": identity,
+                "revision_id": revision,
+                "object_ref": object_ref,
+            }
+        )
+        candidate_path.with_name("change.json").write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        event = _record_eda_event(
+            body.project_id,
+            user,
+            "eda.candidate.record",
+            {
+                "schema_id": "twinstudio.eda-event/candidate-created/v1",
+                "project_id": body.project_id,
+                "artifact_id": identity,
+                "revision_id": revision,
+                "source": body.document.source.model_dump(mode="json"),
+                "candidate_path": manifest["candidate_path"],
+                "candidate_sha256": manifest["candidate_sha256"],
+                "object_ref": object_ref,
+                "operations": manifest["operations"],
+                "validation": manifest["validation"],
+            },
+            expected_version=validation_event.stream_version if validation_event else body.expected_version,
+            correlation_id=body.correlation_id,
+        )
+        source_ref, _ = store_object(settings.data_dir, source_path)
+        update_descriptor(
+            settings.kicad_root,
+            body.project_id,
+            event.stream_version,
+            source_path=body.document.source.path,
+            source_sha256=body.document.source.sha256,
+            revision=f"base:{body.document.source.sha256[:12]}",
+            object_ref=source_ref,
+        )
+        result.update(manifest)
+        if validation_event is not None:
+            result["validation_history_event"] = _eda_event_json(validation_event)
+        result["history_event"] = _eda_event_json(event)
+    return result
 
 
 @app.post("/api/v1/eda/apply")
 def apply_eda(
     body: EdaApplyRequest,
-    _user: AuthPrincipal = Depends(principal),
+    user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    return _apply_eda(body)
+    return _apply_eda(body, user)
 
 
 @app.post("/api/v1/eda/dsl2sch")
 def dsl2sch(
     body: EdaApplyRequest,
-    _user: AuthPrincipal = Depends(principal),
+    user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    return _apply_eda(body, "schematic")
+    return _apply_eda(body, user, "schematic")
 
 
 @app.post("/api/v1/eda/dsl2pcb")
 def dsl2pcb(
     body: EdaApplyRequest,
-    _user: AuthPrincipal = Depends(principal),
+    user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    return _apply_eda(body, "pcb")
+    return _apply_eda(body, user, "pcb")
+
+
+@app.post("/api/v1/projects/{project_id}/eda/apply")
+def project_apply_eda(
+    project_id: str,
+    body: EdaApplyRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    return _apply_eda(body.model_copy(update={"project_id": project_id}), user)
 
 
 @app.get("/api/v1/eda/candidates/{relative:path}")
@@ -830,6 +1170,340 @@ def eda_candidate(
     if not path.is_relative_to(root) or not path.is_file() or path.is_symlink():
         raise HTTPException(status_code=404, detail="candidate not found")
     return FileResponse(path, media_type="text/plain; charset=utf-8", filename=None)
+
+
+def _validated_candidate_decision(
+    project_id: str, body: EdaDecisionRequest
+) -> tuple[Path, Path, dict[str, Any], str, str]:
+    candidate, manifest = _candidate_file(body.candidate_path)
+    source_data = manifest.get("source")
+    if not isinstance(source_data, dict) or not isinstance(source_data.get("path"), str):
+        raise HTTPException(status_code=422, detail="candidate source is invalid")
+    if manifest.get("project_id") not in {None, project_id}:
+        raise HTTPException(status_code=422, detail="candidate belongs to another project")
+    source = resolve_source(settings.kicad_root, source_data["path"])
+    source_hash = _hash_file(source)
+    candidate_hash = _hash_file(candidate)
+    if source_hash != body.source_sha256 or source_data.get("sha256") != body.source_sha256:
+        raise HTTPException(status_code=409, detail="source hash changed since candidate creation")
+    if candidate_hash != body.candidate_sha256 or manifest.get("candidate_sha256") != body.candidate_sha256:
+        raise HTTPException(status_code=409, detail="candidate hash does not match its manifest")
+    revision = str(
+        manifest.get("revision_id") or eda_revision_id(body.candidate_path, body.candidate_sha256)
+    )
+    identity = str(manifest.get("artifact_id") or eda_artifact_id(project_id, source_data["path"]))
+    return candidate, source, manifest, revision, identity
+
+
+def _revision_events(project_id: str, revision: str) -> list[EventEnvelope]:
+    return [
+        event
+        for event in queries.events(project_id)
+        if event.event_type in EDA_EVENT_TYPES and event.data.get("revision_id") == revision
+    ]
+
+
+@app.get("/api/v1/projects/{project_id}/eda/history")
+def project_eda_history(
+    project_id: str,
+    artifact_path: str | None = Query(default=None, max_length=2000),
+    limit: int = Query(default=200, ge=1, le=2000),
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    authorize_project(project_id, user, "project.read")
+    events = [event for event in queries.events(project_id) if event.event_type in EDA_EVENT_TYPES]
+    if artifact_path:
+        events = [
+            event
+            for event in events
+            if event.data.get("source", {}).get("path") == artifact_path
+            or event.data.get("path") == artifact_path
+        ]
+    stream_version = queries.project(project_id).stream_version
+    descriptor = load_descriptor(settings.kicad_root, project_id).model_copy(
+        update={"stream_version": stream_version}
+    )
+    return {
+        "schema_id": "twinstudio.eda-history/v1",
+        "project": descriptor.model_dump(mode="json"),
+        "events": [_eda_event_json(event) for event in events[-limit:]],
+    }
+
+
+@app.post("/api/v1/projects/{project_id}/eda/candidates/accept")
+def accept_project_eda_candidate(
+    project_id: str,
+    body: EdaDecisionRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    _candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
+    prior = _revision_events(project_id, revision)
+    if prior and prior[-1].event_type == "EdaChangeAccepted":
+        return {"status": "accepted", "already_recorded": True, "event": _eda_event_json(prior[-1])}
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.candidate.accept",
+        {
+            "schema_id": "twinstudio.eda-event/change-accepted/v1",
+            "project_id": project_id,
+            "artifact_id": identity,
+            "revision_id": revision,
+            "candidate_path": body.candidate_path,
+            "path": manifest["source"]["path"],
+            "source_sha256": body.source_sha256,
+            "candidate_sha256": body.candidate_sha256,
+            "render_sha256": body.render_sha256,
+            "validation": manifest.get("validation", {}),
+            "reason": body.reason,
+        },
+        expected_version=body.expected_version,
+    )
+    return {"status": "accepted", "event": _eda_event_json(event)}
+
+
+@app.post("/api/v1/projects/{project_id}/eda/candidates/reject")
+def reject_project_eda_candidate(
+    project_id: str,
+    body: EdaDecisionRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    _candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.candidate.reject",
+        {
+            "schema_id": "twinstudio.eda-event/change-rejected/v1",
+            "project_id": project_id,
+            "artifact_id": identity,
+            "revision_id": revision,
+            "candidate_path": body.candidate_path,
+            "path": manifest["source"]["path"],
+            "source_sha256": body.source_sha256,
+            "candidate_sha256": body.candidate_sha256,
+            "render_sha256": body.render_sha256,
+            "reason": body.reason,
+        },
+        expected_version=body.expected_version,
+    )
+    return {"status": "rejected", "event": _eda_event_json(event)}
+
+
+@app.post("/api/v1/projects/{project_id}/eda/candidates/promote")
+def promote_project_eda_candidate(
+    project_id: str,
+    body: EdaDecisionRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    candidate, source, _manifest, revision, identity = _validated_candidate_decision(project_id, body)
+    revision_events = _revision_events(project_id, revision)
+    latest_decision = next(
+        (event for event in reversed(revision_events) if event.event_type in {"EdaChangeAccepted", "EdaChangeRejected"}),
+        None,
+    )
+    if latest_decision is None or latest_decision.event_type != "EdaChangeAccepted":
+        raise HTTPException(status_code=409, detail="candidate must be accepted before promotion")
+    previous_ref, _ = store_object(settings.data_dir, source)
+    candidate_ref, _ = store_object(settings.data_dir, candidate)
+    temporary: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=source.parent, prefix=f".{source.name}.", delete=False) as stream:
+            temporary = Path(stream.name)
+            with candidate.open("rb") as candidate_stream:
+                shutil.copyfileobj(candidate_stream, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, source)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.revision.promote",
+        {
+            "schema_id": "twinstudio.eda-event/revision-promoted/v1",
+            "project_id": project_id,
+            "artifact_id": identity,
+            "revision_id": revision,
+            "path": source.relative_to(settings.kicad_root).as_posix(),
+            "previous_sha256": body.source_sha256,
+            "previous_object_ref": previous_ref,
+            "promoted_sha256": body.candidate_sha256,
+            "promoted_object_ref": candidate_ref,
+            "candidate_path": body.candidate_path,
+        },
+        expected_version=body.expected_version,
+    )
+    update_descriptor(
+        settings.kicad_root,
+        project_id,
+        event.stream_version,
+        source_path=source.relative_to(settings.kicad_root).as_posix(),
+        source_sha256=body.candidate_sha256,
+        revision=revision,
+        object_ref=candidate_ref,
+    )
+    return {"status": "promoted", "event": _eda_event_json(event)}
+
+
+@app.post("/api/v1/projects/{project_id}/eda/revisions/revert")
+def revert_project_eda_revision(
+    project_id: str,
+    body: EdaRevertRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    events = queries.events(project_id)
+    promotion = next(
+        (event for event in events if event.event_id == body.promotion_event_id and event.event_type == "EdaRevisionPromoted"),
+        None,
+    )
+    if promotion is None:
+        raise HTTPException(status_code=404, detail="promotion event not found")
+    source = resolve_source(settings.kicad_root, str(promotion.data["path"]))
+    if _hash_file(source) != body.expected_current_sha256:
+        raise HTTPException(status_code=409, detail="current artifact no longer matches the promoted revision")
+    previous_ref = str(promotion.data["previous_object_ref"])
+    digest = previous_ref.removeprefix("sha256:")
+    previous = settings.data_dir / "artifacts" / "objects" / "sha256" / digest[:2] / digest
+    if not previous.is_file() or _hash_file(previous) != digest:
+        raise HTTPException(status_code=409, detail="previous content-addressed object is unavailable")
+    temporary = source.with_name(f".{source.name}.{uuid4()}.tmp")
+    try:
+        shutil.copyfile(previous, temporary)
+        os.replace(temporary, source)
+    finally:
+        temporary.unlink(missing_ok=True)
+    event = _record_eda_event(
+        project_id,
+        user,
+        "eda.revision.revert",
+        {
+            "schema_id": "twinstudio.eda-event/change-reverted/v1",
+            "project_id": project_id,
+            "artifact_id": promotion.data["artifact_id"],
+            "revision_id": promotion.data["revision_id"],
+            "path": promotion.data["path"],
+            "reverts_event_id": promotion.event_id,
+            "restored_sha256": digest,
+            "restored_object_ref": previous_ref,
+            "reason": body.reason,
+        },
+        expected_version=body.expected_version,
+    )
+    update_descriptor(
+        settings.kicad_root,
+        project_id,
+        event.stream_version,
+        source_path=str(promotion.data["path"]),
+        source_sha256=digest,
+        revision=f"revert:{promotion.event_id}",
+        object_ref=previous_ref,
+    )
+    return {"status": "reverted", "event": _eda_event_json(event)}
+
+
+@app.post("/api/v1/projects/{project_id}/eda/history/migrate")
+def migrate_project_eda_history(
+    project_id: str,
+    body: EdaMigrationRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    _ensure_eda_project(project_id, user)
+    authorize_project(project_id, user, "change.apply")
+    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    known = {
+        str(event.data.get("candidate_path"))
+        for event in queries.events(project_id)
+        if event.event_type in {"EdaCandidateCreated", "EdaHistoryImported"}
+    }
+    imported: list[str] = []
+    accepted: list[str] = []
+    expected = body.expected_version
+    for manifest_path in sorted(root.rglob("change.json")):
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            candidate_relative = str(manifest["candidate_path"])
+            candidate, checked = _candidate_file(candidate_relative)
+            source_data = checked["source"]
+            candidate_hash = _hash_file(candidate)
+            if candidate_relative in known or candidate_hash != checked.get("candidate_sha256"):
+                continue
+            identity = str(
+                checked.get("artifact_id") or eda_artifact_id(project_id, str(source_data["path"]))
+            )
+            revision = str(
+                checked.get("revision_id") or eda_revision_id(candidate_relative, candidate_hash)
+            )
+            object_ref, _ = store_object(settings.data_dir, candidate)
+            _record_eda_event(
+                project_id,
+                user,
+                "eda.candidate.record",
+                {
+                    "schema_id": "twinstudio.eda-event/candidate-created/v1",
+                    "project_id": project_id,
+                    "artifact_id": identity,
+                    "revision_id": revision,
+                    "source": source_data,
+                    "candidate_path": candidate_relative,
+                    "candidate_sha256": candidate_hash,
+                    "object_ref": object_ref,
+                    "operations": checked.get("operations", []),
+                    "validation": checked.get("validation", {}),
+                    "imported": True,
+                    "legacy_manifest": manifest_path.relative_to(root).as_posix(),
+                },
+                expected_version=expected,
+            )
+            expected = None
+            imported.append(revision)
+            approval_path = manifest_path.with_name("approval.json")
+            if approval_path.is_file():
+                approval = json.loads(approval_path.read_text(encoding="utf-8"))
+                if approval.get("status") == "accepted" and approval.get("candidate_sha256") == candidate_hash:
+                    _record_eda_event(
+                        project_id,
+                        user,
+                        "eda.candidate.accept",
+                        {
+                            "schema_id": "twinstudio.eda-event/change-accepted/v1",
+                            "project_id": project_id,
+                            "artifact_id": identity,
+                            "revision_id": revision,
+                            "candidate_path": candidate_relative,
+                            "path": source_data["path"],
+                            "source_sha256": source_data["sha256"],
+                            "candidate_sha256": candidate_hash,
+                            "render_sha256": None,
+                            "validation": checked.get("validation", {}),
+                            "reason": "Imported from legacy approval.json",
+                            "legacy_approval": approval_path.relative_to(root).as_posix(),
+                        },
+                    )
+                    accepted.append(revision)
+        except (KeyError, OSError, ValueError, json.JSONDecodeError):
+            continue
+    summary = _record_eda_event(
+        project_id,
+        user,
+        "eda.history.import",
+        {
+            "schema_id": "twinstudio.eda-event/history-imported/v1",
+            "project_id": project_id,
+            "imported_revisions": imported,
+            "accepted_revisions": accepted,
+            "originals_modified": False,
+        },
+    )
+    return {
+        "status": "completed",
+        "imported": len(imported),
+        "accepted": len(accepted),
+        "originals_modified": False,
+        "event": _eda_event_json(summary),
+    }
 
 
 @app.get("/api/v1/errors/{code}")
@@ -1969,7 +2643,14 @@ def export_project(project_id: str, user: AuthPrincipal = Depends(principal)) ->
     authorize_project(project_id, user, "artifact.download")
     snapshot = queries.project(project_id)
     path = settings.data_dir / "artifacts" / f"{project_id}-{snapshot.revision}{settings.export_extension}"
-    export_project_bundle(snapshot, queries.events(project_id), path, project_root=PROJECT_ROOT)
+    export_project_bundle(
+        snapshot,
+        queries.events(project_id),
+        path,
+        project_root=PROJECT_ROOT,
+        digital_twin_root=settings.kicad_root,
+        object_root=settings.data_dir / "artifacts" / "objects" / "sha256",
+    )
     return FileResponse(path, media_type="application/zip", filename=path.name)
 
 

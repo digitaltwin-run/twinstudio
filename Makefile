@@ -1,4 +1,4 @@
-.PHONY: help install start restart recreate stop kill status health logs logs-follow run foreground test lint compose-up compose-down compose-all seed schemas dsl-preview dsl-conformance verify proto-lint package
+.PHONY: help install start restart recreate stop kill status health logs logs-follow run foreground test lint compose-up compose-down compose-all seed schemas dsl-preview dsl-conformance eda-history-check verify proto-lint package
 
 DEV_SERVER := ./scripts/dev_server.sh
 
@@ -70,6 +70,9 @@ dsl-preview:
 
 dsl-conformance:
 	PYTHONPATH=src python scripts/verify_dsl_conformance.py
+
+eda-history-check:
+	PYTHONPATH=src python scripts/verify_eda_history.py --allow-missing
 
 verify:
 	PYTHONPATH=src python scripts/verify_project.py --run-tests --out docs/verification-report.json

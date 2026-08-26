@@ -1,0 +1,85 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_id": {
+      "const": "twinstudio.eda-history-entry/v1",
+      "default": "twinstudio.eda-history-entry/v1",
+      "title": "Schema Id",
+      "type": "string"
+    },
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "stream_version": {
+      "minimum": 1,
+      "title": "Stream Version",
+      "type": "integer"
+    },
+    "event_type": {
+      "enum": [
+        "EdaChangePlanned",
+        "EdaSchematicAnalyzed",
+        "EdaValidationCompleted",
+        "EdaCandidateCreated",
+        "EdaChangeAccepted",
+        "EdaChangeRejected",
+        "EdaRevisionPromoted",
+        "EdaChangeReverted",
+        "EdaHistoryImported"
+      ],
+      "title": "Event Type",
+      "type": "string"
+    },
+    "actor": {
+      "title": "Actor",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "correlation_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Correlation Id"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Causation Id"
+    },
+    "data": {
+      "additionalProperties": true,
+      "title": "Data",
+      "type": "object"
+    }
+  },
+  "required": [
+    "event_id",
+    "stream_version",
+    "event_type",
+    "actor",
+    "occurred_at",
+    "data"
+  ],
+  "title": "EdaHistoryEntry",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twinstudio.local/schemas/eda-history-entry.schema.json"
+}

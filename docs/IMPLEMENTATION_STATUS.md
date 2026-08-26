@@ -36,7 +36,7 @@ Legend: **Implemented**, **Working scaffold**, **Roadmap**.
 | Arbitrary selected B-Rep edit | Roadmap | Free-form/topology-sensitive operations require persistent semantic/native identity and richer CAD adapters |
 | Parametric housing regeneration | Working scaffold | CadQuery generator for the housing is included as a component |
 | 2D/3D artifact download/export | Implemented | Individual artifacts and portable project bundle |
-| Portable `.twinstudio.zip` | Implemented | Snapshot, event stream, unified specification, artifacts and SHA-256 manifest |
+| Portable `.twinstudio.zip` | Implemented | Snapshot, EDA event stream, project descriptor, previews, content-addressed objects and SHA-256 manifest |
 | CQRS + Event Sourcing | Implemented | Append-only events, projector and optimistic concurrency |
 | Protobuf contracts | Implemented as source contract | `.proto` sources; generated clients are not bundled; namespace retained for compatibility |
 | REST / CLI / shell | Implemented | Shared domain services |
@@ -54,7 +54,8 @@ Legend: **Implemented**, **Working scaffold**, **Roadmap**.
 | Human task/checklist evaluation | Implemented | Logic/rule review, not biomechanical simulation |
 | FMEA and lifecycle evidence | Implemented as data/views | Automated evidence ingestion can be expanded |
 | Mechanical rules | Working scaffold | Simple thresholds, not FEA |
-| PCB/SCH product objects | Partial vertical slice | Native UUID/reference import, typed EDA DSL, safe symbol-property and footprint-position candidate edits; connectivity and source promotion remain out of scope |
+| PCB/SCH product objects | Implemented vertical slice | Native UUID/reference import, typed EDA DSL, candidate validation, event-backed accept/reject/promote/revert and content-addressed history; routing and full SCH connectivity remain out of scope |
+| EDA Digital Twin history | Implemented | `twinstudio.project/v1`, optimistic stream version, portable NDJSON, wellmanifest projection and legacy `change.json`/`approval.json` migration |
 | KiCad CLI check/export adapter | Working scaffold | Requires `kicad-cli` and real source files |
 | PCB synthesis/autorouting | Roadmap | Not claimed |
 | GTIN check digit | Implemented | Does not allocate an authorized GS1 identifier |

@@ -26,6 +26,8 @@ jobs:
           test "$(git -C "$RUNNER_TEMP/wellmanifest-dsl" rev-parse HEAD)" = 550e5f441c709e15f2679c1af151352d1eba2f1e
       - name: Validate NL/DSL boundary against Wellmanifest
         run: PYTHONPATH=src WELLMANIFEST_DSL_ROOT="$RUNNER_TEMP/wellmanifest-dsl" python scripts/verify_dsl_conformance.py
+      - name: Validate portable EDA history hash chain
+        run: PYTHONPATH=src python scripts/verify_eda_history.py --allow-missing
       - run: python scripts/verify_project.py --run-tests
       - run: git diff --exit-code schemas
   protobuf:

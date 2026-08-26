@@ -330,6 +330,65 @@ def main() -> int:
             "[...new URL(location.href).searchParams.getAll('args')]"
         )
         assert any("|object.selected|" in item and "highlight3d=1" in item for item in tree_highlight_args)
+        base_row = page.locator("#objectTree .tree-row").filter(has_text="Lower base").first
+        base_row.locator(".visibility").click()
+        page.wait_for_function(
+            "expected => document.querySelector('#viewer3d')?.dataset.visibleMeshes === String(expected)",
+            arg=loaded_meshes - 1,
+            timeout=args.timeout_ms,
+        )
+        page.wait_for_function(
+            "[...document.querySelectorAll('.drawing-card')].length === 3"
+            " && [...document.querySelectorAll('.drawing-card')]"
+            ".every(card => card.dataset.hiddenRegions === '1')",
+            timeout=args.timeout_ms,
+        )
+        assert base_row.locator(".visibility").get_attribute("data-visible") == "false"
+        assert base_row.locator(".visibility").inner_text() == "○"
+        hidden_svg_objects = page.evaluate(
+            """async () => Promise.all(
+                [...document.querySelectorAll('.drawing-card')].map(async card => {
+                    const image = card.querySelector('img');
+                    const svg = new DOMParser().parseFromString(
+                        await (await fetch(image.src)).text(),
+                        'image/svg+xml',
+                    );
+                    return {
+                        view: card.dataset.view,
+                        hidden: [...svg.querySelectorAll('[data-tree-hidden]')]
+                            .map(element => element.getAttribute('data-twinstudio-object-uri')),
+                    };
+                }),
+            )"""
+        )
+        assert {item["view"] for item in hidden_svg_objects} == {"front", "top", "side"}
+        assert all(
+            item["hidden"] == ["poa://demo/demo-rpi5@main/part/base"]
+            for item in hidden_svg_objects
+        ), hidden_svg_objects
+        visibility_action_args = page.evaluate(
+            "[...new URL(location.href).searchParams.getAll('args')]"
+        )
+        assert any(
+            "|object.visibility.changed|" in item
+            and "object=part/base" in item
+            and "visible=false" in item
+            for item in visibility_action_args
+        ), visibility_action_args
+        visibility_screenshot = args.screenshot.with_name(
+            f"{args.screenshot.stem}-visibility-2d-hidden{args.screenshot.suffix}"
+        )
+        page.screenshot(path=str(visibility_screenshot), full_page=True)
+        base_row.locator(".visibility").click()
+        page.wait_for_function(
+            "expected => document.querySelector('#viewer3d')?.dataset.visibleMeshes === String(expected)"
+            " && [...document.querySelectorAll('.drawing-card')]"
+            ".every(card => card.dataset.hiddenRegions === '0')",
+            arg=loaded_meshes,
+            timeout=args.timeout_ms,
+        )
+        assert base_row.locator(".visibility").get_attribute("data-visible") == "true"
+        tree_visibility_verified = True
         page.locator("#objectTree .tree-row").filter(has_text="Upper lid").click()
         page.wait_for_function(
             "document.querySelector('#objectTree .tree-row.selected')?.textContent.includes('Upper lid')"
@@ -442,6 +501,8 @@ def main() -> int:
                 else "svg-metadata"
             ),
             "tree_selection_highlights_3d_and_2d": tree_highlight_verified,
+            "tree_visibility_controls_3d_and_2d": tree_visibility_verified,
+            "visibility_screenshot": str(visibility_screenshot),
             "plan_from_inferred_selection": plan_verified,
             "planner_runtime": page.locator("#plannerRuntime").inner_text(),
             "plan_changes_geometry": False if plan_verified else None,

@@ -17,6 +17,7 @@ from twinstudio.domain import (
     SelectionMap,
     TestPlan,
 )
+from twinstudio.eda_history import EdaHistoryEntry, TwinStudioProject
 from twinstudio.evolution_models import (
     DslExecutionRecord,
     EvolutionCatalog,
@@ -48,6 +49,8 @@ MODELS = {
     "lifecycle-blueprint.schema.json": LifecycleBlueprint,
     "dsl-execution.schema.json": DslExecutionRecord,
     "evolution-catalog.schema.json": EvolutionCatalog,
+    "twinstudio-project.schema.json": TwinStudioProject,
+    "eda-history-entry.schema.json": EdaHistoryEntry,
 }
 
 for name, model in MODELS.items():

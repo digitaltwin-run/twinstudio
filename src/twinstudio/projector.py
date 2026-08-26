@@ -294,6 +294,14 @@ _AUDIT_ONLY_EVENTS = {
     "SimulationRunCompleted",
     "GenerationRequested",
     "GenerationFailed",
+    "EdaChangePlanned",
+    "EdaValidationCompleted",
+    "EdaCandidateCreated",
+    "EdaChangeAccepted",
+    "EdaChangeRejected",
+    "EdaRevisionPromoted",
+    "EdaChangeReverted",
+    "EdaHistoryImported",
 }
 
 

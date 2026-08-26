@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import tempfile
 import textwrap
 import zipfile
@@ -57,6 +58,8 @@ def export_project_bundle(
     output_path: Path,
     *,
     project_root: Path | None = None,
+    digital_twin_root: Path | None = None,
+    object_root: Path | None = None,
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     event_list = list(events)
@@ -71,6 +74,50 @@ def export_project_bundle(
         with (root / "event-stream.ndjson").open("w", encoding="utf-8") as stream:
             for event in event_list:
                 stream.write(event.model_dump_json() + "\n")
+        descriptor_source = digital_twin_root / "project.twinstudio.json" if digital_twin_root else None
+        if descriptor_source is not None and descriptor_source.is_file():
+            shutil.copyfile(descriptor_source, root / "project.twinstudio.json")
+        else:
+            (root / "project.twinstudio.json").write_text(
+                json.dumps(
+                    {
+                        "schema_id": "twinstudio.project/v1",
+                        "project_id": snapshot.project_id,
+                        "stream_id": snapshot.project_id,
+                        "stream_version": snapshot.stream_version,
+                        "updated_at": snapshot.updated_at.isoformat(),
+                        "artifacts": {},
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+        if digital_twin_root is not None:
+            preview_root = digital_twin_root / ".twinstudio" / "previews"
+            if preview_root.is_dir():
+                for preview in sorted(item for item in preview_root.rglob("*") if item.is_file()):
+                    destination = root / "previews" / preview.relative_to(preview_root)
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copyfile(preview, destination)
+            eda_log = digital_twin_root / ".twinstudio" / "logs" / "eda.jsonl"
+            if eda_log.is_file():
+                destination = root / "logs" / "eda.jsonl"
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(eda_log, destination)
+        referenced_objects = {
+            str(value).removeprefix("sha256:")
+            for event in event_list
+            for key, value in event.data.items()
+            if key.endswith("object_ref") and isinstance(value, str) and value.startswith("sha256:")
+        }
+        if object_root is not None:
+            for digest in sorted(referenced_objects):
+                source = object_root / digest[:2] / digest
+                if source.is_file():
+                    destination = root / "objects" / "sha256" / digest[:2] / digest
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copyfile(source, destination)
         artifact_root = root / "artifacts"
         artifact_root.mkdir()
         missing: list[str] = []
@@ -85,7 +132,7 @@ def export_project_bundle(
             destination.write_bytes(source.read_bytes())
         manifest = {
             "format": "twinstudio-project-bundle",
-            "format_version": 2,
+            "format_version": 3,
             "product": "TwinStudio",
             "project_id": snapshot.project_id,
             "revision": snapshot.revision,

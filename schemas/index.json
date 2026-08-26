@@ -82,6 +82,16 @@
       "file": "evolution-catalog.schema.json",
       "model": "EvolutionCatalog",
       "id": "https://twinstudio.local/schemas/evolution-catalog.schema.json"
+    },
+    {
+      "file": "twinstudio-project.schema.json",
+      "model": "TwinStudioProject",
+      "id": "https://twinstudio.local/schemas/twinstudio-project.schema.json"
+    },
+    {
+      "file": "eda-history-entry.schema.json",
+      "model": "EdaHistoryEntry",
+      "id": "https://twinstudio.local/schemas/eda-history-entry.schema.json"
     }
   ],
   "text_dsl_grammar": "twinscript.ebnf"

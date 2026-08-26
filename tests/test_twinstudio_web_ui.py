@@ -166,7 +166,7 @@ def test_2d_projection_region_creates_a_real_selection_without_tree_click() -> N
     assert "assembly-polygon-fallback" in javascript
     assert "object.inferred" in javascript
     assert "selection.rejected" in javascript
-    assert 'src="/static/app.js?v=20260812-cad-regeneration1"' in HTML.read_text(
+    assert 'src="/static/app.js?v=20260812-tree-visibility2d1"' in HTML.read_text(
         encoding="utf-8"
     )
     assert 'data-projection-entity="front.base.outer-wall"' in front_svg
@@ -193,6 +193,26 @@ def test_tree_object_selection_highlights_3d_and_all_mapped_2d_views() -> None:
         assert 'data-object-uri="poa://demo/demo-rpi5@main/part/base"' in svg
         assert 'data-object-uri="poa://demo/demo-rpi5@main/part/lid"' in svg
         assert svg.count("data-selection-bbox") >= 2
+
+
+def test_tree_visibility_controls_3d_and_bound_2d_regions() -> None:
+    javascript = JAVASCRIPT.read_text(encoding="utf-8")
+    style = (ROOT / "src" / "twinstudio" / "static" / "style.css").read_text(
+        encoding="utf-8"
+    )
+    assert "visibilityOverrides:new Map()" in javascript
+    assert "drawingObjectUrls:new Map()" in javascript
+    assert "function objectIsVisible" in javascript
+    assert "function renderObjectVisibility3d" in javascript
+    assert "function renderDrawingVisibility" in javascript
+    assert "function renderObjectVisibility" in javascript
+    assert "data-twinstudio-object-uri" in javascript
+    assert "data-tree-hidden" in javascript
+    assert "hiddenRegions" in javascript
+    assert "object.visibility.changed" in javascript
+    assert "if(!objectIsVisible(item.objectUri))return false" in javascript
+    assert 'title="Pokaż/ukryj"' in javascript
+    assert ".tree-row.object-hidden" in style
 
 
 def test_planner_wait_and_non_geometry_outcome_are_explicit() -> None:

@@ -179,6 +179,36 @@ class CommandBus:
             case "change.revert":
                 permission = "change.apply"
                 event_type, data = "ChangeReverted", dict(payload)
+            case "eda.change.plan":
+                permission = "change.plan"
+                event_type, data = "EdaChangePlanned", dict(payload)
+            case "eda.validation.record":
+                permission = "change.plan"
+                event_type, data = "EdaValidationCompleted", dict(payload)
+            case "eda.schematic.analysis.record":
+                permission = "change.plan"
+                event_type, data = "EdaSchematicAnalyzed", dict(payload)
+            case "eda.pcb.analysis.record":
+                permission = "change.plan"
+                event_type, data = "EdaPcbAnalyzed", dict(payload)
+            case "eda.candidate.record":
+                permission = "change.apply"
+                event_type, data = "EdaCandidateCreated", dict(payload)
+            case "eda.candidate.accept":
+                permission = "approval.grant"
+                event_type, data = "EdaChangeAccepted", dict(payload)
+            case "eda.candidate.reject":
+                permission = "approval.grant"
+                event_type, data = "EdaChangeRejected", dict(payload)
+            case "eda.revision.promote":
+                permission = "change.apply"
+                event_type, data = "EdaRevisionPromoted", dict(payload)
+            case "eda.revision.revert":
+                permission = "change.apply"
+                event_type, data = "EdaChangeReverted", dict(payload)
+            case "eda.history.import":
+                permission = "change.apply"
+                event_type, data = "EdaHistoryImported", dict(payload)
             case "membership.grant":
                 permission = "membership.manage"
                 event_type, data = "MembershipGranted", {

@@ -185,6 +185,8 @@ The browser includes an **Evolution DSL** tab with an editor, schema and grammar
 - `schemas/evolution-run.schema.json` — generated run and candidate lineage.
 - `schemas/lifecycle-blueprint.schema.json` — tailored lifecycle graph.
 - `schemas/evolution-catalog.schema.json` — controlled catalog.
+- `schemas/twinstudio-project.schema.json` — portable Digital Twin project and artifact heads.
+- `schemas/eda-history-entry.schema.json` — event envelope for portable EDA history.
 - `schemas/index.json` — schema-set index.
 - `proto/lps/v1/` — retained wire-contract namespace for compatibility; new product branding is TwinStudio.
 

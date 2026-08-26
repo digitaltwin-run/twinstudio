@@ -12,12 +12,15 @@ from twinstudio.kicad_dsl import (
     MoveOperation,
     SetPropertyOperation,
     apply_changes,
+    change_validation,
     eda_llm_status,
     inspect_file,
     inspect_source,
     local_nl_to_dsl,
     nl_to_dsl,
+    pcb_state,
     resolve_source,
+    schematic_state,
     write_candidate,
 )
 
@@ -41,6 +44,36 @@ PCB = """(kicad_pcb (version 20221018) (generator pcbnew)
 )\n"""
 
 
+PCB_RJ45 = """(kicad_pcb (version 20221018) (generator pcbnew)
+  (net 0 "")
+  (net 1 "GND")
+  (net 2 "ENC_A")
+  (net 3 "ENC_B")
+  (net 4 "ENC_SW")
+  (footprint "local:RJ45_SMD" (layer "B.Cu")
+    (tstamp 140e85f0-ef55-4c14-a0bd-8fb6aa1af1cb)
+    (at 237.600 92.000)
+    (fp_text reference "J1" (at 0 -9.35) (layer "B.SilkS"))
+    (fp_text value "RJ45 8P8C" (at 0 9.35) (layer "B.SilkS"))
+    (pad "1" smd rect (at -8.4 -5.25) (size 1 1) (layers "B.Cu") (net 4 "ENC_SW"))
+    (pad "2" smd rect (at -8.4 -3.75) (size 1 1) (layers "B.Cu") (net 1 "GND"))
+    (pad "3" smd rect (at -8.4 -2.25) (size 1 1) (layers "B.Cu") (net 3 "ENC_B"))
+    (pad "4" smd rect (at -8.4 -0.75) (size 1 1) (layers "B.Cu") (net 1 "GND"))
+    (pad "5" smd rect (at -8.4 0.75) (size 1 1) (layers "B.Cu") (net 2 "ENC_A"))
+    (pad "6" smd rect (at -8.4 2.25) (size 1 1) (layers "B.Cu") (net 1 "GND"))
+    (pad "7" smd rect (at -8.4 3.75) (size 1 1) (layers "B.Cu"))
+    (pad "8" smd rect (at -8.4 5.25) (size 1 1) (layers "B.Cu"))
+  )
+  (footprint "local:RP2040-Zero" (layer "B.Cu")
+    (tstamp a2408f60-4982-46c0-80d3-37aeb9244d09)
+    (at 111.750 92.000)
+    (fp_text reference "U1" (at 0 0) (layer "B.SilkS"))
+    (fp_text value "RP2040-Zero" (at 0 2) (layer "B.SilkS"))
+    (pad "5V" smd rect (at -10.16 -8) (size 1.2 2) (layers "B.Cu"))
+  )
+)\n"""
+
+
 def test_sch2dsl_reads_only_placed_symbols() -> None:
     document = inspect_source(SCH, "panel.kicad_sch")
 
@@ -49,6 +82,40 @@ def test_sch2dsl_reads_only_placed_symbols() -> None:
     assert len(document.items) == 1
     assert document.items[0].reference == "R1"
     assert document.items[0].position.rotation == 90
+
+
+def test_schematic_state_explains_pcb_sync_and_netgraph_limits() -> None:
+    schematic = inspect_source(SCH, "panel.kicad_sch")
+    board = inspect_source(PCB.replace('reference "R1"', 'reference "R2"'), "panel.kicad_pcb")
+
+    state = schematic_state(schematic, board)
+
+    assert state["status"] == "requires_follow_up"
+    assert state["codes"] == ["EDA-SCH-PCB-SYNC-001", "EDA-SCH-NETGRAPH-001"]
+    assert state["summary"]["pcb_only_references"] == ["R2"]
+    assert state["summary"]["schematic_only_references"] == ["R1"]
+
+
+def test_pcb_state_turns_drc_categories_into_safe_repair_draft() -> None:
+    state = pcb_state(
+        inspect_source(PCB, "panel.kicad_pcb"),
+        {
+            "violations": 3,
+            "unconnected": 2,
+            "categories": {"clearance": 1, "unconnected_items": 2, "silk_over_copper": 3},
+            "details": {"clearance": {"samples": ["@(1, 2): track and pad"]}},
+        },
+    )
+
+    assert state["status"] == "blocked"
+    assert state["codes"] == [
+        "EDA-PCB-CLEARANCE-001",
+        "EDA-PCB-SILK-001",
+        "EDA-PCB-UNCONNECTED-001",
+    ]
+    assert state["findings"][0]["samples"] == ["@(1, 2): track and pad"]
+    assert state["draft"]["status"] == "draft"
+    assert state["draft"]["requires_approval"] is True
 
 
 def test_dsl2sch_changes_only_selected_property() -> None:
@@ -172,3 +239,208 @@ def test_subllm_route_drives_strict_eda_compilation(monkeypatch: pytest.MonkeyPa
     request_payload = json.loads(captured["messages"][1]["content"])
     assert request_payload["output_schema"]["title"] == "EdaChangeDocument"
     assert eda_llm_status(settings)["available"] is True
+
+
+def test_subllm_repairs_a_hallucinated_uuid_for_a_known_reference(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    document = inspect_source(PCB, "panel.kicad_pcb")
+    expected = local_nl_to_dsl("przesuń R1 do x=120 y=75", document)
+    hallucinated = expected.model_copy(
+        update={
+            "operations": [
+                expected.operations[0].model_copy(
+                    update={
+                        "target": EdaTarget(
+                            uuid="11111111-1111-1111-1111-111111111111", reference="R1"
+                        )
+                    }
+                )
+            ]
+        }
+    )
+
+    class Route:
+        provider = "zai"
+        model = "glm-5.3"
+        transport = "openai-compatible"
+
+        @staticmethod
+        def litellm_kwargs():
+            return {"model": "zai/glm-5.3", "api_key": "test-secret"}
+
+    def completion(**_kwargs):
+        message = SimpleNamespace(content=hallucinated.model_dump_json())
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+    monkeypatch.setitem(sys.modules, "subllm", SimpleNamespace(resolve=lambda *_args: Route()))
+    monkeypatch.setitem(sys.modules, "litellm", SimpleNamespace(completion=completion))
+    settings = SimpleNamespace(
+        subllm_enabled=True,
+        subllm_application="twinstudio",
+        subllm_function="eda-nl2dsl",
+        litellm_model="",
+        litellm_api_base="",
+        litellm_api_key="",
+    )
+
+    result, mode = nl_to_dsl("przesuń R1 do x=120 y=75", document, settings)
+
+    assert mode == "subllm:zai/glm-5.3:target-repaired"
+    assert result.operations[0].target.uuid == document.items[0].uuid
+    assert result.operations[0].target.reference == "R1"
+
+
+def test_subllm_invalid_schema_uses_safe_local_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
+    document = inspect_source(PCB, "panel.kicad_pcb")
+
+    class Route:
+        provider = "zai"
+        model = "glm-5.3"
+        transport = "openai-compatible"
+
+        @staticmethod
+        def litellm_kwargs():
+            return {"model": "zai/glm-5.3", "api_key": "test-secret"}
+
+    def completion(**_kwargs):
+        message = SimpleNamespace(content="I cannot produce the requested JSON.")
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+    monkeypatch.setitem(sys.modules, "subllm", SimpleNamespace(resolve=lambda *_args: Route()))
+    monkeypatch.setitem(sys.modules, "litellm", SimpleNamespace(completion=completion))
+    settings = SimpleNamespace(
+        subllm_enabled=True,
+        subllm_application="twinstudio",
+        subllm_function="eda-nl2dsl",
+        litellm_model="",
+        litellm_api_base="",
+        litellm_api_key="",
+    )
+
+    result, mode = nl_to_dsl("przesuń R1 do x=120 y=75", document, settings)
+
+    assert mode == "local-fallback:subllm:zai/glm-5.3:ValidationError"
+    assert result.operations[0].target.uuid == document.items[0].uuid
+    assert result.operations[0].x == 120
+    assert result.operations[0].y == 75
+
+
+def test_subllm_rejects_a_noop_plan_for_a_connectivity_request(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    document = inspect_source(PCB, "panel.kicad_pcb")
+    noop = EdaChangeDocument(
+        source=document.source,
+        operations=[
+            MoveOperation(
+                op="move",
+                entity="footprint",
+                target=EdaTarget(uuid=document.items[0].uuid, reference="R1"),
+                x=document.items[0].position.x,
+                y=document.items[0].position.y,
+                rotation=document.items[0].position.rotation,
+            )
+        ],
+    )
+
+    class Route:
+        provider = "zai"
+        model = "glm-5.3"
+        transport = "openai-compatible"
+
+        @staticmethod
+        def litellm_kwargs():
+            return {"model": "zai/glm-5.3", "api_key": "test-secret"}
+
+    def completion(**_kwargs):
+        message = SimpleNamespace(content=noop.model_dump_json())
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+    monkeypatch.setitem(sys.modules, "subllm", SimpleNamespace(resolve=lambda *_args: Route()))
+    monkeypatch.setitem(sys.modules, "litellm", SimpleNamespace(completion=completion))
+    settings = SimpleNamespace(
+        subllm_enabled=True,
+        subllm_application="twinstudio",
+        subllm_function="eda-nl2dsl",
+        litellm_model="",
+        litellm_api_base="",
+        litellm_api_key="",
+    )
+
+    with pytest.raises(KicadDslError, match="no-op plan"):
+        nl_to_dsl("przesuń R1 do x=100 y=50", document, settings)
+
+
+def test_nl_to_dsl_compiles_and_applies_rj45_connectivity_without_llm() -> None:
+    document = inspect_source(PCB_RJ45, "panel.kicad_pcb")
+    prompt = "złącze RJ45 ma mase na pinach 1,3,5 a sygnaly na 2,4,6 i plus zaislania na 7 i 8"
+
+    change, mode = nl_to_dsl(prompt, document, SimpleNamespace())
+    candidate = apply_changes(PCB_RJ45, change)
+    updated = inspect_source(candidate, "panel.kicad_pcb")
+    pads = {pad.number: pad.net for pad in updated.items[0].pads}
+
+    assert mode == "deterministic:connectivity"
+    assert len(change.operations) == 9
+    assert pads == {
+        "1": "GND",
+        "2": "ENC_A",
+        "3": "GND",
+        "4": "ENC_B",
+        "5": "GND",
+        "6": "ENC_SW",
+        "7": "+5V",
+        "8": "+5V",
+    }
+    u1 = next(item for item in updated.items if item.reference == "U1")
+    assert {pad.number: pad.net for pad in u1.pads}["5V"] == "+5V"
+    assert [(net.code, net.name) for net in updated.nets][-1] == (5, "+5V")
+    assert change_validation(change)["codes"] == ["EDA_ROUTING_REQUIRED", "EDA_DRC_NOT_RUN"]
+
+
+def test_subllm_rejects_an_unknown_component_identity(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    document = inspect_source(PCB, "panel.kicad_pcb")
+    expected = local_nl_to_dsl("przesuń R1 do x=120 y=75", document)
+    invalid = expected.model_copy(
+        update={
+            "operations": [
+                expected.operations[0].model_copy(
+                    update={
+                        "target": EdaTarget(
+                            uuid="11111111-1111-1111-1111-111111111111", reference="R2"
+                        )
+                    }
+                )
+            ]
+        }
+    )
+
+    class Route:
+        provider = "zai"
+        model = "glm-5.3"
+        transport = "openai-compatible"
+
+        @staticmethod
+        def litellm_kwargs():
+            return {"model": "zai/glm-5.3", "api_key": "test-secret"}
+
+    def completion(**_kwargs):
+        message = SimpleNamespace(content=invalid.model_dump_json())
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+    monkeypatch.setitem(sys.modules, "subllm", SimpleNamespace(resolve=lambda *_args: Route()))
+    monkeypatch.setitem(sys.modules, "litellm", SimpleNamespace(completion=completion))
+    settings = SimpleNamespace(
+        subllm_enabled=True,
+        subllm_application="twinstudio",
+        subllm_function="eda-nl2dsl",
+        litellm_model="",
+        litellm_api_base="",
+        litellm_api_key="",
+    )
+
+    with pytest.raises(KicadDslError, match="outside the supplied document"):
+        nl_to_dsl("przesuń R1 do x=120 y=75", document, settings)
