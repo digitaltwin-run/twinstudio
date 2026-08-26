@@ -617,3 +617,16 @@ def test_the_sentence_the_compiler_knows_still_never_costs_a_call(
     )
 
     assert mode == "deterministic:connectivity"
+
+
+def test_naming_an_allowed_operation_defeats_the_routing_guard() -> None:
+    # The reason for the change mentions a trace under a part; the change
+    # itself is a pad net assignment, which DSL v1 can express.
+    assert not kicad_dsl._requests_routing_edit(
+        "Ustalenie: obca ścieżka pod obudową SW6. Wykonaj assign_pad_net "
+        "na SW6, pad 1, sieć GP4."
+    )
+    # Without a named operation it is still a routing request.
+    assert kicad_dsl._requests_routing_edit(
+        "poprowadź ścieżkę GP4 dookoła SW6"
+    )

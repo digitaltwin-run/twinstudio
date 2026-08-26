@@ -1498,7 +1498,14 @@ _ROUTING_PLACE = re.compile(
 )
 
 
+# Prompt, który sam nazywa dozwoloną operację, prosi o coś wyrażalnego —
+# nawet jeśli w uzasadnieniu opisuje ścieżkę biegnącą pod elementem.
+_NAMED_OPERATION = re.compile(r"\b(assign_pad_net|set_property|move)\b", re.IGNORECASE)
+
+
 def _requests_routing_edit(prompt: str) -> bool:
+    if _NAMED_OPERATION.search(prompt):
+        return False
     return bool(_ROUTING_INTENT.search(prompt) and _ROUTING_PLACE.search(prompt))
 
 
