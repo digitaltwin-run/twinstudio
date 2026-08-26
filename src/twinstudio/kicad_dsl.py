@@ -1184,6 +1184,76 @@ def apply_changes_with_repair(
     return source, repair
 
 
+def reroute_nets(source: str, nets: list[str]) -> tuple[str, list[dict[str, Any]]]:
+    """Zdejmuje miedź wskazanych sieci i kładzie ją od nowa.
+
+    Ścieżka biegnąca tranzytem pod obudową to problem trasowania, nie
+    przypisania pinów — zmierzone: optymalna permutacja GPIO daje na tej
+    płytce ten sam sumaryczny dystans. Router omija obrysy elementów, więc
+    wystarczy poprowadzić te same sieci jeszcze raz.
+    """
+    root = _parse(source)
+    sites = _pad_sites(root)
+    segments = _segment_sites(root)
+    codes = {
+        _text(node, 2): int(_text(node, 1))
+        for node in root.values
+        if isinstance(node, _Node) and _head(node) == "net" and _text(node, 1).isdigit()
+    }
+    replacements: list[tuple[int, int, str]] = []
+    insertion = ""
+    report: list[dict[str, Any]] = []
+    for name in sorted(set(nets)):
+        code = codes.get(name)
+        if code is None:
+            raise KicadDslError(f"PCB net {name!r} does not exist")
+        for layer in sorted({item.layer for item in segments if item.net == code}):
+            terminals = [
+                (site.x, site.y) for site in sites
+                if site.net_after == code and layer in site.layers
+            ]
+            if len(terminals) < 2:
+                continue
+            stale = [item for item in segments if item.net == code and item.layer == layer]
+            for item in stale:
+                if item.node is not None:
+                    replacements.append((item.node.start, item.node.end, ""))
+            remaining = [item for item in segments if item not in stale]
+            width = _track_width(stale, layer) or _DEFAULT_TRACK_WIDTH
+            try:
+                tracks = route_net(
+                    terminals, code,
+                    _obstacles(root, sites, remaining, layer, net=code),
+                    _board_bounds(root), width, _COPPER_CLEARANCE + _COPPER_MARGIN,
+                )
+            except RoutingError as exc:
+                raise KicadDslError(f"cannot re-route net {name!r} on {layer}: {exc}") from exc
+            insertion += "".join(_new_track_text(track, code, layer, width) for track in tracks)
+            segments = remaining
+            report.append({
+                "net": name, "layer": layer,
+                "removed_segments": len(stale), "segments": len(tracks),
+                "length_mm": round(
+                    sum(math.hypot(i.x1 - i.x0, i.y1 - i.y0) for i in tracks), 3
+                ),
+            })
+    if not report:
+        raise KicadDslError("no net with copper on both ends to re-route")
+    if insertion:
+        anchors = [
+            value for value in root.values
+            if isinstance(value, _Node) and _head(value) in {"segment", "via"}
+        ]
+        position = anchors[-1].end if anchors else root.end - 1
+        replacements.append((position, position, insertion))
+    spans = sorted(replacements, reverse=True)
+    for index, (start, end, text) in enumerate(spans):
+        if index and end > spans[index - 1][0]:
+            raise KicadDslError("overlapping re-route edits are not allowed")
+        source = source[:start] + text + source[end:]
+    return source, report
+
+
 def resolve_source(root: Path, relative: str) -> Path:
     if not relative or "\x00" in relative or Path(relative).is_absolute():
         raise KicadDslError("source path must be relative to the configured KiCad root")
