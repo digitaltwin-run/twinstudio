@@ -79,6 +79,13 @@ reuses an existing named net or explicitly creates a requested one, and always
 writes a versioned candidate. It does not route copper, so DRC and routing remain
 required after a connectivity change.
 
+Shared KiCad parsing, inspection and routing geometry live in the independently
+versioned `twin-kicad` package. Its bounded multi-net router never narrows a
+declared track to gain reachability and emits only rectilinear segments. It is a
+geometry primitive, not an approval bypass: a result with any unrouted net is
+diagnostic only, while a complete result still needs connectivity comparison,
+KiCad DRC and explicit candidate acceptance before promotion.
+
 TwinStudio owns the canonical EDA event stream and content-addressed revisions.
 Artifact Viewer owns editing, rendered comparison and explicit decisions. Wiki
 only reads the TwinStudio timeline and links to revisions. Promotion is the only

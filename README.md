@@ -139,10 +139,15 @@ typed, approval-required change document; `check` validates it, and `apply`
 creates a candidate rather than changing the original KiCad file.
 
 Lossless KiCad S-expression parsing, typed PCB inspection and deterministic
-copper routing come from the independently versioned
+copper-routing primitives, including bounded multi-net rip-up-and-retry, come
+from the independently versioned
 [`digitaltwin-run/twin-kicad`](https://github.com/digitaltwin-run/twin-kicad)
 package. TwinStudio retains operation planning, candidates, authority and
-history; it does not keep its own parser or router implementations.
+history; it does not keep its own parser or router implementations. Routing
+primitives preserve each declared width and rectilinear geometry. An incomplete
+result remains diagnostic evidence and cannot be presented as a production
+route or promoted without the normal connectivity, DRC and human-decision
+gates.
 
 ```bash
 # Interactive SCH/PCB editor: write a prompt, then use :check and :apply.
