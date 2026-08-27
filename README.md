@@ -146,7 +146,9 @@ package. TwinStudio retains operation planning, candidates, authority and
 history; it does not keep its own parser or router implementations. Routing
 primitives preserve each declared width, rectilinear geometry and explicit via
 dimensions. Overlapping foreign nets remain blocked instead of being erased by
-raster order. An incomplete result remains diagnostic evidence and cannot be
+raster order. Component keep-outs block both layers and admit only explicitly
+listed pad nets, including the intersection of exceptions where keep-outs
+overlap. An incomplete result remains diagnostic evidence and cannot be
 presented as a production route or promoted without the normal connectivity,
 DRC and human-decision gates.
 
