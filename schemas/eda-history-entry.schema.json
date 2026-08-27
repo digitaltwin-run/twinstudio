@@ -24,6 +24,7 @@
         "EdaPcbAnalyzed",
         "EdaNetlistAnalyzed",
         "EdaSimulationAnalyzed",
+        "SvgAnalyzed",
         "EdaValidationCompleted",
         "EdaCandidateCreated",
         "EdaCandidateDeleted",
