@@ -138,7 +138,7 @@ The EDA commands use the same SubLLM policy as Viewer. `plan` produces a
 typed, approval-required change document; `check` validates it, and `apply`
 creates a candidate rather than changing the original KiCad file.
 
-Lossless KiCad S-expression parsing, typed PCB inspection and deterministic
+Lossless KiCad S-expression parsing, typed PCB routing geometry and deterministic
 copper-routing primitives, including bounded multi-net rip-up-and-retry and a
 fail-closed two-layer maze router, come from the independently versioned
 [`digitaltwin-run/twin-kicad`](https://github.com/digitaltwin-run/twin-kicad)
