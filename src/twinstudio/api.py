@@ -9,6 +9,7 @@ import tempfile
 from base64 import b64decode
 from binascii import Error as Base64Error
 from contextlib import asynccontextmanager
+from importlib.metadata import version as package_version
 from pathlib import Path
 from time import perf_counter
 from typing import Any
@@ -873,6 +874,7 @@ def health() -> dict[str, Any]:
         "litellm_configured": bool(settings.litellm_model),
         "subllm": eda_llm_status(settings),
         "eda_dsl_version": "twinstudio.eda/v1",
+        "twin_kicad_version": package_version("twin-kicad"),
         "kicad_root": str(settings.kicad_root),
         "dev_auth_bypass": settings.dev_auth_bypass,
         "feature_lens_catalog": feature_lenses.catalog.catalog_version,
