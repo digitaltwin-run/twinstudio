@@ -11,7 +11,7 @@ requires-python = ">=3.11,<3.14"
 license = "MIT"
 authors = [{ name = "TwinStudio" }]
 dependencies = [
-  "twin-kicad @ https://github.com/digitaltwin-run/twin-kicad/archive/2f13db0b401d306fc10856dbbe0d36ac3f046e6a.zip",
+  "twin-kicad @ https://github.com/digitaltwin-run/twin-kicad/archive/456aaf3a58b5b311b2df571944720d92119d669e.zip",
   "fastapi>=0.128,<1",
   "uvicorn[standard]>=0.35,<1",
   "pydantic>=2.13,<3",

@@ -101,6 +101,32 @@ def test_sch2dsl_reads_only_placed_symbols() -> None:
     assert document.items[0].position.rotation == 90
 
 
+def test_pcb_inspection_accepts_current_property_fields_and_multiline_pads() -> None:
+    current = '''(kicad_pcb (version 20240108)
+      (net 7 "ROW_1")
+      (footprint "Button:SW" (layer "F.Cu") (at 12 34 90)
+        (uuid fp-1)
+        (property "Reference" "SW1")
+        (property "Value" "Button")
+        (pad "1" thru_hole circle
+          (at 1.5 -2)
+          (net 7 "ROW_1")
+          (uuid pad-1))))'''
+
+    document = inspect_source(current, "panel.kicad_pcb")
+
+    assert document.source.kicad_version == 20240108
+    assert document.items[0].reference == "SW1"
+    assert document.items[0].pads[0].model_dump() == {
+        "number": "1",
+        "uuid": "pad-1",
+        "net": "ROW_1",
+        "net_code": 7,
+        "x": 1.5,
+        "y": -2.0,
+    }
+
+
 def test_schematic_state_explains_pcb_sync_and_netgraph_limits() -> None:
     schematic = inspect_source(SCH, "panel.kicad_sch")
     board = inspect_source(PCB.replace('reference "R1"', 'reference "R2"'), "panel.kicad_pcb")

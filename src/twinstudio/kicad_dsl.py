@@ -14,6 +14,7 @@ from typing import Annotated, Any, Iterable, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from twin_kicad.copper import Bounds, Box, Capsule, Obstacle, RoutingError, Track, route_net, track_is_clear
+from twin_kicad.pcb import inspect_pcb
 from twin_kicad.sexp import (
     Node as _Node,
 )
@@ -386,32 +387,43 @@ def _fp_text(node: _Node, kind: str) -> str:
     return ""
 
 
-def _pcb_pad(node: _Node) -> EdaPad:
-    stamp = _child(node, "uuid") or _child(node, "tstamp")
-    net = _child(node, "net")
-    at = _child(node, "at")
-    return EdaPad(
-        number=_text(node, 1),
-        uuid=_text(stamp, 1) if stamp else "",
-        net=_text(net, 2) if net else "",
-        net_code=int(_text(net, 1, "0") or "0") if net else 0,
-        x=_number(at, 1) if at else 0.0,
-        y=_number(at, 2) if at else 0.0,
-    )
-
-
 def inspect_source(source: str, path: str) -> EdaDocument:
     root = _parse(source)
     root_kind = _head(root)
     if root_kind not in {"kicad_sch", "kicad_pcb"}:
         raise KicadDslError("only .kicad_sch and .kicad_pcb S-expressions are supported")
     kind: Literal["schematic", "pcb"] = "schematic" if root_kind == "kicad_sch" else "pcb"
-    nets = [
-        EdaNet(code=int(_text(node, 1)), name=_text(node, 2))
-        for node in (value for value in root.values if isinstance(value, _Node))
-        if kind == "pcb" and _head(node) == "net" and _text(node, 1).isdigit()
-    ]
+    board = inspect_pcb(root) if kind == "pcb" else None
+    nets = [EdaNet(code=net.code, name=net.name) for net in board.nets] if board else []
     items: list[EdaItem] = []
+    if board is not None:
+        items = [
+            EdaItem(
+                entity="footprint",
+                uuid=footprint.uuid,
+                reference=footprint.reference,
+                library_id=footprint.library_id,
+                value=footprint.value,
+                layer=footprint.layer or None,
+                position=EdaPosition(
+                    x=footprint.x,
+                    y=footprint.y,
+                    rotation=footprint.rotation,
+                ),
+                pads=[
+                    EdaPad(
+                        number=pad.number,
+                        uuid=pad.uuid,
+                        net=pad.net_name,
+                        net_code=pad.net_code,
+                        x=pad.x,
+                        y=pad.y,
+                    )
+                    for pad in footprint.pads
+                ],
+            )
+            for footprint in board.footprints
+        ]
     for node in (value for value in root.values if isinstance(value, _Node)):
         if kind == "schematic" and _head(node) == "symbol" and _child(node, "lib_id"):
             props = _properties(node)
@@ -428,28 +440,6 @@ def inspect_source(source: str, path: str) -> EdaDocument:
                     position=EdaPosition(
                         x=_number(at, 1), y=_number(at, 2), rotation=_number(at, 3)
                     ),
-                )
-            )
-        elif kind == "pcb" and _head(node) == "footprint":
-            at = _child(node, "at")
-            stamp = _child(node, "uuid") or _child(node, "tstamp")
-            layer = _child(node, "layer")
-            items.append(
-                EdaItem(
-                    entity="footprint",
-                    uuid=_text(stamp, 1),
-                    reference=_fp_text(node, "reference"),
-                    library_id=_text(node, 1),
-                    value=_fp_text(node, "value"),
-                    layer=_text(layer, 1) or None,
-                    position=EdaPosition(
-                        x=_number(at, 1), y=_number(at, 2), rotation=_number(at, 3)
-                    ),
-                    pads=[
-                        _pcb_pad(pad)
-                        for pad in (value for value in node.values if isinstance(value, _Node))
-                        if _head(pad) == "pad"
-                    ],
                 )
             )
     return EdaDocument(
