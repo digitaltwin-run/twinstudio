@@ -13,6 +13,33 @@ from pathlib import Path
 from typing import Annotated, Any, Iterable, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from twin_kicad.sexp import (
+    Node as _Node,
+)
+from twin_kicad.sexp import (
+    SexpError,
+)
+from twin_kicad.sexp import (
+    Token as _Token,
+)
+from twin_kicad.sexp import (
+    child as _child,
+)
+from twin_kicad.sexp import (
+    head as _head,
+)
+from twin_kicad.sexp import (
+    number as _number,
+)
+from twin_kicad.sexp import (
+    parse as _shared_parse,
+)
+from twin_kicad.sexp import (
+    text as _text,
+)
+from twin_kicad.sexp import (
+    token as _token,
+)
 
 from .kicad_copper import Bounds, Box, Capsule, Obstacle, RoutingError, Track, route_net, track_is_clear
 
@@ -325,115 +352,12 @@ def pcb_state(
     }
 
 
-@dataclass(slots=True)
-class _Token:
-    kind: str
-    value: str
-    start: int
-    end: int
-
-
-@dataclass(slots=True)
-class _Node:
-    start: int
-    end: int
-    values: list[_Token | "_Node"]
-
-
-def _tokens(source: str) -> list[_Token]:
-    result: list[_Token] = []
-    index = 0
-    while index < len(source):
-        char = source[index]
-        if char.isspace():
-            index += 1
-            continue
-        if char == ";":
-            newline = source.find("\n", index)
-            index = len(source) if newline < 0 else newline + 1
-            continue
-        if char in "()":
-            result.append(_Token(char, char, index, index + 1))
-            index += 1
-            continue
-        if char == '"':
-            start = index
-            index += 1
-            escaped = False
-            while index < len(source):
-                current = source[index]
-                index += 1
-                if current == '"' and not escaped:
-                    break
-                escaped = current == "\\" and not escaped
-                if current != "\\":
-                    escaped = False
-            else:
-                raise KicadDslError("unterminated string in KiCad file")
-            raw = source[start:index]
-            try:
-                value = json.loads(raw)
-            except json.JSONDecodeError as exc:
-                raise KicadDslError("invalid quoted string in KiCad file") from exc
-            result.append(_Token("string", value, start, index))
-            continue
-        start = index
-        while index < len(source) and not source[index].isspace() and source[index] not in "()":
-            index += 1
-        result.append(_Token("atom", source[start:index], start, index))
-    return result
-
-
 def _parse(source: str) -> _Node:
-    stack: list[_Node] = []
-    root: _Node | None = None
-    for token in _tokens(source):
-        if token.kind == "(":
-            stack.append(_Node(token.start, -1, []))
-        elif token.kind == ")":
-            if not stack:
-                raise KicadDslError("unexpected closing parenthesis")
-            node = stack.pop()
-            node.end = token.end
-            if stack:
-                stack[-1].values.append(node)
-            elif root is None:
-                root = node
-            else:
-                raise KicadDslError("multiple root expressions")
-        elif not stack:
-            raise KicadDslError("atom outside root expression")
-        else:
-            stack[-1].values.append(token)
-    if stack or root is None:
-        raise KicadDslError("unbalanced KiCad S-expression")
-    return root
-
-
-def _head(node: _Node) -> str | None:
-    first = node.values[0] if node.values else None
-    return first.value if isinstance(first, _Token) else None
-
-
-def _child(node: _Node, name: str) -> _Node | None:
-    return next((value for value in node.values if isinstance(value, _Node) and _head(value) == name), None)
-
-
-def _token(node: _Node, index: int) -> _Token | None:
-    atoms = [value for value in node.values if isinstance(value, _Token)]
-    return atoms[index] if len(atoms) > index else None
-
-
-def _text(node: _Node, index: int, default: str = "") -> str:
-    item = _token(node, index)
-    return item.value if item else default
-
-
-def _number(node: _Node, index: int, default: float = 0.0) -> float:
     try:
-        return float(_text(node, index))
-    except ValueError:
-        return default
+        return _shared_parse(source)
+    except SexpError as exc:
+        # Preserve TwinStudio's public error type while sharing syntax.
+        raise KicadDslError(str(exc)) from exc
 
 
 def _sha256(source: str) -> str:

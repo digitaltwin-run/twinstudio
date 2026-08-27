@@ -1,5 +1,4 @@
 import json
-import re
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -649,9 +648,12 @@ PCB_BLOCKED = PCB_RJ45.replace(
 
 
 def test_a_shielded_part_becomes_a_keepout_for_a_net_it_does_not_carry() -> None:
+    from twin_kicad.sexp import Node
+
     from twinstudio.kicad_dsl import _footprint_keepouts, _pad_sites, _parse
 
     root = _parse(PCB_BLOCKED)
+    assert isinstance(root, Node)
     sites = _pad_sites(root)
     for site in sites:  # stan po zmianie: +5V trafia na J1.7/8 i U1.5V
         if (site.reference, site.number) in {("J1", "7"), ("J1", "8"), ("U1", "5V")}:

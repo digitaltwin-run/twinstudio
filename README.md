@@ -138,6 +138,11 @@ The EDA commands use the same SubLLM policy as Viewer. `plan` produces a
 typed, approval-required change document; `check` validates it, and `apply`
 creates a candidate rather than changing the original KiCad file.
 
+Lossless KiCad S-expression parsing comes from the independently versioned
+[`digitaltwin-run/twin-kicad`](https://github.com/digitaltwin-run/twin-kicad)
+package. TwinStudio retains operation planning, candidates, authority and
+history; it does not keep a second parser implementation.
+
 ```bash
 # Interactive SCH/PCB editor: write a prompt, then use :check and :apply.
 twinstudio eda shell pcb/panel9.kicad_sch
