@@ -80,11 +80,12 @@ writes a versioned candidate. It does not route copper, so DRC and routing remai
 required after a connectivity change.
 
 Shared KiCad parsing, inspection and routing geometry live in the independently
-versioned `twin-kicad` package. Its bounded multi-net router never narrows a
-declared track to gain reachability and emits only rectilinear segments. It is a
-geometry primitive, not an approval bypass: a result with any unrouted net is
-diagnostic only, while a complete result still needs connectivity comparison,
-KiCad DRC and explicit candidate acceptance before promotion.
+versioned `twin-kicad` package. Its bounded multi-net and fail-closed maze
+routers never narrow a declared track to gain reachability and emit only
+rectilinear segments with explicit via dimensions. It is a geometry primitive,
+not an approval bypass: a result with any unrouted net is diagnostic only,
+while a complete result still needs connectivity comparison, KiCad DRC and
+explicit candidate acceptance before promotion.
 
 TwinStudio owns the canonical EDA event stream and content-addressed revisions.
 Artifact Viewer owns editing, rendered comparison and explicit decisions. Wiki
