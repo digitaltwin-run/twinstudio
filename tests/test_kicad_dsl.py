@@ -669,7 +669,7 @@ def test_a_shielded_part_becomes_a_keepout_for_a_net_it_does_not_carry() -> None
 
 
 def test_a_keepout_diverts_the_router() -> None:
-    from twinstudio.kicad_copper import Bounds, Box, route_net
+    from twin_kicad.copper import Bounds, Box, route_net
 
     wall = Box(net=-1, x0=40.0, y0=-5.0, x1=60.0, y1=5.0)
     bounds = Bounds(0.0, -40.0, 100.0, 40.0)

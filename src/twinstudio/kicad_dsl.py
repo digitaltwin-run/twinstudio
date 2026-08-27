@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Annotated, Any, Iterable, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from twin_kicad.copper import Bounds, Box, Capsule, Obstacle, RoutingError, Track, route_net, track_is_clear
 from twin_kicad.sexp import (
     Node as _Node,
 )
@@ -40,8 +41,6 @@ from twin_kicad.sexp import (
 from twin_kicad.sexp import (
     token as _token,
 )
-
-from .kicad_copper import Bounds, Box, Capsule, Obstacle, RoutingError, Track, route_net, track_is_clear
 
 
 class KicadDslError(ValueError):

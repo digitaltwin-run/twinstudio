@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import pytest
-
-from twinstudio.kicad_copper import (
+from twin_kicad.copper import (
     Bounds,
     Box,
     RoutingError,
