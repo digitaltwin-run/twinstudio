@@ -166,6 +166,12 @@ The firmware audit compares only explicit `GP/GPIO` labels. It reports missing
 or extra labels but cannot prove unlabeled wire continuity; run ERC or compare
 a KiCad netlist before treating it as an electrical sign-off.
 
+`POST /api/v1/eda/schematic-state` accepts the normalized Eeschema netlist and
+uses it to detect single-node nets, floating or unpowered pins, isolated parts,
+split rails and SCH–PCB drift. Without a netlist it returns the explicit
+`EDA-SCH-NETGRAPH-001` limitation instead of inferring connectivity from drawing
+geometry.
+
 ### REST
 
 ```text

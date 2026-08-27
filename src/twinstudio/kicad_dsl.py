@@ -43,6 +43,8 @@ from twin_kicad.sexp import (
     token as _token,
 )
 
+from .kicad_audit import netlist_state
+
 
 class KicadDslError(ValueError):
     """Błąd walidacji granicy prompt → bezpieczny DSL EDA.
@@ -166,13 +168,16 @@ class EdaChangeDocument(DslModel):
 
 
 def schematic_state(
-    document: EdaDocument, paired_board: EdaDocument | None = None
+    document: EdaDocument,
+    paired_board: EdaDocument | None = None,
+    netlist: dict[str, Any] | None = None,
+    netlist_error: str | None = None,
 ) -> dict[str, Any]:
     """Return bounded, deterministic repair guidance for a KiCad schematic.
 
-    This is intentionally an inventory and consistency check, not a replacement
-    for KiCad ERC.  The current v1 parser does not infer a wire/net graph from
-    a schematic, so that limitation is always stated explicitly.
+    Symbol inventory comes from the lossless source parser. Logical
+    connectivity comes from Eeschema's exported netlist when supplied by the
+    caller; visual wire geometry is never treated as a substitute for it.
     """
     if document.source.kind != "schematic":
         raise KicadDslError("schematic state requires a .kicad_sch document")
@@ -242,13 +247,32 @@ def schematic_state(
                 schematic_only_references=schematic_only_references,
             )
 
-    finding(
-        "EDA-SCH-NETGRAPH-001",
-        "WARNING",
-        "Adapter v1 nie wyprowadza grafu przewodów i sieci ze schematu.",
-        "Przed zmianą połączeń uruchom ERC w KiCad i użyj pełnego eksportu netlisty.",
-    )
+    connectivity: dict[str, Any] | None = None
+    if netlist is None:
+        finding(
+            "EDA-SCH-NETGRAPH-001",
+            "WARNING",
+            "Nie uzyskano autorytatywnej netlisty Eeschema dla schematu.",
+            "Uruchom eksport netlisty przez kicad-cli i ponów analizę stanu schematu.",
+            error=netlist_error or "netlist was not supplied",
+        )
+    else:
+        pcb = None
+        if paired_board is not None:
+            pcb = {
+                "pads": [
+                    {"reference": item.reference, "pin": pad.number, "net": pad.net}
+                    for item in paired_board.items
+                    for pad in item.pads
+                ]
+            }
+        connectivity = netlist_state(netlist, pcb)
+        codes.extend(str(code) for code in connectivity.get("codes") or [])
+        findings.extend(
+            item for item in connectivity.get("findings") or [] if isinstance(item, dict)
+        )
     blocking = any(item["severity"] == "ERROR" for item in findings)
+    connectivity_summary = (connectivity or {}).get("summary") or {}
     return {
         "schema_id": "twinstudio.eda-schematic-state/v1",
         "status": "blocked" if blocking else "requires_follow_up" if codes else "ready",
@@ -259,9 +283,13 @@ def schematic_state(
             "paired_pcb_found": paired_board is not None,
             "pcb_only_references": pcb_only_references,
             "schematic_only_references": schematic_only_references,
+            "netlist_available": connectivity is not None,
+            "nets": int(connectivity_summary.get("nets", 0)),
+            "nodes": int(connectivity_summary.get("nodes", 0)),
         },
         "codes": list(dict.fromkeys(codes)),
         "findings": findings,
+        "connectivity": connectivity,
     }
 
 

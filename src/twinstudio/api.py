@@ -371,6 +371,11 @@ class EdaAnalysisRequest(ApiModel):
     expected_version: int | None = Field(default=None, ge=0)
 
 
+class EdaSchematicAnalysisRequest(EdaAnalysisRequest):
+    netlist: dict[str, Any] | None = None
+    netlist_error: str | None = Field(default=None, max_length=2000)
+
+
 class EdaPcbAnalysisRequest(EdaAnalysisRequest):
     drc: dict[str, Any] = Field(default_factory=dict)
     geometry: dict[str, Any] | None = None
@@ -889,7 +894,11 @@ def _eda_document(path: str, expected_kind: str | None = None):
     return document
 
 
-def _schematic_state(path: str) -> dict[str, Any]:
+def _schematic_state(
+    path: str,
+    netlist: dict[str, Any] | None = None,
+    netlist_error: str | None = None,
+) -> dict[str, Any]:
     document = _eda_document(path, "schematic")
     paired_board: EdaDocument | None = None
     board_relative = Path(path).with_suffix(".kicad_pcb").as_posix()
@@ -897,7 +906,7 @@ def _schematic_state(path: str) -> dict[str, Any]:
         paired_board = inspect_file(settings.kicad_root, board_relative)
     except KicadDslError:
         paired_board = None
-    return schematic_state(document, paired_board)
+    return schematic_state(document, paired_board, netlist, netlist_error)
 
 
 def _pcb_state(
@@ -1042,14 +1051,23 @@ def eda_schematic_state(
     return _schematic_state(path)
 
 
+@app.post("/api/v1/eda/schematic-state")
+def analyze_eda_schematic_state(
+    body: EdaSchematicAnalysisRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Analyze a schematic with Eeschema's authoritative logical netlist."""
+    return _schematic_state(body.path, body.netlist, body.netlist_error)
+
+
 @app.post("/api/v1/projects/{project_id}/eda/schematic-state")
 def record_eda_schematic_state(
     project_id: str,
-    body: EdaAnalysisRequest,
+    body: EdaSchematicAnalysisRequest,
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     """Record a user-requested schematic analysis in the project EDA audit stream."""
-    analysis = _schematic_state(body.path)
+    analysis = _schematic_state(body.path, body.netlist, body.netlist_error)
     event = _record_eda_event(
         project_id,
         user,

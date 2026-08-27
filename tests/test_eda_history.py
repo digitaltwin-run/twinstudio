@@ -155,6 +155,35 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     assert current_state.status_code == 200, current_state.text
     assert current_state.json()["status"] == "requires_follow_up"
     assert current_state.json()["codes"] == ["EDA-SCH-NETGRAPH-001"]
+    network_state = client.post(
+        "/api/v1/eda/schematic-state",
+        json={
+            "path": source.name,
+            "netlist": {
+                "source": source.name,
+                "components": [
+                    {
+                        "reference": "R1",
+                        "pins": [{"number": "1", "name": "~", "type": "passive"}],
+                    }
+                ],
+                "nets": [
+                    {
+                        "name": "GND",
+                        "nodes": [
+                            {"reference": "R1", "pin": "1"},
+                            {"reference": "#PWR01", "pin": "1"},
+                        ],
+                    }
+                ],
+            },
+        },
+    )
+    assert network_state.status_code == 200, network_state.text
+    assert network_state.json()["status"] == "ready"
+    assert network_state.json()["summary"]["netlist_available"] is True
+    assert network_state.json()["summary"]["nets"] == 1
+    assert "EDA-SCH-NETGRAPH-001" not in network_state.json()["codes"]
     recorded_state = client.post(
         f"/api/v1/projects/{project_id}/eda/schematic-state",
         json={"path": source.name},

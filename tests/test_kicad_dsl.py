@@ -139,6 +139,37 @@ def test_schematic_state_explains_pcb_sync_and_netgraph_limits() -> None:
     assert state["summary"]["schematic_only_references"] == ["R1"]
 
 
+def test_schematic_state_uses_authoritative_netlist_when_available() -> None:
+    schematic = inspect_source(SCH, "panel.kicad_sch")
+    netlist = {
+        "source": "panel.kicad_sch",
+        "components": [
+            {
+                "reference": "R1",
+                "pins": [{"number": "1", "name": "~", "type": "passive"}],
+            }
+        ],
+        "nets": [
+            {
+                "name": "GND",
+                "nodes": [
+                    {"reference": "R1", "pin": "1"},
+                    {"reference": "#PWR01", "pin": "1"},
+                ],
+            }
+        ],
+    }
+
+    state = schematic_state(schematic, netlist=netlist)
+
+    assert state["status"] == "ready"
+    assert "EDA-SCH-NETGRAPH-001" not in state["codes"]
+    assert state["summary"]["netlist_available"] is True
+    assert state["summary"]["nets"] == 1
+    assert state["summary"]["nodes"] == 2
+    assert state["connectivity"]["schema_id"] == "twinstudio.eda-netlist-state/v1"
+
+
 def test_pcb_state_turns_drc_categories_into_safe_repair_draft() -> None:
     state = pcb_state(
         inspect_source(PCB, "panel.kicad_pcb"),
