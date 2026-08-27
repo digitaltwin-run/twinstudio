@@ -79,6 +79,28 @@ def test_a_pin_outside_every_net_is_reported_as_floating() -> None:
     assert pins["samples"] == ["U1.3 [IO]"]
 
 
+def test_an_intentional_no_connect_is_not_reported_as_floating() -> None:
+    documented = _netlist(
+        components=[{"reference": "U1", "part": "local:MCU", "pins": [
+            {"number": "1", "name": "GND", "type": "power_in"},
+            {"number": "2", "name": "VDD", "type": "power_in"},
+            {"number": "3", "name": "IO", "type": "bidirectional"},
+        ]}],
+        nets=[
+            {"name": "GND", "nodes": [{"reference": "U1", "pin": "1"}]},
+            {"name": "+3V3", "nodes": [{"reference": "U1", "pin": "2"}]},
+        ],
+    )
+    documented["intentional_no_connect"] = [{
+        "name": "unconnected-(U1-Pad3)",
+        "nodes": [{"reference": "U1", "pin": "3"}],
+    }]
+
+    state = netlist_state(documented)
+
+    assert "EDA-NET-FLOATING-PIN-001" not in state["codes"]
+
+
 def test_a_part_wired_only_to_itself_is_isolated() -> None:
     isolated = _netlist(
         components=[{"reference": "SW1", "part": "local:SW", "pins": [

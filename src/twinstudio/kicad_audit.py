@@ -188,6 +188,13 @@ def netlist_state(
     nets = netlist.get("nets") or []
     components = netlist.get("components") or []
     findings: list[dict[str, Any]] = []
+    intentional_no_connect = {
+        (str(node.get("reference", "")), str(node.get("pin", "")))
+        for entry in netlist.get("intentional_no_connect") or []
+        if isinstance(entry, dict)
+        for node in entry.get("nodes") or []
+        if isinstance(node, dict)
+    }
 
     nodes_by_net = {net.get("name", ""): net.get("nodes") or [] for net in nets}
     seen: dict[str, list[dict[str, str]]] = {}
@@ -224,9 +231,10 @@ def netlist_state(
     floating: list[str] = []
     for component in components:
         reference = component.get("reference", "")
-        connected = {node["pin"] for node in seen.get(reference, [])}
+        connected = {str(node["pin"]) for node in seen.get(reference, [])}
+        connected.update(pin for ref, pin in intentional_no_connect if ref == reference)
         for pin in component.get("pins") or []:
-            if pin.get("number") not in connected:
+            if str(pin.get("number")) not in connected:
                 floating.append(f"{reference}.{pin.get('number')} [{pin.get('name')}]")
     if floating:
         findings.append(_finding("floating_pin", "Pin nie występuje w żadnej sieci.", sorted(floating)))
