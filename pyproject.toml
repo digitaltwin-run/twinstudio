@@ -32,7 +32,7 @@ dependencies = [
 [project.optional-dependencies]
 llm = ["litellm>=1,<2"]
 subllm = ["subactor-subllm>=1.2,<2"]
-dev = ["httpx2>=2.10,<3", "playwright>=1.50,<2", "pytest>=8,<10", "ruff>=0.12,<1"]
+dev = ["httpx2>=2.10,<3", "jsonschema>=4.25,<5", "playwright>=1.50,<2", "pytest>=8,<10", "ruff>=0.12,<1"]
 
 [project.scripts]
 twinstudio = "twinstudio.cli:app"
