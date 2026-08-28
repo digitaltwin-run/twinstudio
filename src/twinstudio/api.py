@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 from importlib.metadata import version as package_version
 from pathlib import Path
 from time import perf_counter
-from typing import Any
+from typing import Any, Callable
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, WebSocket, WebSocketDisconnect
@@ -1791,17 +1791,34 @@ def _record_text_candidate(
     return result
 
 
-def _plan_svg(body: SvgNlRequest, user: AuthPrincipal) -> dict[str, Any]:
+def _plan_text_dsl(
+    body: SvgNlRequest | ScadNlRequest,
+    user: AuthPrincipal,
+    *,
+    inspect: Callable[[Path, str], Any],
+    translate: Callable[[str, Any, Any], tuple[Any, str]],
+    event_schema: str,
+) -> dict[str, Any]:
     try:
-        document = inspect_svg_file(settings.kicad_root, body.path)
-        change, mode = nl_to_svg_dsl(body.prompt, document, settings)
-    except SvgDslError as exc:
+        document = inspect(settings.kicad_root, body.path)
+        change, mode = translate(body.prompt, document, settings)
+    except (SvgDslError, ScadDslError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return _planned_text_change(
         body,
         user,
         change,
         mode,
+        event_schema=event_schema,
+    )
+
+
+def _plan_svg(body: SvgNlRequest, user: AuthPrincipal) -> dict[str, Any]:
+    return _plan_text_dsl(
+        body,
+        user,
+        inspect=inspect_svg_file,
+        translate=nl_to_svg_dsl,
         event_schema="twinstudio.svg-event/change-planned/v1",
     )
 
@@ -1894,16 +1911,11 @@ def scad2dsl(
 
 
 def _plan_scad(body: ScadNlRequest, user: AuthPrincipal) -> dict[str, Any]:
-    try:
-        document = inspect_scad_file(settings.kicad_root, body.path)
-        change, mode = nl_to_scad_dsl(body.prompt, document, settings)
-    except ScadDslError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    return _planned_text_change(
+    return _plan_text_dsl(
         body,
         user,
-        change,
-        mode,
+        inspect=inspect_scad_file,
+        translate=nl_to_scad_dsl,
         event_schema="twinstudio.scad-event/change-planned/v1",
     )
 
