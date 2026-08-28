@@ -19,7 +19,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, W
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 from twinstudio import __version__
 from twinstudio.artifact_group_review import ArtifactGroupReview, review_artifact_group
@@ -92,6 +92,7 @@ from twinstudio.kicad_audit import netlist_state, simulation_state
 from twinstudio.kicad_dsl import (
     EdaChangeDocument,
     EdaDocument,
+    EdaOperation,
     KicadDslError,
     apply_changes_with_repair,
     change_validation,
@@ -1118,6 +1119,48 @@ def eda_document(
 ) -> dict[str, Any]:
     """Convert an allow-listed native KiCad document to the shared EDA IR."""
     return _eda_document(path).model_dump(mode="json")
+
+
+@app.get("/api/v1/eda/capabilities")
+def eda_capabilities(
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Publish the exact operation union accepted by the deployed adapter."""
+    operation_schema = TypeAdapter(EdaOperation).json_schema()
+    definitions = operation_schema.get("$defs", {})
+    operations: list[dict[str, Any]] = []
+    for variant in operation_schema.get("oneOf", []):
+        reference = variant.get("$ref") if isinstance(variant, dict) else None
+        name = reference.rsplit("/", 1)[-1] if isinstance(reference, str) else ""
+        definition = definitions.get(name, {})
+        properties = definition.get("properties", {}) if isinstance(definition, dict) else {}
+        op = properties.get("op", {}).get("const")
+        if not isinstance(op, str):
+            continue
+        entity_schema = properties.get("entity", {})
+        entity = entity_schema.get("const") or entity_schema.get("default")
+        operations.append({
+            "id": op,
+            "entity": entity if isinstance(entity, str) else None,
+            "required_fields": [
+                field for field in definition.get("required", [])
+                if field not in {"op", "entity"}
+            ],
+            "fields": sorted(field for field in properties if field not in {"op", "entity"}),
+        })
+    operations.sort(key=lambda item: item["id"])
+    return {
+        "schema_id": "twinstudio.eda-capabilities/v1",
+        "adapter": "twinstudio-kicad",
+        "dsl_version": "twinstudio.eda/v1",
+        "operations": operations,
+        "limits": {
+            "max_operations": 50,
+            "atomic_supported": True,
+            "source_hash_required": True,
+            "candidate_only": True,
+        },
+    }
 
 
 @app.get("/api/v1/eda/sch2dsl")

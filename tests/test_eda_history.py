@@ -40,6 +40,19 @@ def sha(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
+def test_eda_capabilities_are_derived_from_the_typed_operation_union() -> None:
+    payload = api_module.eda_capabilities()
+
+    assert payload["schema_id"] == "twinstudio.eda-capabilities/v1"
+    assert {item["id"] for item in payload["operations"]} == {
+        "assign_pad_net", "move", "set_property",
+    }
+    assign = next(item for item in payload["operations"] if item["id"] == "assign_pad_net")
+    assert assign["entity"] == "footprint"
+    assert set(assign["required_fields"]) == {"target", "pad"}
+    assert payload["limits"]["candidate_only"] is True
+
+
 def test_project_contract_and_wellmanifest_hash_chain(tmp_path: Path) -> None:
     descriptor = TwinStudioProject(
         project_id="demo",
