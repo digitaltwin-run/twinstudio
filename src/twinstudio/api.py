@@ -1605,20 +1605,26 @@ def svg2dsl(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
-def _plan_svg(body: SvgNlRequest, user: AuthPrincipal) -> dict[str, Any]:
-    try:
-        document = inspect_svg_file(settings.kicad_root, body.path)
-        change, mode = nl_to_svg_dsl(body.prompt, document, settings)
-    except SvgDslError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json"), "atomic": True}
+def _planned_text_change(
+    body: SvgNlRequest | ScadNlRequest,
+    user: AuthPrincipal,
+    change: SvgChangeDocument | ScadChangeDocument,
+    mode: str,
+    *,
+    event_schema: str,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "mode": mode,
+        "document": change.model_dump(mode="json"),
+        "atomic": True,
+    }
     if body.project_id:
         event = _record_eda_event(
             body.project_id,
             user,
             "eda.change.plan",
             {
-                "schema_id": "twinstudio.svg-event/change-planned/v1",
+                "schema_id": event_schema,
                 "source": change.source.model_dump(mode="json"),
                 "prompt": change.prompt,
                 "trigger": "user_prompt",
@@ -1629,6 +1635,106 @@ def _plan_svg(body: SvgNlRequest, user: AuthPrincipal) -> dict[str, Any]:
         )
         result["history_event"] = _eda_event_json(event)
     return result
+
+
+def _text_change_dry_run(
+    body: SvgApplyRequest | ScadApplyRequest,
+    source: str,
+    candidate: str,
+    validation: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "valid": True,
+        "dry_run": True,
+        "source_sha256": body.document.source.sha256,
+        "candidate_sha256": hashlib.sha256(candidate.encode("utf-8")).hexdigest(),
+        "changed": source != candidate,
+        "operations": len(body.document.operations),
+        "validation": validation,
+    }
+
+
+def _record_text_candidate(
+    body: SvgApplyRequest | ScadApplyRequest,
+    user: AuthPrincipal,
+    source_path: Path,
+    manifest: dict[str, Any],
+    *,
+    event_schema: str,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "valid": True,
+        "dry_run": False,
+        **manifest,
+        "candidate_url": f"/api/v1/eda/candidates/{manifest['candidate_path']}",
+    }
+    if not body.project_id:
+        return result
+
+    output_root = settings.data_dir / "artifacts" / "kicad-edits"
+    candidate_path = output_root / manifest["candidate_path"]
+    object_ref, _ = store_object(settings.data_dir, candidate_path)
+    revision = eda_revision_id(manifest["candidate_path"], manifest["candidate_sha256"])
+    identity = eda_artifact_id(body.project_id, body.document.source.path)
+    manifest.update(
+        {
+            "project_id": body.project_id,
+            "artifact_id": identity,
+            "revision_id": revision,
+            "object_ref": object_ref,
+        }
+    )
+    candidate_path.with_name("change.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    event = _record_eda_event(
+        body.project_id,
+        user,
+        "eda.candidate.record",
+        {
+            "schema_id": event_schema,
+            "project_id": body.project_id,
+            "artifact_id": identity,
+            "revision_id": revision,
+            "source": body.document.source.model_dump(mode="json"),
+            "candidate_path": manifest["candidate_path"],
+            "candidate_sha256": manifest["candidate_sha256"],
+            "object_ref": object_ref,
+            "operations": manifest["operations"],
+            "validation": manifest["validation"],
+        },
+        expected_version=body.expected_version,
+        correlation_id=body.correlation_id,
+    )
+    source_ref, _ = store_object(settings.data_dir, source_path)
+    update_descriptor(
+        settings.kicad_root,
+        body.project_id,
+        event.stream_version,
+        source_path=body.document.source.path,
+        source_sha256=body.document.source.sha256,
+        revision=revision,
+        object_ref=source_ref,
+    )
+    result.update(manifest)
+    result["history_event"] = _eda_event_json(event)
+    return result
+
+
+def _plan_svg(body: SvgNlRequest, user: AuthPrincipal) -> dict[str, Any]:
+    try:
+        document = inspect_svg_file(settings.kicad_root, body.path)
+        change, mode = nl_to_svg_dsl(body.prompt, document, settings)
+    except SvgDslError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return _planned_text_change(
+        body,
+        user,
+        change,
+        mode,
+        event_schema="twinstudio.svg-event/change-planned/v1",
+    )
 
 
 @app.post("/api/v1/svg/nl2dsl")
@@ -1677,43 +1783,21 @@ def _apply_svg(body: SvgApplyRequest, user: AuthPrincipal) -> dict[str, Any]:
         candidate = apply_svg_changes(source, body.document)
     except (SvgDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
     validation = {"status": "structurally_valid", "codes": [], "requires_routing": False, "svg_xml": "valid"}
     if body.dry_run:
-        return {
-            "valid": True, "dry_run": True, "source_sha256": body.document.source.sha256,
-            "candidate_sha256": candidate_sha256, "changed": source != candidate,
-            "operations": len(body.document.operations), "validation": validation,
-        }
+        return _text_change_dry_run(body, source, candidate, validation)
     try:
         output_root = settings.data_dir / "artifacts" / "kicad-edits"
         manifest = write_svg_candidate(settings.kicad_root, output_root, body.document)
     except (SvgDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    result: dict[str, Any] = {"valid": True, "dry_run": False, **manifest, "candidate_url": f"/api/v1/eda/candidates/{manifest['candidate_path']}"}
-    if body.project_id:
-        candidate_path = output_root / manifest["candidate_path"]
-        object_ref, _ = store_object(settings.data_dir, candidate_path)
-        revision = eda_revision_id(manifest["candidate_path"], manifest["candidate_sha256"])
-        identity = eda_artifact_id(body.project_id, body.document.source.path)
-        manifest.update({"project_id": body.project_id, "artifact_id": identity, "revision_id": revision, "object_ref": object_ref})
-        candidate_path.with_name("change.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        event = _record_eda_event(
-            body.project_id, user, "eda.candidate.record",
-            {
-                "schema_id": "twinstudio.svg-event/candidate-created/v1", "project_id": body.project_id,
-                "artifact_id": identity, "revision_id": revision, "source": body.document.source.model_dump(mode="json"),
-                "candidate_path": manifest["candidate_path"], "candidate_sha256": manifest["candidate_sha256"],
-                "object_ref": object_ref, "operations": manifest["operations"], "validation": manifest["validation"],
-            }, expected_version=body.expected_version, correlation_id=body.correlation_id,
-        )
-        source_ref, _ = store_object(settings.data_dir, source_path)
-        update_descriptor(settings.kicad_root, body.project_id, event.stream_version,
-                          source_path=body.document.source.path, source_sha256=body.document.source.sha256,
-                          revision=revision, object_ref=source_ref)
-        result.update(manifest)
-        result["history_event"] = _eda_event_json(event)
-    return result
+    return _record_text_candidate(
+        body,
+        user,
+        source_path,
+        manifest,
+        event_schema="twinstudio.svg-event/candidate-created/v1",
+    )
 
 
 @app.post("/api/v1/svg/apply")
@@ -1746,19 +1830,13 @@ def _plan_scad(body: ScadNlRequest, user: AuthPrincipal) -> dict[str, Any]:
         change, mode = nl_to_scad_dsl(body.prompt, document, settings)
     except ScadDslError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json"), "atomic": True}
-    if body.project_id:
-        event = _record_eda_event(
-            body.project_id, user, "eda.change.plan",
-            {
-                "schema_id": "twinstudio.scad-event/change-planned/v1",
-                "source": change.source.model_dump(mode="json"), "prompt": change.prompt,
-                "trigger": "user_prompt", "mode": mode,
-                "operations": [item.model_dump(mode="json") for item in change.operations],
-            }, expected_version=body.expected_version,
-        )
-        result["history_event"] = _eda_event_json(event)
-    return result
+    return _planned_text_change(
+        body,
+        user,
+        change,
+        mode,
+        event_schema="twinstudio.scad-event/change-planned/v1",
+    )
 
 
 @app.post("/api/v1/scad/nl2dsl")
@@ -1781,45 +1859,20 @@ def _apply_scad(body: ScadApplyRequest, user: AuthPrincipal) -> dict[str, Any]:
         validation = validate_scad(candidate)
     except (ScadDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
     if body.dry_run:
-        return {
-            "valid": True, "dry_run": True, "source_sha256": body.document.source.sha256,
-            "candidate_sha256": candidate_sha256, "changed": source != candidate,
-            "operations": len(body.document.operations), "validation": validation,
-        }
+        return _text_change_dry_run(body, source, candidate, validation)
     try:
         output_root = settings.data_dir / "artifacts" / "kicad-edits"
         manifest = write_scad_candidate(settings.kicad_root, output_root, body.document)
     except (ScadDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    result: dict[str, Any] = {
-        "valid": True, "dry_run": False, **manifest,
-        "candidate_url": f"/api/v1/eda/candidates/{manifest['candidate_path']}",
-    }
-    if body.project_id:
-        candidate_path = output_root / manifest["candidate_path"]
-        object_ref, _ = store_object(settings.data_dir, candidate_path)
-        revision = eda_revision_id(manifest["candidate_path"], manifest["candidate_sha256"])
-        identity = eda_artifact_id(body.project_id, body.document.source.path)
-        manifest.update({"project_id": body.project_id, "artifact_id": identity, "revision_id": revision, "object_ref": object_ref})
-        candidate_path.with_name("change.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        event = _record_eda_event(
-            body.project_id, user, "eda.candidate.record",
-            {
-                "schema_id": "twinstudio.scad-event/candidate-created/v1", "project_id": body.project_id,
-                "artifact_id": identity, "revision_id": revision, "source": body.document.source.model_dump(mode="json"),
-                "candidate_path": manifest["candidate_path"], "candidate_sha256": manifest["candidate_sha256"],
-                "object_ref": object_ref, "operations": manifest["operations"], "validation": manifest["validation"],
-            }, expected_version=body.expected_version, correlation_id=body.correlation_id,
-        )
-        source_ref, _ = store_object(settings.data_dir, source_path)
-        update_descriptor(settings.kicad_root, body.project_id, event.stream_version,
-                          source_path=body.document.source.path, source_sha256=body.document.source.sha256,
-                          revision=revision, object_ref=source_ref)
-        result.update(manifest)
-        result["history_event"] = _eda_event_json(event)
-    return result
+    return _record_text_candidate(
+        body,
+        user,
+        source_path,
+        manifest,
+        event_schema="twinstudio.scad-event/candidate-created/v1",
+    )
 
 
 @app.post("/api/v1/scad/apply")

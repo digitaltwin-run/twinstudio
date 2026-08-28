@@ -16,7 +16,7 @@ with TestClient(app) as client:
     health = client.get('/health')
     assert health.status_code == 200
     assert health.json()['version'] == '0.5.0'
-    assert health.json()['twin_kicad_version'] == '0.8.1'
+    assert health.json()['twin_kicad_version'] == '0.9.0'
     assert health.json()['revision'] == 'test-revision'
     assert health.json()['feature_lens_count'] == 49
     assert health.json()['observation_dsl_version'] == 'TWINOBS 1.0'

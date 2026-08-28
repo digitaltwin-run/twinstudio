@@ -2,10 +2,14 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
 from fastapi.testclient import TestClient
 
 import twinstudio.api as api_module
 import twinstudio.scad_dsl as scad_dsl
+from twinstudio.bus import CommandBus, QueryService
+from twinstudio.event_store import EventStore
+from twinstudio.mqtt_bus import NullPublisher
 
 SCH = """(kicad_sch (version 20211123) (generator eeschema)
   (symbol (lib_id "local:R") (at 10 20 0) (unit 1)
@@ -188,6 +192,104 @@ def test_scad_rest_vertical_slice(tmp_path: Path, monkeypatch) -> None:
     unsafe["operations"] = [{"op": "set_variable", "target": "scad:variable:unknown", "value": 5}]
     rejected = client.post("/api/v1/scad/apply", json={"document": unsafe, "dry_run": True})
     assert rejected.status_code == 422
+
+
+@pytest.mark.parametrize(
+    (
+        "kind",
+        "filename",
+        "source",
+        "prompt",
+        "plan_schema",
+        "candidate_schema",
+        "result_schema",
+    ),
+    [
+        (
+            "svg",
+            "drawing.svg",
+            SVG,
+            'zmień napis "Warstwa 2" na "Warstwa dolna"',
+            "twinstudio.svg-event/change-planned/v1",
+            "twinstudio.svg-event/candidate-created/v1",
+            "twinstudio.svg-result/v1",
+        ),
+        (
+            "scad",
+            "panel.scad",
+            SCAD,
+            "ustaw T na 4",
+            "twinstudio.scad-event/change-planned/v1",
+            "twinstudio.scad-event/candidate-created/v1",
+            "twinstudio.scad-result/v1",
+        ),
+    ],
+)
+def test_text_candidate_cycle_records_format_specific_project_history(
+    tmp_path: Path,
+    monkeypatch,
+    kind: str,
+    filename: str,
+    source: str,
+    prompt: str,
+    plan_schema: str,
+    candidate_schema: str,
+    result_schema: str,
+) -> None:
+    source_root = tmp_path / "sources"
+    source_root.mkdir()
+    (source_root / filename).write_text(source, encoding="utf-8")
+    data_dir = tmp_path / "data"
+    local_store = EventStore(f"sqlite:///{tmp_path / 'events.db'}")
+    monkeypatch.setattr(api_module, "store", local_store)
+    monkeypatch.setattr(api_module, "queries", QueryService(local_store))
+    monkeypatch.setattr(
+        api_module,
+        "commands",
+        CommandBus(local_store, NullPublisher()),
+    )
+    monkeypatch.setattr(
+        api_module,
+        "settings",
+        SimpleNamespace(
+            kicad_root=source_root,
+            data_dir=data_dir,
+            litellm_model="",
+            litellm_api_base="",
+            litellm_api_key="",
+            subllm_enabled=False,
+        ),
+    )
+    client = TestClient(api_module.app)
+    project_id = f"{kind}-candidate-test"
+
+    planned = client.post(
+        f"/api/v1/projects/{project_id}/{kind}/nl2dsl",
+        json={"path": filename, "prompt": prompt},
+    )
+    assert planned.status_code == 200, planned.text
+    assert planned.json()["history_event"]["data"]["schema_id"] == plan_schema
+
+    applied = client.post(
+        f"/api/v1/projects/{project_id}/{kind}/apply",
+        json={
+            "document": planned.json()["document"],
+            "dry_run": False,
+            "correlation_id": f"{kind}-candidate-cycle",
+        },
+    )
+    assert applied.status_code == 200, applied.text
+    payload = applied.json()
+    assert payload["history_event"]["data"]["schema_id"] == candidate_schema
+    assert payload["history_event"]["correlation_id"] == f"{kind}-candidate-cycle"
+    manifest = json.loads(
+        (data_dir / "artifacts" / "kicad-edits" / payload["candidate_path"])
+        .with_name("change.json")
+        .read_text(encoding="utf-8")
+    )
+    assert manifest["schema_id"] == result_schema
+    assert manifest["project_id"] == project_id
+    assert (source_root / "project.twinstudio.json").is_file()
 
 
 def test_scad_validation_streams_source_to_configured_cad_runner(monkeypatch) -> None:

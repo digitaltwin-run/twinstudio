@@ -54,5 +54,20 @@ drugi ma m.in. operator `CROSSOVER`, a pierwszy nie. Ich mechaniczne połączeni
 zmieniłoby kontrakty. Najpierw trzeba wskazać model kanoniczny i przygotować
 migrację serializowanych dokumentów.
 
-Powtarzalne funkcje planowania/aplikacji SVG i OpenSCAD są następnym kandydatem,
-ale powinny współdzielić usługę cyklu kandydata, nie jeden luźno typowany handler.
+## Wspólny cykl kandydatów SVG/OpenSCAD
+
+Cykl planowania i utrwalania tekstowych kandydatów współdzieli teraz trzy jawnie
+typowane operacje aplikacyjne: budowę wyniku planu, wynik `dry_run` oraz zapis
+obiektu, rewizji, deskryptora i zdarzenia historii. Parser, translator, aplikator,
+walidator i writer pozostają własnością danego formatu. Publiczne endpointy są
+dzięki temu nadal cienkimi, osobnymi adapterami i zachowują dotychczasowe schema
+ID oraz odpowiedzi HTTP.
+
+Porównywalny skan dwóch izolowanych worktree, wykonany tą samą wersją reDUP i
+parametrami (`py,js,ts`, minimum 8 linii, fuzzy 0,86, semantic 0,90), zmniejszył
+wynik z 36 do 35 grup, z 551 do 493 potencjalnie odzyskiwalnych linii oraz ze
+120 do 65 linii w grupach actionable. Grupa fuzzy `_apply_svg`/`_apply_scad`
+(44 linie) zniknęła, a grupa `_plan_svg`/`_plan_scad` zmalała z 24 do 13 linii.
+Pozostałe podobieństwo `_plan_*` i `*2dsl` jest zamierzoną symetrią adapterów;
+ich mechaniczne połączenie przeniosłoby typowanie formatów do konfiguracji
+callbacków i pogorszyło czytelność granicy.
