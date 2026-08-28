@@ -243,28 +243,43 @@ def _base_side_view(config: ProjectConfig) -> View2D:
     return view
 
 
-def _lid_front_polygon(config: ProjectConfig) -> list[tuple[float, float]]:
-    d = config.dimensions
+def _lid_polygon(
+    span: float,
+    lower_section: float,
+    height: float,
+    left_inset: float,
+    right_inset: float,
+) -> list[tuple[float, float]]:
     return [
         (0, 0),
-        (0, d.lid_vertical_lower_section),
-        (d.lid_side_inset, d.lid_height),
-        (d.external_width - d.lid_side_inset, d.lid_height),
-        (d.external_width, d.lid_vertical_lower_section),
-        (d.external_width, 0),
+        (0, lower_section),
+        (left_inset, height),
+        (span - right_inset, height),
+        (span, lower_section),
+        (span, 0),
     ]
+
+
+def _lid_front_polygon(config: ProjectConfig) -> list[tuple[float, float]]:
+    d = config.dimensions
+    return _lid_polygon(
+        d.external_width,
+        d.lid_vertical_lower_section,
+        d.lid_height,
+        d.lid_side_inset,
+        d.lid_side_inset,
+    )
 
 
 def _lid_side_polygon(config: ProjectConfig) -> list[tuple[float, float]]:
     d = config.dimensions
-    return [
-        (0, 0),
-        (0, d.lid_vertical_lower_section),
-        (d.lid_front_inset, d.lid_height),
-        (d.external_depth - d.lid_rear_inset, d.lid_height),
-        (d.external_depth, d.lid_vertical_lower_section),
-        (d.external_depth, 0),
-    ]
+    return _lid_polygon(
+        d.external_depth,
+        d.lid_vertical_lower_section,
+        d.lid_height,
+        d.lid_front_inset,
+        d.lid_rear_inset,
+    )
 
 
 def _lid_front_view(config: ProjectConfig) -> View2D:
