@@ -1662,16 +1662,24 @@ def project_apply_eda(
     return _apply_eda(body.model_copy(update={"project_id": project_id}), user)
 
 
+def _inspect_text_dsl(
+    path: str,
+    *,
+    inspect: Callable[[Path, str], Any],
+) -> dict[str, Any]:
+    try:
+        return inspect(settings.kicad_root, path).model_dump(mode="json")
+    except (SvgDslError, ScadDslError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
 @app.get("/api/v1/svg2dsl")
 def svg2dsl(
     path: str = Query(min_length=1, max_length=2000),
     _user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     """Expose an allow-listed SVG document as typed, stable-target vector DSL."""
-    try:
-        return inspect_svg_file(settings.kicad_root, path).model_dump(mode="json")
-    except SvgDslError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return _inspect_text_dsl(path, inspect=inspect_svg_file)
 
 
 def _planned_text_change(
@@ -1904,10 +1912,7 @@ def scad2dsl(
     _user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     """Expose only editable, top-level numeric OpenSCAD parameters."""
-    try:
-        return inspect_scad_file(settings.kicad_root, path).model_dump(mode="json")
-    except ScadDslError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return _inspect_text_dsl(path, inspect=inspect_scad_file)
 
 
 def _plan_scad(body: ScadNlRequest, user: AuthPrincipal) -> dict[str, Any]:
