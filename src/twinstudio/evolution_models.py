@@ -16,6 +16,7 @@ from twinstudio.domain import (
     StrictModel,
     utcnow,
 )
+from twinstudio.evolution_defaults import build_default_evolution_operators
 from twinstudio.model_validation import require_unique_attribute, validate_evaluation_weights
 
 
@@ -207,16 +208,11 @@ class EvolutionOperatorSpec(StrictModel):
 
 
 def default_evolution_operators() -> list[EvolutionOperatorSpec]:
-    return [
-        EvolutionOperatorSpec(operator=MutationOperatorKind.REFRAME_GOAL, weight=1.0),
-        EvolutionOperatorSpec(operator=MutationOperatorKind.REPURPOSE_FEATURE, weight=1.0),
-        EvolutionOperatorSpec(operator=MutationOperatorKind.PARAMETER_SHIFT, weight=0.9),
-        EvolutionOperatorSpec(operator=MutationOperatorKind.MODULARIZE, weight=0.8),
-        EvolutionOperatorSpec(operator=MutationOperatorKind.MAKE_REVERSIBLE, weight=0.7),
-        EvolutionOperatorSpec(operator=MutationOperatorKind.SUBSTITUTE_PROCESS, weight=0.6),
-        EvolutionOperatorSpec(operator=MutationOperatorKind.ADJACENT_ASSOCIATION, weight=1.0),
-        EvolutionOperatorSpec(operator=MutationOperatorKind.CROSSOVER, weight=0.4),
-    ]
+    return build_default_evolution_operators(
+        MutationOperatorKind,
+        EvolutionOperatorSpec,
+        include_crossover=True,
+    )
 
 
 class EvolutionPolicy(StrictModel):
