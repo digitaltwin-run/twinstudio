@@ -1260,6 +1260,13 @@ def write_candidate(root: Path, output_root: Path, document: EdaChangeDocument) 
         sibling = path.with_suffix(sibling_suffix)
         if sibling != path and sibling.is_file():
             shutil.copy2(sibling, target.with_suffix(sibling_suffix))
+    for table_name in ("fp-lib-table", "sym-lib-table"):
+        table = path.parent / table_name
+        if table.is_file() and not table.is_symlink():
+            shutil.copy2(table, target_dir / table_name)
+    for context_dir in [*sorted(path.parent.glob("*.pretty")), path.parent / "components"]:
+        if context_dir.is_dir() and not context_dir.is_symlink():
+            shutil.copytree(context_dir, target_dir / context_dir.name, dirs_exist_ok=True)
     manifest = {
         "schema_id": "twinstudio.eda-result/v1",
         "source": document.source.model_dump(mode="json"),

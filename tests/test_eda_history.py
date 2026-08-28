@@ -282,6 +282,12 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     candidate_footprint = candidate_file.parent / "local.pretty" / "R_0603.kicad_mod"
     candidate_footprint.parent.mkdir()
     candidate_footprint.write_text("reviewed footprint\n", encoding="utf-8")
+    source_manifest = source_root / "components" / "manifests" / "r-0603.json"
+    source_manifest.parent.mkdir(parents=True)
+    source_manifest.write_text("old manifest\n", encoding="utf-8")
+    candidate_manifest = candidate_file.parent / "components" / "manifests" / "r-0603.json"
+    candidate_manifest.parent.mkdir(parents=True)
+    candidate_manifest.write_text("reviewed manifest\n", encoding="utf-8")
     decision = {
         "candidate_path": candidate_payload["candidate_path"],
         "source_sha256": sha(SCH),
@@ -299,9 +305,14 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     assert promoted.status_code == 200, promoted.text
     assert '"10k"' in source.read_text(encoding="utf-8")
     assert source_footprint.read_text(encoding="utf-8") == "reviewed footprint\n"
+    assert source_manifest.read_text(encoding="utf-8") == "reviewed manifest\n"
     promotion_event = promoted.json()["event"]
     assert any(
         item["path"] == "local.pretty/R_0603.kicad_mod"
+        for item in promotion_event["data"]["files"]
+    )
+    assert any(
+        item["path"] == "components/manifests/r-0603.json"
         for item in promotion_event["data"]["files"]
     )
     reverted = client.post(
@@ -314,6 +325,7 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     assert reverted.status_code == 200, reverted.text
     assert source.read_text(encoding="utf-8") == SCH
     assert source_footprint.read_text(encoding="utf-8") == "old footprint\n"
+    assert source_manifest.read_text(encoding="utf-8") == "old manifest\n"
 
     history = client.get(f"/api/v1/projects/{project_id}/eda/history")
     assert history.status_code == 200

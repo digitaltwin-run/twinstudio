@@ -1921,7 +1921,7 @@ def _promotion_bundle(candidate: Path, source: Path) -> list[tuple[Path, Path]]:
             pair = (item, source_dir / item.name)
             if pair not in files:
                 files.append(pair)
-        elif item.is_dir() and item.name.endswith(".pretty"):
+        elif item.is_dir() and (item.name.endswith(".pretty") or item.name == "components"):
             for member in sorted(item.rglob("*")):
                 if member.is_file() and not member.is_symlink():
                     files.append((member, source_dir / member.relative_to(candidate_dir)))

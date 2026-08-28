@@ -260,6 +260,12 @@ def test_file_boundary_and_candidate_copy(tmp_path: Path) -> None:
     root.mkdir()
     source_path = root / "panel.kicad_sch"
     source_path.write_text(SCH, encoding="utf-8")
+    (root / "fp-lib-table").write_text("(fp_lib_table)\n", encoding="utf-8")
+    (root / "local.pretty").mkdir()
+    (root / "local.pretty/R_TEST.kicad_mod").write_text("(footprint R_TEST)\n", encoding="utf-8")
+    (root / "components/manifests").mkdir(parents=True)
+    (root / "components/catalog.json").write_text("{}\n", encoding="utf-8")
+    (root / "components/manifests/r-test.json").write_text("{}\n", encoding="utf-8")
     document = inspect_file(root, "panel.kicad_sch")
     change = local_nl_to_dsl("ustaw wartość R1 na 10k", document)
 
@@ -268,6 +274,11 @@ def test_file_boundary_and_candidate_copy(tmp_path: Path) -> None:
     assert source_path.read_text(encoding="utf-8") == SCH
     assert (output / result["candidate_path"]).is_file()
     assert (output / result["candidate_path"]).with_name("change.json").is_file()
+    candidate_dir = (output / result["candidate_path"]).parent
+    assert (candidate_dir / "fp-lib-table").read_text(encoding="utf-8") == "(fp_lib_table)\n"
+    assert (candidate_dir / "local.pretty/R_TEST.kicad_mod").is_file()
+    assert (candidate_dir / "components/catalog.json").is_file()
+    assert (candidate_dir / "components/manifests/r-test.json").is_file()
     with pytest.raises(KicadDslError):
         resolve_source(root, "../outside.kicad_sch")
 
