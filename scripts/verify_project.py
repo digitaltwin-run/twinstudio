@@ -18,15 +18,8 @@ from twinstudio.domain import ProjectSnapshot
 from twinstudio.dsl import compile_dsl, parse_dsl
 from twinstudio.evolution import ProjectEvolutionEngine
 from twinstudio.feature_lenses import FeatureLensEngine
+from twinstudio.hashing import sha256_file
 from twinstudio.settings import settings
-
-
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def _subprocess_check(name: str, command: list[str], *, root: Path, env: dict[str, str] | None = None) -> dict:
@@ -59,7 +52,7 @@ def verify(root: Path, *, run_tests: bool = False) -> dict:
         path = root / artifact.path
         if not path.exists():
             missing.append(artifact.uri)
-        elif artifact.sha256 and sha256(path) != artifact.sha256:
+        elif artifact.sha256 and sha256_file(path) != artifact.sha256:
             mismatched.append(artifact.uri)
     checks.append(
         {

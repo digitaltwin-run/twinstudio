@@ -11,6 +11,7 @@ import ezdxf
 from reportlab.lib.pagesizes import A3, A4, landscape
 from reportlab.pdfgen import canvas
 
+from .layout import auxiliary_boss_positions, camera_positions
 from .models import DrawingLayerStyle, ProjectConfig
 from .validation import (
     board_actual_clearances,
@@ -309,25 +310,6 @@ def _lid_front_view(config: ProjectConfig) -> View2D:
     return view
 
 
-def _camera_positions(config: ProjectConfig) -> Iterable[tuple[float, float]]:
-    c = config.camera_mounts
-    x0 = c.center_x - ((c.columns - 1) * c.x_pitch) / 2.0
-    y0 = c.center_y - ((c.rows - 1) * c.y_pitch) / 2.0
-    for row in range(c.rows):
-        for col in range(c.columns):
-            yield x0 + col * c.x_pitch, y0 + row * c.y_pitch
-
-
-def _aux_positions(config: ProjectConfig) -> list[tuple[float, float]]:
-    b = config.auxiliary_lid_bosses
-    return [
-        (b.center_x - b.x_span / 2.0, b.center_y - b.y_span / 2.0),
-        (b.center_x + b.x_span / 2.0, b.center_y - b.y_span / 2.0),
-        (b.center_x - b.x_span / 2.0, b.center_y + b.y_span / 2.0),
-        (b.center_x + b.x_span / 2.0, b.center_y + b.y_span / 2.0),
-    ]
-
-
 def _lid_top_view(config: ProjectConfig) -> View2D:
     d = config.dimensions
     view = View2D("Top", d.external_width, d.external_depth)
@@ -336,13 +318,13 @@ def _lid_top_view(config: ProjectConfig) -> View2D:
         _rect(d.lid_side_inset, d.lid_front_inset, d.top_width, d.top_depth, "visible_edges"),
     )
     if config.feature_layers.camera_mounts.enabled:
-        for p in _camera_positions(config):
+        for p in camera_positions(config):
             view.add(
                 Circle2D(p, config.camera_mounts.outer_diameter / 2.0, "hidden_edges"),
                 Circle2D(p, config.camera_mounts.hole_diameter / 2.0, "centerlines"),
             )
     if config.feature_layers.lid_aux_bosses.enabled:
-        for p in _aux_positions(config):
+        for p in auxiliary_boss_positions(config):
             view.add(
                 Circle2D(p, config.auxiliary_lid_bosses.outer_diameter / 2.0, "hidden_edges"),
                 Circle2D(p, config.auxiliary_lid_bosses.hole_diameter / 2.0, "centerlines"),

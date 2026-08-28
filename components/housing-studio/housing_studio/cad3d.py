@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
 import cadquery as cq
 
+from .layout import auxiliary_boss_positions, camera_positions
 from .models import ConnectorOpening, ProjectConfig
 from .validation import board_hole_centers, hinge_segments
 
@@ -331,25 +331,6 @@ def _make_lid_shell(config: ProjectConfig) -> cq.Workplane:
     return cq.Workplane(obj=outer.cut(inner))
 
 
-def _camera_positions(config: ProjectConfig) -> Iterable[tuple[float, float]]:
-    c = config.camera_mounts
-    x0 = c.center_x - ((c.columns - 1) * c.x_pitch) / 2.0
-    y0 = c.center_y - ((c.rows - 1) * c.y_pitch) / 2.0
-    for row in range(c.rows):
-        for column in range(c.columns):
-            yield x0 + column * c.x_pitch, y0 + row * c.y_pitch
-
-
-def _auxiliary_boss_positions(config: ProjectConfig) -> list[tuple[float, float]]:
-    b = config.auxiliary_lid_bosses
-    return [
-        (b.center_x - b.x_span / 2.0, b.center_y - b.y_span / 2.0),
-        (b.center_x + b.x_span / 2.0, b.center_y - b.y_span / 2.0),
-        (b.center_x - b.x_span / 2.0, b.center_y + b.y_span / 2.0),
-        (b.center_x + b.x_span / 2.0, b.center_y + b.y_span / 2.0),
-    ]
-
-
 def _add_locating_lip(result: cq.Workplane, config: ProjectConfig) -> cq.Workplane:
     d = config.dimensions
     mating = config.mating
@@ -442,7 +423,7 @@ def make_lid(config: ProjectConfig) -> cq.Workplane:
         c = config.camera_mounts
         z_top = d.total_height - d.lid_top_thickness + c.embed_depth
         z_bottom = z_top - c.boss_height_after_reduction
-        for x, y in _camera_positions(config):
+        for x, y in camera_positions(config):
             result = _add_vertical_boss(
                 result,
                 x,
@@ -457,7 +438,7 @@ def make_lid(config: ProjectConfig) -> cq.Workplane:
         b = config.auxiliary_lid_bosses
         z_top = d.base_height + b.top_z_from_base_mating_plane
         z_bottom = z_top - b.boss_height
-        for x, y in _auxiliary_boss_positions(config):
+        for x, y in auxiliary_boss_positions(config):
             result = _add_vertical_boss(
                 result,
                 x,

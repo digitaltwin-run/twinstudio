@@ -1,29 +1,24 @@
 # Granice własności i audyt duplikacji
 
-Stan pomiaru: 2026-08-28. Skan wykonano przez MCP reDUP dla funkcji Python/JS/TS,
-bez testów i kodu zależności. Analiza `code2llm` została użyta pomocniczo, ale jej
-wyniku ilościowego nie traktujemy jako miary projektu: narzędzie weszło również
-do lokalnego katalogu `.venv.backup-*`.
+Stan pomiaru: 2026-08-28. Powtarzalny skan wykonuje polecenie:
+
+```bash
+redup scan . --format json --ext .py,.js --min-lines 8 --min-sim 0.9
+```
+
+Katalogi ignorowane przez repozytorium i kod zależności nie wchodzą do wyniku.
 
 ## Wynik
 
-Przed refaktoryzacją skan semantyczny obejmował 111 plików i 30 555 linii. Znalazł
-91 grup o potencjale 3 081 linii, z czego 2 565 linii pochodziło z pełnej kopii
-Housing Studio. Po refaktoryzacji obejmuje 99 plików i 25 861 linii: 36 grup i
-557 linii potencjału. Spadek wynosi 82% dla łącznego potencjału oraz 4 694 linii
-źródłowych.
+Na początku bieżącego audytu TwinStudio obejmował 65 plików i 24 489 linii.
+Skan znalazł 9 grup w 23 fragmentach, o potencjale 148 linii. Po refaktoryzacji
+obejmuje 69 plików i 24 502 linie: 4 grupy w 8 fragmentach, o potencjale 46
+linii. Produkcyjna logika wskazana przez skan została scentralizowana; potencjał
+pozostałych podobieństw spadł o 69%.
 
-Skan składniowy o progu 0,90 zostawia 177 linii. Największe pozycje to wspólna
-struktura operacji SVG/OpenSCAD w `twinstudio.api`, trzy adaptery zapisu stanu
-schematu, przykładowy artefakt będący celową kopią źródła demonstracyjnego oraz
-dwa modele polityki ewolucji.
-
-Skan granic zależności nie znalazł grup duplikacji w `twinapi` (13 plików,
-1 933 linie), `twin-kicad` (7 plików, 1 786 linii), `wellmanifest/sch`
-(1 plik, 188 linii) ani `wellmanifest/pcb` (1 plik, 330 linii). Łączny skan
-katalogu `digitaltwin-run` również nie wykazał kopii implementacji pomiędzy
-TwinStudio, TwinAPI i twin-kicad. Trafienia z tych trzech projektów pozostają
-wewnątrz TwinStudio i są opisane poniżej.
+Tym samym poleceniem sprawdzono granice zależności. `twinapi` ma 0 grup
+(11 plików, 1 870 linii), a Viewer po własnej refaktoryzacji ma 0 grup
+(63 pliki, 23 773 linie).
 
 ## Jedno źródło dla każdego obszaru
 
@@ -36,18 +31,33 @@ wewnątrz TwinStudio i są opisane poniżej.
 - `twin-kicad` jest przypiętą zależnością odpowiedzialną za bezstratny parser,
   geometrię trasowania i router; TwinStudio nie kopiuje tych implementacji.
 - `artifact_source.py` jest wspólnym właścicielem haszowania tekstu i ochrony
-  ścieżki dla DSL SVG/OpenSCAD.
+  ścieżki oraz budowy deskryptora źródła dla DSL SVG/OpenSCAD.
+- `hashing.py` jest właścicielem strumieniowego SHA-256 pliku dla API, historii,
+  eksportu i narzędzi weryfikacyjnych TwinStudio.
+- `lens_catalog_io.py` ładuje każdy wersjonowany katalog soczewek; moduły domenowe
+  nadają tylko znaczenie konkretnemu zasobowi.
+- `model_validation.py` utrzymuje wspólne niezmienniki ID i wag bez wymuszania
+  połączenia dwóch jeszcze różnych wersji modeli ewolucji.
+- `housing_studio/layout.py` jest jednym źródłem punktów kamer i bossów zarówno
+  dla modelu 3D, jak i dokumentacji 2D.
 
 Testy komponentu uruchamiają się osobno po testach platformy. Zapobiega to
 zarówno kopiowaniu testów, jak i przypadkowemu importowaniu innego kodu lokalnie
 niż w Dockerze.
 
-## Pozostałe grupy
+## Pozostałe cztery grupy
 
-Semantyczne podobieństwo `api.py` i `mcp_gateway.py` nie zawsze jest duplikacją:
-to różne adaptery transportowe. Nie należy scalać ich sygnatur ani modeli
-odpowiedzi. Jeśli ciało wykonuje logikę biznesową, kolejny krok to wydzielenie
-usługi aplikacyjnej i pozostawienie dwóch cienkich adapterów.
+1. `examples/.../software/vision_app.py` i jego kopia w
+   `demo-rpi5.lps/artifacts/` świadomie pokazują, że pakiet projektu materializuje
+   dokładną rewizję źródła. Import między nimi unieważniłby test przenośności.
+2. Dwa `sample_output/.../rebuild_project.py` są wygenerowanymi uruchamiaczami,
+   nie źródłem logiki produktu. Ich usuwanie należy do polityki retencji wyników.
+3. SHA-256 w `services/cad-worker` i `components/housing-studio` należy do dwóch
+   niezależnie pakowanych i wdrażanych artefaktów. Zależność od głównego runtime
+   tylko dla dziewięciu linii zwiększyłaby sprzężenie wdrożeniowe.
+4. `inspect_svg` i `inspect_scad` są cienkimi, symetrycznymi adapterami różnych
+   parserów. Wspólny jest już niezmiennik content-addressed source; kolekcje
+   `elements` i `variables` pozostają jawnie typowane.
 
 Modele ewolucji w `domain.py` i `evolution_models.py` nie są jeszcze równoważne:
 drugi ma m.in. operator `CROSSOVER`, a pierwszy nie. Ich mechaniczne połączenie
@@ -71,3 +81,7 @@ wynik z 36 do 35 grup, z 551 do 493 potencjalnie odzyskiwalnych linii oraz ze
 Pozostałe podobieństwo `_plan_*` i `*2dsl` jest zamierzoną symetrią adapterów;
 ich mechaniczne połączenie przeniosłoby typowanie formatów do konfiguracji
 callbacków i pogorszyło czytelność granicy.
+
+Semantyczne podobieństwo `api.py` i `mcp_gateway.py` również nie oznacza wspólnej
+sygnatury transportu. Jeśli pojawi się w nich ta sama logika biznesowa, należy
+wydzielić usługę aplikacyjną i pozostawić dwa cienkie adaptery.

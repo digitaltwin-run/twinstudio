@@ -88,6 +88,7 @@ from twinstudio.evolution_models import (
     TwinDslDocument,
 )
 from twinstudio.feature_lenses import FeatureLensEngine
+from twinstudio.hashing import sha256_file
 from twinstudio.kicad_audit import netlist_state, simulation_state
 from twinstudio.kicad_dsl import (
     EdaChangeDocument,
@@ -1002,7 +1003,7 @@ def _eda_event_evidence(payload: dict[str, Any]) -> list[dict[str, str]]:
             or path.is_relative_to(candidate_root)
         ):
             continue
-        if not path.is_file() or path.is_symlink() or _hash_file(path) != digest:
+        if not path.is_file() or path.is_symlink() or sha256_file(path) != digest:
             continue
         if digest in seen:
             continue
@@ -1012,12 +1013,12 @@ def _eda_event_evidence(payload: dict[str, Any]) -> list[dict[str, str]]:
             temporary = destination.with_name(f".{digest}.{uuid4().hex}.tmp")
             try:
                 shutil.copyfile(path, temporary)
-                if _hash_file(temporary) != digest:
+                if sha256_file(temporary) != digest:
                     raise OSError("EDA evidence digest changed while copying")
                 os.replace(temporary, destination)
             finally:
                 temporary.unlink(missing_ok=True)
-        elif not destination.is_file() or destination.is_symlink() or _hash_file(destination) != digest:
+        elif not destination.is_file() or destination.is_symlink() or sha256_file(destination) != digest:
             raise OSError("content-addressed EDA evidence is invalid")
         seen.add(digest)
         result.append({
@@ -1084,14 +1085,6 @@ def _candidate_file(relative: str) -> tuple[Path, dict[str, Any]]:
     if manifest.get("candidate_path") != candidate.relative_to(root).as_posix():
         raise HTTPException(status_code=422, detail="candidate manifest path mismatch")
     return candidate, manifest
-
-
-def _hash_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def _candidate_hash_in_use(root: Path, candidate_sha256: str) -> bool:
@@ -1924,8 +1917,8 @@ def _validated_candidate_decision(
         source = _resolve_editable_source(str(source_kind), source_data["path"])
     except (KicadDslError, SvgDslError, ScadDslError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    source_hash = _hash_file(source)
-    candidate_hash = _hash_file(candidate)
+    source_hash = sha256_file(source)
+    candidate_hash = sha256_file(candidate)
     if source_hash != body.source_sha256 or source_data.get("sha256") != body.source_sha256:
         raise HTTPException(status_code=409, detail="source hash changed since candidate creation")
     if candidate_hash != body.candidate_sha256 or manifest.get("candidate_sha256") != body.candidate_sha256:
@@ -2026,7 +2019,7 @@ def _revert_bundle(records: list[dict[str, Any]]) -> None:
             target = (root / relative).resolve()
             if not target.is_relative_to(root) or target.is_symlink():
                 raise ValueError("promotion bundle path escapes the project")
-            if not target.is_file() or _hash_file(target) != promoted_sha256:
+            if not target.is_file() or sha256_file(target) != promoted_sha256:
                 raise ValueError(f"current artifact no longer matches promoted file: {relative}")
             previous_ref = record.get("previous_object_ref")
             if previous_ref is None:
@@ -2034,7 +2027,7 @@ def _revert_bundle(records: list[dict[str, Any]]) -> None:
                 continue
             digest = str(previous_ref).removeprefix("sha256:")
             previous = settings.data_dir / "artifacts" / "objects" / "sha256" / digest[:2] / digest
-            if not previous.is_file() or _hash_file(previous) != digest:
+            if not previous.is_file() or sha256_file(previous) != digest:
                 raise ValueError(f"previous content-addressed object is unavailable: {relative}")
             with tempfile.NamedTemporaryFile(
                 dir=target.parent, prefix=f".{target.name}.", delete=False
@@ -2344,7 +2337,7 @@ def revert_project_eda_revision(
         )
     except (KicadDslError, SvgDslError, ScadDslError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    if _hash_file(source) != body.expected_current_sha256:
+    if sha256_file(source) != body.expected_current_sha256:
         raise HTTPException(status_code=409, detail="current artifact no longer matches the promoted revision")
     previous_ref = str(promotion.data["previous_object_ref"])
     digest = previous_ref.removeprefix("sha256:")
@@ -2356,7 +2349,7 @@ def revert_project_eda_revision(
             raise HTTPException(status_code=409, detail=str(exc)) from exc
     else:
         previous = settings.data_dir / "artifacts" / "objects" / "sha256" / digest[:2] / digest
-        if not previous.is_file() or _hash_file(previous) != digest:
+        if not previous.is_file() or sha256_file(previous) != digest:
             raise HTTPException(status_code=409, detail="previous content-addressed object is unavailable")
         temporary = source.with_name(f".{source.name}.{uuid4()}.tmp")
         try:
@@ -2418,7 +2411,7 @@ def migrate_project_eda_history(
             candidate_relative = str(manifest["candidate_path"])
             candidate, checked = _candidate_file(candidate_relative)
             source_data = checked["source"]
-            candidate_hash = _hash_file(candidate)
+            candidate_hash = sha256_file(candidate)
             if candidate_relative in known or candidate_hash != checked.get("candidate_sha256"):
                 continue
             identity = str(

@@ -20,7 +20,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .artifact_source import resolve_artifact_source, sha256_text
+from .artifact_source import content_addressed_document, resolve_artifact_source, sha256_text
 from .kicad_dsl import eda_litellm_route
 
 
@@ -109,8 +109,8 @@ def _variables(source: str) -> list[tuple[ScadVariable, re.Match[str]]]:
 
 
 def inspect_scad(source: str, path: str) -> ScadDocument:
-    return ScadDocument(
-        source=ScadSource(path=path, sha256=sha256_text(source)),
+    return content_addressed_document(
+        ScadDocument, ScadSource, source, path,
         variables=[item for item, _match in _variables(source)],
     )
 

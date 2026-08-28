@@ -10,6 +10,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from twinstudio.evolution_models import ActionRelation, ActionSearchSpec, GoalVariant
+from twinstudio.model_validation import require_unique_attribute
 
 
 class ActionLexeme(BaseModel):
@@ -35,9 +36,7 @@ class ActionLexiconCatalog(BaseModel):
 
     @model_validator(mode="after")
     def validate_unique_ids(self) -> "ActionLexiconCatalog":
-        ids = [item.id for item in self.actions]
-        if len(ids) != len(set(ids)):
-            raise ValueError("Action lexeme IDs must be unique")
+        require_unique_attribute(self.actions, "id", "Action lexeme IDs")
         return self
 
 

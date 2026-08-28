@@ -20,6 +20,7 @@ from reportlab.pdfgen.canvas import Canvas
 from svglib.svglib import svg2rlg
 
 from twinstudio.domain import EventEnvelope, ProjectSnapshot
+from twinstudio.hashing import sha256_file
 from twinstudio.specification import unified_specification
 
 TAB_PDF_TITLES = {
@@ -42,14 +43,6 @@ try:
     _PDF_FONT_BOLD = "TwinStudio-Bold"
 except Exception:  # pragma: no cover - ReportLab packages normally include Vera
     pass
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def export_project_bundle(

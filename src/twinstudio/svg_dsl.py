@@ -17,7 +17,7 @@ from xml.etree import ElementTree
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .artifact_source import resolve_artifact_source, sha256_text
+from .artifact_source import content_addressed_document, resolve_artifact_source, sha256_text
 from .kicad_dsl import eda_litellm_route
 
 
@@ -131,8 +131,8 @@ def _elements(source: str) -> list[tuple[SvgElement, re.Match[str]]]:
 
 
 def inspect_svg(source: str, path: str) -> SvgDocument:
-    return SvgDocument(
-        source=SvgSource(path=path, sha256=sha256_text(source)),
+    return content_addressed_document(
+        SvgDocument, SvgSource, source, path,
         elements=[element for element, _match in _elements(source)],
     )
 

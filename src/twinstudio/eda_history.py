@@ -14,6 +14,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from twinstudio.domain import EventEnvelope
+from twinstudio.hashing import sha256_file
 
 
 class HistoryModel(BaseModel):
@@ -101,14 +102,6 @@ def canonical_json(value: Any) -> str:
 
 def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def artifact_id(project_id: str, path: str) -> str:

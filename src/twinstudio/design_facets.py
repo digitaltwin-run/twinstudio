@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from importlib.resources import files
-
-import yaml
 
 from twinstudio.domain import FeatureLens, FeatureLensCatalog
 from twinstudio.feature_lenses import load_feature_lens_catalog
+from twinstudio.lens_catalog_io import load_lens_catalog_resource
 
 
 @lru_cache(maxsize=1)
@@ -18,9 +16,7 @@ def load_engineering_lens_catalog() -> FeatureLensCatalog:
     distinguish supplied-source terminology from TwinStudio additions.
     """
 
-    source = files("twinstudio").joinpath("data/engineering_lenses.yaml")
-    payload = yaml.safe_load(source.read_text(encoding="utf-8"))
-    return FeatureLensCatalog.model_validate(payload)
+    return load_lens_catalog_resource("engineering_lenses.yaml")
 
 
 @lru_cache(maxsize=1)

@@ -3,11 +3,8 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from functools import lru_cache
-from importlib.resources import files
 from typing import Any
 
-import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from twinstudio.domain import (
@@ -21,16 +18,13 @@ from twinstudio.domain import (
     ObjectNode,
     ProjectSnapshot,
 )
+from twinstudio.lens_catalog_io import load_lens_catalog_resource
 from twinstudio.settings import Settings
 
 
-@lru_cache(maxsize=1)
 def load_feature_lens_catalog() -> FeatureLensCatalog:
     """Load the source-grounded feature-lens catalog bundled with TwinStudio."""
-
-    source = files("twinstudio").joinpath("data/feature_lenses.yaml")
-    payload = yaml.safe_load(source.read_text(encoding="utf-8"))
-    return FeatureLensCatalog.model_validate(payload)
+    return load_lens_catalog_resource("feature_lenses.yaml")
 
 
 class _IdeaPayload(BaseModel):

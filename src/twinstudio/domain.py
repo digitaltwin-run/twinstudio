@@ -8,6 +8,8 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from twinstudio.model_validation import require_unique_attribute, validate_evaluation_weights
+
 
 def utcnow() -> datetime:
     return datetime.now(UTC)
@@ -861,15 +863,7 @@ class EvaluationPolicy(StrictModel):
     @field_validator("weights")
     @classmethod
     def validate_weights(cls, value: dict[str, float]) -> dict[str, float]:
-        allowed = {item.value for item in EvaluationDimension}
-        unknown = sorted(set(value) - allowed)
-        if unknown:
-            raise ValueError(f"Unknown evaluation dimensions: {', '.join(unknown)}")
-        if not value or sum(value.values()) <= 0:
-            raise ValueError("At least one positive evaluation weight is required")
-        if any(weight < 0 for weight in value.values()):
-            raise ValueError("Evaluation weights cannot be negative")
-        return value
+        return validate_evaluation_weights(value, {item.value for item in EvaluationDimension})
 
 
 class LifecycleTemplateStage(StrictModel):
@@ -898,9 +892,7 @@ class LifecycleTemplateCatalog(StrictModel):
 
     @model_validator(mode="after")
     def validate_template_ids(self) -> "LifecycleTemplateCatalog":
-        ids = [item.template_id for item in self.templates]
-        if len(ids) != len(set(ids)):
-            raise ValueError("Lifecycle template IDs must be unique")
+        require_unique_attribute(self.templates, "template_id", "Lifecycle template IDs")
         return self
 
 
