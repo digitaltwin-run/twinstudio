@@ -6,7 +6,6 @@ podgląd różnic. Operacje są małymi patchami tekstowymi, związanymi z hashe
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 from base64 import b64encode
@@ -18,6 +17,7 @@ from xml.etree import ElementTree
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .artifact_source import resolve_artifact_source, sha256_text
 from .kicad_dsl import eda_litellm_route
 
 
@@ -100,18 +100,10 @@ _ATTR = re.compile(r'''(?P<name>[\w:.-]+)\s*=\s*(?P<quote>["'])(?P<value>.*?)(?P
 _EDITABLE = {"text", "rect", "path", "circle", "ellipse", "line", "polygon", "polyline", "g"}
 
 
-def _sha(value: str) -> str:
-    return hashlib.sha256(value.encode("utf-8")).hexdigest()
-
-
 def resolve_svg_source(root: Path, relative: str) -> Path:
-    if not relative or "\x00" in relative or Path(relative).is_absolute():
-        raise SvgDslError("SVG source path must be relative")
-    path = (root / relative).resolve()
-    root = root.resolve()
-    if not path.is_relative_to(root) or not path.is_file() or path.is_symlink() or path.suffix.lower() != ".svg":
-        raise SvgDslError("SVG source is outside the configured artifact root or does not exist")
-    return path
+    return resolve_artifact_source(
+        root, relative, suffix=".svg", label="SVG", error_type=SvgDslError
+    )
 
 
 def _elements(source: str) -> list[tuple[SvgElement, re.Match[str]]]:
@@ -140,7 +132,7 @@ def _elements(source: str) -> list[tuple[SvgElement, re.Match[str]]]:
 
 def inspect_svg(source: str, path: str) -> SvgDocument:
     return SvgDocument(
-        source=SvgSource(path=path, sha256=_sha(source)),
+        source=SvgSource(path=path, sha256=sha256_text(source)),
         elements=[element for element, _match in _elements(source)],
     )
 
@@ -249,7 +241,7 @@ def _quote(value: str) -> str:
 
 
 def apply_svg_changes(source: str, document: SvgChangeDocument) -> str:
-    if _sha(source) != document.source.sha256:
+    if sha256_text(source) != document.source.sha256:
         raise SvgDslError("source hash changed; refresh svg2dsl before applying")
     output = source
     for operation in document.operations:
@@ -340,7 +332,7 @@ def write_svg_candidate(root: Path, output_root: Path, document: SvgChangeDocume
     source = source_path.read_text(encoding="utf-8")
     candidate = apply_svg_changes(source, document)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    digest = _sha(candidate)[:12]
+    digest = sha256_text(candidate)[:12]
     relative = Path(document.source.path)
     target_dir = output_root / f"{stamp}-{digest}" / relative.parent
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -349,7 +341,7 @@ def write_svg_candidate(root: Path, output_root: Path, document: SvgChangeDocume
     manifest = {
         "schema_id": "twinstudio.svg-result/v1",
         "source": document.source.model_dump(mode="json"),
-        "candidate_sha256": _sha(candidate),
+        "candidate_sha256": sha256_text(candidate),
         "candidate_path": target.relative_to(output_root).as_posix(),
         "operations": [item.model_dump(mode="json") for item in document.operations],
         "validation": {"status": "structurally_valid", "codes": [], "requires_routing": False, "svg_xml": "valid"},

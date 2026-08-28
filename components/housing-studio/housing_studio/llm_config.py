@@ -12,7 +12,14 @@ from dotenv import load_dotenv
 from .config_diff import diff_as_dicts
 from .models import ProjectConfig
 
-load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
+_component_root = Path(__file__).resolve().parents[1]
+_environment_roots = [Path.cwd()]
+if _component_root.parent.name == "components":
+    _environment_roots.append(_component_root.parent.parent)
+_environment_roots.append(_component_root)
+for _environment_root in dict.fromkeys(_environment_roots):
+    load_dotenv(_environment_root / ".env.local", override=False)
+    load_dotenv(_environment_root / ".env", override=False)
 
 
 @dataclass(slots=True)

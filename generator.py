@@ -1,88 +1,21 @@
 #!/usr/bin/env python3
+"""Compatibility launcher for the canonical Housing Studio component."""
 from __future__ import annotations
 
-import argparse
-import json
+import runpy
+import sys
 from pathlib import Path
 
-from housing_studio.artifacts import generate_artifacts
-from housing_studio.llm_config import interpret_with_litellm
-from housing_studio.models import ProjectConfig, default_project_config
-from housing_studio.validation import collect_warnings, design_metrics
-
-
-def load_config(path: Path | None) -> ProjectConfig:
-    if path is None:
-        return default_project_config()
-    return ProjectConfig.model_validate_json(path.read_text(encoding="utf-8"))
+COMPONENT_ROOT = Path(__file__).resolve().parent / "components" / "housing-studio"
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Generate a parametric two-part housing in 2D and 3D."
+    sys.path.insert(0, str(COMPONENT_ROOT))
+    namespace = runpy.run_path(
+        str(COMPONENT_ROOT / "generator.py"),
+        run_name="twinstudio_housing_generator",
     )
-    parser.add_argument("--config", type=Path, help="Input ProjectConfig JSON file")
-    parser.add_argument("--prompt", help="Natural-language change request interpreted through LiteLLM")
-    parser.add_argument("--prompt-file", type=Path, help="Read natural-language changes from a text file")
-    parser.add_argument("--out", type=Path, default=Path("generated"), help="Generated jobs directory")
-    parser.add_argument("--job-id", help="Optional deterministic job directory name")
-    parser.add_argument("--print-config", action="store_true", help="Print the validated final config")
-    parser.add_argument("--print-changes", action="store_true", help="Print the natural-language configuration diff")
-    parser.add_argument("--validate-only", action="store_true", help="Validate and print metrics without generating artifacts")
-    parser.add_argument("--serve", action="store_true", help="Start the FastAPI web application")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8000)
-    args = parser.parse_args()
-
-    if args.serve:
-        import uvicorn
-
-        uvicorn.run("app.main:app", host=args.host, port=args.port, reload=False)
-        return 0
-
-    config = load_config(args.config)
-    interpretation_mode: str | None = None
-    configuration_changes: list[dict[str, object]] | None = None
-    prompt = args.prompt
-    if args.prompt_file:
-        prompt = args.prompt_file.read_text(encoding="utf-8")
-    if prompt:
-        interpretation = interpret_with_litellm(prompt, config)
-        config = interpretation.config
-        interpretation_mode = interpretation.mode
-        configuration_changes = interpretation.changes
-        print(f"Interpretation mode: {interpretation.mode}")
-        print(interpretation.message)
-        if args.print_changes:
-            print(json.dumps(interpretation.changes, indent=2, ensure_ascii=False))
-
-    if args.print_config:
-        print(config.model_dump_json(indent=2))
-
-    if args.validate_only:
-        print(json.dumps({
-            "metrics": design_metrics(config),
-            "warnings": [warning.to_dict() for warning in collect_warnings(config)],
-        }, indent=2, ensure_ascii=False))
-        return 0
-
-    manifest = generate_artifacts(
-        config,
-        args.out,
-        job_id=args.job_id,
-        source_prompt=prompt,
-        interpretation_mode=interpretation_mode,
-        configuration_changes=configuration_changes,
-    )
-    job_dir = args.out.resolve() / manifest["job_id"]
-    print(json.dumps({
-        "job_id": manifest["job_id"],
-        "job_dir": str(job_dir),
-        "artifact_count": len(manifest["artifacts"]),
-        "bundle": str(job_dir / manifest["bundle"]) if manifest.get("bundle") else None,
-        "warnings": manifest["warnings"],
-    }, indent=2, ensure_ascii=False))
-    return 0
+    return int(namespace["main"]())
 
 
 if __name__ == "__main__":

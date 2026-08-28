@@ -7,7 +7,6 @@ OpenSCAD, gdy program jest dostępny w środowisku TwinStudio.
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 import os
@@ -21,6 +20,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .artifact_source import resolve_artifact_source, sha256_text
 from .kicad_dsl import eda_litellm_route
 
 
@@ -75,18 +75,10 @@ _VARIABLE = re.compile(
 )
 
 
-def _sha(source: str) -> str:
-    return hashlib.sha256(source.encode("utf-8")).hexdigest()
-
-
 def resolve_scad_source(root: Path, relative: str) -> Path:
-    if not relative or "\x00" in relative or Path(relative).is_absolute():
-        raise ScadDslError("SCAD source path must be relative")
-    path = (root / relative).resolve()
-    root = root.resolve()
-    if not path.is_relative_to(root) or not path.is_file() or path.is_symlink() or path.suffix.lower() != ".scad":
-        raise ScadDslError("SCAD source is outside the configured artifact root or does not exist")
-    return path
+    return resolve_artifact_source(
+        root, relative, suffix=".scad", label="SCAD", error_type=ScadDslError
+    )
 
 
 def _variables(source: str) -> list[tuple[ScadVariable, re.Match[str]]]:
@@ -118,7 +110,7 @@ def _variables(source: str) -> list[tuple[ScadVariable, re.Match[str]]]:
 
 def inspect_scad(source: str, path: str) -> ScadDocument:
     return ScadDocument(
-        source=ScadSource(path=path, sha256=_sha(source)),
+        source=ScadSource(path=path, sha256=sha256_text(source)),
         variables=[item for item, _match in _variables(source)],
     )
 
@@ -138,7 +130,7 @@ def _format_number(value: float) -> str:
 
 
 def apply_scad_changes(source: str, document: ScadChangeDocument) -> str:
-    if _sha(source) != document.source.sha256:
+    if sha256_text(source) != document.source.sha256:
         raise ScadDslError("source hash changed; refresh scad2dsl before applying")
     operation = document.operations[0]
     variables = {item.target: (item, match) for item, match in _variables(source)}
@@ -259,7 +251,7 @@ def write_scad_candidate(root: Path, output_root: Path, document: ScadChangeDocu
     candidate = apply_scad_changes(source_path.read_text(encoding="utf-8"), document)
     validation = validate_scad(candidate)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    digest = _sha(candidate)[:12]
+    digest = sha256_text(candidate)[:12]
     relative = Path(document.source.path)
     target_dir = output_root / f"{stamp}-{digest}" / relative.parent
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -268,7 +260,7 @@ def write_scad_candidate(root: Path, output_root: Path, document: ScadChangeDocu
     manifest = {
         "schema_id": "twinstudio.scad-result/v1",
         "source": document.source.model_dump(mode="json"),
-        "candidate_sha256": _sha(candidate),
+        "candidate_sha256": sha256_text(candidate),
         "candidate_path": target.relative_to(output_root).as_posix(),
         "operations": [item.model_dump(mode="json") for item in document.operations],
         "validation": validation,

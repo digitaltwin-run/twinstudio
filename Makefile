@@ -46,9 +46,10 @@ run foreground:
 
 test:
 	PYTHONPATH=src python -m pytest -q
+	python -m pytest -q components/housing-studio/tests
 
 lint:
-	ruff check src tests
+	ruff check src tests components/housing-studio
 
 compose-up:
 	docker compose up --build
