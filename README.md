@@ -180,6 +180,20 @@ split rails and SCH–PCB drift. Without a netlist it returns the explicit
 `EDA-SCH-NETGRAPH-001` limitation instead of inferring connectivity from drawing
 geometry.
 
+Project-backed EDA changes form one auditable case. The plan response returns a
+stable `correlation_id`; validation, candidate, human decision, promotion and
+revert retain it, while each event's `causation_id` points to the immediately
+preceding lifecycle event. Candidate manifests persist these identifiers so a
+Viewer, CLI or later agent can resume the same case without reconstructing it
+from timestamps.
+
+The portable `wellmanifest.logs/event/v1` projection contains immutable evidence
+instead of references to mutable working files. TwinStudio copies source and
+candidate bytes into the project's `.twinstudio/evidence/sha256/` store before
+recording an event and binds each reference to its SHA-256 digest. A log receipt
+reference remains null until a genuine POA executor performs read-back and
+issues a receipt; an approval event is not presented as an execution receipt.
+
 ### REST
 
 ```text

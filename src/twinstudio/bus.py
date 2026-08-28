@@ -323,5 +323,5 @@ class CommandBus:
             data=data,
             actor=command.actor,
             correlation_id=command.correlation_id or command.command_id,
-            causation_id=command.command_id,
+            causation_id=command.causation_id or command.command_id,
         )

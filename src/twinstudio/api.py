@@ -356,6 +356,7 @@ class EdaNlRequest(ApiModel):
     prompt: str = Field(min_length=1, max_length=30_000)
     project_id: str | None = Field(default=None, min_length=1, max_length=160)
     expected_version: int | None = Field(default=None, ge=0)
+    correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
     context_signature: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     context_sources: list[dict[str, Any]] = Field(default_factory=list, max_length=24)
     atomic: bool = False
@@ -397,6 +398,7 @@ class EdaApplyRequest(ApiModel):
     project_id: str | None = Field(default=None, min_length=1, max_length=160)
     expected_version: int | None = Field(default=None, ge=0)
     correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
+    causation_id: str | None = Field(default=None, min_length=1, max_length=128)
     atomic: bool = False
 
 
@@ -447,6 +449,8 @@ class EdaDecisionRequest(ApiModel):
     source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     candidate_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     expected_version: int | None = Field(default=None, ge=0)
+    correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
+    causation_id: str | None = Field(default=None, min_length=1, max_length=128)
     reason: str = Field(default="", max_length=2000)
     render_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
 
@@ -455,6 +459,7 @@ class EdaRevertRequest(ApiModel):
     promotion_event_id: str = Field(min_length=1, max_length=128)
     expected_current_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     expected_version: int | None = Field(default=None, ge=0)
+    correlation_id: str | None = Field(default=None, min_length=1, max_length=128)
     reason: str = Field(default="", max_length=2000)
 
 
@@ -948,6 +953,79 @@ def _sync_eda_project_files(project_id: str) -> int:
     return version
 
 
+def _eda_event_evidence(payload: dict[str, Any]) -> list[dict[str, str]]:
+    """Freeze mutable EDA inputs as content-addressed wellmanifest evidence."""
+    project_root = settings.kicad_root.resolve()
+    candidate_root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    candidates: list[tuple[Path, str]] = []
+
+    source = payload.get("source")
+    if isinstance(source, dict) and isinstance(source.get("path"), str):
+        digest = source.get("sha256")
+        if isinstance(digest, str):
+            candidates.append((project_root / source["path"], digest))
+
+    relative = payload.get("path")
+    if isinstance(relative, str):
+        digest = next(
+            (
+                payload.get(key)
+                for key in ("restored_sha256", "promoted_sha256", "source_sha256")
+                if isinstance(payload.get(key), str)
+            ),
+            None,
+        )
+        if isinstance(digest, str):
+            candidates.append((project_root / relative, digest))
+
+    candidate_path = payload.get("candidate_path")
+    candidate_sha256 = payload.get("candidate_sha256")
+    if isinstance(candidate_path, str) and isinstance(candidate_sha256, str):
+        candidates.append((candidate_root / candidate_path, candidate_sha256))
+
+    render_sha256 = payload.get("render_sha256")
+    if isinstance(render_sha256, str) and isinstance(candidate_sha256, str):
+        candidates.append(
+            (project_root / ".twinstudio" / "previews" / f"{candidate_sha256}.png", render_sha256)
+        )
+
+    evidence_root = project_root / ".twinstudio" / "evidence" / "sha256"
+    result: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for unresolved, digest in candidates:
+        if len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest):
+            continue
+        path = unresolved.resolve()
+        if not (
+            path.is_relative_to(project_root)
+            or path.is_relative_to(candidate_root)
+        ):
+            continue
+        if not path.is_file() or path.is_symlink() or _hash_file(path) != digest:
+            continue
+        if digest in seen:
+            continue
+        destination = evidence_root / digest[:2] / digest
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        if not destination.exists():
+            temporary = destination.with_name(f".{digest}.{uuid4().hex}.tmp")
+            try:
+                shutil.copyfile(path, temporary)
+                if _hash_file(temporary) != digest:
+                    raise OSError("EDA evidence digest changed while copying")
+                os.replace(temporary, destination)
+            finally:
+                temporary.unlink(missing_ok=True)
+        elif not destination.is_file() or destination.is_symlink() or _hash_file(destination) != digest:
+            raise OSError("content-addressed EDA evidence is invalid")
+        seen.add(digest)
+        result.append({
+            "path": destination.relative_to(project_root).as_posix(),
+            "sha256": digest,
+        })
+    return result
+
+
 def _record_eda_event(
     project_id: str,
     user: AuthPrincipal,
@@ -956,9 +1034,14 @@ def _record_eda_event(
     *,
     expected_version: int | None = None,
     correlation_id: str | None = None,
+    causation_id: str | None = None,
 ) -> EventEnvelope:
     _ensure_eda_project(project_id, user)
     snapshot = queries.project(project_id)
+    payload = {key: value for key, value in payload.items() if key != "evidence"}
+    evidence = _eda_event_evidence(payload)
+    if evidence:
+        payload["evidence"] = evidence
     stored = commands.execute(
         CommandEnvelope(
             command_type=command_type,
@@ -966,6 +1049,7 @@ def _record_eda_event(
             expected_version=snapshot.stream_version if expected_version is None else expected_version,
             actor=user.email,
             correlation_id=correlation_id,
+            causation_id=causation_id,
             payload=payload,
         )
     )
@@ -1202,6 +1286,7 @@ def eda_nl2dsl(
 
 def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict[str, Any]:
     document = _eda_document(body.path)
+    correlation_id = body.correlation_id or _correlation_id(request)
     prompt = body.prompt
     if body.atomic:
         prompt = (
@@ -1239,7 +1324,7 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict
                     },
                 },
                 expected_version=body.expected_version,
-                correlation_id=_correlation_id(request),
+                correlation_id=correlation_id,
             )
         raise HTTPException(
             status_code=422,
@@ -1254,7 +1339,11 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict
         ) from exc
     if body.atomic and len(change.operations) != 1:
         raise HTTPException(status_code=422, detail="atomic EDA plan requires exactly one DSL operation")
-    result: dict[str, Any] = {"mode": mode, "document": change.model_dump(mode="json")}
+    result: dict[str, Any] = {
+        "mode": mode,
+        "document": change.model_dump(mode="json"),
+        "correlation_id": correlation_id,
+    }
     if rejection:
         # Bez tego edytor wie tylko, że coś odrzucono, i nie ma czego poprawić.
         result["rejected_response"] = rejection
@@ -1277,6 +1366,7 @@ def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict
                 "operations": [item.model_dump(mode="json") for item in change.operations],
             },
             expected_version=body.expected_version,
+            correlation_id=correlation_id,
         )
         result["history_event"] = _eda_event_json(event)
     return result
@@ -1338,6 +1428,7 @@ def _apply_eda(
                 },
                 expected_version=body.expected_version,
                 correlation_id=body.correlation_id,
+                causation_id=body.causation_id,
             )
         if body.dry_run:
             result: dict[str, Any] = {
@@ -1354,6 +1445,13 @@ def _apply_eda(
             return result
         output_root = settings.data_dir / "artifacts" / "kicad-edits"
         manifest = write_candidate(settings.kicad_root, output_root, body.document)
+        manifest.update(
+            {
+                "correlation_id": body.correlation_id,
+                "causation_id": body.causation_id,
+                "validation_event_id": validation_event.event_id if validation_event else None,
+            }
+        )
     except (KicadDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     result = {
@@ -1396,6 +1494,11 @@ def _apply_eda(
             },
             expected_version=validation_event.stream_version if validation_event else body.expected_version,
             correlation_id=body.correlation_id,
+            causation_id=validation_event.event_id if validation_event else body.causation_id,
+        )
+        manifest["candidate_event_id"] = event.event_id
+        candidate_path.with_name("change.json").write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         source_ref, _ = store_object(settings.data_dir, source_path)
         update_descriptor(
@@ -1754,6 +1857,28 @@ def _revision_events(project_id: str, revision: str) -> list[EventEnvelope]:
     ]
 
 
+def _candidate_case(
+    body: EdaDecisionRequest,
+    manifest: dict[str, Any],
+    events: list[EventEnvelope],
+) -> tuple[str | None, str | None]:
+    """Resolve one stable case and the immediately preceding lifecycle event."""
+    latest = events[-1] if events else None
+    correlation_id = (
+        body.correlation_id
+        or manifest.get("correlation_id")
+        or (latest.correlation_id if latest else None)
+    )
+    causation_id = (
+        body.causation_id
+        or (latest.event_id if latest else None)
+        or manifest.get("candidate_event_id")
+        or manifest.get("validation_event_id")
+        or manifest.get("causation_id")
+    )
+    return correlation_id, causation_id
+
+
 @app.post("/api/v1/projects/{project_id}/updates")
 def record_project_update(
     project_id: str,
@@ -1841,6 +1966,7 @@ def accept_project_eda_candidate(
     prior = _revision_events(project_id, revision)
     if prior and prior[-1].event_type == "EdaChangeAccepted":
         return {"status": "accepted", "already_recorded": True, "event": _eda_event_json(prior[-1])}
+    correlation_id, causation_id = _candidate_case(body, manifest, prior)
     event = _record_eda_event(
         project_id,
         user,
@@ -1859,6 +1985,8 @@ def accept_project_eda_candidate(
             "reason": body.reason,
         },
         expected_version=body.expected_version,
+        correlation_id=correlation_id,
+        causation_id=causation_id,
     )
     return {"status": "accepted", "event": _eda_event_json(event)}
 
@@ -1870,6 +1998,8 @@ def reject_project_eda_candidate(
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     _candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
+    prior = _revision_events(project_id, revision)
+    correlation_id, causation_id = _candidate_case(body, manifest, prior)
     event = _record_eda_event(
         project_id,
         user,
@@ -1887,6 +2017,8 @@ def reject_project_eda_candidate(
             "reason": body.reason,
         },
         expected_version=body.expected_version,
+        correlation_id=correlation_id,
+        causation_id=causation_id,
     )
     return {"status": "rejected", "event": _eda_event_json(event)}
 
@@ -1906,6 +2038,8 @@ def delete_project_eda_candidate(
     staged = root / f".deleted-{relative.parts[0]}-{uuid4().hex}"
     os.replace(revision_root, staged)
     try:
+        prior = _revision_events(project_id, revision)
+        correlation_id, causation_id = _candidate_case(body, manifest, prior)
         event = _record_eda_event(
             project_id,
             user,
@@ -1923,6 +2057,8 @@ def delete_project_eda_candidate(
                 "reason": body.reason,
             },
             expected_version=body.expected_version,
+            correlation_id=correlation_id,
+            causation_id=causation_id,
         )
     except Exception:
         os.replace(staged, revision_root)
@@ -1980,6 +2116,8 @@ def promote_project_eda_candidate(
             "candidate_path": body.candidate_path,
         },
         expected_version=body.expected_version,
+        correlation_id=body.correlation_id or latest_decision.correlation_id or manifest.get("correlation_id"),
+        causation_id=latest_decision.event_id,
     )
     update_descriptor(
         settings.kicad_root,
@@ -2041,6 +2179,8 @@ def revert_project_eda_revision(
             "reason": body.reason,
         },
         expected_version=body.expected_version,
+        correlation_id=body.correlation_id or promotion.correlation_id,
+        causation_id=promotion.event_id,
     )
     update_descriptor(
         settings.kicad_root,

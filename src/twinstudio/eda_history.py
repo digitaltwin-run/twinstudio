@@ -280,6 +280,16 @@ def wellmanifest_projection(project_id: str, events: list[EventEnvelope]) -> lis
         actor = source_event.actor.replace("@", "-")
         producer = f"human:{actor}" if "@" in source_event.actor else f"service:{actor}"
         occurred_at = source_event.occurred_at.astimezone(UTC).isoformat().replace("+00:00", "Z")
+        evidence = source_event.data.get("evidence")
+        if not isinstance(evidence, list):
+            evidence = []
+        evidence = [
+            {"path": item["path"], "sha256": item["sha256"]}
+            for item in evidence[:16]
+            if isinstance(item, dict)
+            and isinstance(item.get("path"), str)
+            and isinstance(item.get("sha256"), str)
+        ]
         event = {
             "schema": "wellmanifest.logs/event/v1",
             "eventId": f"event:twinstudio:{source_event.event_id}",
@@ -297,7 +307,7 @@ def wellmanifest_projection(project_id: str, events: list[EventEnvelope]) -> lis
             "subjectRef": f"twinstudio:project/{project_id}/eda",
             "outcome": outcome,
             "subjectState": state,
-            "evidence": [],
+            "evidence": evidence,
             "inputHash": data_hash,
             "receiptRef": None,
             "previousHash": previous_hash,

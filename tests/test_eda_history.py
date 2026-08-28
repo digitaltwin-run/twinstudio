@@ -211,13 +211,24 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
 
     planned = client.post(
         f"/api/v1/projects/{project_id}/eda/nl2dsl",
-        json={"path": source.name, "prompt": "ustaw wartość R1 na 10k"},
+        json={
+            "path": source.name,
+            "prompt": "ustaw wartość R1 na 10k",
+            "correlation_id": "eda-case:panel-r1",
+        },
     )
     assert planned.status_code == 200, planned.text
+    assert planned.json()["correlation_id"] == "eda-case:panel-r1"
+    plan_event = planned.json()["history_event"]
     document = planned.json()["document"]
     candidate_response = client.post(
         f"/api/v1/projects/{project_id}/eda/apply",
-        json={"document": document, "dry_run": False},
+        json={
+            "document": document,
+            "dry_run": False,
+            "correlation_id": planned.json()["correlation_id"],
+            "causation_id": plan_event["event_id"],
+        },
     )
     assert candidate_response.status_code == 200, candidate_response.text
     candidate_payload = candidate_response.json()
@@ -261,6 +272,21 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
         "EdaRevisionPromoted",
         "EdaChangeReverted",
     ]
+    lifecycle = history.json()["events"][2:]
+    assert {event["correlation_id"] for event in lifecycle} == {"eda-case:panel-r1"}
+    for previous, current in zip(lifecycle, lifecycle[1:]):
+        assert current["causation_id"] == previous["event_id"]
+    manifest = json.loads(
+        (
+            tmp_path
+            / "data"
+            / "artifacts"
+            / "kicad-edits"
+            / candidate_payload["candidate_path"]
+        ).with_name("change.json").read_text(encoding="utf-8")
+    )
+    assert manifest["correlation_id"] == "eda-case:panel-r1"
+    assert manifest["candidate_event_id"] == lifecycle[2]["event_id"]
     assert (source_root / "project.twinstudio.json").is_file()
     assert (source_root / ".twinstudio" / "event-stream.ndjson").is_file()
     assert (source_root / ".twinstudio" / "logs" / "eda.jsonl").is_file()
@@ -270,6 +296,17 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     ]
     assert log_entries[0]["code"] == "EDA-SCH-NETGRAPH-001"
     assert log_entries[1]["code"] == "EDA-PCB-CLEARANCE-001"
+    lifecycle_logs = log_entries[2:]
+    assert all(item["evidence"] for item in lifecycle_logs)
+    for item in lifecycle_logs:
+        for evidence in item["evidence"]:
+            frozen = source_root / evidence["path"]
+            assert frozen.is_file()
+            assert hashlib.sha256(frozen.read_bytes()).hexdigest() == evidence["sha256"]
+    candidate_log = next(item for item in lifecycle_logs if item["eventType"] == "eda.candidate_created")
+    assert {item["sha256"] for item in candidate_log["evidence"]} == {
+        sha(SCH), candidate_payload["candidate_sha256"],
+    }
     assert validate_hash_chain(log_entries) == []
 
 

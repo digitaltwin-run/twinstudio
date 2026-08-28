@@ -1265,6 +1265,7 @@ class CommandEnvelope(StrictModel):
     payload: dict[str, Any]
     actor: str
     correlation_id: str | None = None
+    causation_id: str | None = None
     issued_at: datetime = Field(default_factory=utcnow)
 
 
