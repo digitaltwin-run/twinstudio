@@ -58,6 +58,7 @@ from twinstudio.dsl import (
     safe_parameter_patches,
     write_evolution_artifacts,
 )
+from twinstudio.eda_chat import EdaChatMessage, EdaChatResponse, respond_to_eda_chat
 from twinstudio.eda_history import (
     EDA_EVENT_TYPES,
     EdaHistoryEntry,
@@ -368,6 +369,15 @@ class ArtifactGroupPromptRequest(ApiModel):
     group: str = Field(min_length=1, max_length=2_000)
     paths: list[str] = Field(min_length=1, max_length=40)
     prompt: str = Field(min_length=1, max_length=30_000)
+
+
+class EdaChatRequest(ApiModel):
+    session_id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]{7,79}$")
+    sequence: int = Field(ge=1)
+    paths: list[str] = Field(min_length=1, max_length=40)
+    context_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    deterministic_context: dict[str, Any]
+    messages: list[EdaChatMessage] = Field(min_length=1, max_length=40)
 
 
 class EdaAnalysisRequest(ApiModel):
@@ -1432,6 +1442,72 @@ def project_artifact_group_prompt(
     except KicadDslError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return review.model_dump(mode="json")
+
+
+@app.post("/api/v1/projects/{project_id}/eda/chat/respond")
+def project_eda_chat_respond(
+    project_id: str,
+    body: EdaChatRequest,
+    user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Explain deterministic SCH/PCB conflicts and record the exchange.
+
+    This endpoint deliberately has no apply/promote branch.  Mutations remain
+    typed candidate operations handled by the existing EDA lifecycle.
+    """
+    encoded_context = json.dumps(
+        body.deterministic_context,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+    if len(encoded_context) > 240_000:
+        raise HTTPException(status_code=422, detail="deterministic EDA chat context exceeds 240 KB")
+    if hashlib.sha256(encoded_context).hexdigest() != body.context_sha256:
+        raise HTTPException(status_code=409, detail="EDA chat context hash does not match the payload")
+    response: EdaChatResponse = respond_to_eda_chat(
+        body.deterministic_context, body.messages, settings
+    )
+    dedupe_key = f"eda-chat:{body.session_id}:{body.sequence}:{body.context_sha256[:16]}"
+    previous = next(
+        (
+            event for event in reversed(queries.events(project_id))
+            if event.event_type == "ProjectUpdateRecorded"
+            and event.data.get("dedupe_key") == dedupe_key
+        ),
+        None,
+    )
+    if previous is None:
+        event = _record_eda_event(
+            project_id,
+            user,
+            "project.update.record",
+            {
+                "schema_id": "twinstudio.project-update/v1",
+                "trigger": "user_prompt",
+                "category": "recommendation",
+                "summary": response.summary,
+                "source_paths": body.paths,
+                "dedupe_key": dedupe_key,
+                "details": {
+                    "kind": "eda_chat_exchange",
+                    "session_id": body.session_id,
+                    "sequence": body.sequence,
+                    "context_sha256": body.context_sha256,
+                    "user_message": body.messages[-1].content,
+                    "assistant": response.model_dump(mode="json"),
+                },
+            },
+            correlation_id=body.session_id,
+        )
+    else:
+        event = previous
+    return {
+        "schema_id": "twinstudio.eda-chat-exchange/v1",
+        "response": response.model_dump(mode="json"),
+        "history_event": _eda_event_json(event),
+    }
 
 
 def _apply_eda(

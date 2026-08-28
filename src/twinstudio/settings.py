@@ -78,6 +78,9 @@ class Settings:
     subllm_audit_function: str = _env(
         "TWINSTUDIO_SUBLLM_AUDIT_FUNCTION", default="eda-firmware-audit"
     ).strip()
+    subllm_chat_function: str = _env(
+        "TWINSTUDIO_SUBLLM_CHAT_FUNCTION", default="eda-conflict-chat"
+    ).strip()
 
     mcp_allowed_origins: tuple[str, ...] = _csv(
         "MCP_ALLOWED_ORIGINS",
