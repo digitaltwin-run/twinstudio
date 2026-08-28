@@ -2236,39 +2236,51 @@ def project_eda_history(
     }
 
 
+def _decide_project_eda_candidate(
+    project_id: str,
+    body: EdaDecisionRequest,
+    user: AuthPrincipal,
+    *,
+    decision: str,
+) -> dict[str, Any]:
+    _candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
+    prior = _revision_events(project_id, revision)
+    if decision == "accept" and prior and prior[-1].event_type == "EdaChangeAccepted":
+        return {"status": "accepted", "already_recorded": True, "event": _eda_event_json(prior[-1])}
+    correlation_id, causation_id = _candidate_case(body, manifest, prior)
+    payload = {
+        "schema_id": f"twinstudio.eda-event/change-{decision}ed/v1",
+        "project_id": project_id,
+        "artifact_id": identity,
+        "revision_id": revision,
+        "candidate_path": body.candidate_path,
+        "path": manifest["source"]["path"],
+        "source_sha256": body.source_sha256,
+        "candidate_sha256": body.candidate_sha256,
+        "render_sha256": body.render_sha256,
+        "reason": body.reason,
+    }
+    if decision == "accept":
+        payload["validation"] = manifest.get("validation", {})
+    event = _record_eda_event(
+        project_id,
+        user,
+        f"eda.candidate.{decision}",
+        payload,
+        expected_version=body.expected_version,
+        correlation_id=correlation_id,
+        causation_id=causation_id,
+    )
+    return {"status": f"{decision}ed", "event": _eda_event_json(event)}
+
+
 @app.post("/api/v1/projects/{project_id}/eda/candidates/accept")
 def accept_project_eda_candidate(
     project_id: str,
     body: EdaDecisionRequest,
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    _candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
-    prior = _revision_events(project_id, revision)
-    if prior and prior[-1].event_type == "EdaChangeAccepted":
-        return {"status": "accepted", "already_recorded": True, "event": _eda_event_json(prior[-1])}
-    correlation_id, causation_id = _candidate_case(body, manifest, prior)
-    event = _record_eda_event(
-        project_id,
-        user,
-        "eda.candidate.accept",
-        {
-            "schema_id": "twinstudio.eda-event/change-accepted/v1",
-            "project_id": project_id,
-            "artifact_id": identity,
-            "revision_id": revision,
-            "candidate_path": body.candidate_path,
-            "path": manifest["source"]["path"],
-            "source_sha256": body.source_sha256,
-            "candidate_sha256": body.candidate_sha256,
-            "render_sha256": body.render_sha256,
-            "validation": manifest.get("validation", {}),
-            "reason": body.reason,
-        },
-        expected_version=body.expected_version,
-        correlation_id=correlation_id,
-        causation_id=causation_id,
-    )
-    return {"status": "accepted", "event": _eda_event_json(event)}
+    return _decide_project_eda_candidate(project_id, body, user, decision="accept")
 
 
 @app.post("/api/v1/projects/{project_id}/eda/candidates/reject")
@@ -2277,30 +2289,7 @@ def reject_project_eda_candidate(
     body: EdaDecisionRequest,
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
-    _candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
-    prior = _revision_events(project_id, revision)
-    correlation_id, causation_id = _candidate_case(body, manifest, prior)
-    event = _record_eda_event(
-        project_id,
-        user,
-        "eda.candidate.reject",
-        {
-            "schema_id": "twinstudio.eda-event/change-rejected/v1",
-            "project_id": project_id,
-            "artifact_id": identity,
-            "revision_id": revision,
-            "candidate_path": body.candidate_path,
-            "path": manifest["source"]["path"],
-            "source_sha256": body.source_sha256,
-            "candidate_sha256": body.candidate_sha256,
-            "render_sha256": body.render_sha256,
-            "reason": body.reason,
-        },
-        expected_version=body.expected_version,
-        correlation_id=correlation_id,
-        causation_id=causation_id,
-    )
-    return {"status": "rejected", "event": _eda_event_json(event)}
+    return _decide_project_eda_candidate(project_id, body, user, decision="reject")
 
 
 @app.post("/api/v1/projects/{project_id}/eda/candidates/delete")
