@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import tempfile
 from datetime import UTC, datetime
@@ -215,16 +216,26 @@ LOG_CODE_ALIASES = {
     "EDA_ROUTING_REQUIRED": "EDA-PCB-ROUTING-001",
     "EDA_DRC_NOT_RUN": "EDA-PCB-DRC-001",
     "EDA_CONNECTIVITY_NOT_RUN": "EDA-SCH-NET-001",
+    "EDA_PARITY_NOT_RUN": "EDA-SCH-PCB-SYNC-001",
+    "EDA_FOOTPRINT_PARITY_NOT_RUN": "EDA-SCH-PCB-SYNC-001",
+    "EDA_ERC_NOT_RUN": "EDA-SCH-NETGRAPH-001",
 }
+LOG_CODE_PATTERN = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$")
+
+
+def _log_code(value: str) -> str | None:
+    """Projection codes belong to logs DSL, not to an adopter's Python enum."""
+    mapped = LOG_CODE_ALIASES.get(value, value)
+    return mapped if LOG_CODE_PATTERN.fullmatch(mapped) else None
 
 
 def _event_code(data: dict[str, Any]) -> str | None:
     """Map internal validation labels to documented wellmanifest error codes."""
     error = data.get("error")
     if isinstance(error, dict) and isinstance(error.get("code"), str):
-        return LOG_CODE_ALIASES.get(error["code"], error["code"])
+        return _log_code(error["code"])
     if isinstance(data.get("code"), str):
-        return LOG_CODE_ALIASES.get(data["code"], data["code"])
+        return _log_code(data["code"])
     for container in (data.get("analysis"), data.get("validation")):
         if not isinstance(container, dict):
             continue
@@ -235,14 +246,18 @@ def _event_code(data: dict[str, Any]) -> str | None:
                     continue
                 value = finding.get("code")
                 if isinstance(value, str):
-                    return LOG_CODE_ALIASES.get(value, value)
+                    projected = _log_code(value)
+                    if projected is not None:
+                        return projected
         codes = container.get("codes")
         if not isinstance(codes, list):
             continue
         for value in codes:
             if not isinstance(value, str):
                 continue
-            return LOG_CODE_ALIASES.get(value, value)
+            projected = _log_code(value)
+            if projected is not None:
+                return projected
     return None
 
 

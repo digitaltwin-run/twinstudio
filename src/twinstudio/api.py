@@ -1900,6 +1900,109 @@ def _revision_events(project_id: str, revision: str) -> list[EventEnvelope]:
     ]
 
 
+def _promotion_bundle(candidate: Path, source: Path) -> list[tuple[Path, Path]]:
+    """Return the reviewed KiCad file together with its measured project context."""
+    files = [(candidate, source)]
+    if candidate.suffix not in {".kicad_pcb", ".kicad_sch"}:
+        return files
+    candidate_dir = candidate.parent
+    source_dir = source.parent
+    allowed = {
+        f"{candidate.stem}.kicad_pcb",
+        f"{candidate.stem}.kicad_sch",
+        f"{candidate.stem}.kicad_pro",
+        "fp-lib-table",
+        "sym-lib-table",
+    }
+    for item in sorted(candidate_dir.iterdir()):
+        if item.is_symlink():
+            continue
+        if item.is_file() and item.name in allowed:
+            pair = (item, source_dir / item.name)
+            if pair not in files:
+                files.append(pair)
+        elif item.is_dir() and item.name.endswith(".pretty"):
+            for member in sorted(item.rglob("*")):
+                if member.is_file() and not member.is_symlink():
+                    files.append((member, source_dir / member.relative_to(candidate_dir)))
+    return files
+
+
+def _promote_bundle(candidate: Path, source: Path) -> list[dict[str, Any]]:
+    """Atomically replace each file and retain content-addressed rollback evidence."""
+    staged: list[tuple[Path, Path]] = []
+    records: list[dict[str, Any]] = []
+    try:
+        for candidate_file, target in _promotion_bundle(candidate, source):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            previous_ref = store_object(settings.data_dir, target)[0] if target.is_file() else None
+            promoted_ref, _ = store_object(settings.data_dir, candidate_file)
+            with tempfile.NamedTemporaryFile(
+                dir=target.parent, prefix=f".{target.name}.", delete=False
+            ) as stream:
+                temporary = Path(stream.name)
+                with candidate_file.open("rb") as candidate_stream:
+                    shutil.copyfileobj(candidate_stream, stream)
+                stream.flush()
+                os.fsync(stream.fileno())
+            staged.append((temporary, target))
+            records.append({
+                "path": target.relative_to(settings.kicad_root).as_posix(),
+                "previous_object_ref": previous_ref,
+                "promoted_object_ref": promoted_ref,
+                "promoted_sha256": promoted_ref.removeprefix("sha256:"),
+            })
+        for temporary, target in staged:
+            os.replace(temporary, target)
+    finally:
+        for temporary, _target in staged:
+            temporary.unlink(missing_ok=True)
+    return records
+
+
+def _revert_bundle(records: list[dict[str, Any]]) -> None:
+    """Restore every file measured during promotion, refusing partial stale state."""
+    root = settings.kicad_root.resolve()
+    prepared: list[tuple[Path | None, Path]] = []
+    try:
+        for record in records:
+            relative = record.get("path")
+            promoted_sha256 = record.get("promoted_sha256")
+            if not isinstance(relative, str) or not isinstance(promoted_sha256, str):
+                raise ValueError("promotion bundle is incomplete")
+            target = (root / relative).resolve()
+            if not target.is_relative_to(root) or target.is_symlink():
+                raise ValueError("promotion bundle path escapes the project")
+            if not target.is_file() or _hash_file(target) != promoted_sha256:
+                raise ValueError(f"current artifact no longer matches promoted file: {relative}")
+            previous_ref = record.get("previous_object_ref")
+            if previous_ref is None:
+                prepared.append((None, target))
+                continue
+            digest = str(previous_ref).removeprefix("sha256:")
+            previous = settings.data_dir / "artifacts" / "objects" / "sha256" / digest[:2] / digest
+            if not previous.is_file() or _hash_file(previous) != digest:
+                raise ValueError(f"previous content-addressed object is unavailable: {relative}")
+            with tempfile.NamedTemporaryFile(
+                dir=target.parent, prefix=f".{target.name}.", delete=False
+            ) as stream:
+                temporary = Path(stream.name)
+                with previous.open("rb") as previous_stream:
+                    shutil.copyfileobj(previous_stream, stream)
+                stream.flush()
+                os.fsync(stream.fileno())
+            prepared.append((temporary, target))
+        for temporary, target in prepared:
+            if temporary is None:
+                target.unlink()
+            else:
+                os.replace(temporary, target)
+    finally:
+        for temporary, _target in prepared:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+
+
 def _candidate_case(
     body: EdaDecisionRequest,
     manifest: dict[str, Any],
@@ -2127,20 +2230,14 @@ def promote_project_eda_candidate(
     )
     if latest_decision is None or latest_decision.event_type != "EdaChangeAccepted":
         raise HTTPException(status_code=409, detail="candidate must be accepted before promotion")
-    previous_ref, _ = store_object(settings.data_dir, source)
-    candidate_ref, _ = store_object(settings.data_dir, candidate)
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(dir=source.parent, prefix=f".{source.name}.", delete=False) as stream:
-            temporary = Path(stream.name)
-            with candidate.open("rb") as candidate_stream:
-                shutil.copyfileobj(candidate_stream, stream)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary, source)
-    finally:
-        if temporary is not None:
-            temporary.unlink(missing_ok=True)
+    promoted_files = _promote_bundle(candidate, source)
+    primary = next(
+        item
+        for item in promoted_files
+        if item["path"] == source.relative_to(settings.kicad_root).as_posix()
+    )
+    previous_ref = str(primary["previous_object_ref"])
+    candidate_ref = str(primary["promoted_object_ref"])
     event = _record_eda_event(
         project_id,
         user,
@@ -2157,6 +2254,7 @@ def promote_project_eda_candidate(
             "promoted_sha256": body.candidate_sha256,
             "promoted_object_ref": candidate_ref,
             "candidate_path": body.candidate_path,
+            "files": promoted_files,
         },
         expected_version=body.expected_version,
         correlation_id=body.correlation_id or latest_decision.correlation_id or manifest.get("correlation_id"),
@@ -2197,15 +2295,22 @@ def revert_project_eda_revision(
         raise HTTPException(status_code=409, detail="current artifact no longer matches the promoted revision")
     previous_ref = str(promotion.data["previous_object_ref"])
     digest = previous_ref.removeprefix("sha256:")
-    previous = settings.data_dir / "artifacts" / "objects" / "sha256" / digest[:2] / digest
-    if not previous.is_file() or _hash_file(previous) != digest:
-        raise HTTPException(status_code=409, detail="previous content-addressed object is unavailable")
-    temporary = source.with_name(f".{source.name}.{uuid4()}.tmp")
-    try:
-        shutil.copyfile(previous, temporary)
-        os.replace(temporary, source)
-    finally:
-        temporary.unlink(missing_ok=True)
+    promoted_files = promotion.data.get("files")
+    if isinstance(promoted_files, list) and promoted_files:
+        try:
+            _revert_bundle(promoted_files)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+    else:
+        previous = settings.data_dir / "artifacts" / "objects" / "sha256" / digest[:2] / digest
+        if not previous.is_file() or _hash_file(previous) != digest:
+            raise HTTPException(status_code=409, detail="previous content-addressed object is unavailable")
+        temporary = source.with_name(f".{source.name}.{uuid4()}.tmp")
+        try:
+            shutil.copyfile(previous, temporary)
+            os.replace(temporary, source)
+        finally:
+            temporary.unlink(missing_ok=True)
     event = _record_eda_event(
         project_id,
         user,

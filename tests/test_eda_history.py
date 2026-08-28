@@ -94,6 +94,34 @@ def test_project_contract_and_wellmanifest_hash_chain(tmp_path: Path) -> None:
     )
 
 
+def test_internal_validation_codes_are_projected_to_logs_dsl_codes() -> None:
+    event = EventEnvelope(
+        stream_id="demo",
+        stream_version=1,
+        event_type="EdaChangeAccepted",
+        data={"validation": {"codes": ["EDA_PARITY_NOT_RUN", "EDA_ERC_NOT_RUN"]}},
+        actor="creator@example.test",
+    )
+
+    projection = wellmanifest_projection("demo", [event])
+
+    assert projection[0]["code"] == "EDA-SCH-PCB-SYNC-001"
+
+
+def test_unknown_internal_label_is_not_leaked_into_the_portable_projection() -> None:
+    event = EventEnvelope(
+        stream_id="demo",
+        stream_version=1,
+        event_type="EdaChangeAccepted",
+        data={"validation": {"codes": ["INTERNAL_LABEL", "EDA_ERC_NOT_RUN"]}},
+        actor="creator@example.test",
+    )
+
+    projection = wellmanifest_projection("demo", [event])
+
+    assert projection[0]["code"] == "EDA-SCH-NETGRAPH-001"
+
+
 def test_failed_eda_plan_is_projected_to_wellmanifest_logs(tmp_path: Path, monkeypatch) -> None:
     source_root = tmp_path / "project"
     source_root.mkdir()
@@ -245,6 +273,15 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     )
     assert candidate_response.status_code == 200, candidate_response.text
     candidate_payload = candidate_response.json()
+    source_footprint = source_root / "local.pretty" / "R_0603.kicad_mod"
+    source_footprint.parent.mkdir()
+    source_footprint.write_text("old footprint\n", encoding="utf-8")
+    candidate_file = (
+        data_dir / "artifacts" / "kicad-edits" / candidate_payload["candidate_path"]
+    )
+    candidate_footprint = candidate_file.parent / "local.pretty" / "R_0603.kicad_mod"
+    candidate_footprint.parent.mkdir()
+    candidate_footprint.write_text("reviewed footprint\n", encoding="utf-8")
     decision = {
         "candidate_path": candidate_payload["candidate_path"],
         "source_sha256": sha(SCH),
@@ -261,7 +298,12 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     )
     assert promoted.status_code == 200, promoted.text
     assert '"10k"' in source.read_text(encoding="utf-8")
+    assert source_footprint.read_text(encoding="utf-8") == "reviewed footprint\n"
     promotion_event = promoted.json()["event"]
+    assert any(
+        item["path"] == "local.pretty/R_0603.kicad_mod"
+        for item in promotion_event["data"]["files"]
+    )
     reverted = client.post(
         f"/api/v1/projects/{project_id}/eda/revisions/revert",
         json={
@@ -271,6 +313,7 @@ def test_project_eda_history_accept_promote_and_revert(tmp_path: Path, monkeypat
     )
     assert reverted.status_code == 200, reverted.text
     assert source.read_text(encoding="utf-8") == SCH
+    assert source_footprint.read_text(encoding="utf-8") == "old footprint\n"
 
     history = client.get(f"/api/v1/projects/{project_id}/eda/history")
     assert history.status_code == 200
