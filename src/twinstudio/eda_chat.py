@@ -71,13 +71,26 @@ def _report_summary(context: dict[str, Any], name: str) -> tuple[bool, int, list
     count = 0
     counts = report.get("counts")
     if isinstance(counts, dict):
-        for key in ("violations", "mismatches", "total", "blocking"):
+        for key in ("violations", "mismatches", "mismatched", "incomplete", "total", "blocking"):
             value = counts.get(key)
             if isinstance(value, int):
                 count = max(count, value)
+    categories = report.get("categories")
+    if isinstance(categories, dict):
+        count = max(count, sum(value for value in categories.values() if isinstance(value, int)))
+    rules = report.get("rules")
+    if isinstance(rules, list):
+        count = max(count, sum(
+            int(rule.get("count", 0)) for rule in rules if isinstance(rule, dict)
+        ))
     findings = report.get("findings")
     if isinstance(findings, list):
         count = max(count, len(findings))
+    violations = report.get("violations")
+    if isinstance(violations, int):
+        count = max(count, violations)
+    elif isinstance(violations, list):
+        count = max(count, len(violations))
     return blocking, count, codes
 
 
@@ -98,6 +111,16 @@ def _local_response(context: dict[str, Any]) -> EdaChatResponse:
             message=f"{label}: {'blokada' if blocking else f'{count} ustaleń' if count else 'bez wykrytych naruszeń'}.",
             evidence_paths=paths,
         ))
+    errors = context.get("errors")
+    if isinstance(errors, list):
+        for error in errors[:10]:
+            if isinstance(error, dict):
+                facts.append(EdaChatFact(
+                    severity="error",
+                    code=f"{error.get('check', 'check')}_not_run",
+                    message=str(error.get("error") or "kontrola nie została wykonana"),
+                    evidence_paths=paths,
+                ))
     return EdaChatResponse(
         mode="local-fallback",
         summary=(
@@ -127,7 +150,13 @@ def _parse_response(content: Any) -> EdaChatResponse:
         start, end = text.find("{"), text.rfind("}")
         if start >= 0 and end > start:
             text = text[start:end + 1]
-    return EdaChatResponse.model_validate_json(text)
+    parsed = EdaChatResponse.model_validate_json(text)
+    meaningful_summary = parsed.summary.strip(" .,…—-_\n\t")
+    if len(meaningful_summary) < 20:
+        raise ValueError("LLM-DEGENERATE-RESPONSE-001: summary contains no useful explanation")
+    if not (parsed.facts or parsed.questions or parsed.proposed_actions):
+        raise ValueError("LLM-DEGENERATE-RESPONSE-002: response contains no facts, questions or actions")
+    return parsed
 
 
 def _routes(settings: Any) -> list[tuple[dict[str, Any], str, bool]]:

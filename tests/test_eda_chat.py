@@ -2,11 +2,12 @@ import hashlib
 import json
 from types import SimpleNamespace
 
+import pytest
 from fastapi.testclient import TestClient
 
 from twinstudio import api as api_module
 from twinstudio.bus import CommandBus, QueryService
-from twinstudio.eda_chat import EdaChatMessage, respond_to_eda_chat
+from twinstudio.eda_chat import EdaChatMessage, _parse_response, respond_to_eda_chat
 from twinstudio.event_store import EventStore
 from twinstudio.mqtt_bus import NullPublisher
 
@@ -32,6 +33,22 @@ def test_chat_has_honest_deterministic_fallback() -> None:
     assert response.requires_human_review is True
     assert any(fact.code == "parity_measured" for fact in response.facts)
     assert all(action.requires_candidate for action in response.proposed_actions)
+    schematic = next(fact for fact in response.facts if fact.code == "schematic_style_measured")
+    assert "1 ustaleń" in schematic.message
+
+
+def test_chat_rejects_schema_valid_but_empty_llm_answer() -> None:
+    with pytest.raises(ValueError, match="DEGENERATE"):
+        _parse_response(json.dumps({
+            "schema_id": "twinstudio.eda-chat-response/v1",
+            "mode": "subllm",
+            "summary": "...",
+            "facts": [],
+            "questions": [],
+            "proposed_actions": [],
+            "limitations": [],
+            "requires_human_review": True,
+        }))
 
 
 def test_chat_endpoint_records_exchange_in_event_stream(tmp_path, monkeypatch) -> None:
