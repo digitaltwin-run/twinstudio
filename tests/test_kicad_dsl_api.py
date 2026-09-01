@@ -8,7 +8,9 @@ from fastapi.testclient import TestClient
 import twinstudio.api as api_module
 import twinstudio.scad_dsl as scad_dsl
 from twinstudio.bus import CommandBus, QueryService
+from twinstudio.eda_operation_planner import EdaOperationProposal
 from twinstudio.event_store import EventStore
+from twinstudio.kicad_dsl import KicadDslError
 from twinstudio.mqtt_bus import NullPublisher
 
 SCH = """(kicad_sch (version 20211123) (generator eeschema)
@@ -93,6 +95,56 @@ def test_eda_plan_target_error_uses_stable_problem_code(tmp_path: Path, monkeypa
     assert payload["detail"] == "Prompt musi wskazać dokładnie jeden element, np. R1, SW3 lub RJ45."
     assert payload["error"]["code"] == "EDA-DSL-TARGET-REQUIRED-001"
     assert payload["error"]["operation"] == "POST /api/v1/eda/nl2dsl"
+
+
+def test_eda_operation_plan_is_read_only_and_maps_planner_errors(monkeypatch) -> None:
+    captured: dict = {}
+
+    def propose(**kwargs):
+        captured.update(kwargs)
+        return (
+            EdaOperationProposal(
+                decision="propose",
+                operation="optimize_placement_and_routing",
+                why="Reduces routing cost.",
+                interpretation="Search capacitor placement and reroute.",
+                limitations=["Candidate only."],
+            ),
+            "subllm:zai/glm-5.3",
+        )
+
+    monkeypatch.setattr(api_module, "propose_eda_operation", propose)
+    client = TestClient(api_module.app)
+    body = {
+        "prompt": "Zoptymalizuj routing",
+        "source": {"path": "pcb/panel9.kicad_pcb", "kind": "pcb"},
+        "operations": [{"id": "optimize_placement_and_routing"}],
+        "project_context": {"placement_search": {"max_candidates": 5}},
+    }
+
+    response = client.post("/api/v1/eda/operation-plan", json=body)
+
+    assert response.status_code == 200
+    assert response.json()["mode"] == "subllm:zai/glm-5.3"
+    assert response.json()["proposal"]["operation"] == "optimize_placement_and_routing"
+    assert captured == {
+        "prompt": body["prompt"],
+        "source": body["source"],
+        "operations": body["operations"],
+        "project_context": body["project_context"],
+        "settings": api_module.settings,
+    }
+
+    monkeypatch.setattr(
+        api_module,
+        "propose_eda_operation",
+        lambda **_kwargs: (_ for _ in ()).throw(KicadDslError("route unavailable")),
+    )
+    rejected = client.post("/api/v1/eda/operation-plan", json=body)
+    assert rejected.status_code == 422
+    assert rejected.json()["detail"] == "route unavailable"
+    assert rejected.json()["error"]["code"] == "EDA-DSL-VALIDATION-001"
+    assert rejected.json()["error"]["details"]["operation"] == "eda.operation-plan"
 
 
 def test_svg_rest_vertical_slice(tmp_path: Path, monkeypatch) -> None:

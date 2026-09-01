@@ -138,6 +138,22 @@ The EDA commands use the same SubLLM policy as Viewer. `plan` produces a
 typed, approval-required change document; `check` validates it, and `apply`
 creates a candidate rather than changing the original KiCad file.
 
+Routing prompts that cannot be represented by native EDA DSL v1 may use the
+read-only `POST /api/v1/eda/operation-plan` adapter. The caller supplies the
+implemented TwinAPI vocabulary and project measurements; SubLLM may select one
+operation or return `unsupported`. The response never executes a handler and
+never contains human approval. A sole omitted operation identifier can be
+repaired only when the caller advertised exactly one capability. The caller
+must still build a hash-bound POA plan, show limitations, obtain separate human
+approval, create a candidate and run its DRC/parity/profile/objective gates.
+The planner uses a bounded 4000-token completion budget because reasoning models
+account for hidden reasoning and the final JSON in the same limit. An empty
+provider completion fails explicitly as `LLM-EMPTY-RESPONSE-001`; reasoning text
+is never copied into the API response or audit log.
+Recording another candidate advances the project stream but preserves the
+canonical artifact's current promoted revision; only a new or externally
+changed source is registered as a new `base:<sha>` head.
+
 Lossless KiCad S-expression parsing, typed PCB routing geometry and deterministic
 copper-routing primitives, including bounded multi-net rip-up-and-retry and a
 fail-closed two-layer maze router, come from the independently versioned

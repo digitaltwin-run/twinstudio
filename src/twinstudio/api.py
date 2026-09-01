@@ -65,6 +65,7 @@ from twinstudio.eda_history import (
     load_descriptor,
     store_object,
     update_descriptor,
+    update_source_descriptor,
     write_event_stream,
     write_wellmanifest_projection,
 )
@@ -74,6 +75,7 @@ from twinstudio.eda_history import (
 from twinstudio.eda_history import (
     revision_id as eda_revision_id,
 )
+from twinstudio.eda_operation_planner import propose_eda_operation
 from twinstudio.event_store import ConcurrencyError, EventStore
 from twinstudio.evolution import (
     ProjectEvolutionEngine,
@@ -363,6 +365,13 @@ class EdaNlRequest(ApiModel):
     context_signature: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     context_sources: list[dict[str, Any]] = Field(default_factory=list, max_length=24)
     atomic: bool = False
+
+
+class EdaOperationPlanRequest(ApiModel):
+    prompt: str = Field(min_length=1, max_length=30_000)
+    source: dict[str, Any]
+    operations: list[dict[str, Any]] = Field(min_length=1, max_length=40)
+    project_context: dict[str, Any] = Field(default_factory=dict)
 
 
 class ArtifactGroupPromptRequest(ApiModel):
@@ -1330,6 +1339,32 @@ def eda_nl2dsl(
     return _plan_eda(body, user, request)
 
 
+@app.post("/api/v1/eda/operation-plan")
+def eda_operation_plan(
+    body: EdaOperationPlanRequest,
+    _user: AuthPrincipal = Depends(principal),
+) -> dict[str, Any]:
+    """Translate a prompt to one advertised operation; never execute it."""
+    try:
+        proposal, mode = propose_eda_operation(
+            prompt=body.prompt,
+            source=body.source,
+            operations=body.operations,
+            project_context=body.project_context,
+            settings=settings,
+        )
+    except KicadDslError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": exc.code,
+                "message": str(exc),
+                "details": {"operation": "eda.operation-plan", "retryable": False},
+            },
+        ) from exc
+    return {"mode": mode, "proposal": proposal.model_dump(mode="json")}
+
+
 def _plan_eda(body: EdaNlRequest, user: AuthPrincipal, request: Request) -> dict[str, Any]:
     document = _eda_document(body.path)
     correlation_id = body.correlation_id or _correlation_id(request)
@@ -1613,13 +1648,12 @@ def _apply_eda(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         source_ref, _ = store_object(settings.data_dir, source_path)
-        update_descriptor(
+        update_source_descriptor(
             settings.kicad_root,
             body.project_id,
             event.stream_version,
             source_path=body.document.source.path,
             source_sha256=body.document.source.sha256,
-            revision=f"base:{body.document.source.sha256[:12]}",
             object_ref=source_ref,
         )
         result.update(manifest)
@@ -1785,13 +1819,12 @@ def _record_text_candidate(
         correlation_id=body.correlation_id,
     )
     source_ref, _ = store_object(settings.data_dir, source_path)
-    update_descriptor(
+    update_source_descriptor(
         settings.kicad_root,
         body.project_id,
         event.stream_version,
         source_path=body.document.source.path,
         source_sha256=body.document.source.sha256,
-        revision=revision,
         object_ref=source_ref,
     )
     result.update(manifest)

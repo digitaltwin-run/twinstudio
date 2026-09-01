@@ -254,6 +254,20 @@ def test_local_nl_to_dsl_supports_polish_value_and_move() -> None:
     assert move.operations[0].y == 75.5
 
 
+def test_pcb_footprint_move_requires_routing_and_drc() -> None:
+    pcb = inspect_source(PCB, "panel.kicad_pcb")
+    change = local_nl_to_dsl("przesuń R1 do x=120 y=75", pcb)
+
+    validation = change_validation(change)
+
+    assert validation == {
+        "status": "requires_follow_up",
+        "codes": ["EDA_ROUTING_REQUIRED", "EDA_DRC_NOT_RUN"],
+        "requires_routing": True,
+        "drc": "not_run",
+    }
+
+
 def test_file_boundary_and_candidate_copy(tmp_path: Path) -> None:
     root = tmp_path / "sources"
     output = tmp_path / "output"
@@ -632,6 +646,24 @@ def test_a_routing_request_is_refused_before_the_model_is_asked(
         kicad_dsl.nl_to_dsl(
             "nie przeprowadzaj niebieskich linii pod switchami tylko na około",
             document, SimpleNamespace(),
+        )
+
+
+def test_polish_routing_optimization_is_refused_before_native_dsl(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    document = inspect_source(PCB, "panel.kicad_pcb")
+    monkeypatch.setattr(
+        kicad_dsl, "eda_litellm_route",
+        lambda settings: pytest.fail("routing should be delegated without an NL-to-DSL call"),
+    )
+
+    with pytest.raises(KicadDslError, match="DSL v1"):
+        kicad_dsl.nl_to_dsl(
+            "Zoptymalizuj trasowanie, zmniejsz liczbę przelotek poprzez dowolną "
+            "lokalizację kondensatorów",
+            document,
+            SimpleNamespace(),
         )
 
 

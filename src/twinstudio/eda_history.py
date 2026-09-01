@@ -194,6 +194,38 @@ def update_descriptor(
     return descriptor
 
 
+def update_source_descriptor(
+    project_root: Path,
+    project_id: str,
+    stream_version: int,
+    *,
+    source_path: str,
+    source_sha256: str,
+    object_ref: str,
+) -> TwinStudioProject:
+    """Record a source without downgrading an unchanged promoted head.
+
+    Candidate creation advances project history, but it does not promote that
+    candidate.  When the canonical source hash is unchanged, its existing
+    revision and object reference therefore remain authoritative.  A new base
+    revision is recorded only for a previously unseen or externally changed
+    source.
+    """
+    descriptor = load_descriptor(project_root, project_id)
+    current = descriptor.artifacts.get(artifact_id(project_id, source_path))
+    if current is not None and current.head_sha256 == source_sha256:
+        return update_descriptor(project_root, project_id, stream_version)
+    return update_descriptor(
+        project_root,
+        project_id,
+        stream_version,
+        source_path=source_path,
+        source_sha256=source_sha256,
+        revision=f"base:{source_sha256[:12]}",
+        object_ref=object_ref,
+    )
+
+
 def eda_events(events: list[EventEnvelope]) -> list[EventEnvelope]:
     return [event for event in events if event.event_type in EDA_EVENT_TYPES]
 

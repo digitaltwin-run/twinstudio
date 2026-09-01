@@ -1218,6 +1218,10 @@ def change_validation(
     connectivity_changed = any(
         isinstance(operation, AssignPadNetOperation) for operation in document.operations
     )
+    placement_changed = (
+        document.source.kind == "pcb"
+        and any(isinstance(operation, MoveOperation) for operation in document.operations)
+    )
     if connectivity_changed:
         if document.source.kind == "schematic":
             # PCB DRC has no meaning for a schematic candidate.  The caller
@@ -1236,6 +1240,18 @@ def change_validation(
             "requires_routing": not repaired,
             "drc": "not_run",
             "copper_repair": repair or {"retargeted": [], "routed": []},
+        }
+    if placement_changed:
+        # Moving a footprint never moves its already routed copper.  Calling
+        # this structurally complete made the browser promise that DRC was not
+        # required, although the post-candidate gate then found a dangling
+        # track.  The dry-run must disclose that debt before any candidate is
+        # written.
+        return {
+            "status": "requires_follow_up",
+            "codes": ["EDA_ROUTING_REQUIRED", "EDA_DRC_NOT_RUN"],
+            "requires_routing": True,
+            "drc": "not_run",
         }
     return {
         "status": "structurally_valid",
@@ -1619,12 +1635,19 @@ def _requests_connectivity_edit(prompt: str) -> bool:
 # Bez tego rozpoznania model mieli takie zadanie minutami i kończy timeoutem
 # albo odpowiedzią, której schemat nie przyjmuje.
 _ROUTING_INTENT = re.compile(
-    r"\b(przeprowad\w*|poprowad\w*|przetrasu\w*|trasu\w*|routing\w*|reroute\w*|"
-    r"ście\w*k\w*|ścieżk\w*|sciezk\w*|linie|linii|przelotk\w*|via)\b",
+    r"\b(przeprowad\w*|poprowad\w*|przetrasu\w*|trasu\w*|trasow\w*|routing\w*|"
+    r"reroute\w*|optymaliz\w*|ście\w*k\w*|ścieżk\w*|sciezk\w*|linie|linii|"
+    r"przelot\w*|via)\b",
     re.IGNORECASE,
 )
 _ROUTING_PLACE = re.compile(
-    r"\b(pod|obok|dooko\w*|na oko\w*|omi\w*|z dala|inn\w+ (?:pin|gpio)|warstw\w*)\b",
+    r"\b(pod|obok|dooko\w*|na oko\w*|omi\w*|z dala|inn\w+ (?:pin|gpio)|warstw\w*|"
+    r"lokaliz\w*|położ\w*|poloz\w*|rozmieszcz\w*|kondensator\w*)\b",
+    re.IGNORECASE,
+)
+_ROUTING_CHANGE = re.compile(
+    r"\b(zoptymaliz\w*|optymaliz\w*|zmniejsz\w*|ogranicz\w*|popraw\w*|usuń\w*|"
+    r"usun\w*|przetrasu\w*|poprowad\w*)\b",
     re.IGNORECASE,
 )
 
@@ -1637,7 +1660,10 @@ _NAMED_OPERATION = re.compile(r"\b(assign_pad_net|set_property|move)\b", re.IGNO
 def _requests_routing_edit(prompt: str) -> bool:
     if _NAMED_OPERATION.search(prompt):
         return False
-    return bool(_ROUTING_INTENT.search(prompt) and _ROUTING_PLACE.search(prompt))
+    return bool(
+        _ROUTING_INTENT.search(prompt)
+        and (_ROUTING_PLACE.search(prompt) or _ROUTING_CHANGE.search(prompt))
+    )
 
 
 def nl_to_dsl(

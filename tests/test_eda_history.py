@@ -13,6 +13,10 @@ from twinstudio.bus import CommandBus, QueryService
 from twinstudio.domain import EventEnvelope
 from twinstudio.eda_history import (
     TwinStudioProject,
+    artifact_id,
+    load_descriptor,
+    update_descriptor,
+    update_source_descriptor,
     validate_hash_chain,
     wellmanifest_projection,
 )
@@ -92,6 +96,63 @@ def test_project_contract_and_wellmanifest_hash_chain(tmp_path: Path) -> None:
             "data": event.data,
         }
     )
+
+
+def test_candidate_history_never_downgrades_an_unchanged_promoted_head(
+    tmp_path: Path,
+) -> None:
+    source_sha = "a" * 64
+    promoted_ref = "sha256:" + source_sha
+    identity = artifact_id("demo", "pcb/panel.kicad_pcb")
+    update_descriptor(
+        tmp_path,
+        "demo",
+        7,
+        source_path="pcb/panel.kicad_pcb",
+        source_sha256=source_sha,
+        revision="rev:promoted:aaaaaaaaaaaa",
+        object_ref=promoted_ref,
+    )
+
+    update_source_descriptor(
+        tmp_path,
+        "demo",
+        8,
+        source_path="pcb/panel.kicad_pcb",
+        source_sha256=source_sha,
+        object_ref="sha256:" + "b" * 64,
+    )
+
+    descriptor = load_descriptor(tmp_path, "demo")
+    assert descriptor.stream_version == 8
+    assert descriptor.artifacts[identity].revision_id == "rev:promoted:aaaaaaaaaaaa"
+    assert descriptor.artifacts[identity].object_ref == promoted_ref
+
+
+def test_externally_changed_source_starts_a_new_base_head(tmp_path: Path) -> None:
+    update_descriptor(
+        tmp_path,
+        "demo",
+        7,
+        source_path="pcb/panel.kicad_pcb",
+        source_sha256="a" * 64,
+        revision="rev:promoted:aaaaaaaaaaaa",
+        object_ref="sha256:" + "a" * 64,
+    )
+
+    update_source_descriptor(
+        tmp_path,
+        "demo",
+        8,
+        source_path="pcb/panel.kicad_pcb",
+        source_sha256="b" * 64,
+        object_ref="sha256:" + "b" * 64,
+    )
+
+    descriptor = load_descriptor(tmp_path, "demo")
+    head = descriptor.artifacts[artifact_id("demo", "pcb/panel.kicad_pcb")]
+    assert head.head_sha256 == "b" * 64
+    assert head.revision_id == "base:" + "b" * 12
 
 
 def test_internal_validation_codes_are_projected_to_logs_dsl_codes() -> None:
