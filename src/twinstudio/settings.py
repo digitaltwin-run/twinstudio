@@ -94,10 +94,21 @@ class Settings:
     artifact_backend: str = _env("ARTIFACT_BACKEND", default="local")
     export_extension: str = _env("TWINSTUDIO_EXPORT_EXTENSION", default=".twinstudio.zip")
 
+    @property
+    def eda_candidates_root(self) -> Path:
+        """Shared candidate store; defaults to the historical data-dir location."""
+        return Path(
+            _env(
+                "TWINSTUDIO_EDA_CANDIDATES_ROOT",
+                default=str(self.data_dir / "artifacts" / "kicad-edits"),
+            )
+        ).resolve()
+
     def ensure_directories(self) -> None:
         self.data_dir.mkdir(parents=True, exist_ok=True)
         (self.data_dir / "artifacts").mkdir(parents=True, exist_ok=True)
         (self.data_dir / "outbox" / "emails").mkdir(parents=True, exist_ok=True)
+        self.eda_candidates_root.mkdir(parents=True, exist_ok=True)
 
 
 settings = Settings()

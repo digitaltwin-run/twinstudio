@@ -70,7 +70,7 @@
     {"path": "src/twinstudio/change_planner.py", "role": "parser-contract", "digest": "sha256:977b68950c2e9ef95155c69ce19d203b9ea25b0bb627956a6251dd823d7ce0b4"},
     {"path": "src/twinstudio/cad_regeneration.py", "role": "parser-contract", "digest": "sha256:7788320e51f6fdcb7b74455f77a9975da77e64f26782df6894e41fd4479a5877"},
     {"path": "src/twinstudio/bus.py", "role": "parser-contract", "digest": "sha256:b8c3c12bc487ea884c99dae969350b75a4709f6fd57ca70d7e4564469a1c47dc"},
-    {"path": "src/twinstudio/api.py", "role": "parser-contract", "digest": "sha256:a3c116dc2b1d79192ce6f2b50a04a70152defe4293915874dea02a9e31a944f0"},
+    {"path": "src/twinstudio/api.py", "role": "parser-contract", "digest": "sha256:0a35e54b3b1c621dc1f00f9c091c14f7b9cf9fe873ef6cfb43b16177935600bc"},
     {"path": "src/twinstudio/observability.py", "role": "parser-contract", "digest": "sha256:e40d49137ea39e449f37b6ed322bb34bd4aa8d54b6c09ea97fd8219df1ba7a27"},
     {"path": "scripts/generate_schemas.py", "role": "serializer-contract", "digest": "sha256:7e67577a3fb61f955c725dc42fc73e02d173d6c7dd71c5fb222dfc9ddde0e539"},
     {"path": "scripts/verify_dsl_conformance.py", "role": "parser-contract", "digest": "sha256:40ac2b0cbf724212f25ac85a5934ec306f2dd94f824e7ecfa50f0865c52fadc1"},
@@ -121,10 +121,12 @@
     "responseSchemas": ["https://twinstudio.local/schemas/change-plan-proposal.schema.json"],
     "naturalLanguage": "typed-source-only",
     "sourceSchema": "twinstudio.nl-source/v1",
+    "decisionProtocol": "nl-to-dsl-input-output",
     "modelAuthority": "propose-only",
     "strict": true
   },
   "documentation": {
+    "vocabularyKind": "commands",
     "commandRoot": "docs",
     "errorRoot": "docs/ERROR",
     "criticalRoot": "docs/CRITICAL",
@@ -151,6 +153,13 @@
     "blockingSeverities": ["error", "critical"],
     "requireEvaluable": true,
     "blockUnresolvedSecurity": true
+  },
+  "publicationPolicy": {
+    "declaredTier": "controlled",
+    "deterministic": true,
+    "independentReview": true,
+    "externalAuthority": true,
+    "runtimeIsolation": true
   },
   "conformance": {
     "levels": ["manifest", "contract", "runtime", "llm-boundary"],

@@ -177,6 +177,11 @@ is a presentation client and compatibility facade, not a second storage owner.
 Set `TWINSTUDIO_WORKSPACES_ROOT` to the shared artifacts root and use
 `TWINSTUDIO_WORKSPACE_WRITES_ENABLED=false` to make workspace mutations fail
 closed.
+When Viewer and TwinStudio are separate processes, mount one candidate
+directory into both services and point `TWINSTUDIO_EDA_CANDIDATES_ROOT` at its
+host-side path. Candidate creation, workspace details, preview and lifecycle
+decisions will then address the same files. If it is unset, TwinStudio keeps
+the historical private location below `TWINSTUDIO_DATA_DIR`.
 
 ```bash
 # Interactive SCH/PCB editor: write a prompt, then use :check and :apply.

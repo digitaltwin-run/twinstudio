@@ -226,6 +226,25 @@ def update_source_descriptor(
     )
 
 
+def remove_descriptor_artifact(
+    project_root: Path,
+    project_id: str,
+    stream_version: int,
+    *,
+    source_path: str,
+) -> TwinStudioProject:
+    """Remove the head of a reverted new source while retaining event history."""
+    descriptor = load_descriptor(project_root, project_id)
+    descriptor.artifacts.pop(artifact_id(project_id, source_path), None)
+    descriptor.stream_version = stream_version
+    descriptor.updated_at = datetime.now(UTC)
+    _atomic_text(
+        project_root / "project.twinstudio.json",
+        json.dumps(descriptor.model_dump(mode="json"), ensure_ascii=False, indent=2) + "\n",
+    )
+    return descriptor
+
+
 def eda_events(events: list[EventEnvelope]) -> list[EventEnvelope]:
     return [event for event in events if event.event_type in EDA_EVENT_TYPES]
 

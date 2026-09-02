@@ -65,7 +65,9 @@ immutable source identity and UUID/reference scope. If SubLLM or its provider
 is unavailable, the deterministic local compiler produces the identical DSL
 and reports an explicit `local-fallback` mode. The source root is allow-listed by
 `TWINSTUDIO_KICAD_ROOT`; candidates are stored below
-`TWINSTUDIO_DATA_DIR/artifacts/kicad-edits`.
+`TWINSTUDIO_EDA_CANDIDATES_ROOT` (by default
+`TWINSTUDIO_DATA_DIR/artifacts/kicad-edits`). Point it at a shared project
+candidate directory when TwinStudio and its Viewer run as separate services.
 
 The `twinstudio eda` CLI exposes the same adapter without an HTTP server:
 `inspect`, `plan`, `check`, `apply`, and an interactive `shell`. `apply` always

@@ -10,7 +10,7 @@ from base64 import b64decode
 from binascii import Error as Base64Error
 from contextlib import asynccontextmanager
 from importlib.metadata import version as package_version
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from time import perf_counter
 from typing import Any, Callable
 from uuid import uuid4
@@ -64,6 +64,7 @@ from twinstudio.eda_history import (
     EDA_EVENT_TYPES,
     EdaHistoryEntry,
     load_descriptor,
+    remove_descriptor_artifact,
     store_object,
     update_descriptor,
     update_source_descriptor,
@@ -167,7 +168,10 @@ EXAMPLES_ROOT = PROJECT_ROOT / "examples"
 ERROR_ROOT = PROJECT_ROOT / "error"
 
 store = EventStore(settings.database_url)
-workspace_store = ProjectPackageStore(settings.workspaces_root)
+workspace_store = ProjectPackageStore(
+    settings.workspaces_root,
+    candidates_root=settings.eda_candidates_root,
+)
 publisher = publisher_from_settings(settings)
 queries = QueryService(store)
 commands = CommandBus(store, publisher)
@@ -1002,10 +1006,18 @@ def _sync_eda_project_files(project_id: str) -> int:
     return version
 
 
+def _eda_candidates_root() -> Path:
+    """Return the configured shared store with a legacy-test fallback."""
+    configured = getattr(settings, "eda_candidates_root", None)
+    if configured is not None:
+        return Path(configured).resolve()
+    return (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+
+
 def _eda_event_evidence(payload: dict[str, Any]) -> list[dict[str, str]]:
     """Freeze mutable EDA inputs as content-addressed wellmanifest evidence."""
     project_root = settings.kicad_root.resolve()
-    candidate_root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    candidate_root = _eda_candidates_root()
     candidates: list[tuple[Path, str]] = []
 
     source = payload.get("source")
@@ -1120,7 +1132,7 @@ def _eda_event_json(event: EventEnvelope) -> dict[str, Any]:
 
 
 def _candidate_file(relative: str) -> tuple[Path, dict[str, Any]]:
-    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    root = _eda_candidates_root()
     candidate = (root / relative).resolve()
     if not candidate.is_relative_to(root) or not candidate.is_file() or candidate.is_symlink():
         raise HTTPException(status_code=404, detail="candidate not found")
@@ -1618,7 +1630,7 @@ def _apply_eda(
             if validation_event is not None:
                 result["history_event"] = _eda_event_json(validation_event)
             return result
-        output_root = settings.data_dir / "artifacts" / "kicad-edits"
+        output_root = _eda_candidates_root()
         manifest = write_candidate(settings.kicad_root, output_root, body.document)
         manifest.update(
             {
@@ -1810,7 +1822,7 @@ def _record_text_candidate(
     if not body.project_id:
         return result
 
-    output_root = settings.data_dir / "artifacts" / "kicad-edits"
+    output_root = _eda_candidates_root()
     candidate_path = output_root / manifest["candidate_path"]
     object_ref, _ = store_object(settings.data_dir, candidate_path)
     revision = eda_revision_id(manifest["candidate_path"], manifest["candidate_sha256"])
@@ -1942,7 +1954,7 @@ def _apply_svg(body: SvgApplyRequest, user: AuthPrincipal) -> dict[str, Any]:
     if body.dry_run:
         return _text_change_dry_run(body, source, candidate, validation)
     try:
-        output_root = settings.data_dir / "artifacts" / "kicad-edits"
+        output_root = _eda_candidates_root()
         manifest = write_svg_candidate(settings.kicad_root, output_root, body.document)
     except (SvgDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -2009,7 +2021,7 @@ def _apply_scad(body: ScadApplyRequest, user: AuthPrincipal) -> dict[str, Any]:
     if body.dry_run:
         return _text_change_dry_run(body, source, candidate, validation)
     try:
-        output_root = settings.data_dir / "artifacts" / "kicad-edits"
+        output_root = _eda_candidates_root()
         manifest = write_scad_candidate(settings.kicad_root, output_root, body.document)
     except (ScadDslError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -2050,7 +2062,7 @@ def eda_candidate(
     relative: str,
     _user: AuthPrincipal = Depends(principal),
 ) -> FileResponse:
-    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    root = _eda_candidates_root()
     path = (root / relative).resolve()
     if not path.is_relative_to(root) or not path.is_file() or path.is_symlink():
         raise HTTPException(status_code=404, detail="candidate not found")
@@ -2066,12 +2078,22 @@ def _validated_candidate_decision(
         raise HTTPException(status_code=422, detail="candidate source is invalid")
     if manifest.get("project_id") not in {None, project_id}:
         raise HTTPException(status_code=422, detail="candidate belongs to another project")
-    source_kind = source_data.get("kind")
-    try:
-        source = _resolve_editable_source(str(source_kind), source_data["path"])
-    except (KicadDslError, SvgDslError, ScadDslError) as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    source_hash = sha256_file(source)
+    source_kind = str(source_data.get("kind") or "")
+    source_is_new = source_data.get("exists") is False
+    if source_is_new:
+        source = _resolve_new_candidate_source(source_kind, source_data["path"])
+        source_hash = hashlib.sha256(b"").hexdigest()
+        if source.is_file() or source.is_symlink():
+            raise HTTPException(
+                status_code=409,
+                detail="new candidate source was created after candidate creation",
+            )
+    else:
+        try:
+            source = _resolve_editable_source(source_kind, source_data["path"])
+        except (KicadDslError, SvgDslError, ScadDslError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        source_hash = sha256_file(source)
     candidate_hash = sha256_file(candidate)
     if source_hash != body.source_sha256 or source_data.get("sha256") != body.source_sha256:
         raise HTTPException(status_code=409, detail="source hash changed since candidate creation")
@@ -2090,6 +2112,28 @@ def _resolve_editable_source(kind: str, path: str) -> Path:
     if kind == "scad":
         return resolve_scad_source(settings.kicad_root, path)
     return resolve_source(settings.kicad_root, path)
+
+
+def _resolve_new_candidate_source(kind: str, path: str) -> Path:
+    """Resolve an absent candidate target without weakening path or type checks."""
+    expected_suffix = {"schematic": ".kicad_sch", "pcb": ".kicad_pcb"}.get(kind)
+    if expected_suffix is None:
+        raise HTTPException(status_code=422, detail="new source bootstrap supports only KiCad SCH/PCB")
+    normalized = path.strip().replace("\\", "/")
+    relative = PurePosixPath(normalized)
+    if (
+        not normalized
+        or relative.is_absolute()
+        or any(part in {"", ".", ".."} for part in relative.parts)
+        or any("\x00" in part or ":" in part for part in relative.parts)
+        or relative.suffix.casefold() != expected_suffix
+    ):
+        raise HTTPException(status_code=422, detail="new candidate source path is invalid")
+    root = settings.kicad_root.resolve()
+    source = (root / Path(*relative.parts)).resolve()
+    if not source.is_relative_to(root) or source == root or source.parent.is_symlink():
+        raise HTTPException(status_code=422, detail="new candidate source path escapes the project")
+    return source
 
 
 def _revision_events(project_id: str, revision: str) -> list[EventEnvelope]:
@@ -2365,7 +2409,7 @@ def delete_project_eda_candidate(
     user: AuthPrincipal = Depends(principal),
 ) -> dict[str, Any]:
     candidate, _source, manifest, revision, identity = _validated_candidate_decision(project_id, body)
-    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    root = _eda_candidates_root()
     relative = candidate.relative_to(root)
     revision_root = (root / relative.parts[0]).resolve()
     if revision_root.parent != root or not revision_root.is_dir() or revision_root.is_symlink():
@@ -2425,7 +2469,7 @@ def promote_project_eda_candidate(
         for item in promoted_files
         if item["path"] == source.relative_to(settings.kicad_root).as_posix()
     )
-    previous_ref = str(primary["previous_object_ref"])
+    previous_ref = primary["previous_object_ref"]
     candidate_ref = str(primary["promoted_object_ref"])
     event = _record_eda_event(
         project_id,
@@ -2482,8 +2526,12 @@ def revert_project_eda_revision(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     if sha256_file(source) != body.expected_current_sha256:
         raise HTTPException(status_code=409, detail="current artifact no longer matches the promoted revision")
-    previous_ref = str(promotion.data["previous_object_ref"])
-    digest = previous_ref.removeprefix("sha256:")
+    previous_ref = promotion.data.get("previous_object_ref")
+    digest = (
+        str(previous_ref).removeprefix("sha256:")
+        if previous_ref is not None
+        else hashlib.sha256(b"").hexdigest()
+    )
     promoted_files = promotion.data.get("files")
     if isinstance(promoted_files, list) and promoted_files:
         try:
@@ -2491,6 +2539,8 @@ def revert_project_eda_revision(
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
     else:
+        if previous_ref is None:
+            raise HTTPException(status_code=409, detail="new-source promotion has no bundle metadata")
         previous = settings.data_dir / "artifacts" / "objects" / "sha256" / digest[:2] / digest
         if not previous.is_file() or sha256_file(previous) != digest:
             raise HTTPException(status_code=409, detail="previous content-addressed object is unavailable")
@@ -2513,21 +2563,30 @@ def revert_project_eda_revision(
             "reverts_event_id": promotion.event_id,
             "restored_sha256": digest,
             "restored_object_ref": previous_ref,
+            "restored_exists": previous_ref is not None,
             "reason": body.reason,
         },
         expected_version=body.expected_version,
         correlation_id=body.correlation_id or promotion.correlation_id,
         causation_id=promotion.event_id,
     )
-    update_descriptor(
-        settings.kicad_root,
-        project_id,
-        event.stream_version,
-        source_path=str(promotion.data["path"]),
-        source_sha256=digest,
-        revision=f"revert:{promotion.event_id}",
-        object_ref=previous_ref,
-    )
+    if previous_ref is None:
+        remove_descriptor_artifact(
+            settings.kicad_root,
+            project_id,
+            event.stream_version,
+            source_path=str(promotion.data["path"]),
+        )
+    else:
+        update_descriptor(
+            settings.kicad_root,
+            project_id,
+            event.stream_version,
+            source_path=str(promotion.data["path"]),
+            source_sha256=digest,
+            revision=f"revert:{promotion.event_id}",
+            object_ref=str(previous_ref),
+        )
     return {"status": "reverted", "event": _eda_event_json(event)}
 
 
@@ -2539,7 +2598,7 @@ def migrate_project_eda_history(
 ) -> dict[str, Any]:
     _ensure_eda_project(project_id, user)
     authorize_project(project_id, user, "change.apply")
-    root = (settings.data_dir / "artifacts" / "kicad-edits").resolve()
+    root = _eda_candidates_root()
     known = {
         str(event.data.get("candidate_path"))
         for event in queries.events(project_id)

@@ -513,6 +513,102 @@ def test_project_candidate_can_be_deleted_without_erasing_audit_history(
     assert chronology[-1]["data"]["dedupe_key"] == "inventory:abc123"
 
 
+def test_new_schematic_candidate_accept_promote_and_revert(
+    tmp_path: Path, monkeypatch
+) -> None:
+    source_root = tmp_path / "project"
+    source_parent = source_root / "pcb"
+    source_parent.mkdir(parents=True)
+    source = source_parent / "mouse.kicad_sch"
+    data_dir = tmp_path / "data"
+    candidates_root = tmp_path / "shared-project" / "eda-candidates"
+    candidate_dir = candidates_root / "bootstrap" / "pcb"
+    candidate_dir.mkdir(parents=True)
+    candidate = candidate_dir / source.name
+    candidate.write_text(SCH, encoding="utf-8")
+    candidate_hash = sha(SCH)
+    empty_hash = sha("")
+    manifest = {
+        "schema_id": "twinstudio.eda-result/v1",
+        "project_id": "mouse-bootstrap",
+        "revision_id": "rev:bootstrap:mouse",
+        "candidate_path": "bootstrap/pcb/mouse.kicad_sch",
+        "candidate_sha256": candidate_hash,
+        "source": {
+            "path": "pcb/mouse.kicad_sch",
+            "sha256": empty_hash,
+            "kind": "schematic",
+            "exists": False,
+        },
+        "validation": {"status": "passed", "codes": []},
+    }
+    (candidate_dir / "change.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    local_store = EventStore(f"sqlite:///{tmp_path / 'events.db'}")
+    publisher = NullPublisher()
+    monkeypatch.setattr(api_module, "store", local_store)
+    monkeypatch.setattr(api_module, "queries", QueryService(local_store))
+    monkeypatch.setattr(api_module, "commands", CommandBus(local_store, publisher))
+    monkeypatch.setattr(
+        api_module,
+        "settings",
+        SimpleNamespace(
+            kicad_root=source_root,
+            data_dir=data_dir,
+            eda_candidates_root=candidates_root,
+        ),
+    )
+    client = TestClient(api_module.app)
+    decision = {
+        "candidate_path": manifest["candidate_path"],
+        "source_sha256": empty_hash,
+        "candidate_sha256": candidate_hash,
+    }
+
+    source.write_text("external source", encoding="utf-8")
+    stale = client.post(
+        "/api/v1/projects/mouse-bootstrap/eda/candidates/accept", json=decision
+    )
+    assert stale.status_code == 409
+    assert "created after candidate creation" in stale.text
+    assert source.read_text(encoding="utf-8") == "external source"
+    source.unlink()
+
+    accepted = client.post(
+        "/api/v1/projects/mouse-bootstrap/eda/candidates/accept", json=decision
+    )
+    assert accepted.status_code == 200, accepted.text
+    assert source.exists() is False
+
+    promoted = client.post(
+        "/api/v1/projects/mouse-bootstrap/eda/candidates/promote", json=decision
+    )
+    assert promoted.status_code == 200, promoted.text
+    assert source.read_text(encoding="utf-8") == SCH
+    promotion = promoted.json()["event"]
+    assert promotion["data"]["previous_object_ref"] is None
+    primary = next(
+        item
+        for item in promotion["data"]["files"]
+        if item["path"] == "pcb/mouse.kicad_sch"
+    )
+    assert primary["previous_object_ref"] is None
+
+    reverted = client.post(
+        "/api/v1/projects/mouse-bootstrap/eda/revisions/revert",
+        json={
+            "promotion_event_id": promotion["event_id"],
+            "expected_current_sha256": candidate_hash,
+        },
+    )
+    assert reverted.status_code == 200, reverted.text
+    assert reverted.json()["event"]["data"]["restored_exists"] is False
+    assert source.exists() is False
+    descriptor = load_descriptor(source_root, "mouse-bootstrap")
+    identity = artifact_id("mouse-bootstrap", "pcb/mouse.kicad_sch")
+    assert identity not in descriptor.artifacts
+
+
 def test_legacy_sidecars_migrate_without_changing_source(tmp_path: Path, monkeypatch) -> None:
     source_root = tmp_path / "project"
     source_root.mkdir()
