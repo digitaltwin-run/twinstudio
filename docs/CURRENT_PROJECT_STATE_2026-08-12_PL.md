@@ -1,5 +1,11 @@
 # TwinStudio — aktualny stan projektu (2026-08-12)
 
+> Aktualizacja 2026-09-02: źródła `components/housing-studio` zostały
+> przeniesione z zachowaniem historii do osobnego repozytorium
+> `digitaltwin-run/housing-studio`. TwinStudio i `cad-worker` instalują odtąd
+> przypięty commit pakietu; dalsza część dokumentu zachowuje historyczny stan
+> audytu z 2026-08-12.
+
 ## 1. Werdykt
 
 Bieżące drzewo robocze realizuje główną intencję rozwoju TwinStudio 0.5.0:

@@ -66,7 +66,7 @@ docker compose --profile object-store up --build
 python3.12 -m venv --clear .venv
 .venv/bin/python --version
 .venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -e ".[llm,dev]" -e "./components/housing-studio[dev]"
+.venv/bin/python -m pip install -e ".[llm,dev]"
 test -f .env.local || cp .env.local.example .env.local
 .venv/bin/twinstudio seed
 make start
@@ -168,6 +168,16 @@ overlap. An incomplete result remains diagnostic evidence and cannot be
 presented as a production route or promoted without the normal connectivity,
 DRC and human-decision gates.
 
+Portable workspace storage, isolated `.projects/<project-id>` directories,
+deterministic ZIP transfer, fingerprints and Planfile normalization come from
+the independently versioned Apache-2.0
+[`digitaltwin-run/twin-projects`](https://github.com/digitaltwin-run/twin-projects)
+package. TwinStudio owns its authenticated `/api/v1/workspaces` adapter; Viewer
+is a presentation client and compatibility facade, not a second storage owner.
+Set `TWINSTUDIO_WORKSPACES_ROOT` to the shared artifacts root and use
+`TWINSTUDIO_WORKSPACE_WRITES_ENABLED=false` to make workspace mutations fail
+closed.
+
 ```bash
 # Interactive SCH/PCB editor: write a prompt, then use :check and :apply.
 twinstudio eda shell pcb/panel9.kicad_sch
@@ -247,6 +257,19 @@ PYTHONPATH=src python scripts/generate_schemas.py
 ```
 
 ## Architecture
+
+Component dependency direction:
+
+```text
+Viewer -> TwinStudio API -> twin-projects (workspace/package/Planfile)
+                        -> twin-kicad    (lossless EDA model/routing)
+                        -> twinapi       (operation vocabulary/adapters)
+                        -> housing-studio (parametric 2D/3D enclosure generation)
+```
+
+The leaf components live in separate `digitaltwin-run/*` repositories and do
+not import TwinStudio or Viewer. TwinStudio consumes commit-pinned releases;
+each component owns its implementation, tests and Apache-2.0 license.
 
 ```mermaid
 flowchart LR

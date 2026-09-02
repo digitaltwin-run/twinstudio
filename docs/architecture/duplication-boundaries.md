@@ -25,9 +25,9 @@ Tym samym poleceniem sprawdzono granice zależności. `twinapi` ma 0 grup
 - `src/twinstudio/` jest właścicielem orkiestracji, CQRS, zdarzeń, DSL, API i MCP.
 - `src/living_product_studio/` jest wyłącznie tymczasową przestrzenią zgodności.
   Pliki importują `twinstudio` i nie mogą zawierać własnej logiki.
-- `components/housing-studio/` jest jedynym źródłem generatora obudowy, jego UI,
-  modeli, zasobów i testów. Usunięto kopie `housing_studio/` oraz `app/` z katalogu
-  głównego. `generator.py` jest tylko uruchamiaczem komponentu.
+- `digitaltwin-run/housing-studio` jest jedynym źródłem generatora obudowy,
+  jego UI, modeli, zasobów i testów. TwinStudio instaluje wersję przypiętą do
+  commita; repozytorium platformy nie przechowuje kopii źródeł komponentu.
 - `twin-kicad` jest przypiętą zależnością odpowiedzialną za bezstratny parser,
   geometrię trasowania i router; TwinStudio nie kopiuje tych implementacji.
 - `artifact_source.py` jest wspólnym właścicielem haszowania tekstu i ochrony
@@ -52,7 +52,7 @@ niż w Dockerze.
    dokładną rewizję źródła. Import między nimi unieważniłby test przenośności.
 2. Dwa `sample_output/.../rebuild_project.py` są wygenerowanymi uruchamiaczami,
    nie źródłem logiki produktu. Ich usuwanie należy do polityki retencji wyników.
-3. SHA-256 w `services/cad-worker` i `components/housing-studio` należy do dwóch
+3. SHA-256 w `services/cad-worker` i `housing-studio` należy do dwóch
    niezależnie pakowanych i wdrażanych artefaktów. Zależność od głównego runtime
    tylko dla dziewięciu linii zwiększyłaby sprzężenie wdrożeniowe.
 4. `inspect_svg` i `inspect_scad` są cienkimi, symetrycznymi adapterami różnych

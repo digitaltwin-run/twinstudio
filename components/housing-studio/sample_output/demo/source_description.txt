@@ -1,1 +1,0 @@
-Bundled baseline derived from the consolidated Raspberry Pi 5 housing specification. No natural-language values were changed for this snapshot.

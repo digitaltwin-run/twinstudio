@@ -1,1 +1,0 @@
-Ustaw grubość wszystkich ścian na 2 mm. Zachowaj szerokość 79 mm, wysokość podstawy 25 mm i wysokość całkowitą 40 mm. Włącz oba zestawy słupków Raspberry Pi. Zawias ma otwierać się do 195 stopni. W dokumentacji 2D zachowaj warstwy visible edges, hidden edges, centerlines, dimensions i PCB reference oraz widoki front, top i side.

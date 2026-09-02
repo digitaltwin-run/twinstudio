@@ -8,9 +8,11 @@ version = "0.5.0"
 description = "Event-sourced collaborative product digital-thread studio with scoped NL-to-2D-to-3D edits, design-fixation lenses, simulations and artifact generation."
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
-license = "MIT"
+license = "Apache-2.0"
 authors = [{ name = "TwinStudio" }]
 dependencies = [
+  "rpi5-housing-studio @ https://github.com/digitaltwin-run/housing-studio/archive/0c21334b92fd5c997444fc465f346d9738b17164.zip",
+  "twin-projects @ https://github.com/digitaltwin-run/twin-projects/archive/f25d761154c32556c74922cbbdd5ae15e6c533b9.zip",
   "twin-kicad @ https://github.com/digitaltwin-run/twin-kicad/archive/26e6e98c5d1981aadd7cd32ecdc302bd1995690a.zip",
   "fastapi>=0.128,<1",
   "uvicorn[standard]>=0.35,<1",

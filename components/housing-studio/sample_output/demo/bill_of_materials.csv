@@ -1,4 +1,0 @@
-item,part_number,description,quantity,source,notes
-1,BASE-001,Lower housing base,1,generated,Print-ready CAD part
-2,LID-001,Upper hinged lid,1,generated,Print-ready CAD part
-3,PIN-REF,Hinge pin / axle,1,external hardware,Nominal diameter 3.00 mm; final material and retention method require confirmation

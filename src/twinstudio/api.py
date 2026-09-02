@@ -20,6 +20,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from twin_projects import ProjectPackageStore
 
 from twinstudio import __version__
 from twinstudio.artifact_group_review import ArtifactGroupReview, review_artifact_group
@@ -158,6 +159,7 @@ from twinstudio.svg_dsl import (
     resolve_svg_source,
     write_svg_candidate,
 )
+from twinstudio.workspace_api import build_workspace_router
 
 PROJECT_ROOT = settings.project_root
 STATIC_ROOT = Path(__file__).resolve().parent / "static"
@@ -165,6 +167,7 @@ EXAMPLES_ROOT = PROJECT_ROOT / "examples"
 ERROR_ROOT = PROJECT_ROOT / "error"
 
 store = EventStore(settings.database_url)
+workspace_store = ProjectPackageStore(settings.workspaces_root)
 publisher = publisher_from_settings(settings)
 queries = QueryService(store)
 commands = CommandBus(store, publisher)
@@ -902,6 +905,7 @@ def health() -> dict[str, Any]:
         "eda_dsl_version": "twinstudio.eda/v1",
         "twin_kicad_version": package_version("twin-kicad"),
         "kicad_root": str(settings.kicad_root),
+        "workspaces_root": str(settings.workspaces_root),
         "dev_auth_bypass": settings.dev_auth_bypass,
         "feature_lens_catalog": feature_lenses.catalog.catalog_version,
         "feature_lens_count": feature_lenses.catalog.active_lens_count,
@@ -963,6 +967,30 @@ def _ensure_eda_project(project_id: str, user: AuthPrincipal) -> None:
             )
         except (CommandRejected, ConcurrencyError):
             queries.project(project_id)
+
+
+def _authorize_workspace(
+    project_id: str, user: AuthPrincipal, permission: str
+) -> None:
+    try:
+        authorize_project(project_id, user, permission)
+    except ProjectNotFound as exc:
+        if settings.dev_auth_bypass:
+            return
+        raise HTTPException(status_code=404, detail="Workspace not found") from exc
+    except PermissionDenied as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+
+
+app.include_router(
+    build_workspace_router(
+        workspace_store,
+        principal_dependency=principal,
+        authorize=_authorize_workspace,
+        register_project=_ensure_eda_project,
+        writes_enabled=settings.workspace_writes_enabled,
+    )
+)
 
 
 def _sync_eda_project_files(project_id: str) -> int:

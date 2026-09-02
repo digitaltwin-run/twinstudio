@@ -44,6 +44,10 @@ class Settings:
     kicad_root: Path = Path(
         _env("TWINSTUDIO_KICAD_ROOT", default=str(project_root))
     ).resolve()
+    workspaces_root: Path = Path(
+        _env("TWINSTUDIO_WORKSPACES_ROOT", default=str(kicad_root))
+    ).resolve()
+    workspace_writes_enabled: bool = _bool("TWINSTUDIO_WORKSPACE_WRITES_ENABLED", True)
     database_url: str = _env("DATABASE_URL", default="sqlite:///./data/twinstudio.db")
 
     dev_auth_bypass: bool = _bool("DEV_AUTH_BYPASS", True)

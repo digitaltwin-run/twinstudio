@@ -18,7 +18,7 @@ help:
 	  'Host and port come from TWINSTUDIO_HOST/TWINSTUDIO_PORT (.env.local first).'
 
 install:
-	python -m pip install -e ".[llm,dev]" -e "./components/housing-studio[dev]"
+	python -m pip install -e ".[llm,dev]"
 
 start:
 	@$(DEV_SERVER) start
@@ -46,10 +46,9 @@ run foreground:
 
 test:
 	PYTHONPATH=src python -m pytest -q
-	python -m pytest -q components/housing-studio/tests
 
 lint:
-	ruff check src tests components/housing-studio
+	ruff check src tests
 
 compose-up:
 	docker compose up --build

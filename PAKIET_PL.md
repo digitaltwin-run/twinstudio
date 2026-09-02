@@ -11,7 +11,7 @@
 - `schemas/` — JSON Schema Draft 2020-12, indeks oraz EBNF TwinScript.
 - `examples/evolution/` — równoważne przykłady `.twin`, YAML i JSON oraz wygenerowany raport demonstracyjny.
 - `src/twinstudio/` — API, CQRS/ES, auth, POA, LiteLLM, feature lenses, evolution engine, DSL, lifecycle, MCP i web UI.
-- `components/housing-studio/` — parametryczny generator obudowy 2D/3D.
+- `digitaltwin-run/housing-studio` — przypięta zależność generatora obudowy 2D/3D.
 - `services/cad-worker/` — ograniczony adapter zaznaczonego obszaru STEP/B-Rep.
 - `examples/rpi5-camera3/` — demonstracyjny projekt urządzenia oraz zweryfikowany `demo-rpi5.twinstudio.zip`.
 - `proto/lps/v1/` — zachowana przestrzeń kontraktów przewodowych dla kompatybilności.

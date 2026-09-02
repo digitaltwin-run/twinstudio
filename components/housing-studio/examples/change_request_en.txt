@@ -1,1 +1,0 @@
-Set all housing walls to 2 mm. Keep both Raspberry Pi mounting patterns enabled. Use a 195 degree hinge opening and generate front, top, and side drawings with visible-edge, hidden-edge, centerline, dimension, and PCB-reference layers.
