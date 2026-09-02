@@ -1,4 +1,4 @@
-.PHONY: help install start restart recreate stop kill status health logs logs-follow run foreground test lint compose-up compose-down compose-all seed schemas dsl-preview dsl-conformance eda-history-check verify proto-lint package
+.PHONY: help install start restart recreate stop kill status health logs logs-follow run foreground test lint compose-up compose-down compose-all seed schemas dsl-preview dsl-conformance eda-history-check workspace-cli-e2e verify proto-lint package
 
 DEV_SERVER := ./scripts/dev_server.sh
 
@@ -14,6 +14,7 @@ help:
 	  '  make logs-follow follow local server logs' \
 	  '  make run         replace the instance and run in the foreground' \
 	  '  make dsl-conformance validate NL/DSL boundary with wellmanifest/dsl' \
+	  '  make workspace-cli-e2e test create/export/import/merge through REST' \
 	  '' \
 	  'Host and port come from TWINSTUDIO_HOST/TWINSTUDIO_PORT (.env.local first).'
 
@@ -73,6 +74,9 @@ dsl-conformance:
 
 eda-history-check:
 	PYTHONPATH=src python scripts/verify_eda_history.py --allow-missing
+
+workspace-cli-e2e:
+	./scripts/test_workspace_cli.sh
 
 verify:
 	PYTHONPATH=src python scripts/verify_project.py --run-tests --out docs/verification-report.json

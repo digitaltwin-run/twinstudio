@@ -39,6 +39,7 @@ from twinstudio.mqtt_bus import publisher_from_settings
 from twinstudio.seed import seed_from_file
 from twinstudio.settings import settings
 from twinstudio.simulations import simulate_power
+from twinstudio.workspace_cli import workspace_app
 
 app = typer.Typer(
     help=(
@@ -48,6 +49,7 @@ app = typer.Typer(
 )
 eda_app = typer.Typer(help="Safe KiCad SCH/PCB inspection, LLM planning and firmware audit.")
 app.add_typer(eda_app, name="eda")
+app.add_typer(workspace_app, name="workspace")
 
 
 def services() -> tuple[

@@ -300,3 +300,6 @@ flowchart LR
 9. The synchronous MCP core does not yet provide request-scoped SSE, subscriptions, MRTR or a production OAuth server.
 
 See `docs/IMPLEMENTATION_STATUS.md`, `docs/18_PROJECT_EVOLUTION_DSL_PL.md`, `docs/19_TWINSCRIPT_API_REFERENCE.md` and `docs/VERIFICATION.md`.
+
+Shell users operate through the same authenticated boundary with
+`twinstudio workspace`; see [the Polish workspace CLI guide](docs/20_WORKSPACE_CLI_PL.md).
