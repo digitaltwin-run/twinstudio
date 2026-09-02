@@ -121,12 +121,10 @@
     "responseSchemas": ["https://twinstudio.local/schemas/change-plan-proposal.schema.json"],
     "naturalLanguage": "typed-source-only",
     "sourceSchema": "twinstudio.nl-source/v1",
-    "decisionProtocol": "nl-to-dsl-input-output",
     "modelAuthority": "propose-only",
     "strict": true
   },
   "documentation": {
-    "vocabularyKind": "commands",
     "commandRoot": "docs",
     "errorRoot": "docs/ERROR",
     "criticalRoot": "docs/CRITICAL",
@@ -153,13 +151,6 @@
     "blockingSeverities": ["error", "critical"],
     "requireEvaluable": true,
     "blockUnresolvedSecurity": true
-  },
-  "publicationPolicy": {
-    "declaredTier": "controlled",
-    "deterministic": true,
-    "independentReview": true,
-    "externalAuthority": true,
-    "runtimeIsolation": true
   },
   "conformance": {
     "levels": ["manifest", "contract", "runtime", "llm-boundary"],
