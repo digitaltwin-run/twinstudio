@@ -48,7 +48,7 @@ test:
 	PYTHONPATH=src python -m pytest -q
 
 lint:
-	ruff check src tests
+	ruff check .
 
 compose-up:
 	docker compose up --build
